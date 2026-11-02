@@ -121,6 +121,28 @@ body[data-vt=neon] .cardx .fr{box-shadow:0 0 8px #3ff0ff}
 .cardx.got:not(.own1):not(.own2) .fr::after{display:none}
 @keyframes gotPop{0%{transform:scale(0)}100%{transform:scale(1)}}
 .cardx.got .fr .dc{filter:brightness(.88)}
+.bkSeg{flex-wrap:wrap}.bkSeg button{flex:0 0 calc(25% - 6px);padding:4px!important}.bkp{display:block;width:100%;aspect-ratio:3/4;border-radius:6px;background:center/100% 100% no-repeat}
+body[data-vt=natural].bk0 .cardx .bk,body[data-vt=natural] .bkp.p0{background-image:url(../img/mm/back_natural.webp)!important}
+body[data-vt=natural].bk1 .cardx .bk,body[data-vt=natural] .bkp.p1{background-image:url(../img/mm/back_natural_1.webp)!important}
+body[data-vt=natural].bk2 .cardx .bk,body[data-vt=natural] .bkp.p2{background-image:url(../img/mm/back_natural_2.webp)!important}
+body[data-vt=natural].bk3 .cardx .bk,body[data-vt=natural] .bkp.p3{background-image:url(../img/mm/back_natural_3.webp)!important}
+body[data-vt=natural].bk4 .cardx .bk,body[data-vt=natural] .bkp.p4{background-image:url(../img/mm/back_natural_4.webp)!important}
+body[data-vt=natural].bk5 .cardx .bk,body[data-vt=natural] .bkp.p5{background-image:url(../img/mm/back_natural_5.webp)!important}
+body[data-vt=natural].bk6 .cardx .bk,body[data-vt=natural] .bkp.p6{background-image:url(../img/mm/back_natural_6.webp)!important}
+body[data-vt=retro].bk0 .cardx .bk,body[data-vt=retro] .bkp.p0{background-image:url(../img/mm/back_retro.webp)!important}
+body[data-vt=retro].bk1 .cardx .bk,body[data-vt=retro] .bkp.p1{background-image:url(../img/mm/back_retro_1.webp)!important}
+body[data-vt=retro].bk2 .cardx .bk,body[data-vt=retro] .bkp.p2{background-image:url(../img/mm/back_retro_2.webp)!important}
+body[data-vt=retro].bk3 .cardx .bk,body[data-vt=retro] .bkp.p3{background-image:url(../img/mm/back_retro_3.webp)!important}
+body[data-vt=retro].bk4 .cardx .bk,body[data-vt=retro] .bkp.p4{background-image:url(../img/mm/back_retro_4.webp)!important}
+body[data-vt=retro].bk5 .cardx .bk,body[data-vt=retro] .bkp.p5{background-image:url(../img/mm/back_retro_5.webp)!important}
+body[data-vt=retro].bk6 .cardx .bk,body[data-vt=retro] .bkp.p6{background-image:url(../img/mm/back_retro_6.webp)!important}
+body[data-vt=neon].bk0 .cardx .bk,body[data-vt=neon] .bkp.p0{background-image:url(../img/mm/back_neon.webp)!important}
+body[data-vt=neon].bk1 .cardx .bk,body[data-vt=neon] .bkp.p1{background-image:url(../img/mm/back_neon_1.webp)!important}
+body[data-vt=neon].bk2 .cardx .bk,body[data-vt=neon] .bkp.p2{background-image:url(../img/mm/back_neon_2.webp)!important}
+body[data-vt=neon].bk3 .cardx .bk,body[data-vt=neon] .bkp.p3{background-image:url(../img/mm/back_neon_3.webp)!important}
+body[data-vt=neon].bk4 .cardx .bk,body[data-vt=neon] .bkp.p4{background-image:url(../img/mm/back_neon_4.webp)!important}
+body[data-vt=neon].bk5 .cardx .bk,body[data-vt=neon] .bkp.p5{background-image:url(../img/mm/back_neon_5.webp)!important}
+body[data-vt=neon].bk6 .cardx .bk,body[data-vt=neon] .bkp.p6{background-image:url(../img/mm/back_neon_6.webp)!important}
 body[data-vt=retro] .sw{background:#3a160a;box-shadow:inset 0 0 0 2px #a8651e}body[data-vt=retro] .sw::after{background:#e0b98a}
 body[data-vt=retro] .sw.on{background:linear-gradient(#d0452f,#8f2a1f);box-shadow:inset 0 0 0 2px #f2b134,0 0 10px rgba(255,154,46,.5)}body[data-vt=retro] .sw.on::after{background:#ffe7b0}
 body[data-vt=neon] .sw{background:rgba(20,8,55,.9);box-shadow:inset 0 0 0 1.5px #5a3bb0}body[data-vt=neon] .sw::after{background:#8f7fd0;box-shadow:none}
@@ -245,6 +267,7 @@ body[data-vt=retro] .hole{background:radial-gradient(circle at 50% 40%,#2a1208,#
 <div class="modal" id="mSet"><div class="card">
   <h2>🐾 あそびかた設定</h2>
   <div class="row"><div class="lb">モード</div><div class="seg" data-k="mode"><button data-v="solo">ひとりで</button><button data-v="cpu">CPUと対戦</button><button data-v="pvp">2人で対戦</button></div></div>
+  <div class="row"><div class="lb">カードの裏面</div><div class="seg bkSeg" data-k="back"><button data-v="rand">🎲<br>ランダム</button><button data-v="0"><i class="bkp p0"></i></button><button data-v="1"><i class="bkp p1"></i></button><button data-v="2"><i class="bkp p2"></i></button><button data-v="3"><i class="bkp p3"></i></button><button data-v="4"><i class="bkp p4"></i></button><button data-v="5"><i class="bkp p5"></i></button><button data-v="6"><i class="bkp p6"></i></button></div></div>
   <div class="row"><div class="lb">カードの枚数</div><div class="seg" data-k="size"><button data-v="12">かんたん<br>12枚</button><button data-v="20">ふつう<br>20枚</button><button data-v="30">むずかしい<br>30枚</button></div></div>
   <div class="row" id="rowLv"><div class="lb">ムーン（CPU）の記憶力</div><div class="seg" data-k="level"><button data-v="1">わすれんぼ</button><button data-v="2">ふつう</button><button data-v="3">天才</button></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -322,7 +345,7 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
 
 // ===== 神経衰弱 =====
 const store=mkStore('mcmm_');
-const S=Object.assign({mode:'cpu',size:'20',level:'2',talk:true,sound:true},store.get('settings',{}));
+const S=Object.assign({mode:'cpu',size:'20',level:'2',back:'rand',talk:true,sound:true},store.get('settings',{}));
 SND.on=S.sound; TALK.on=S.talk;
 let best=store.get('best',{}), rec=store.get('rec',{});
 const EMO=['cavalier','beagle','golden','samoyed','husky','border','bernese','pug','frenchie','boston','toypoodle','shiba','pom','chihuahua','schnauzer','dachs','maltese','corgi'];
@@ -330,8 +353,9 @@ const LAYOUT={12:[4,3],20:[5,4],30:[6,5]};
 let deck=[], open=[], matched=[], owner=[], turn=1, score={1:0,2:0}, busy=false, over=false, moves=0, combo=0, t0=0, timer=null, seen=new Map(), gen0=0, cpuMem=[];
 const isHuman=p=>S.mode!=='cpu'||p===1;
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function applyBack(){ const v=S.back==='rand'?String((Math.random()*7)|0):S.back; for(let k=0;k<7;k++) document.body.classList.remove('bk'+k); document.body.classList.add('bk'+v); }
 function newGame(){
-  gen0++; clearInterval(timer);
+  applyBack(); gen0++; clearInterval(timer);
   const n=+S.size, pairs=n/2;
   const kinds=['colon','moon',...shuffle(EMO.slice()).slice(0,pairs-2)];
   deck=shuffle(kinds.flatMap(k=>[k,k]));
@@ -451,7 +475,7 @@ function peek(){ // ちょっとだけ見る（ひとりモード・1回）
 }
 let peeked=false;
 const pend=Object.assign({},S);
-const syncSet=bindSettings($('mSet'),pend,k=>{ if(['talk','sound'].includes(k)){S[k]=pend[k];SND.on=S.sound;TALK.on=S.talk;store.set('settings',S)} $('rowLv').style.display=pend.mode==='cpu'?'':'none'; });
+const syncSet=bindSettings($('mSet'),pend,k=>{ if(['talk','sound'].includes(k)){S[k]=pend[k];SND.on=S.sound;TALK.on=S.talk;store.set('settings',S)} if(k==='back'){S.back=pend.back;store.set('settings',S);applyBack()} $('rowLv').style.display=pend.mode==='cpu'?'':'none'; });
 $('bSet').onclick=()=>{actx();Object.assign(pend,S);syncSet();$('rowLv').style.display=pend.mode==='cpu'?'':'none';openM('mSet')};
 $('bStart').onclick=()=>{Object.assign(S,pend);store.set('settings',S);closeM('mSet');start()};
 $('bHelp').onclick=()=>openM('mHelp');
