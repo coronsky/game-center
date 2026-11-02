@@ -240,7 +240,7 @@ body[data-vt=retro] .hole{background:radial-gradient(circle at 50% 40%,#2a1208,#
   <div class="foot"><span id="info"></span><span><b id="plyN">1</b>手目</span></div>
 </div>
 <style>/* ==== shogi image skin ==== */
-html body[data-vt] .boardWrap{position:relative;margin:8px auto 0;width:min(98%,470px);padding:0;border:0;border-radius:0;box-shadow:none;animation:none}
+html body[data-vt] .boardWrap{position:relative;left:50%;transform:translateX(-50%);margin:8px 0 0;padding:0;border:0;border-radius:0;box-shadow:none;animation:none}
 html body[data-vt] .bgrid{position:absolute;gap:0}
 html body[data-vt] #board{aspect-ratio:auto;width:100%;height:100%;box-sizing:border-box}
 html body[data-vt] .sq{background:transparent!important;filter:none!important;box-shadow:none!important}
@@ -350,6 +350,13 @@ html body[data-vt=neon] .pc[data-k="11"]{background-image:url(../img/neon/sg_pc_
 html body[data-vt=neon] .pc[data-k="12"]{background-image:url(../img/neon/sg_pc_ngi.webp)!important;--h:94%}
 html body[data-vt=neon] .pc[data-k="13"]{background-image:url(../img/neon/sg_pc_uma.webp)!important;--h:97%}
 html body[data-vt=neon] .pc[data-k="14"]{background-image:url(../img/neon/sg_pc_ryu.webp)!important;--h:97%}
+html,body{overflow-x:hidden}
+html body[data-vt=natural] .boardWrap{width:min(calc(96vw*100/76.486),calc(470px*100/76.486))}
+html body[data-vt=natural].nodog .boardWrap{aspect-ratio:740/809;background-image:url(../img/natural/sg_frame_nd.webp)}html body[data-vt=natural].nodog .bgrid{top:12.485%;height:74.266%}
+html body[data-vt=retro] .boardWrap{width:min(calc(96vw*100/73.158),calc(470px*100/73.158))}
+html body[data-vt=retro].nodog .boardWrap{aspect-ratio:760/816;background-image:url(../img/retro/sg_frame_nd.webp)}html body[data-vt=retro].nodog .bgrid{top:13.480%;height:72.328%}
+html body[data-vt=neon] .boardWrap{width:min(calc(96vw*100/72.460),calc(470px*100/72.460))}
+html body[data-vt=neon].nodog .boardWrap{aspect-ratio:748/819;background-image:url(../img/neon/sg_frame_nd.webp)}html body[data-vt=neon].nodog .bgrid{top:14.530%;height:70.248%}
 </style>
 <div class="modal" id="mPro"><div class="card"><h2>成りますか？</h2><div class="prs"><button id="prA"></button><button id="prB"></button></div></div></div>
 <div class="modal" id="mSet"><div class="card">
@@ -358,6 +365,7 @@ html body[data-vt=neon] .pc[data-k="14"]{background-image:url(../img/neon/sg_pc_
   <div class="row"><div class="lb">CPUのつよさ</div><div class="seg" data-k="level"><button data-v="1">やさしい</button><button data-v="2">ふつう</button><button data-v="3">つよい</button></div></div>
   <div class="row"><div class="lb">ハンデ（CPUの駒を減らす）</div><div class="seg" data-k="handi"><button data-v="0">なし</button><button data-v="ka">角落ち</button><button data-v="hi">飛車落ち</button><button data-v="2">二枚落ち</button></div></div>
   <div class="tg"><span>動かせる場所を表示</span><div class="sw" data-k="showLegal"></div></div>
+  <div class="tg"><span>盤のコロンとムーン</span><div class="sw" data-k="dogs"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="acts"><button class="btn c" id="bHelp">あそびかた</button><button class="btn g" id="bStart">この設定ではじめる</button></div>
@@ -435,7 +443,7 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
 
 // ===== 将棋 =====
 const store=mkStore('mcsg_');
-const S=Object.assign({side:'1',level:'2',handi:'0',showLegal:true,talk:true,sound:true},store.get('settings',{}));
+const S=Object.assign({side:'1',level:'2',handi:'0',showLegal:true,dogs:true,talk:true,sound:true},store.get('settings',{}));
 SND.on=S.sound; TALK.on=S.talk;
 let rec=store.get('rec',{});
 
@@ -793,7 +801,7 @@ function hint(){
 }
 // settings
 const pend=Object.assign({},S);
-const syncSet=bindSettings($('mSet'),pend,k=>{ if(['showLegal','talk','sound'].includes(k)){S[k]=pend[k];SND.on=S.sound;TALK.on=S.talk;store.set('settings',S);render()} });
+const syncSet=bindSettings($('mSet'),pend,k=>{ if(['showLegal','dogs','talk','sound'].includes(k)){S[k]=pend[k];SND.on=S.sound;TALK.on=S.talk;store.set('settings',S);render();document.body.classList.toggle('nodog',S.dogs===false)} });
 $('bSet').onclick=()=>{actx();Object.assign(pend,S);syncSet();openM('mSet')};
 $('bStart').onclick=()=>{Object.assign(S,pend);store.set('settings',S);closeM('mSet');newGame()};
 $('bResign').onclick=()=>{ if(over) return; closeM('mSet'); gen++; clearTimeout(cpuTimer); endGame(-me(),'投了'); };
@@ -803,6 +811,8 @@ $('bAgain').onclick=()=>{closeM('mRes');newGame()};
 $('bUndo').onclick=()=>{actx();undo()};
 $('bHint').onclick=()=>{actx();hint()};
 buildUI(); newGame();
+
+document.body.classList.toggle('nodog',S.dogs===false);
 
 
 (()=>{const VTS=['natural','retro','neon'],VTN={natural:'ナチュラル',retro:'レトロ',neon:'サイバーネオン'};
