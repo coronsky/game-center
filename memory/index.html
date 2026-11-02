@@ -420,9 +420,8 @@ function finish(){
   if(S.mode==='cpu'){ if(!w){r.d++;msg='引き分け！'} else if(w===1){r.w++;msg='あなたの勝ち！記憶力ばつぐん🎉'} else {r.l++;msg='ざんねん…ムーンの勝ち！'} store.set('rec',rec); }
   else msg=w?(w===1?'コロン':'ムーン')+'チームの勝ち！':'引き分け！';
   setStatus(w?(w===1?'コロン':'ムーン')+'の勝ち！':'引き分け');
-  if(w===1||S.mode==='pvp'
+  if(w===1||S.mode==='pvp'||!w) SFX.win(); else SFX.lose();
   try{window.MC&&MC.report('memory',S.mode==='cpu'?(!w?'draw':w===1?'win':'lose'):'play',{lv:+S.level})}catch(e){}
-||!w) SFX.win(); else SFX.lose();
   if(w){ sayText(w,'やったー！',true); sayText(3-w,'くやしい〜',true); confetti(['🐾','🦴','🍪','✨','🎉']); }
   showResult({winner:w,title:w?'🏆 '+(w===1?'コロン':'ムーン')+'の勝ち！':'🤝 引き分け',score:score[1]+' - '+score[2],msg,rec:S.mode==='cpu'?`この強さでの成績：${r.w}勝 ${r.l}敗 ${r.d}分`:''});
 }

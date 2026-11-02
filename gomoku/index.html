@@ -421,9 +421,8 @@ function finish(w){
   if(S.mode==='pvp') msg=w?(w===1?'コロン':'ムーン')+'チームの勝ち！':'引き分け';
   else if(!w){r.d++;msg='引き分け！'} else if(w===+S.side){r.w++;msg='あなたの勝ち！5つならんだ🎉'} else {r.l++;msg='ざんねん…ムーンに5つならべられた！'}
   store.set('rec',rec);
-  setStatus(w?(w===1
+  setStatus(w?(w===1?'コロン':'ムーン')+'の勝ち！':'引き分け');
   try{window.MC&&MC.report('gomoku',S.mode==='pvp'?'play':(!w?'draw':w===+S.side?'win':'lose'),{lv:+S.level})}catch(e){}
-?'コロン':'ムーン')+'の勝ち！':'引き分け');
   if(!w||isHuman(w)) SFX.win(); else SFX.lose();
   if(w){ sayText(w,'5つならんだ！',true); sayText(3-w,'あ〜っ！',true); confetti(['🐾','🦴','✨','🎉']); }
   showResult({winner:w,title:w?'🏆 '+(w===1?'コロン':'ムーン')+'の勝ち！':'🤝 引き分け',score:hist.length+'手',msg,rec:S.mode==='cpu'?`この強さ・盤での成績：${r.w}勝 ${r.l}敗 ${r.d}分`:'',delay:1300});

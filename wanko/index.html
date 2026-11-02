@@ -441,9 +441,8 @@ function endGame(w,why){
   let msg; if(S.mode==='pvp') msg=wp?(wp===1?'コロン':'ムーン')+'チームの勝ち！':'引き分け';
   else if(!w){r.d++;msg='引き分け（'+why+'）'} else if(w===+S.side){r.w++;msg='あなたの勝ち！🎉'} else {r.l++;msg='ざんねん…もう一回！'}
   store.set('rec',rec);
-  setStatus(wp?
+  setStatus(wp?(wp===1?'コロン':'ムーン')+'の勝ち！':'引き分け');
   try{window.MC&&MC.report('wanko',S.mode==='pvp'?'play':(!w?'draw':w===+S.side?'win':'lose'),{lv:+S.level})}catch(e){}
-(wp===1?'コロン':'ムーン')+'の勝ち！':'引き分け');
   if(!wp||isHuman(w)) SFX.win(); else SFX.lose();
   if(wp){ sayText(wp,'やったー！',true); sayText(3-wp,'まけた〜',true); confetti(['🐾','🦴','🎾','✨','🎉']); }
   showResult({winner:wp,title:wp?'🏆 '+(wp===1?'コロン':'ムーン')+'の勝ち！':'🤝 引き分け',score:why,msg,rec:S.mode==='cpu'?`この強さでの成績：${r.w}勝 ${r.l}敗 ${r.d}分`:''});
