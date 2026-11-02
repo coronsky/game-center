@@ -392,6 +392,9 @@ body[data-vt=neon] .nb{background:rgba(20,8,55,.85);border:1.5px solid #ff4fd8;c
 body[data-vt=retro] .result .avs img{border-color:#a8651e;box-shadow:0 0 10px rgba(255,154,46,.4)}body[data-vt=retro] .result .avs .win img{border-color:#f2b134;box-shadow:0 0 16px #ff9a2e}
 body[data-vt=neon] .result .avs img{border-color:#5a3bb0;box-shadow:0 0 10px rgba(63,240,255,.4)}body[data-vt=neon] .result .avs .win img{border-color:#ff4fd8;box-shadow:0 0 18px #ff4fd8}
 body[data-vt=neon] .result .avs div{font-family:"DotGothic16",monospace;font-weight:400}
+body.nodog[data-vt=natural] .boardWrap{aspect-ratio:724/741;background-image:url(../img/natural/rv_frame_nd.webp)}body.nodog[data-vt=natural] .felt{top:12.146%}
+body.nodog[data-vt=retro] .boardWrap{aspect-ratio:684/744;background-image:url(../img/retro/rv_frame_nd.webp)}body.nodog[data-vt=retro] .felt{top:13.306%}
+body.nodog[data-vt=neon] .boardWrap{aspect-ratio:682/776;background-image:url(../img/neon/rv_frame_nd.webp)}body.nodog[data-vt=neon] .felt{top:15.464%}
 </style>
 <link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script></head>
 <body data-vt="natural">
@@ -458,6 +461,7 @@ body[data-vt=neon] .result .avs div{font-family:"DotGothic16",monospace;font-wei
     <button data-v="full"><span class="stPrev full"><i><b></b></i><i class="w"><b></b></i></span>顔いっぱい</button></div></div>
   <div class="tg"><span>置ける場所を表示</span><div class="sw" data-k="showLegal"></div></div>
   <div class="tg"><span>最後に置いた石に印</span><div class="sw" data-k="showLast"></div></div>
+  <div class="tg"><span>盤のコロンとムーン</span><div class="sw" data-k="dogs"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>振動(対応スマホ)</span><div class="sw" data-k="vibe"></div></div>
@@ -533,7 +537,7 @@ const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
 const CORNERS=[0,7,56,63];
 const store={get(k,d){try{const v=localStorage.getItem('mcrv_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
   set(k,v){try{localStorage.setItem('mcrv_'+k,JSON.stringify(v))}catch(e){}}};
-const S=Object.assign({mode:'cpu',side:'B',level:'2',rule:'normal',stone:'face',showLegal:true,showLast:true,talk:true,sound:true,vibe:true},store.get('settings',{}));
+const S=Object.assign({mode:'cpu',side:'B',level:'2',rule:'normal',stone:'face',showLegal:true,showLast:true,dogs:true,talk:true,sound:true,vibe:true},store.get('settings',{}));
 let rec=store.get('record',{});
 const P=Object.assign({coins:0,owned:{green:1},theme:'green',equip:{},badges:{},stars:{},ruleWins:{},
   stats:{games:0,wins:0,streak:0,bestStreak:0,maxFlip:0,pats:0,earned:0,corners:0}},store.get('prof',{}));
@@ -1138,13 +1142,14 @@ function syncSettingsUI(){
   $('rowSide').style.display=$('rowLv').style.display=pending.mode==='cpu'?'':'none';
   $('ruleDesc').textContent=RULES[pending.rule||'normal'].d;
 }
+function applyDogs(){document.body.classList.toggle('nodog',S.dogs===false)}
 function applyStone(){document.body.classList.remove('st-face','st-full','st-paw');if(S.stone==='paw')document.body.classList.add('st-paw');if(S.stone==='face')document.body.classList.add('st-face');if(S.stone==='full')document.body.classList.add('st-full')}
 document.querySelectorAll('#mSet .seg button').forEach(b=>b.addEventListener('click',()=>{const k=b.parentElement.dataset.k;pending[k]=b.dataset.v;
   if(k==='stone'){S.stone=b.dataset.v;applyStone();saveS()}
   sfx.tap();syncSettingsUI()}));
 document.querySelectorAll('.sw').forEach(sw=>sw.addEventListener('click',()=>{
   const k=sw.dataset.k; pending[k]=!pending[k];
-  if(['showLegal','showLast','talk','sound','vibe'].includes(k)){S[k]=pending[k];saveS();render()}
+  if(['showLegal','showLast','dogs','talk','sound','vibe'].includes(k)){S[k]=pending[k];saveS();render();applyDogs()}
   syncSettingsUI(); sfx.tap();
 }));
 const openM=id=>$(id).classList.add('show');
@@ -1181,7 +1186,7 @@ $('vtBtn').onclick=e=>{ e.stopPropagation(); ctx(); const v=VTS[(VTS.indexOf(doc
 /* init */
 S.side = (S.side==='W'||S.side===2)?W:B;
 pending=Object.assign({},S,{side:S.side===W?'W':'B'});
-applyStone(); buildBoard(); applyLook(); newGame();
+applyStone(); applyDogs(); buildBoard(); applyLook(); newGame();
 })();
 
 </script>
