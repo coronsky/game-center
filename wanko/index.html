@@ -239,18 +239,38 @@ body[data-vt=retro] .hole{background:radial-gradient(circle at 50% 40%,#2a1208,#
   <div class="acts"><button class="btn c" id="bHelp">あそびかた</button><button class="btn g" id="bStart">この設定ではじめる</button></div>
   <div class="acts"><button class="btn c" data-close="mSet">とじる</button></div>
 </div></div>
+<style>/* wanko image skin */
+html body[data-vt] .tk{background:center/contain no-repeat!important;border:0!important;box-shadow:none!important;filter:drop-shadow(0 3px 3px rgba(0,0,0,.4));width:96%}
+html body[data-vt] .tk .em,html body[data-vt] .tk .face,html body[data-vt] .tk .crn{display:none}
+html body[data-vt] .tk i{z-index:2;width:11%;height:11%;box-shadow:0 0 0 2px #fff,0 1px 2px rgba(0,0,0,.5)}
+html body[data-vt] .tk.sm{width:46px}html body[data-vt] .legend .tk{transform:none;width:44px}
+html body[data-vt=natural] .tk.t5.s{background-image:url(../img/natural/wk_king_s.webp)!important}html body[data-vt=natural] .tk.t5.g{background-image:url(../img/natural/wk_king_g.webp)!important}
+html body[data-vt=natural] .tk.t1{background-image:url(../img/natural/wk_pup.webp)!important}
+html body[data-vt=natural] .tk.t2{background-image:url(../img/natural/wk_bone.webp)!important}
+html body[data-vt=natural] .tk.t3{background-image:url(../img/natural/wk_ball.webp)!important}
+html body[data-vt=natural] .tk.t4{background-image:url(../img/natural/wk_dog.webp)!important}
+html body[data-vt=retro] .tk.t5.s{background-image:url(../img/retro/wk_king_s.webp)!important}html body[data-vt=retro] .tk.t5.g{background-image:url(../img/retro/wk_king_g.webp)!important}
+html body[data-vt=retro] .tk.t1{background-image:url(../img/retro/wk_pup.webp)!important}
+html body[data-vt=retro] .tk.t2{background-image:url(../img/retro/wk_bone.webp)!important}
+html body[data-vt=retro] .tk.t3{background-image:url(../img/retro/wk_ball.webp)!important}
+html body[data-vt=retro] .tk.t4{background-image:url(../img/retro/wk_dog.webp)!important}
+html body[data-vt=neon] .tk.t5.s{background-image:url(../img/neon/wk_king_s.webp)!important}html body[data-vt=neon] .tk.t5.g{background-image:url(../img/neon/wk_king_g.webp)!important}
+html body[data-vt=neon] .tk.t1{background-image:url(../img/neon/wk_pup.webp)!important}
+html body[data-vt=neon] .tk.t2{background-image:url(../img/neon/wk_bone.webp)!important}
+html body[data-vt=neon] .tk.t3{background-image:url(../img/neon/wk_ball.webp)!important}
+html body[data-vt=neon] .tk.t4{background-image:url(../img/neon/wk_dog.webp)!important}</style>
 <div class="modal" id="mHelp"><div class="card help">
   <h2>📖 ワンコしょうぎ</h2>
-  <p>3×4マスの小さな将棋。相手の<b>ボス</b>（顔の駒）をつかまえたら勝ち！</p>
+  <p>3×4マスの小さな将棋。相手の<b>王さま</b>（王冠をつけたワンコ）をつかまえたら勝ち！</p>
   <div class="legend">
-    <div><span class="tk"><span class="em">👑</span></span>ボス：まわり8方向</div>
-    <div><span class="tk"><span class="em">🦴</span></span>ホネ：たて・よこ</div>
-    <div><span class="tk"><span class="em">🎾</span></span>ボール：ななめ</div>
-    <div><span class="tk"><span class="em">🐶</span></span>こいぬ：前に1つ</div>
+    <div><span class="tk s t5"><span class="em">👑</span></span>王さま（コロン／ムーン）：まわり8方向</div>
+    <div><span class="tk s t2"><span class="em">🌵</span></span>サボテン：たて・よこ</div>
+    <div><span class="tk s t3"><span class="em">🌰</span></span>どんぐり：ななめ</div>
+    <div><span class="tk s t1"><span class="em">🌱</span></span>芽っこ：前に1つ</div>
   </div>
-  <p>🐶 こいぬが一番奥まで進むと 🐕 <b>おとな犬</b>に成長！（前・ななめ前・横・後ろに動ける）</p>
+  <p>🌱 芽っこが一番奥まで進むと 🌼 <b>タンポポ</b>に成長！（前・ななめ前・横・後ろに動ける）</p>
   <p>🫳 とった駒は持ち駒になって、空いているマスに置けます。</p>
-  <p>🏁 自分のボスが相手の一番奥のマスに入って、すぐにつかまらなければ<b>ゴールで勝ち</b>！</p>
+  <p>🏁 自分の王さまが相手の一番奥のマスに入って、すぐにつかまらなければ<b>ゴールで勝ち</b>！</p>
   <p>駒の赤い点（相手は青い点）が動ける方向です。</p>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div>
 </div></div>
@@ -321,7 +341,7 @@ SND.on=S.sound; TALK.on=S.talk;
 let rec=store.get('rec',{});
 const R=4,Cn=3,NSQ=12;
 const PUP=1,BONE=2,BALL=3,DOG=4,BOSS=5;
-const INFO={1:{e:'🐶',n:'こいぬ'},2:{e:'🦴',n:'ホネ'},3:{e:'🎾',n:'ボール'},4:{e:'🐕',n:'おとな犬'},5:{e:'👑',n:'ボス'}};
+const INFO={1:{e:'🌱',n:'芽っこ'},2:{e:'🌵',n:'サボテン'},3:{e:'🌰',n:'どんぐり'},4:{e:'🌼',n:'タンポポ'},5:{e:'👑',n:'王さま'}};
 const MOVES={1:[[-1,0]],2:[[-1,0],[1,0],[0,-1],[0,1]],3:[[-1,-1],[-1,1],[1,-1],[1,1]],4:[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,0]],5:[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]};
 const VAL=[0,10,30,30,40,0];
 let b=new Int8Array(NSQ), hand=[[0,0,0,0],[0,0,0,0]], side=1;
@@ -411,7 +431,7 @@ function render(){
 function newGame(){ gen0++; clearTimeout(cpuT); setup(); hist=[];sel=null;over=false;busy=false;lastMv=-1;plyN=0;pos={};hintMv=null;
   if(S.mode==='pvp'){$('tagS').textContent='プレイヤー1';$('tagG').textContent='プレイヤー2'} else {$('tagS').textContent=S.side==='1'?'あなた':'CPU';$('tagG').textContent=S.side==='-1'?'あなた':'CPU'}
   $('info').textContent=S.mode==='pvp'?'2人で対戦':'CPU：'+{1:'やさしい',2:'ふつう',3:'つよい'}[S.level];
-  render(); setTimeout(()=>{sayText(1,'ボスを守るワン！');setTimeout(()=>sayText(2,'ボスとっちゃうよ〜♪'),500)},300); next(); }
+  render(); setTimeout(()=>{sayText(1,'王さまを守るワン！');setTimeout(()=>sayText(2,'王さまとっちゃうよ〜♪'),500)},300); next(); }
 function onHand(s,t){ if(over||busy||!isHuman(side)||s!==side) return; actx(); SFX.tap(); sel=(sel&&sel.drop&&sel.t===t)?null:{drop:true,t}; hintMv=null; render(); }
 function onSq(i){ if(over||busy||!isHuman(side)) return; actx();
   if(sel){ const m=gen(side).find(m=>mT(m)===i&&(sel.drop?mF(m)===16+sel.t:mF(m)===sel.sq)); if(m!==undefined){ doMove(m); return; } }
@@ -423,11 +443,11 @@ function doMove(m){
   make(m); lastMv=m; sel=null; hintMv=null; plyN++; SFX.put(); render();
   const cel=cells[to], wp=s===1?1:2;
   cel.querySelector('.tk')?.classList.add('pop');
-  if(Math.abs(cap)===BOSS){ burstEl(cel,['👑','✨']); return endGame(s,'ボスをつかまえた'); }
+  if(Math.abs(cap)===BOSS){ burstEl(cel,['👑','✨']); return endGame(s,'王さまをつかまえた'); }
   if(pupBefore&&Math.abs(b[to])===DOG){ sayText(wp,pick(['おとなになったワン！','せいちょうした！'])); burstEl(cel,['✨','⭐']); }
   else if(cap){ sayText(wp,pick(['とったワン！','もらった〜♪','ぱくっ！'])); sayText(3-wp,pick(['あっ！','くぅ〜ん'])); }
   if(tried(s)){ burstEl(cel,['🏁','✨']); return endGame(s,'ゴールにとうちゃく'); }
-  const bk=bossSq(-s); if(bk>=0&&attacked(bk,s)){ setTimeout(()=>{toast('ボスがねらわれてる！',true);SFX.alarm()},150); }
+  const bk=bossSq(-s); if(bk>=0&&attacked(bk,s)){ setTimeout(()=>{toast('王さまがねらわれてる！',true);SFX.alarm()},150); }
   const k=b.join(',')+hand[0].join('')+hand[1].join('')+side; pos[k]=(pos[k]||0)+1;
   if(pos[k]>=3) return endGame(0,'同じ形が3回');
   if(plyN>=200) return endGame(0,'長期戦');
