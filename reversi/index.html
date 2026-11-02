@@ -404,6 +404,11 @@ body[data-vt=retro] .sw{background:#3a160a;box-shadow:inset 0 0 0 2px #a8651e}bo
 body[data-vt=retro] .sw.on{background:linear-gradient(#d0452f,#8f2a1f);box-shadow:inset 0 0 0 2px #f2b134,0 0 10px rgba(255,154,46,.5)}body[data-vt=retro] .sw.on::after{background:#ffe7b0}
 body[data-vt=neon] .sw{background:rgba(20,8,55,.9);box-shadow:inset 0 0 0 1.5px #5a3bb0}body[data-vt=neon] .sw::after{background:#8f7fd0;box-shadow:none}
 body[data-vt=neon] .sw.on{background:rgba(255,79,216,.35);box-shadow:inset 0 0 0 1.5px #ff4fd8,0 0 10px #ff4fd8}body[data-vt=neon] .sw.on::after{background:#fff;box-shadow:0 0 8px #ff4fd8}
+.endBar{display:none;grid-template-columns:1fr 1fr;gap:8px;margin:10px 16px 0}
+.rpBar{display:none;grid-template-columns:repeat(6,1fr);gap:6px;margin:10px 12px 0}body.replay .rpBar{display:grid}
+.rpBar .btn{padding:10px 0;font-size:15px}.rpBar #rpPlay{font-size:12px}
+.rpN{grid-column:1/-1;text-align:center;font-weight:900;font-size:13px;opacity:.85}
+body.replay .btns,body.replay .btns2{opacity:.35;pointer-events:none}
 </style>
 <link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script></head>
 <body data-vt="natural">
@@ -435,6 +440,8 @@ body[data-vt=neon] .sw.on{background:rgba(255,79,216,.35);box-shadow:inset 0 0 0
   </div>
 
   <div class="status" id="status"><span class="paw">🐾</span><span class="txt" id="statusTxt">コロンの番だよ</span></div>
+  <div class="endBar" id="endBar"><button class="btn s" id="bResAgain">📊 結果をもう一度</button><button class="btn s" id="bRp">🎬 ふりかえり</button></div>
+  <div class="rpBar" id="rpBar"><button class="btn s" data-rp="first">⏮</button><button class="btn s" data-rp="prev">◀</button><button class="btn g" data-rp="play" id="rpPlay">▶ 再生</button><button class="btn s" data-rp="next">▶</button><button class="btn s" data-rp="last">⏭</button><button class="btn s" data-rp="end">✕</button><div class="rpN" id="rpN"></div></div>
 
   <div class="btns">
     <button class="btn g" id="bHint"><img class="ii" src="../img/natural/ac_sparkle.webp" alt=""><span class="ic">💡</span>ヒント</button>
@@ -565,7 +572,7 @@ const RULES={
 const LV={1:'やさしい',2:'ふつう',3:'つよい',4:'最強'};
 
 let board, turn, history, lastMove, busy=false, over=false, hintIdx=-1, moveCount, cpuTimer=null, gen=0;
-let C={}, chal=null, ANTI=false, treats=new Set(), treatGot={1:0,2:0}, usedHelp=false, minDiff=0, tl=[], maxFlipG=0;
+let RP=null; let C={}, chal=null, ANTI=false, treats=new Set(), treatGot={1:0,2:0}, usedHelp=false, minDiff=0, tl=[], maxFlipG=0;
 
 /* ---------- logic ---------- */
 const idx=(r,c)=>r*N+c, opp=p=>3-p;
@@ -762,7 +769,8 @@ function render(newIdx){
   $('moveNo').textContent=moveCount;
   const st=$('status');
   st.classList.remove('think');
-  if(over){ const w=winnerOf(sx,sy); setStatus(!w?'引き分け！':NAME[w]+'の勝ち！'); }
+  $('endBar').style.display=over&&!RP?'grid':'none';
+  if(over){ if(!RP){ const w=winnerOf(sx,sy); setStatus(!w?'引き分け！':NAME[w]+'の勝ち！'); } }
   else if(!isHuman(turn)){ st.classList.add('think'); setStatus(NAME[turn]+'が考え中'); }
   else setStatus(C.mode==='pvp'?NAME[turn]+'の番だよ':'あなた('+NAME[turn]+')の番だよ');
   $('bUndo').disabled=busy||!history.length||(C.mode==='cpu'&&!history.some(h=>h.turn===C.side));
@@ -799,7 +807,7 @@ function newGame(stage){
   const inCenter=i=>{const r=(i/N)|0,c=i%N;return r>=2&&r<=5&&c>=2&&c<=5};
   if(C.rule==='block') randomCells(5,i=>!inCenter(i)&&!CORNERS.includes(i)).forEach(i=>board[i]=X);
   if(C.rule==='treat') randomCells(5,i=>board[i]===E&&![27,28,35,36].includes(i)).forEach(i=>treats.add(i));
-  turn=B; history=[]; lastMove=-1; over=false; busy=false; hintIdx=-1; moveCount=1;
+  rpEnd(); turn=B; history=[]; lastMove=-1; over=false; busy=false; hintIdx=-1; moveCount=1;
   treatGot={1:0,2:0}; usedHelp=false; minDiff=0; tl=[[2,2]]; maxFlipG=0;
   cells.forEach(c=>{const d=c.querySelector('.disc');if(d)d.remove();c.classList.remove('peek')});
   updateTags(); render();
@@ -1092,6 +1100,7 @@ function finish(){
   setTimeout(()=>{$('mRes').classList.add('show'); if(newB.length) sfx.badge();},900);
 }
 function undo(){
+  if(RP) rpEnd();
   if(busy||!history.length) return;
   gen++; clearTimeout(cpuTimer);
   let h;
@@ -1122,6 +1131,15 @@ function burst(cell,items=['🐾','✨']){
     document.body.appendChild(s); setTimeout(()=>s.remove(),1400);
   }
 }
+function rpFrames(){ const f=history.map(h=>({b:h.board.slice(),l:h.lastMove})); f.push({b:board.slice(),l:lastMove}); return f; }
+function rpShow(k){ if(!RP) return; RP.k=Math.max(0,Math.min(RP.f.length-1,k)); const fr=RP.f[RP.k]; board=fr.b.slice(); lastMove=fr.l; render(fr.l);
+  $('rpN').textContent=RP.k===0?'はじめの盤面':RP.k+' / '+(RP.f.length-1)+'手目'; setStatus(RP.k===RP.f.length-1?'さいごの盤面':'ふりかえり中…'); }
+function rpStop(){ if(RP&&RP.t){ clearInterval(RP.t); RP.t=0; $('rpPlay').textContent='▶ 再生'; } }
+function rpStart(){ if(!over||RP) return; $('mRes').classList.remove('show'); RP={f:rpFrames(),save:{b:board.slice(),l:lastMove},k:0,t:0}; document.body.classList.add('replay'); rpShow(0); }
+function rpEnd(){ if(!RP) return; rpStop(); board=RP.save.b; lastMove=RP.save.l; RP=null; document.body.classList.remove('replay'); render(); }
+function rpAct(a){ if(!RP) return; sfx.tap();
+  if(a==='play'){ if(RP.t){ rpStop(); return; } if(RP.k>=RP.f.length-1) rpShow(0); $('rpPlay').textContent='⏸ 停止'; RP.t=setInterval(()=>{ if(RP.k>=RP.f.length-1){ rpStop(); return; } rpShow(RP.k+1); try{sfx.place()}catch(e){} },700); return; }
+  rpStop(); if(a==='first') rpShow(0); else if(a==='prev') rpShow(RP.k-1); else if(a==='next') rpShow(RP.k+1); else if(a==='last') rpShow(RP.f.length-1); else if(a==='end') rpEnd(); }
 function confetti(p){
   { const cf=document.createElement('div'); cf.className='cfx'; document.body.appendChild(cf); setTimeout(()=>cf.remove(),1900); }
   const items=p===B?['🐾','🍪','✨','🟤','🎉']:['🐾','🦴','✨','🤍','🎉'];
@@ -1171,6 +1189,9 @@ $('bStart').onclick=()=>{
 $('bHelp').onclick=()=>openM('mHelp');
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove('show'));
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')}));
+$('bResAgain').onclick=()=>{ctx();sfx.tap();openM('mRes')};
+$('bRp').onclick=()=>{ctx();sfx.tap();rpStart()};
+document.querySelectorAll('[data-rp]').forEach(b=>b.onclick=()=>rpAct(b.dataset.rp));
 $('bAgain').onclick=()=>{$('mRes').classList.remove('show');newGame(chal)};
 $('bNew').onclick=()=>{ctx();sfx.tap();newGame(chal)};
 $('bUndo').onclick=()=>{ctx();undo()};
