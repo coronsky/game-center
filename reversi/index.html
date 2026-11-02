@@ -293,6 +293,90 @@ body:is([data-vt=retro],[data-vt=neon]) :is(.stg .tx small,.shp .tx small,.bdg s
 body:is([data-vt=retro],[data-vt=neon]) .result .msg{color:#ffd36b}
 body[data-vt=neon] .result .msg{color:#3ff0ff;text-shadow:0 0 8px #3ff0ff}
 body:is([data-vt=retro],[data-vt=neon]) .help p{color:inherit}
+/* ==== v3 image skin ==== */
+body[data-vt] .boardWrap{position:relative;margin:10px auto 0;width:min(96%,460px);padding:0;border:0;border-radius:0;box-shadow:none;animation:none;background:none}
+body[data-vt] .boardWrap::before{content:'';display:block}
+body[data-vt] .felt{position:absolute;padding:0;border-radius:0;background:none;box-shadow:none;aspect-ratio:1}
+body[data-vt] .felt::before,body[data-vt] .colsL,body[data-vt] .rowsL{display:none}
+body[data-vt] .board{width:100%;height:100%;border-radius:4px;gap:1.5px;box-shadow:none}
+body[data-vt] .disc{inset:6%}body[data-vt] .disc .f{filter:drop-shadow(0 2px 2px rgba(0,0,0,.45))}
+body[data-vt] .disc .f{background-size:cover!important;background-position:center!important;box-shadow:none!important}
+body[data-vt].st-face .disc .f::after{display:none}
+body[data-vt] .cell.legal::after{width:44%;height:44%;border-radius:0;box-shadow:none!important;background:var(--mkL) center/contain no-repeat!important}
+body[data-vt] .cell.legal:hover::after{width:54%;height:54%}
+body[data-vt].pawdot .cell.legal::after{content:'';opacity:1;width:50%;height:50%;background:var(--mkH) center/contain no-repeat!important;font-size:0}
+body[data-vt] .cell.last::before{inset:1%;width:auto;height:auto;left:1%;top:1%;transform:none;border-radius:0;background:var(--mkR) center/contain no-repeat;box-shadow:none;z-index:auto}
+body[data-vt] .cell.hint::before{content:'';background:var(--mkH) center/58% no-repeat;font-size:0}
+body[data-vt] .btns .btn{flex-direction:column;gap:1px;padding:0 0 2px;background:none!important;border:0!important;box-shadow:none!important;font-size:clamp(11px,3.2vw,13px)}
+body[data-vt] .btns .btn .ii{display:block;width:min(15vw,60px);height:min(15vw,60px)}body[data-vt] .btns .btn .ic{display:none}
+body[data-vt] .btns .btn:active .ii{transform:scale(.92)}body[data-vt] .btns .btn:focus{outline:none}
+body[data-vt=retro] .gTitle,body[data-vt=neon] .gTitle{background:var(--plate) center/100% 100% no-repeat;border:0;box-shadow:none;border-radius:0;padding:10px 46px 18px}
+body[data-vt=neon] .gTitle{padding:12px 46px 14px}
+.spk{position:absolute;inset:-60%;z-index:6;pointer-events:none;background:var(--spk) center/contain no-repeat;animation:spk .6s ease-out forwards}
+@keyframes spk{0%{opacity:0;transform:scale(.4)}30%{opacity:1}100%{opacity:0;transform:scale(1.15) rotate(12deg)}}
+.cfx{position:fixed;left:50%;top:38%;width:min(90vw,420px);aspect-ratio:1;z-index:90;pointer-events:none;background:var(--cf) center/contain no-repeat;transform:translate(-50%,-50%);animation:cfx 1.8s ease-out forwards}
+@keyframes cfx{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}100%{opacity:0;transform:translate(-50%,-30%) scale(1.25)}}
+body.st-paw .stw .fc{display:none}
+body[data-vt] .dots{width:3.2%;height:3.2%}body[data-vt=natural] .dots{background:#f3ecc8}body[data-vt=retro] .dots{background:#f2c95a;box-shadow:0 0 4px #f2b134}body[data-vt=neon] .dots{background:#9ff8ff;box-shadow:0 0 6px #3ff0ff}
+body[data-vt=natural]{--mkL:url(../img/natural/rv_mk_legal.webp);--mkR:url(../img/natural/rv_mk_last.webp);--mkH:url(../img/natural/rv_mk_hint.webp);--plate:url(../img/natural/rv_plate.webp);--spk:url(../img/natural/rv_fx_spk.webp);--cf:url(../img/natural/rv_fx_cf.webp)}
+body[data-vt=natural] .boardWrap{aspect-ratio:724/967;background:url(../img/natural/rv_frame.webp) center/100% 100% no-repeat}
+body[data-vt=natural] .felt{left:11.326%;top:9.307%;width:77.486%}
+body[data-vt=natural] .board{background:rgba(236,230,196,.9);border:1.5px solid rgba(236,230,196,.9);box-shadow:none}
+body[data-vt=natural].th-green .cell{background:url(../img/natural/rv_felt.webp) center/cover,#2f6a2c}
+body[data-vt=natural] .disc .b1{background-image:url(../img/natural/rv_st_plainB.webp)!important}
+body[data-vt=natural] .disc .w1{background-image:url(../img/natural/rv_st_plainW.webp)!important}
+body[data-vt=natural].st-face .disc .b1{background-image:url(../img/natural/rv_st_faceB.webp)!important}
+body[data-vt=natural].st-face .disc .w1{background-image:url(../img/natural/rv_st_faceW.webp)!important}
+body[data-vt=natural].st-paw .disc .b1{background-image:url(../img/natural/rv_st_pawB.webp)!important}
+body[data-vt=natural].st-paw .disc .w1{background-image:url(../img/natural/rv_st_pawW.webp)!important}
+body[data-vt=natural] #bgLayer{background-image:linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.15)),url(../img/natural/rv_tx1.webp)!important;background-size:cover!important;background-position:center!important}
+body[data-vt=natural] .btns .btn{color:#5a3d2b!important;text-shadow:0 1px 0 #fff8e8}
+body[data-vt=retro]{--mkL:url(../img/retro/rv_mk_legal.webp);--mkR:url(../img/retro/rv_mk_last.webp);--mkH:url(../img/retro/rv_mk_hint.webp);--plate:url(../img/retro/rv_plate.webp);--spk:url(../img/retro/rv_fx_spk.webp);--cf:url(../img/retro/rv_fx_cf.webp)}
+body[data-vt=retro] .boardWrap{aspect-ratio:684/963;background:url(../img/retro/rv_frame.webp) center/100% 100% no-repeat}
+body[data-vt=retro] .felt{left:9.649%;top:10.280%;width:79.825%}
+body[data-vt=retro] .board{background:#c9a54a;border:1.5px solid #c9a54a;box-shadow:none}
+body[data-vt=retro].th-green .cell{background:url(../img/retro/rv_felt.webp) center/cover,#1f4220}
+body[data-vt=retro] .disc .b1{background-image:url(../img/retro/rv_st_plainB.webp)!important}
+body[data-vt=retro] .disc .w1{background-image:url(../img/retro/rv_st_plainW.webp)!important}
+body[data-vt=retro].st-face .disc .b1{background-image:url(../img/retro/rv_st_faceB.webp)!important}
+body[data-vt=retro].st-face .disc .w1{background-image:url(../img/retro/rv_st_faceW.webp)!important}
+body[data-vt=retro].st-paw .disc .b1{background-image:url(../img/retro/rv_st_pawB.webp)!important}
+body[data-vt=retro].st-paw .disc .w1{background-image:url(../img/retro/rv_st_pawW.webp)!important}
+body[data-vt=retro] #bgLayer{background-image:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.6)),url(../img/retro/rv_tx1.webp)!important;background-size:cover!important;background-position:center!important}
+body[data-vt=retro] .btns .btn{color:#ffd36b!important;text-shadow:0 2px 0 #3a1408}
+body[data-vt=neon]{--mkL:url(../img/neon/rv_mk_legal.webp);--mkR:url(../img/neon/rv_mk_last.webp);--mkH:url(../img/neon/rv_mk_hint.webp);--plate:url(../img/neon/rv_plate.webp);--spk:url(../img/neon/rv_fx_spk.webp);--cf:url(../img/neon/rv_fx_cf.webp)}
+body[data-vt=neon] .boardWrap{aspect-ratio:682/952;background:url(../img/neon/rv_frame.webp) center/100% 100% no-repeat}
+body[data-vt=neon] .felt{left:10.850%;top:12.605%;width:78.592%}
+body[data-vt=neon] .board{background:#5ff3ff;border:1.5px solid #5ff3ff;box-shadow:0 0 6px #3ff0ff,0 0 14px rgba(63,240,255,.5)}
+body[data-vt=neon].th-green .cell{background:url(../img/neon/rv_felt.webp) center/cover,#06323a}
+body[data-vt=neon] .disc .b1{background-image:url(../img/neon/rv_st_plainB.webp)!important}
+body[data-vt=neon] .disc .w1{background-image:url(../img/neon/rv_st_plainW.webp)!important}
+body[data-vt=neon].st-face .disc .b1{background-image:url(../img/neon/rv_st_faceB.webp)!important}
+body[data-vt=neon].st-face .disc .w1{background-image:url(../img/neon/rv_st_faceW.webp)!important}
+body[data-vt=neon].st-paw .disc .b1{background-image:url(../img/neon/rv_st_pawB.webp)!important}
+body[data-vt=neon].st-paw .disc .w1{background-image:url(../img/neon/rv_st_pawW.webp)!important}
+body[data-vt=neon] #bgLayer{background-image:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.6)),url(../img/neon/rv_tx1.webp)!important;background-size:cover!important;background-position:center!important}
+body[data-vt=neon] .btns .btn{color:#fff!important;text-shadow:0 0 6px #ff4fd8}
+body[data-vt=natural] #scB .stw{background:url(../img/natural/rv_st_plainB.webp) center/cover;border-radius:50%}
+body[data-vt=natural].st-face #scB .stw{background-image:url(../img/natural/rv_st_faceB.webp)}
+body[data-vt=natural].st-paw #scB .stw{background-image:url(../img/natural/rv_st_pawB.webp)}
+body[data-vt=natural] #scW .stw{background:url(../img/natural/rv_st_plainW.webp) center/cover;border-radius:50%}
+body[data-vt=natural].st-face #scW .stw{background-image:url(../img/natural/rv_st_faceW.webp)}
+body[data-vt=natural].st-paw #scW .stw{background-image:url(../img/natural/rv_st_pawW.webp)}
+body[data-vt=retro] #scB .stw{background:url(../img/retro/rv_st_plainB.webp) center/cover;border-radius:50%}
+body[data-vt=retro].st-face #scB .stw{background-image:url(../img/retro/rv_st_faceB.webp)}
+body[data-vt=retro].st-paw #scB .stw{background-image:url(../img/retro/rv_st_pawB.webp)}
+body[data-vt=retro] #scW .stw{background:url(../img/retro/rv_st_plainW.webp) center/cover;border-radius:50%}
+body[data-vt=retro].st-face #scW .stw{background-image:url(../img/retro/rv_st_faceW.webp)}
+body[data-vt=retro].st-paw #scW .stw{background-image:url(../img/retro/rv_st_pawW.webp)}
+body[data-vt=neon] #scB .stw{background:url(../img/neon/rv_st_plainB.webp) center/cover;border-radius:50%}
+body[data-vt=neon].st-face #scB .stw{background-image:url(../img/neon/rv_st_faceB.webp)}
+body[data-vt=neon].st-paw #scB .stw{background-image:url(../img/neon/rv_st_pawB.webp)}
+body[data-vt=neon] #scW .stw{background:url(../img/neon/rv_st_plainW.webp) center/cover;border-radius:50%}
+body[data-vt=neon].st-face #scW .stw{background-image:url(../img/neon/rv_st_faceW.webp)}
+body[data-vt=neon].st-paw #scW .stw{background-image:url(../img/neon/rv_st_pawW.webp)}
+body[data-vt] .stw svg{opacity:0}body[data-vt].st-face .stw .fc{display:none}
+.stPrev.paw i::after{content:'🐾';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px}
 </style>
 <link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script></head>
 <body data-vt="natural">
@@ -355,6 +439,7 @@ body:is([data-vt=retro],[data-vt=neon]) .help p{color:inherit}
   <div class="row"><div class="lb">石のデザイン</div><div class="seg" data-k="stone">
     <button data-v="plain"><span class="stPrev"><i></i><i class="w"></i></span>ふつう</button>
     <button data-v="face"><span class="stPrev face"><i><b></b></i><i class="w"><b></b></i></span>顔入り</button>
+    <button data-v="paw"><span class="stPrev paw"><i></i><i class="w"></i></span>肉球</button>
     <button data-v="full"><span class="stPrev full"><i><b></b></i><i class="w"><b></b></i></span>顔いっぱい</button></div></div>
   <div class="tg"><span>置ける場所を表示</span><div class="sw" data-k="showLegal"></div></div>
   <div class="tg"><span>最後に置いた石に印</span><div class="sw" data-k="showLast"></div></div>
@@ -710,7 +795,7 @@ function play(i,f){
   let gotTreat=false;
   if(treats.has(i)){ treats.delete(i); treatGot[p]++; gotTreat=true; }
   sfx.place(p); vibe(15);
-  { const c=cells[i]; c.classList.remove('ripple'); void c.offsetWidth; c.classList.add('ripple'); setTimeout(()=>c.classList.remove('ripple'),600); }
+  { const c=cells[i]; c.classList.remove('ripple'); void c.offsetWidth; c.classList.add('ripple'); setTimeout(()=>c.classList.remove('ripple'),600); const sp=document.createElement('i'); sp.className='spk'; c.appendChild(sp); setTimeout(()=>sp.remove(),650); }
   peek([i,...f]);
   render(i);
   const myGen=gen;
@@ -1010,6 +1095,7 @@ function burst(cell,items=['🐾','✨']){
   }
 }
 function confetti(p){
+  { const cf=document.createElement('div'); cf.className='cfx'; document.body.appendChild(cf); setTimeout(()=>cf.remove(),1900); }
   const items=p===B?['🐾','🍪','✨','🟤','🎉']:['🐾','🦴','✨','🤍','🎉'];
   for(let k=0;k<26;k++){
     const s=document.createElement('div'); s.className='fx'; s.textContent=pick(items);
@@ -1037,7 +1123,7 @@ function syncSettingsUI(){
   $('rowSide').style.display=$('rowLv').style.display=pending.mode==='cpu'?'':'none';
   $('ruleDesc').textContent=RULES[pending.rule||'normal'].d;
 }
-function applyStone(){document.body.classList.remove('st-face','st-full');if(S.stone==='face')document.body.classList.add('st-face');if(S.stone==='full')document.body.classList.add('st-full')}
+function applyStone(){document.body.classList.remove('st-face','st-full','st-paw');if(S.stone==='paw')document.body.classList.add('st-paw');if(S.stone==='face')document.body.classList.add('st-face');if(S.stone==='full')document.body.classList.add('st-full')}
 document.querySelectorAll('#mSet .seg button').forEach(b=>b.addEventListener('click',()=>{const k=b.parentElement.dataset.k;pending[k]=b.dataset.v;
   if(k==='stone'){S.stone=b.dataset.v;applyStone();saveS()}
   sfx.tap();syncSettingsUI()}));
@@ -1069,6 +1155,9 @@ $('bShop').onclick=()=>{ctx();sfx.tap();renderShop();openM('mShop')};
 const VTS=['natural','retro','neon'], VTN={natural:'ナチュラル',retro:'レトロ',neon:'サイバーネオン'};
 function setVT(v,anim){ if(!VTS.includes(v)) v='natural'; document.body.dataset.vt=v; store.set('vt',v);
   $('homeBtn').href='../#'+v; try{ if(location.hash.slice(1)!==v) history.replaceState(null,'','#'+v); }catch(e){}
+  try{ const base=$('bHint').querySelector('.ii').dataset.base||($('bHint').querySelector('.ii').dataset.base=$('bHint').querySelector('.ii').getAttribute('src').replace(/natural\/.*$/,''));
+    const set={bHint:v+'/rv_bt_hint.webp',bUndo:v+'/rv_bt_undo.webp',bNew:v+'/rv_bt_new.webp',bSet:v==='retro'?'retro/icon_settings.webp':v+'/bt_settings.webp'};
+    for(const k in set) $(k).querySelector('.ii').src=base+set[k]; }catch(e){}
   if(anim) toast('🎨 '+VTN[v]); }
 const hv=(location.hash||'').slice(1);
 setVT(VTS.includes(hv)?hv:store.get('vt','natural'));
