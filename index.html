@@ -29,9 +29,9 @@ body[data-theme=neon] #bgLayer{background-image:linear-gradient(rgba(10,4,35,.25
 .hdots{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;gap:6px;z-index:3;padding:4px 8px;border-radius:10px;background:rgba(0,0,0,.28)}
 .hdots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5)}.hdots i.on{background:#fff;transform:scale(1.25)}
 .hTip{position:absolute;left:8px;top:8px;z-index:3;font-size:11px;font-weight:900;color:#fff;background:rgba(0,0,0,.42);border-radius:12px;padding:4px 9px;pointer-events:none;transition:opacity .6s}
-body[data-theme=natural] .hero .img{aspect-ratio:2/1}
-body[data-theme=retro] .hero .img{aspect-ratio:2/1}
-body[data-theme=neon] .hero .img{aspect-ratio:2/1}
+body[data-theme=natural] .hero .img{aspect-ratio:800/734}
+body[data-theme=retro] .hero .img{aspect-ratio:800/734}
+body[data-theme=neon] .hero .img{aspect-ratio:800/734}
 body[data-theme=natural] .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(transparent,var(--bg))}
 .logoN{text-align:center;padding:16px 8px 2px;line-height:1.05;display:none}
 .logoN .en{font-family:"Brush Script MT","Segoe Script",cursive;font-size:clamp(24px,7vw,32px);color:#8B6B4F}
@@ -322,7 +322,7 @@ const GAMES=[
 const BADGE={pop:'人気',rec:'おすすめ',new:'新作'};
 const TABS=[['all','すべて','tab_all','tb_all','🎮'],['pop','人気','tab_popular','tb_popular','👑'],['new','新作','tab_new','tb_new','⭐'],['fav','お気に入り','tab_fav','tb_fav','❤️'],['puzzle','パズル',null,'tb_puzzle','🧩'],['battle','対戦',null,'tb_battle','⚔️']];
 const RANKS=[{n:'ブロンズ',k:'bronze',c:0,e:'🥉'},{n:'シルバー',k:'silver',c:100,e:'🥈'},{n:'ゴールド',k:'gold',c:300,e:'🥇'},{n:'プラチナ',k:'platinum',c:700,e:'💎'}];
-const HEADERS={natural:['img/natural/header1.webp'],retro:['img/retro/header1.webp','img/retro/header2.webp'],neon:['img/neon/header1.webp','img/neon/header2.webp']};
+const HEADERS={natural:['img/natural/header3.webp'],retro:['img/retro/header3.webp'],neon:['img/neon/header3.webp']};
 const CARDS={retro:7,neon:7,natural:5}, SQ={neon:16,natural:8};
 const EMO={coin:'🪙',avatar_default:'🐾',icon_settings:'⚙️',icon_home:'🏠',icon_search:'🔍',icon_trophy:'🏆',icon_gift:'🎁',btn_play:'▶'};
 // --- 保存 ---
