@@ -237,6 +237,8 @@ body[data-vt=retro] .hole{background:radial-gradient(circle at 50% 40%,#2a1208,#
   <div class="handRow"><span class="lbl">コロンの<br>持ち駒</span><div id="handS" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"></div></div>
   <div class="lastBox">直前の手：<span id="lastTxt"></span></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
+  <div class="endBar" id="endBar"><button class="btn c" id="bResAgain">📊 結果をもう一度</button><button class="btn c" id="bRp">🎬 ふりかえり</button></div>
+  <div class="rpBar" id="rpBar"><button class="btn c" data-rp="first">⏮</button><button class="btn c" data-rp="prev">◀</button><button class="btn g" data-rp="play" id="rpPlay">▶ 再生</button><button class="btn c" data-rp="next">▶</button><button class="btn c" data-rp="last">⏭</button><button class="btn c" data-rp="end">✕</button><div class="rpN" id="rpN"></div></div>
   <div class="btns">
     <button class="btn g" id="bHint"><i class="bi"></i><span class="ic">💡</span>ヒント</button><button class="btn c" id="bUndo"><i class="bi"></i><span class="ic">↩︎</span>待った</button>
     <button class="btn c" id="bNew"><i class="bi"></i><span class="ic">⟳</span>最初から</button><button class="btn c" id="bFlag"><i class="bi"></i><span class="ic">🏳️</span>投了</button><button class="btn g" id="bSet"><i class="bi"></i><span class="ic">⚙︎</span>設定</button>
@@ -370,6 +372,11 @@ html body[data-vt] .btns .btn .bi{width:min(14vw,56px);height:min(14vw,56px)}
 html body[data-vt] .sq.tgt.cap::after{background:none!important;width:88%;height:88%;border-radius:8px;border:3px solid rgba(230,70,50,.9)!important;box-shadow:0 0 8px rgba(255,80,60,.7)!important}
 html body[data-vt=retro] .sq.tgt.cap::after{border-color:#ff5a3c!important;box-shadow:0 0 0 1.5px #fff3c4,0 0 10px rgba(255,90,60,.9)!important}
 html body[data-vt] .app{overflow-x:clip}
+.endBar{display:none;grid-template-columns:1fr 1fr;gap:8px;margin:10px 16px 0}.endBar .btn{padding:10px 4px;font-size:13px}
+.rpBar{display:none;grid-template-columns:repeat(6,1fr);gap:6px;margin:10px 12px 0}body.replay .rpBar{display:grid}
+.rpBar .btn{padding:10px 0;font-size:15px}.rpBar #rpPlay{font-size:12px}
+.rpN{grid-column:1/-1;text-align:center;font-weight:900;font-size:13px;opacity:.85}
+body.replay .btns{opacity:.35;pointer-events:none}
 </style>
 <div class="modal" id="mPro"><div class="card"><h2>成りますか？</h2><div class="prs"><button id="prA"></button><button id="prB"></button></div></div></div>
 <div class="modal" id="mSet"><div class="card">
@@ -650,7 +657,7 @@ function think(s,lv){
 }
 
 // ----- UI -----
-let hist=[], lastMv=-1, sel=null, over=false, busy=false, hintMv=null, plyN=0, posCount={}, cpuTimer=null, gen=0;
+let RP=null; let hist=[], lastMv=-1, sel=null, over=false, busy=false, hintMv=null, plyN=0, posCount={}, cpuTimer=null, gen=0;
 const me=()=>+S.side, cpuSide=()=>-(+S.side);
 const isHuman=s=>s===me();
 const boardEl=$('board'), cells=[];
@@ -699,6 +706,7 @@ function render(){
   document.querySelectorAll('.hp').forEach(x=>x.onclick=()=>onHand(+x.dataset.s,+x.dataset.t));
   $('scS').classList.toggle('active',!over&&side===1); $('scG').classList.toggle('active',!over&&side===-1);
   $('plyN').textContent=plyN+1;
+  $('endBar').style.display=over&&!RP?'grid':'none';
   if(!over){
     const who=side===1?'コロン':'ムーン';
     if(!isHuman(side)) setStatus(who+'が考え中',true);
@@ -716,7 +724,7 @@ function notation(m,s){
 }
 function posKey(){ return b.join(',')+'|'+hand[0].join('')+hand[1].join('')+'|'+side; }
 function newGame(){
-  gen++; clearTimeout(cpuTimer);
+  rpEnd(); gen++; clearTimeout(cpuTimer);
   setup(S.handi); hist=[]; lastMv=-1; sel=null; over=false; busy=false; hintMv=null; plyN=0; posCount={}; legalCache=null;
   $('tagS').textContent=me()===1?'あなた・先手':'CPU・先手'; $('tagG').textContent=me()===-1?'あなた・後手':'CPU・後手';
   $('lastTxt').textContent='対局開始';
@@ -754,7 +762,7 @@ function askPromote(c){
 function doMove(m){
   const s=side, to=mTo(m), f=mFrom(m), cap=b[to];
   const nt=notation(m,s);
-  hist.push({b:b.slice(),hand:hand.map(h=>h.slice()),side,lastMv,plyN,posCount:Object.assign({},posCount)});
+  hist.push({b:b.slice(),hand:hand.map(h=>h.slice()),side,lastMv,plyN,posCount:Object.assign({},posCount),nt});
   make(m); legalCache=null; lastMv=m; sel=null; hintMv=null; plyN++;
   $('lastTxt').textContent=nt;
   SFX.put(); if(navigator.vibrate){try{navigator.vibrate(12)}catch(e){}}
@@ -800,6 +808,7 @@ function endGame(w,why){
   showResult({winner:wp,title:!w?'🤝 引き分け':'🏆 '+(w===1?'コロン':'ムーン')+'の勝ち！',score:plyN+'手で終局',msg,rec:`この強さでの成績：${r.w}勝 ${r.l}敗 ${r.d}分`});
 }
 function undo(){
+  if(RP) rpEnd();
   if(busy||!hist.length) return;
   gen++; clearTimeout(cpuTimer);
   let h; do{ h=hist.pop(); }while(hist.length&&h.side!==me());
@@ -828,6 +837,25 @@ $('bHint').onclick=()=>{actx();hint()};
 buildUI(); newGame();
 
 document.body.classList.toggle('nodog',S.dogs===false);
+
+function rpFrames(){ const f=hist.map((h,i)=>({b:Int8Array.from(h.b),hand:h.hand.map(x=>x.slice()),l:h.lastMv,nt:i?hist[i-1].nt:''}));
+  f.push({b:Int8Array.from(b),hand:hand.map(x=>x.slice()),l:lastMv,nt:hist.length?hist[hist.length-1].nt:''}); return f; }
+function rpShow(k){ if(!RP) return; RP.k=Math.max(0,Math.min(RP.f.length-1,k)); const fr=RP.f[RP.k];
+  b=Int8Array.from(fr.b); hand=fr.hand.map(x=>x.slice()); lastMv=fr.l; sel=null; hintMv=null; render();
+  $('lastTxt').textContent=RP.k?fr.nt:'対局開始';
+  $('rpN').textContent=RP.k===0?'はじめの局面':RP.k+' / '+(RP.f.length-1)+'手目';
+  setStatus(RP.k===RP.f.length-1?'さいごの局面':'ふりかえり中…'); }
+function rpStop(){ if(RP&&RP.t){ clearInterval(RP.t); RP.t=0; $('rpPlay').textContent='▶ 再生'; } }
+function rpStart(){ if(!over||RP) return; closeM('mRes'); RP={f:rpFrames(),save:{b:Int8Array.from(b),hand:hand.map(x=>x.slice()),l:lastMv,txt:$('lastTxt').textContent,st:$('statusTxt').textContent},k:0,t:0};
+  document.body.classList.add('replay'); rpShow(0); }
+function rpEnd(){ if(!RP) return; rpStop(); const sv=RP.save; b=sv.b; hand=sv.hand; lastMv=sv.l; RP=null; document.body.classList.remove('replay'); render(); $('lastTxt').textContent=sv.txt; setStatus(sv.st); }
+function rpAct(a){ if(!RP) return; SFX.tap();
+  if(a==='play'){ if(RP.t){ rpStop(); return; } if(RP.k>=RP.f.length-1) rpShow(0); $('rpPlay').textContent='⏸ 停止';
+    RP.t=setInterval(()=>{ if(RP.k>=RP.f.length-1){ rpStop(); return; } rpShow(RP.k+1); try{SFX.put()}catch(e){} },900); return; }
+  rpStop(); if(a==='first') rpShow(0); else if(a==='prev') rpShow(RP.k-1); else if(a==='next') rpShow(RP.k+1); else if(a==='last') rpShow(RP.f.length-1); else if(a==='end') rpEnd(); }
+$('bResAgain').onclick=()=>{SFX.tap();openM('mRes')};
+$('bRp').onclick=()=>{SFX.tap();rpStart()};
+document.querySelectorAll('[data-rp]').forEach(x=>x.onclick=()=>rpAct(x.dataset.rp));
 
 
 (()=>{const VTS=['natural','retro','neon'],VTN={natural:'ナチュラル',retro:'レトロ',neon:'サイバーネオン'};
