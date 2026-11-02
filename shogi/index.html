@@ -235,7 +235,7 @@ body[data-vt=retro] .hole{background:radial-gradient(circle at 50% 40%,#2a1208,#
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns">
     <button class="btn g" id="bHint"><i class="bi"></i><span class="ic">💡</span>ヒント</button><button class="btn c" id="bUndo"><i class="bi"></i><span class="ic">↩︎</span>待った</button>
-    <button class="btn c" id="bNew"><i class="bi"></i><span class="ic">⟳</span>最初から</button><button class="btn g" id="bSet"><i class="bi"></i><span class="ic">⚙︎</span>設定</button>
+    <button class="btn c" id="bNew"><i class="bi"></i><span class="ic">⟳</span>最初から</button><button class="btn c" id="bFlag"><i class="bi"></i><span class="ic">🏳️</span>投了</button><button class="btn g" id="bSet"><i class="bi"></i><span class="ic">⚙︎</span>設定</button>
   </div>
   <div class="foot"><span id="info"></span><span><b id="plyN">1</b>手目</span></div>
 </div>
@@ -267,7 +267,7 @@ html body[data-vt=natural] .star{background:#3b2410;}
 html body[data-vt=natural] :is(#files,#ranks) span{color:#6b4a2f!important;}
 html body[data-vt=natural] .sq.sel{box-shadow:inset 0 0 0 3px #ffe066,0 0 10px #ffe066!important;background:rgba(255,230,120,.25)!important}
 html body[data-vt=natural] .sq.last{background:rgba(140,200,90,.45)!important}html body[data-vt=natural] .sq.lastf{background:rgba(140,200,90,.25)!important}
-html body[data-vt=natural] .sq.tgt::after{background:#ffd23a!important;box-shadow:0 0 8px #ffd23a}
+html body[data-vt=natural] .sq.tgt::after{background:#2f9e44!important;box-shadow:0 0 0 2.5px #fff,0 0 8px rgba(20,90,30,.8)}
 html body[data-vt=natural] .handRow:first-of-type,html body[data-vt=natural] .handRow{border-image:url(../img/natural/sg_box2.webp) 30% 24% 34% 24% fill / 10px 22px 16px round}
 html body[data-vt=natural] .handRow ~ .boardWrap ~ .handRow{border-image:url(../img/natural/sg_box1.webp) 30% 24% 34% 24% fill / 10px 22px 16px round}
 html body[data-vt=natural] .handRow :is(.lbl,.none){color:#fff8e8!important;text-shadow:0 1px 2px rgba(0,0,0,.7);opacity:1!important}
@@ -297,7 +297,7 @@ html body[data-vt=retro] .star{background:#3b2410;}
 html body[data-vt=retro] :is(#files,#ranks) span{color:#5a3214!important;}
 html body[data-vt=retro] .sq.sel{box-shadow:inset 0 0 0 3px #ffc23a,0 0 10px #ffc23a!important;background:rgba(255,230,120,.25)!important}
 html body[data-vt=retro] .sq.last{background:rgba(150,190,90,.42)!important}html body[data-vt=retro] .sq.lastf{background:rgba(150,190,90,.22)!important}
-html body[data-vt=retro] .sq.tgt::after{background:#ffcf4a!important;box-shadow:0 0 8px #ffcf4a}
+html body[data-vt=retro] .sq.tgt::after{background:#e0452f!important;box-shadow:0 0 0 2.5px #fff3c4,0 0 10px rgba(224,69,47,.9)}
 html body[data-vt=retro] .handRow:first-of-type,html body[data-vt=retro] .handRow{border-image:url(../img/retro/sg_box2.webp) 30% 24% 34% 24% fill / 10px 22px 16px round}
 html body[data-vt=retro] .handRow ~ .boardWrap ~ .handRow{border-image:url(../img/retro/sg_box2.webp) 30% 24% 34% 24% fill / 10px 22px 16px round}
 html body[data-vt=retro] .handRow :is(.lbl,.none){color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.7);opacity:1!important}
@@ -357,6 +357,15 @@ html body[data-vt=retro] .boardWrap{width:min(calc(96vw*100/73.158),calc(470px*1
 html body[data-vt=retro].nodog .boardWrap{aspect-ratio:760/816;background-image:url(../img/retro/sg_frame_nd.webp)}html body[data-vt=retro].nodog .bgrid{top:13.480%;height:72.328%}
 html body[data-vt=neon] .boardWrap{width:min(calc(96vw*100/72.460),calc(470px*100/72.460))}
 html body[data-vt=neon].nodog .boardWrap{aspect-ratio:748/819;background-image:url(../img/neon/sg_frame_nd.webp)}html body[data-vt=neon].nodog .bgrid{top:14.530%;height:70.248%}
+html body[data-vt] .sq.tgt::after{width:34%;height:32%}
+.btns:has(#bFlag){grid-template-columns:repeat(5,1fr);gap:4px}
+html body[data-vt=natural] #bFlag .bi{background-image:url(../img/natural/sg_bt_flag.webp)}html body[data-vt=retro] #bFlag .bi{background-image:url(../img/retro/sg_bt_flag.webp)}
+html body[data-vt=neon] #bFlag .bi{background:rgba(20,8,55,.85);border:2px solid #ff4fd8;border-radius:14px;box-shadow:0 0 10px #ff4fd8;display:flex!important;align-items:center;justify-content:center;font-style:normal}
+html body[data-vt=neon] #bFlag .bi::before{content:'🏳️';font-size:min(7vw,28px)}
+html body[data-vt] .btns .btn .bi{width:min(14vw,56px);height:min(14vw,56px)}
+html body[data-vt] .sq.tgt.cap::after{background:none!important;width:88%;height:88%;border-radius:8px;border:3px solid rgba(230,70,50,.9)!important;box-shadow:0 0 8px rgba(255,80,60,.7)!important}
+html body[data-vt=retro] .sq.tgt.cap::after{border-color:#ff5a3c!important;box-shadow:0 0 0 1.5px #fff3c4,0 0 10px rgba(255,90,60,.9)!important}
+html body[data-vt] .app{overflow-x:clip}
 </style>
 <div class="modal" id="mPro"><div class="card"><h2>成りますか？</h2><div class="prs"><button id="prA"></button><button id="prB"></button></div></div></div>
 <div class="modal" id="mSet"><div class="card">
@@ -728,7 +737,7 @@ function onSq(i){
     }
   }
   const p=b[i];
-  if(p&&(p>0)===(side>0)){ sel = (sel&&!sel.drop&&sel.sq===i)?null:{sq:i}; SFX.tap(); hintMv=null; render(); if(sel&&!legal.some(m=>mFrom(m)===i)) toast('その駒は動かせないよ',true); }
+  if(p&&(p>0)===(side>0)){ sel = (sel&&!sel.drop&&sel.sq===i)?null:{sq:i}; SFX.tap(); hintMv=null; render(); if(sel&&!legal.some(m=>mFrom(m)===i)) toast(inCheck(side)?'王手中！王手をふせげる駒を動かしてね':'その駒は動かせないよ',true); }
   else if(sel){ sel=null; render(); }
 }
 function askPromote(c){
@@ -804,6 +813,8 @@ const pend=Object.assign({},S);
 const syncSet=bindSettings($('mSet'),pend,k=>{ if(['showLegal','dogs','talk','sound'].includes(k)){S[k]=pend[k];SND.on=S.sound;TALK.on=S.talk;store.set('settings',S);render();document.body.classList.toggle('nodog',S.dogs===false)} });
 $('bSet').onclick=()=>{actx();Object.assign(pend,S);syncSet();openM('mSet')};
 $('bStart').onclick=()=>{Object.assign(S,pend);store.set('settings',S);closeM('mSet');newGame()};
+let resT=0;
+$('bFlag').onclick=()=>{ if(over) return; if(Date.now()-resT<3000){ resT=0; $('bResign').onclick(); } else { resT=Date.now(); toast('もう一度おすと投了します'); } };
 $('bResign').onclick=()=>{ if(over) return; closeM('mSet'); gen++; clearTimeout(cpuTimer); endGame(-me(),'投了'); };
 $('bHelp').onclick=()=>openM('mHelp');
 $('bNew').onclick=()=>{actx();SFX.tap();newGame()};
