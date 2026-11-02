@@ -210,8 +210,27 @@ body[data-theme=neon] .card h2{font-family:"DotGothic16";font-weight:400;text-sh
 .fx{position:fixed;pointer-events:none;z-index:70;font-size:22px;animation:fly 1.3s ease-out forwards}
 @keyframes fly{0%{transform:translate(0,0) scale(.6);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.1);opacity:0}}
 .brand{text-align:center;margin:22px 0 0;font-weight:900;letter-spacing:.12em;font-size:13px;color:var(--sub)}
+
+.mis{margin:12px 12px 0;border-radius:18px;padding:10px 12px;background:var(--card);border:1.5px solid var(--line);box-shadow:var(--shadow)}
+.mis .mh{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:14px;margin-bottom:6px}
+.mis .mh small{font-size:11px;color:var(--sub);font-weight:700}
+.mi{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px dashed rgba(127,127,127,.3);font-size:13px;font-weight:700}
+.mi:first-of-type{border-top:none}
+.mi .ck{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid var(--line);background:rgba(127,127,127,.1)}
+.mi.done .ck{background:var(--main);border-color:var(--main);color:#fff}
+.mi.done .mt{text-decoration:line-through;opacity:.6}
+.mi .mt{flex:1;min-width:0}
+.mi .mp{font-size:11px;color:var(--sub);white-space:nowrap}
+.mi .rw{font-size:12px;font-weight:900;color:var(--gold);white-space:nowrap}
+.mis .allb{margin-top:6px;text-align:center;font-size:12px;font-weight:900;color:var(--sub)}
+.mis .allb.ok{color:var(--main)}
+.instBar{margin:10px 12px 0;display:none;align-items:center;gap:8px;border-radius:16px;padding:8px 10px;background:var(--card);border:1.5px dashed var(--line);font-size:12.5px;font-weight:700}
+.instBar.show{display:flex}.instBar span{flex:1}
+.instBar button{border:none;border-radius:12px;padding:7px 10px;font-weight:900;font-size:12.5px;background:var(--main);color:#fff}
+.instBar .x{background:none;color:var(--sub);padding:4px}
+.iosSteps{font-size:13.5px;line-height:1.9;text-align:left}
 </style>
-</head>
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="coins.js"></script></head>
 <body data-theme="natural">
 <div id="bgLayer"></div>
 <div class="app">
@@ -232,6 +251,8 @@ body[data-theme=neon] .card h2{font-family:"DotGothic16";font-weight:400;text-sh
     <button class="giftBtn" id="giftBtn" aria-label="ログインボーナス"></button>
   </section>
 
+  <section class="mis" id="mis" style="display:none"></section>
+  <div class="instBar" id="instBar"><span>📲 ホーム画面に追加すると、アプリみたいに開けるよ</span><button id="instGo">追加する</button><button class="x" id="instX">✕</button></div>
   <div class="search" id="search"><input id="q" type="search" placeholder="ゲームの名前でさがす"></div>
   <nav class="tabs" id="tabs"></nav>
   <div class="secTitle"><span id="secName"></span><span id="secCount"></span></div>
@@ -253,6 +274,7 @@ body[data-theme=neon] .card h2{font-family:"DotGothic16";font-weight:400;text-sh
   <div class="lb">プレイヤー名</div>
   <input class="txt" id="nameIn" maxlength="12" placeholder="ゲスト">
   <div class="row"><span>効果音</span><button class="sw" id="swSound"></button></div>
+  <button class="btn c" id="instSet" style="margin-top:10px">📲 ホーム画面に追加</button>
   <div class="acts"><button class="btn" data-close="mSet">とじる</button></div>
 </div></div>
 
@@ -277,6 +299,9 @@ body[data-theme=neon] .card h2{font-family:"DotGothic16";font-weight:400;text-sh
   <div class="acts"><button class="btn" data-close="mGift">やったー！</button></div>
 </div></div>
 
+<div class="modal" id="mInst"><div class="card"><h2>📲 ホーム画面に追加</h2>
+  <div class="iosSteps" id="instSteps"></div>
+  <div class="acts"><button class="btn" data-close="mInst">わかった</button></div></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -430,7 +455,33 @@ $('hero').addEventListener('click',e=>{ actx(); const r=e.currentTarget.getBound
 $('q').addEventListener('input',drawList);
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove('show'));
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')}));
-render();
+
+// --- 今日のミッション ---
+function drawMis(){ const el=$('mis'); if(!window.MC){el.style.display='none';return} const m=MC.state(); el.style.display='';
+  const n=m.list.filter(x=>m.done[x.id]).length;
+  el.innerHTML=`<div class="mh"><span>🎯 今日のミッション</span><small>${n} / ${m.list.length} 達成</small></div>`+
+   m.list.map(x=>{const d=!!m.done[x.id], p=Math.min(m.prog[x.id]||0,x.need); return `<div class="mi ${d?'done':''}"><span class="ck">${d?'✓':''}</span><span class="mt">${x.t}</span>${x.need>1&&!d?`<span class="mp">${p}/${x.need}</span>`:''}<span class="rw">🪙${x.rw}</span></div>`}).join('')+
+   `<div class="allb ${m.bonus?'ok':''}">${m.bonus?'🏆 全部クリア！ボーナス+30 ゲット':'全部クリアでボーナス 🪙30'}</div>`;
+}
+// --- ホーム画面に追加 ---
+let deferredPrompt=null;
+const isStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;showInstBar()});
+function showInstBar(){ if(isStandalone()||P.instHide||!('serviceWorker' in navigator)) return; $('instBar').classList.add('show'); }
+async function doInstall(){ actx();
+  if(isStandalone()){ toast('もうホーム画面から開いてるよ！'); return; }
+  if(deferredPrompt){ deferredPrompt.prompt(); const r=await deferredPrompt.userChoice.catch(()=>null); deferredPrompt=null; if(r&&r.outcome==='accepted'){ $('instBar').classList.remove('show'); toast('追加したよ！'); } return; }
+  $('instSteps').innerHTML= isIOS()
+   ? '<b>iPhone・iPadの場合（Safari）</b><br>① 画面下の <b>共有ボタン（□↑）</b> を押す<br>② <b>「ホーム画面に追加」</b> を選ぶ<br>③ 右上の <b>「追加」</b> を押す'
+   : '<b>Androidの場合（Chrome）</b><br>① 右上の <b>︙ メニュー</b> を押す<br>② <b>「ホーム画面に追加」</b> または <b>「アプリをインストール」</b> を選ぶ<br>③ <b>「追加」</b> を押す';
+  $('mInst').classList.add('show'); }
+$('instGo').onclick=doInstall; $('instSet').onclick=doInstall;
+$('instX').onclick=()=>{P.instHide=true;save();$('instBar').classList.remove('show')};
+if(isIOS()) showInstBar();
+if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ const Q=store.get('p',{}); if(Q.coins!=null&&Q.coins!==P.coins){P.coins=Q.coins;drawPlayer()} drawMis(); } });
+render(); drawMis();
 })();
 </script>
 <script src="backup.js"></script>

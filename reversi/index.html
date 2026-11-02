@@ -294,7 +294,7 @@ body:is([data-vt=retro],[data-vt=neon]) .result .msg{color:#ffd36b}
 body[data-vt=neon] .result .msg{color:#3ff0ff;text-shadow:0 0 8px #3ff0ff}
 body:is([data-vt=retro],[data-vt=neon]) .help p{color:inherit}
 </style>
-</head>
+<link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script></head>
 <body data-vt="natural">
 <div id="bgLayer"></div>
 <div class="app">
@@ -923,6 +923,7 @@ function finish(){
   const me = C.mode==='cpu'?C.side:null;
   const r=recKey(); let msg;
   const cpu=C.mode==='cpu', win=cpu&&winner===me, draw=!winner;
+  try{window.MC&&MC.report('reversi',cpu?(draw?'draw':win?'win':'lose'):'play',{lv:+C.level})}catch(e){}
   if(cpu){
     if(draw){r.d++;msg='引き分け！いい勝負だったね'}
     else if(win){r.w++;msg='あなたの勝ち！おめでとう🎉'}
@@ -1080,6 +1081,6 @@ applyStone(); buildBoard(); applyLook(); newGame();
 })();
 
 </script>
-<script src="../backup.js"></script>
+<script src="../backup.js"></script><script>if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>
 </html>
