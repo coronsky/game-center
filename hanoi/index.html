@@ -110,6 +110,10 @@ body{min-height:100vh;display:flex;justify-content:center;background:radial-grad
 .cu.hint{animation:ch 1s infinite}@keyframes ch{50%{filter:brightness(1.3) drop-shadow(0 0 6px #ffd36b)}}
 #dogTop{position:absolute;left:83.333%;width:20%;aspect-ratio:1;transform:translate(-50%,0) scale(0);border-radius:50%;background:var(--colon) center/cover;border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.3);transition:transform .4s cubic-bezier(.3,1.6,.5,1) .3s;z-index:3}
 #dogTop.show{transform:translate(-50%,0) scale(1)}
+body[data-vt=retro] .sw{background:#3a160a;box-shadow:inset 0 0 0 2px #a8651e}body[data-vt=retro] .sw::after{background:#e0b98a}
+body[data-vt=retro] .sw.on{background:linear-gradient(#d0452f,#8f2a1f);box-shadow:inset 0 0 0 2px #f2b134,0 0 10px rgba(255,154,46,.5)}body[data-vt=retro] .sw.on::after{background:#ffe7b0}
+body[data-vt=neon] .sw{background:rgba(20,8,55,.9);box-shadow:inset 0 0 0 1.5px #5a3bb0}body[data-vt=neon] .sw::after{background:#8f7fd0;box-shadow:none}
+body[data-vt=neon] .sw.on{background:rgba(255,79,216,.35);box-shadow:inset 0 0 0 1.5px #ff4fd8,0 0 10px #ff4fd8}body[data-vt=neon] .sw.on::after{background:#fff;box-shadow:0 0 8px #ff4fd8}
 
 #bgLayer{position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center top}
 .vtBtn{position:absolute;right:8px;top:8px;z-index:30;width:44px;height:44px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.45);color:#fff;font:inherit;font-size:8.5px;font-weight:900;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.25);white-space:nowrap}
