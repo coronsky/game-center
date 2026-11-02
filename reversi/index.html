@@ -294,7 +294,7 @@ body:is([data-vt=retro],[data-vt=neon]) .result .msg{color:#ffd36b}
 body[data-vt=neon] .result .msg{color:#3ff0ff;text-shadow:0 0 8px #3ff0ff}
 body:is([data-vt=retro],[data-vt=neon]) .help p{color:inherit}
 /* ==== v3 image skin ==== */
-body[data-vt] .boardWrap{position:relative;margin:10px auto 0;width:min(96%,460px);padding:0;border:0;border-radius:0;box-shadow:none;animation:none;background:none}
+body[data-vt] .boardWrap{position:relative;left:50%;transform:translateX(-50%);margin:10px 0 0;padding:0;border:0;border-radius:0;box-shadow:none;animation:none;background:none}
 body[data-vt] .boardWrap::before{content:'';display:block}
 body[data-vt] .felt{position:absolute;padding:0;border-radius:0;background:none;box-shadow:none;aspect-ratio:1}
 body[data-vt] .felt::before,body[data-vt] .colsL,body[data-vt] .rowsL{display:none}
@@ -395,6 +395,10 @@ body[data-vt=neon] .result .avs div{font-family:"DotGothic16",monospace;font-wei
 body.nodog[data-vt=natural] .boardWrap{aspect-ratio:724/741;background-image:url(../img/natural/rv_frame_nd.webp?v=3)}body.nodog[data-vt=natural] .felt{top:12.146%}
 body.nodog[data-vt=retro] .boardWrap{aspect-ratio:684/744;background-image:url(../img/retro/rv_frame_nd.webp?v=3)}body.nodog[data-vt=retro] .felt{top:13.306%}
 body.nodog[data-vt=neon] .boardWrap{aspect-ratio:682/776;background-image:url(../img/neon/rv_frame_nd.webp?v=3)}body.nodog[data-vt=neon] .felt{top:15.464%}
+html,body{overflow-x:hidden}body[data-vt] .app{overflow-x:clip}
+body[data-vt=natural] .boardWrap{width:min(calc(95vw*100/77.486),calc(460px*100/77.486))}
+body[data-vt=retro] .boardWrap{width:min(calc(95vw*100/79.825),calc(460px*100/79.825))}
+body[data-vt=neon] .boardWrap{width:min(calc(95vw*100/78.592),calc(460px*100/78.592))}
 </style>
 <link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script></head>
 <body data-vt="natural">
