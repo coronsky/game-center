@@ -377,6 +377,21 @@ body[data-vt=neon].st-face #scW .stw{background-image:url(../img/neon/rv_st_face
 body[data-vt=neon].st-paw #scW .stw{background-image:url(../img/neon/rv_st_pawW.webp)}
 body[data-vt] .stw svg{opacity:0}body[data-vt].st-face .stw .fc{display:none}
 .stPrev.paw i::after{content:'🐾';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px}
+
+/* result modal theming */
+body[data-vt=retro] .result .big{color:#ffe7b0;text-shadow:0 0 10px #ff9a2e,0 3px 0 #8f2a1f}
+body[data-vt=neon] .result .big{color:#fff;font-family:"DotGothic16",monospace;font-weight:400;text-shadow:0 0 8px #fff,0 0 18px #ff4fd8}
+body[data-vt=retro] .chart .cB{stroke:#f2b134;filter:drop-shadow(0 0 3px #ff9a2e)}body[data-vt=retro] .chart .cW{stroke:#fbe9c8}body[data-vt=retro] .chart .cAx{stroke:#a8651e}
+body[data-vt=neon] .chart .cB{stroke:#ff4fd8;filter:drop-shadow(0 0 4px #ff4fd8)}body[data-vt=neon] .chart .cW{stroke:#3ff0ff;filter:drop-shadow(0 0 4px #3ff0ff)}body[data-vt=neon] .chart .cAx{stroke:#5a3bb0}
+body[data-vt=retro] .lg .lB{background:#f2b134!important}body[data-vt=retro] .lg .lW{background:#fbe9c8!important}
+body[data-vt=neon] .lg .lB{background:#ff4fd8!important;box-shadow:0 0 4px #ff4fd8}body[data-vt=neon] .lg .lW{background:#3ff0ff!important;box-shadow:0 0 4px #3ff0ff}
+body:is([data-vt=retro],[data-vt=neon]) #resCoins small{color:inherit;opacity:.75}
+body[data-vt=retro] #resCoins b{color:#ffd36b}body[data-vt=neon] #resCoins b{color:#fff;text-shadow:0 0 6px #3ff0ff}
+body[data-vt=retro] .nb{background:linear-gradient(#5a2412,#3a160a);border:1.5px solid #f2b134;color:#ffd36b;box-shadow:0 0 8px rgba(255,154,46,.35)}
+body[data-vt=neon] .nb{background:rgba(20,8,55,.85);border:1.5px solid #ff4fd8;color:#fff;text-shadow:0 0 6px #ff4fd8;box-shadow:0 0 8px rgba(255,79,216,.5)}
+body[data-vt=retro] .result .avs img{border-color:#a8651e;box-shadow:0 0 10px rgba(255,154,46,.4)}body[data-vt=retro] .result .avs .win img{border-color:#f2b134;box-shadow:0 0 16px #ff9a2e}
+body[data-vt=neon] .result .avs img{border-color:#5a3bb0;box-shadow:0 0 10px rgba(63,240,255,.4)}body[data-vt=neon] .result .avs .win img{border-color:#ff4fd8;box-shadow:0 0 18px #ff4fd8}
+body[data-vt=neon] .result .avs div{font-family:"DotGothic16",monospace;font-weight:400}
 </style>
 <link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script></head>
 <body data-vt="natural">
@@ -996,10 +1011,10 @@ function renderBadges(){
 function chartSVG(){
   const w=300,h=96,n=Math.max(tl.length-1,1), mx=Math.max(8,...tl.map(t=>Math.max(t[0],t[1])));
   const pt=k=>tl.map((t,i)=>`${(i/n*w).toFixed(1)},${(h-4-t[k]/mx*(h-10)).toFixed(1)}`).join(' ');
-  return `<svg viewBox="-4 0 ${w+8} ${h}" class="chart"><line x1="0" y1="${h-4}" x2="${w}" y2="${h-4}" stroke="#d9c6a8"/>
-    <polyline points="${pt(1)}" fill="none" stroke="#c9bda6" stroke-width="3" stroke-linejoin="round"/>
-    <polyline points="${pt(0)}" fill="none" stroke="#8a4f2c" stroke-width="3" stroke-linejoin="round"/></svg>
-    <div class="lg"><span><i style="background:#8a4f2c"></i>コロン</span><span>石の数のうつりかわり</span><span><i style="background:#c9bda6"></i>ムーン</span></div>`;
+  return `<svg viewBox="-4 0 ${w+8} ${h}" class="chart"><line x1="0" y1="${h-4}" x2="${w}" y2="${h-4}" stroke="#d9c6a8" class="cAx"/>
+    <polyline points="${pt(1)}" fill="none" stroke="#c9bda6" class="cW" stroke-width="3" stroke-linejoin="round"/>
+    <polyline points="${pt(0)}" fill="none" stroke="#8a4f2c" class="cB" stroke-width="3" stroke-linejoin="round"/></svg>
+    <div class="lg"><span><i class="lB" style="background:#8a4f2c"></i>コロン</span><span>石の数のうつりかわり</span><span><i class="lW" style="background:#c9bda6"></i>ムーン</span></div>`;
 }
 function finish(){
   over=true; busy=false; render();
