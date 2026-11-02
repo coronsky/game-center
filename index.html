@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>コロン＆ムーンのゲームセンター</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Mochiy+Pop+One&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;overscroll-behavior:none}
+body{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;transition:background .3s}
+button{font:inherit;color:inherit;cursor:pointer}
+img{display:block}
+/* ===== テーマ変数 ===== */
+body[data-theme=natural]{--bg:#F8F4E8;--ink:#5a3d2b;--sub:#8d735b;--main:#56705A;--main-d:#455c48;--accent:#D7E7D4;--gold:#C9A66B;--line:#e8d9bf;--card:#fffdf8;--shadow:0 4px 12px rgba(86,112,90,.15);--pop:#F0A23B;--rec:#6E9A5B;--new:#E0614F}
+body[data-theme=retro]{--bg:#2a1208;--ink:#fbe9c8;--sub:#e0b98a;--main:#c0392b;--main-d:#8f2a1f;--accent:#2c7a72;--gold:#f2b134;--line:#7a4a22;--card:rgba(40,16,6,.82);--shadow:0 6px 16px rgba(0,0,0,.5);--pop:#f2b134;--rec:#2c9a8a;--new:#e0452f}
+body[data-theme=neon]{--bg:#0d0626;--ink:#ffffff;--sub:#c9b8ff;--main:#ff4fd8;--main-d:#b82fa0;--accent:#3ff0ff;--gold:#ffd34d;--line:#5a3bb0;--card:rgba(20,8,55,.78);--shadow:0 0 18px rgba(255,79,216,.35);--pop:#ff9a3c;--rec:#3ff0ff;--new:#ff4f7b}
+/* 背景 */
+#bgLayer{position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center top}
+body[data-theme=natural] #bgLayer{background-image:linear-gradient(rgba(248,244,232,.35),rgba(248,244,232,.7)),url(img/natural/bg.webp)}
+body[data-theme=retro] #bgLayer{background-image:linear-gradient(rgba(25,8,2,.35),rgba(25,8,2,.75)),url(img/retro/bg.webp)}
+body[data-theme=neon] #bgLayer{background-image:linear-gradient(rgba(10,4,35,.25),rgba(10,4,35,.7)),url(img/neon/bg.webp)}
+.app{max-width:480px;margin:0 auto;padding-bottom:96px;position:relative}
+/* ===== ヘッダー ===== */
+.hero{position:relative;overflow:hidden;cursor:pointer}
+.hero .img{width:100%;background-size:cover;background-position:center;transition:opacity .25s,transform .25s}
+.hero .img.sw{opacity:0;transform:scale(1.03)}
+.hdots{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;gap:6px;z-index:3;padding:4px 8px;border-radius:10px;background:rgba(0,0,0,.28)}
+.hdots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5)}.hdots i.on{background:#fff;transform:scale(1.25)}
+.hTip{position:absolute;left:8px;top:8px;z-index:3;font-size:11px;font-weight:900;color:#fff;background:rgba(0,0,0,.42);border-radius:12px;padding:4px 9px;pointer-events:none;transition:opacity .6s}
+body[data-theme=natural] .hero .img{aspect-ratio:2/1}
+body[data-theme=retro] .hero .img{aspect-ratio:2/1}
+body[data-theme=neon] .hero .img{aspect-ratio:2/1}
+body[data-theme=natural] .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(transparent,var(--bg))}
+.logoN{text-align:center;padding:16px 8px 2px;line-height:1.05;display:none}
+.logoN .en{font-family:"Brush Script MT","Segoe Script",cursive;font-size:clamp(24px,7vw,32px);color:#8B6B4F}
+.logoN .jp{font-size:clamp(30px,9.5vw,44px);font-weight:900;color:#7a4a2a;letter-spacing:.06em;text-shadow:0 2px 0 #fff6e6}
+.logoN .gcx{font-size:12px;letter-spacing:.3em;color:#9a8068;font-weight:700}
+body[data-theme=natural] .logoN{display:none}
+.logoImg{position:absolute;left:50%;top:4%;width:62%;transform:translateX(-50%);display:none;pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))}
+.hero.plain .logoImg{display:block}
+body[data-theme=retro] .logoImg{display:none!important}
+.logoR{position:absolute;left:0;right:0;top:12%;text-align:center;display:none;pointer-events:none}
+.logoR .en{font-family:"Mochiy Pop One",sans-serif;font-size:clamp(20px,6vw,28px);color:#ffe7b0;text-shadow:0 0 8px #ff9a2e,0 2px 0 #7a2a10}
+.logoR .jp{font-family:"Mochiy Pop One",sans-serif;font-size:clamp(28px,8.5vw,40px);color:#ffd36b;letter-spacing:.06em;text-shadow:0 0 12px #ff8a1e,0 3px 0 #8f2a1f,0 5px 0 #4a1408}
+
+.retroDogs{position:absolute;bottom:6%;left:0;right:0;display:none;justify-content:center;gap:14px;pointer-events:none}
+.retroDogs i{width:22%;aspect-ratio:1;border-radius:50%;background-size:cover;border:4px solid #f2b134;box-shadow:0 0 14px #ff9a2e,inset 0 0 0 2px #7a2a10}
+
+.hdrChip{position:absolute;right:8px;bottom:30px;z-index:3;border:2px solid rgba(255,255,255,.75);border-radius:16px;padding:6px 12px;font-size:13px;font-weight:900;background:rgba(0,0,0,.45);color:#fff;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,.3);animation:chipPulse 2.4s ease-in-out 3}
+@keyframes chipPulse{50%{transform:scale(1.08)}}
+.hdrChip:active{transform:scale(.92)}
+/* ===== プレイヤーバー ===== */
+.player{position:relative;z-index:2;margin:-22px 12px 0;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 8px;border-radius:32px}
+body[data-theme=natural] .player{background:rgba(86,112,90,.88);border:2px solid var(--gold);box-shadow:0 6px 16px rgba(86,112,90,.25);color:#fff;backdrop-filter:blur(6px)}
+body[data-theme=retro] .player{background:linear-gradient(#5a2412,#3a160a);border:3px solid var(--gold);box-shadow:0 0 0 3px #7a2a10,0 0 16px rgba(255,154,46,.5);color:var(--ink)}
+body[data-theme=neon] .player,body[data-theme=natural] .player{margin-top:-14px;padding:0;gap:6px;background:none;border:none;box-shadow:none;backdrop-filter:none;color:var(--ink)}
+.av{width:52px;height:52px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;background:#f0a23b;border:3px solid var(--gold)}
+.av img{width:100%;height:100%;object-fit:contain}
+.av{background:none!important;border:none!important}
+.pinfo{flex:1;min-width:0;cursor:pointer}
+.pinfo .nm{font-weight:900;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pinfo .rk{display:flex;align-items:center;gap:4px;font-size:12px;opacity:.92}
+.pinfo .rk img{width:20px;height:20px}
+.coins{display:flex;align-items:center;gap:4px;font-weight:900;font-size:19px;font-family:Georgia,serif}
+.coins img{width:24px;height:24px}
+.giftBtn{width:40px;height:40px;flex:none;border:none;border-radius:50%;background:var(--gold);color:#fff;font-size:22px;font-weight:900;display:flex;align-items:center;justify-content:center;position:relative;padding:0}
+.giftBtn img{width:40px;height:40px}
+.giftBtn{background:none!important}
+.giftBtn.ready::after{content:"";position:absolute;right:0;top:0;width:11px;height:11px;border-radius:50%;background:#ff3b5c;border:2px solid #fff;animation:blink 1s infinite}
+@keyframes blink{50%{transform:scale(1.3)}}
+/* ネオン：プレートを敷く */
+.plate{position:relative;flex:1;min-width:0;height:62px;display:none}
+.plate>img.bgp{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;filter:drop-shadow(0 0 6px rgba(255,79,216,.4))}
+.plate .in{position:absolute;inset:0 12px 0 44%;display:flex;flex-direction:column;justify-content:center;color:#fff;text-shadow:0 0 6px #ff4fd8}
+.plate.coin .in{left:40%;flex-direction:row;align-items:center;font-family:"DotGothic16",monospace;font-size:22px}
+body[data-theme=neon] .plate,body[data-theme=natural] .plate{display:block}
+body[data-theme=neon] .player>.av,body[data-theme=neon] .player>.pinfo,body[data-theme=neon] .player>.coins,body[data-theme=natural] .player>.av,body[data-theme=natural] .player>.pinfo,body[data-theme=natural] .player>.coins{display:none}
+body[data-theme=natural] .plate>img.bgp{filter:drop-shadow(0 3px 5px rgba(90,61,43,.25))}
+body[data-theme=natural] .plate .in{color:#5a3d2b;text-shadow:none;left:30%}
+body[data-theme=natural] .plate.coin .in{left:32%;font-family:Georgia,serif;font-weight:900}
+/* ===== 検索・タブ ===== */
+.search{margin:12px 14px 0;display:none}
+.search.show{display:block}
+.search input{width:100%;border-radius:22px;border:2px solid var(--line);padding:10px 16px;font:inherit;font-size:15px;background:var(--card);color:var(--ink);outline:none}
+.tabs{display:flex;gap:8px;margin:14px 0 0;padding:4px 14px 10px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:2px solid var(--line);background:var(--card);border-radius:16px;padding:7px 12px;display:flex;align-items:center;gap:5px;font-weight:900;font-size:14px;position:relative;transition:transform .15s}
+.tab .ti{font-size:17px;line-height:1}.tab .ti img{width:22px;height:22px}
+.tab.on{background:var(--main);border-color:var(--main-d);color:#fff}
+body[data-theme=natural] .tab.on::after{content:"";position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);border:7px solid transparent;border-top-color:var(--main)}
+body[data-theme=retro] .tab{border-color:#a8651e;box-shadow:inset 0 0 0 1px rgba(255,210,120,.3)}
+body[data-theme=retro] .tab.on{background:linear-gradient(#d0452f,#9a2c1f);border-color:var(--gold);box-shadow:0 0 10px rgba(255,154,46,.6)}
+body[data-theme=neon] .tab,body[data-theme=natural] .tab{border:none;background:none;padding:0;flex-direction:column;gap:0;font-size:11px;text-shadow:0 0 6px #ff4fd8;opacity:.6}
+body[data-theme=neon] .tab .ti img,body[data-theme=natural] .tab .ti img{width:92px;height:auto}
+body[data-theme=natural] .tab{text-shadow:none;opacity:.7;font-size:11.5px}
+body[data-theme=natural] .tab.on .ti img{filter:drop-shadow(0 0 0 #fff) drop-shadow(0 3px 6px rgba(86,112,90,.5))}
+body[data-theme=natural] .tab.on::after{display:none}
+body[data-theme=neon] .tab.on,body[data-theme=natural] .tab.on{background:none;opacity:1;transform:scale(1.04)}
+body[data-theme=neon] .tab.on .ti img{filter:drop-shadow(0 0 8px #3ff0ff)}
+.tab:active{transform:scale(.95)}
+/* ===== 一覧 ===== */
+.secTitle{margin:10px 18px 8px;font-weight:900;font-size:13px;color:var(--sub);display:flex;justify-content:space-between}
+.list{margin:0 12px;display:flex;flex-direction:column;gap:12px}
+body:not([data-theme=natural]) .list{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px}
+.empty{grid-column:1/-1;text-align:center;padding:30px 10px;color:var(--sub);font-weight:700;line-height:1.7}
+/* 横長カード（ナチュラル） */
+.gc{display:flex;align-items:center;gap:12px;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:12px;box-shadow:var(--shadow);text-decoration:none;color:var(--ink);position:relative;transition:transform .2s ease}
+.gc:hover{transform:scale(1.02)}.gc:active{transform:scale(.97)}
+.thumb{position:relative;width:88px;height:88px;flex:none;border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:42px}
+.thumb .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.thumb .ti{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb .dog{position:absolute;right:4px;bottom:4px;width:30%;aspect-ratio:1;border-radius:50%;background-size:cover;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.fav{position:absolute;left:4px;top:4px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,.85);font-size:15px;display:flex;align-items:center;justify-content:center;padding:0;z-index:3;filter:grayscale(1) opacity(.65);transition:transform .15s}
+.fav.on{filter:none}.fav:active{transform:scale(1.3)}
+.gtx{flex:1;min-width:0}
+.gtx small{display:block;font-size:12px;color:var(--sub);font-weight:700}
+.gtx b{display:block;font-size:20px;line-height:1.25}
+.gtx p{margin:2px 0 0;font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gtx .who{display:inline-block;margin-top:4px;font-size:10.5px;font-weight:900;padding:1px 7px;border-radius:8px;background:var(--accent);color:var(--main-d)}
+.badge{position:absolute;right:62px;top:10px;font-size:11px;font-weight:900;color:#fff;border-radius:11px;padding:2px 9px}
+.badge.pop{background:var(--pop)}.badge.rec{background:var(--rec)}.badge.new{background:var(--new)}
+.play{width:44px;height:44px;flex:none;border-radius:50%;background:var(--main);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 3px 6px rgba(0,0,0,.2)}
+.play img{width:100%;height:100%;object-fit:contain}
+body[data-theme=natural] .gc .play{background:none;box-shadow:none;width:50px;height:50px}
+body[data-theme=natural] .gc{background:rgba(255,253,248,.88);backdrop-filter:blur(3px)}
+.gc .thumb{overflow:visible}
+.gc .thumb .bg{position:absolute;inset:8%;border-radius:6px;overflow:hidden}
+.gc .thumb .sq{position:absolute;inset:-6%;width:112%;height:112%;object-fit:fill;pointer-events:none;z-index:2}
+.gc .thumb .ph{z-index:1}.gc .thumb .ti{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb .dog{z-index:3}
+/* 縦長タイル（レトロ・ネオン） */
+.tile{position:relative;aspect-ratio:2/3;text-decoration:none;color:var(--ink);display:block;transition:transform .2s ease}
+.tile:hover{transform:scale(1.03)}.tile:active{transform:scale(.97)}
+.tile .inner{position:absolute;inset:5% 6%;border-radius:12px;background:var(--card)}
+.tile .frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;z-index:2}
+body[data-theme=neon] .tile .frame{filter:drop-shadow(0 0 6px rgba(63,240,255,.45))}
+.tile .tw{position:absolute;left:17%;right:17%;top:13%;aspect-ratio:1;z-index:1}
+.tile .tw .thumb{width:100%;height:100%;border-radius:10px;font-size:clamp(34px,11vw,52px)}
+.tile .tw .sq{position:absolute;inset:-12%;width:124%;height:124%;object-fit:fill;z-index:2;pointer-events:none}
+.tile .tt{position:absolute;left:10%;right:10%;top:63%;text-align:center;z-index:3}
+.tile .tt b{display:block;font-size:clamp(13.5px,4.2vw,17px);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .tt p{margin:2px 0 0;font-size:10.5px;color:var(--sub);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+body[data-theme=retro] .tile .tt b{font-family:"Mochiy Pop One",sans-serif;font-weight:400;color:#ffd36b;text-shadow:0 2px 0 #6a200e}
+body[data-theme=neon] .tile .tt b{font-family:"DotGothic16",monospace;font-weight:400;text-shadow:0 0 8px #ff4fd8}
+.tile .play{position:absolute;bottom:6.5%;left:50%;transform:translateX(-50%);z-index:3;width:auto;height:30px;border-radius:15px;padding:0 14px;font-size:12px;font-weight:900;gap:4px;background:var(--main)}
+body[data-theme=neon] .tile .play{background:none;box-shadow:none;padding:0;height:34px}
+body[data-theme=neon] .tile .play img{height:34px;width:auto}
+.tile .badge{right:auto;left:50%;transform:translateX(-50%);top:3.5%;z-index:4;box-shadow:0 0 8px rgba(0,0,0,.4)}
+.tile .fav{left:auto;right:11%;top:9%;width:26px;height:26px;font-size:13px}
+/* ===== 下のナビ ===== */
+.bnav{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:min(456px,calc(100% - 20px));display:flex;justify-content:space-around;align-items:center;padding:6px 8px;border-radius:26px;z-index:20}
+body[data-theme=natural] .bnav{background:rgba(255,253,248,.92);border:1.5px solid var(--line);box-shadow:0 6px 18px rgba(86,112,90,.2);backdrop-filter:blur(8px)}
+body[data-theme=retro] .bnav{background:linear-gradient(#5a2412,#3a160a);border:3px solid var(--gold);box-shadow:0 0 14px rgba(255,154,46,.5)}
+body[data-theme=neon] .bnav{background:rgba(14,6,40,.82);border:1.5px solid rgba(63,240,255,.6);box-shadow:0 0 16px rgba(255,79,216,.45);backdrop-filter:blur(8px)}
+.nb{border:none;background:none;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;font-weight:900;padding:2px 6px;color:var(--ink);transition:transform .15s}
+.nb .ni{font-size:22px;height:30px;display:flex;align-items:center}.nb .ni img{height:30px;width:auto}
+body[data-theme=neon] .nb .ni img,body[data-theme=natural] .nb .ni img{height:36px}
+.nb:active{transform:scale(.92)}
+/* ===== モーダル ===== */
+.modal{position:fixed;inset:0;background:rgba(20,10,5,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:14px;backdrop-filter:blur(3px)}
+.modal.show{display:flex}
+.card{width:100%;max-width:420px;max-height:90vh;overflow:auto;border-radius:24px;padding:18px 16px;animation:pop .3s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{0%{transform:scale(.85);opacity:0}100%{transform:none;opacity:1}}
+body[data-theme=natural] .card{background:linear-gradient(rgba(251,246,236,.55),rgba(251,246,236,.55)),url(img/natural/bg_modal.webp) center/cover;border:3px solid #c9a06a;color:#5a3d2b}
+body[data-theme=retro] .card{background:linear-gradient(rgba(42,18,8,.92),rgba(42,18,8,.95)),url(img/retro/bg_modal.webp) center/cover;border:3px solid var(--gold);box-shadow:0 0 20px rgba(255,154,46,.5)}
+body[data-theme=neon] .card{background:linear-gradient(rgba(13,6,38,.86),rgba(13,6,38,.9)),url(img/neon/bg_modal.webp) center/cover;border:1.5px solid var(--accent);box-shadow:0 0 22px rgba(255,79,216,.5)}
+.card h2{margin:0 0 12px;text-align:center;font-size:20px}
+body[data-theme=retro] .card h2{font-family:"Mochiy Pop One";font-weight:400;color:#ffd36b}
+body[data-theme=neon] .card h2{font-family:"DotGothic16";font-weight:400;text-shadow:0 0 8px #ff4fd8}
+.lb{font-size:13px;font-weight:900;color:var(--sub);margin:14px 0 6px}
+.themes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.th{border:3px solid transparent;border-radius:14px;padding:0;overflow:hidden;background:none;text-align:center;font-weight:900;font-size:12.5px}
+.th .pv{height:66px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.th .tn{padding:5px 0}
+.th.on{border-color:var(--main)}
+.th.nat .pv{background:url(img/natural/bg.webp) center 40%/cover}.th.nat .tn{background:#56705A;color:#fff}
+.th.ret .pv{background:url(img/retro/bg.webp) center 40%/cover}.th.ret .tn{background:#8f2a1f;color:#ffd36b}
+.th.neo .pv{background:url(img/neon/bg.webp) center 40%/cover}.th.neo .tn{background:#2a0f6b;color:#fff;text-shadow:0 0 6px #ff4fd8}
+.hdrs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hd{border:3px solid transparent;border-radius:12px;padding:0;overflow:hidden;background:#0002;aspect-ratio:2/1;background-size:cover;background-position:center;position:relative;font-weight:900;font-size:12px;color:#fff}
+.hd.on{border-color:var(--main)}
+.hd span{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);padding:2px}
+.hd.add{display:flex;align-items:center;justify-content:center;flex-direction:column;background:rgba(127,127,127,.15);color:var(--ink);border:2px dashed var(--sub)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px dashed rgba(127,127,127,.35);font-weight:700;font-size:14px}
+.sw{width:48px;height:28px;border-radius:20px;background:#aaa6;position:relative;cursor:pointer;flex:none;border:none;padding:0}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .2s}
+.sw.on{background:var(--main)}.sw.on::after{left:23px}
+.txt{width:100%;border-radius:14px;border:2px solid var(--line);padding:9px 12px;font:inherit;font-size:15px;background:rgba(255,255,255,.9);color:#5a3d2b}
+.btn{border:none;border-radius:20px;padding:11px 14px;font-weight:900;font-size:14px;background:var(--main);color:#fff;width:100%}
+.btn.c{background:rgba(127,127,127,.2);color:var(--ink)}
+.acts{display:flex;gap:8px;margin-top:14px}
+.ranks{display:flex;flex-direction:column;gap:8px}
+.rkRow{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:rgba(127,127,127,.12)}
+.rkRow.cur{outline:2px solid var(--gold);background:rgba(242,177,52,.15)}
+.rkRow .rm{width:40px;height:40px;font-size:30px;display:flex;align-items:center;justify-content:center}.rkRow .rm img{width:40px;height:40px}
+.rkRow b{flex:1}
+.bar{height:10px;border-radius:6px;background:rgba(127,127,127,.25);overflow:hidden;margin:6px 0 2px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--main))}
+.center{text-align:center}
+.bigIc{width:120px;height:120px;margin:4px auto;font-size:84px;display:flex;align-items:center;justify-content:center;animation:bob 1.6s ease-in-out infinite}
+.bigIc img{width:120px;height:120px;object-fit:contain}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-3deg)}}
+.plus{font-size:34px;font-weight:900;font-family:Georgia,serif;color:var(--gold)}
+.note{font-size:12px;color:var(--sub);line-height:1.6}
+.toast{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%) scale(.7);background:rgba(40,40,40,.9);color:#fff;font-weight:900;font-size:18px;padding:12px 22px;border-radius:22px;opacity:0;pointer-events:none;transition:all .25s;z-index:80;max-width:86vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.fx{position:fixed;pointer-events:none;z-index:70;font-size:22px;animation:fly 1.3s ease-out forwards}
+@keyframes fly{0%{transform:translate(0,0) scale(.6);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.1);opacity:0}}
+.brand{text-align:center;margin:22px 0 0;font-weight:900;letter-spacing:.12em;font-size:13px;color:var(--sub)}
+</style>
+</head>
+<body data-theme="natural">
+<div id="bgLayer"></div>
+<div class="app">
+  <div class="logoN"><div class="en">Coron &amp; Moon</div><div class="jp">ゲームセンター</div><div class="gcx">GAME CENTER</div></div>
+  <div class="hero" id="hero">
+    <div class="img" id="heroImg"></div>
+    <div class="logoR"><div class="en">Coron &amp; Moon</div><div class="jp">ゲームセンター</div></div>
+    <div class="retroDogs"><i style="background-image:url(img/colon.webp)"></i><i style="background-image:url(img/moon.webp)"></i></div>
+    <button class="hdrChip" id="hdrChip">🎨 着せかえ</button>
+  </div>
+
+  <section class="player" id="player">
+    <div class="av" id="av"></div>
+    <div class="pinfo" id="pinfo"><div class="nm" id="pName"></div><div class="rk" id="pRank"></div></div>
+    <div class="coins" id="pCoins"></div>
+    <div class="plate prof" id="plProf"><img class="bgp" id="plProfImg" src="img/neon/pl_profile.webp" alt=""><div class="in"><div class="nm" id="pName2" style="font-weight:900;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div><div class="rk" id="pRank2" style="font-size:11.5px;display:flex;align-items:center;gap:3px"></div></div></div>
+    <div class="plate coin" id="plCoin"><img class="bgp" id="plCoinImg" src="img/neon/pl_coin.webp" alt=""><div class="in" id="pCoins2"></div></div>
+    <button class="giftBtn" id="giftBtn" aria-label="ログインボーナス"></button>
+  </section>
+
+  <div class="search" id="search"><input id="q" type="search" placeholder="ゲームの名前でさがす"></div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="secTitle"><span id="secName"></span><span id="secCount"></span></div>
+  <main class="list" id="list"></main>
+  <div class="brand">MonChien 🐾</div>
+</div>
+
+<nav class="bnav" id="bnav"></nav>
+
+<!-- 設定 -->
+<div class="modal" id="mSet"><div class="card">
+  <h2>⚙ せってい</h2>
+  <div class="lb">テーマ</div>
+  <div class="themes">
+    <button class="th nat" data-t="natural"><div class="pv"></div><div class="tn">ナチュラル</div></button>
+    <button class="th ret" data-t="retro"><div class="pv"></div><div class="tn">レトロ</div></button>
+    <button class="th neo" data-t="neon"><div class="pv"></div><div class="tn">サイバーネオン</div></button>
+  </div>
+  <div class="lb">プレイヤー名</div>
+  <input class="txt" id="nameIn" maxlength="12" placeholder="ゲスト">
+  <div class="row"><span>効果音</span><button class="sw" id="swSound"></button></div>
+  <div class="acts"><button class="btn" data-close="mSet">とじる</button></div>
+</div></div>
+
+
+<!-- ランク -->
+<div class="modal" id="mRank"><div class="card">
+  <h2>🏆 ランク</h2>
+  <div class="center note" id="rkNow"></div>
+  <div class="bar"><i id="rkBar"></i></div>
+  <div class="center note" id="rkNext"></div>
+  <div class="ranks" id="rkList" style="margin-top:12px"></div>
+  <div class="note" style="margin-top:10px">コインのため方：1日1回のログインボーナスで＋10、ゲームを開くと＋1（1日10回まで）。</div>
+  <div class="acts"><button class="btn" data-close="mRank">とじる</button></div>
+</div></div>
+
+<!-- ボーナス・ランクアップ -->
+<div class="modal" id="mGift"><div class="card center">
+  <h2 id="gTitle"></h2>
+  <div class="bigIc" id="gIc"></div>
+  <div class="plus" id="gPlus"></div>
+  <div class="note" id="gNote"></div>
+  <div class="acts"><button class="btn" data-close="mGift">やったー！</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const GAMES=[
+ {id:'reversi',name:'リバーシ',desc:'石をはさんでひっくり返そう',cat:'battle',badge:'pop',who:'CPU・2人',emo:'⚪',col:['#5c8858','#3f6a3c'],dog:'colon',url:'./reversi/'},
+ {id:'shogi',name:'将棋',desc:'本格ルールの将棋で勝負',cat:'battle',badge:'rec',who:'CPU',emo:'☗',col:['#e9c06e','#c99a4f'],dog:'moon',url:'./shogi/'},
+ {id:'wanko',name:'ワンコしょうぎ',desc:'3×4マスのミニ将棋',cat:'battle',badge:'',who:'CPU・2人',emo:'🐶',col:['#83b26f','#5f8c5b'],dog:'colon',url:'./wanko/'},
+ {id:'gomoku',name:'五目ならべ',desc:'5つならべたら勝ち',cat:'battle',badge:'',who:'CPU・2人',emo:'🐾',col:['#f3d48e','#e2b45f'],dog:'moon',url:'./gomoku/'},
+ {id:'memory',name:'神経衰弱',desc:'カードをめくって絵合わせ',cat:'battle',badge:'pop',who:'ひとり・CPU・2人',emo:'🃏',col:['#d08a52','#a9622f'],dog:'colon',url:'./memory/'},
+ {id:'escape',name:'箱入りワンコ',desc:'旅館の木のパズルで脱出',cat:'puzzle',badge:'new',who:'ひとり',emo:'🚪',col:['#c79563','#9a6338'],dog:'colon',url:'./escape/'},
+ {id:'rings',name:'知恵の輪',desc:'ルールを見つけて輪をはずそう',cat:'puzzle',badge:'new',who:'ひとり',emo:'⭕',col:['#9ccbb5','#5f9a82'],dog:'moon',url:'./rings/'},
+ {id:'peg',name:'ペグソリティア',desc:'飛びこえて最後の1匹に',cat:'puzzle',badge:'',who:'ひとり',emo:'🎯',col:['#c79563','#8a5a2c'],dog:'colon',url:'./peg/'},
+ {id:'slide',name:'15パズル',desc:'バラバラの写真をもとどおりに',cat:'puzzle',badge:'rec',who:'ひとり',emo:'🧩',col:['#8ec5e8','#5fa8d3'],dog:'moon',url:'./slide/'},
+ {id:'hanoi',name:'ハノイの塔',desc:'ざぶとんを右の柱へはこぼう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🍡',col:['#f6c97a','#f2b134'],dog:'colon',url:'./hanoi/'}
+];
+const BADGE={pop:'人気',rec:'おすすめ',new:'新作'};
+const TABS=[['all','すべて','tab_all','tb_all','🎮'],['pop','人気','tab_popular','tb_popular','👑'],['new','新作','tab_new','tb_new','⭐'],['fav','お気に入り','tab_fav','tb_fav','❤️'],['puzzle','パズル',null,'tb_puzzle','🧩'],['battle','対戦',null,'tb_battle','⚔️']];
+const RANKS=[{n:'ブロンズ',k:'bronze',c:0,e:'🥉'},{n:'シルバー',k:'silver',c:100,e:'🥈'},{n:'ゴールド',k:'gold',c:300,e:'🥇'},{n:'プラチナ',k:'platinum',c:700,e:'💎'}];
+const HEADERS={natural:['img/natural/header1.webp'],retro:['img/retro/header1.webp','img/retro/header2.webp'],neon:['img/neon/header1.webp','img/neon/header2.webp']};
+const CARDS={retro:7,neon:7,natural:5}, SQ={neon:16,natural:8};
+const EMO={coin:'🪙',avatar_default:'🐾',icon_settings:'⚙️',icon_home:'🏠',icon_search:'🔍',icon_trophy:'🏆',icon_gift:'🎁',btn_play:'▶'};
+// --- 保存 ---
+const store={get(k,d){try{const v=localStorage.getItem('mcgc_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('mcgc_'+k,JSON.stringify(v));return true}catch(e){return false}}};
+const P=Object.assign({name:'',coins:0,lastBonus:'',open:{d:'',n:0},favs:[],tab:'all',theme:'natural',hdr:{natural:0,retro:0,neon:0},rand:false,sound:true},store.get('p',{}));
+{const h=(location.hash||'').slice(1); if(['natural','retro','neon'].includes(h)) P.theme=h;}
+P.hdr=Object.assign({natural:0,retro:0,neon:0},P.hdr);
+const save=()=>store.set('p',P);
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
+const T=()=>P.theme;
+// --- 音 ---
+let ac=null; function actx(){if(!ac){try{ac=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}} if(ac&&ac.state==='suspended')ac.resume().catch(()=>{}); return ac}
+function tone(f,t0,d,type='triangle',v=.15){const a=actx(); if(!a||!P.sound)return; const o=a.createOscillator(),g=a.createGain(); o.type=type; o.frequency.value=f; const s=a.currentTime+t0; g.gain.setValueAtTime(0,s); g.gain.linearRampToValueAtTime(v,s+.01); g.gain.exponentialRampToValueAtTime(.001,s+d); o.connect(g).connect(a.destination); o.start(s); o.stop(s+d+.02)}
+const SFX={tap(){tone(680,0,.06,'sine',.08)},coin(){tone(988,0,.08,'square',.05);tone(1319,.08,.16,'square',.05)},fan(){[523,659,784,1047].forEach((f,k)=>tone(f,k*.12,.25))}};
+function bark(p){const a=actx(); if(!a||!P.sound)return; const b=p===1?520:700,o=a.createOscillator(),g=a.createGain(),fl=a.createBiquadFilter(); o.type='sawtooth'; fl.type='bandpass'; fl.frequency.value=b*1.6; const s=a.currentTime; o.frequency.setValueAtTime(b,s); o.frequency.linearRampToValueAtTime(b*1.35,s+.04); o.frequency.exponentialRampToValueAtTime(b*.55,s+.16); g.gain.setValueAtTime(0,s); g.gain.linearRampToValueAtTime(.3,s+.015); g.gain.exponentialRampToValueAtTime(.001,s+.18); o.connect(fl).connect(g).connect(a.destination); o.start(s); o.stop(s+.2)}
+let tt; function toast(t){const e=$('toast'); e.textContent=t; e.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>e.classList.remove('show'),1300)}
+function burst(x,y,items,n=6,dist=60){for(let k=0;k<n;k++){const s=document.createElement('div'); s.className='fx'; s.textContent=items[k%items.length]; s.style.left=(x-11)+'px'; s.style.top=(y-11)+'px'; const a=k/n*Math.PI*2; s.style.setProperty('--dx',Math.cos(a)*dist+'px'); s.style.setProperty('--dy',Math.sin(a)*dist+'px'); document.body.appendChild(s); setTimeout(()=>s.remove(),1300)}}
+// --- アイコン ---
+function ic(key){ if(!key) return ''; return `<img src="img/${T()}/${key}.webp" alt="">`; }
+const rankOf=c=>{let r=RANKS[0]; for(const x of RANKS) if(c>=x.c) r=x; return r};
+function rankIc(r){ return `<img src="img/${T()}/rank_${r.k}.webp" alt="">`; }
+// --- 描画 ---
+function drawHeader(){ $('heroImg').style.backgroundImage=`url("${HEADERS[T()][0]}")`; }
+function drawPlayer(){
+  const r=rankOf(P.coins), nm=P.name||'ゲスト';
+  $('av').innerHTML=ic('avatar_default');
+  $('pName').textContent='プレイヤー：'+nm; $('pName2').textContent=nm;
+  $('pRank').innerHTML=`${rankIc(r)}ランク：${r.n}`; $('pRank2').innerHTML=`${rankIc(r)}${r.n}`;
+  $('pRank2').querySelectorAll('img').forEach(i=>{i.style.width='16px';i.style.height='16px'});
+  $('pCoins').innerHTML=`${ic('coin')}<span>${P.coins.toLocaleString()}</span>`; $('pCoins2').textContent=P.coins.toLocaleString();
+  if(T()!=='retro'){ $('plProfImg').src=`img/${T()}/pl_profile.webp`; $('plCoinImg').src=`img/${T()}/pl_coin.webp`; }
+  const g=$('giftBtn'); g.innerHTML=T()==='retro'?ic('icon_gift'):`<img src="img/${T()}/ac_gift.webp" alt="">`; g.classList.toggle('ready',P.lastBonus!==today());
+}
+function drawTabs(){
+  const tabs=TABS;
+  if(!tabs.find(t=>t[0]===P.tab)) P.tab='all';
+  $('tabs').innerHTML=tabs.map(([k,n,ri,ni,e])=>{
+    const icon = T()==='neon'? `<img src="img/neon/${ni}.webp" alt="">` : T()==='natural'? `<img src="img/natural/${ni.replace('tb_','tc_')}.webp" alt="">` : (ri?`<img src="img/retro/${ri}.webp" alt="">`:e);
+    return `<button class="tab ${P.tab===k?'on':''}" data-k="${k}"><span class="ti">${icon}</span><span>${n}</span></button>`;}).join('');
+  $('tabs').querySelectorAll('.tab').forEach(b=>b.onclick=()=>{actx();SFX.tap();P.tab=b.dataset.k;save();drawTabs();drawList()});
+}
+function thumbHTML(g){
+  return `<div class="thumb"><img class="ti" src="img/thumb/${g.id}.webp" alt="${g.name}" loading="lazy"></div>`;
+}
+function filtered(){
+  const q=$('q').value.trim(); let l=GAMES;
+  if(P.tab==='pop') l=l.filter(g=>g.badge==='pop'); else if(P.tab==='new') l=l.filter(g=>g.badge==='new');
+  else if(P.tab==='fav') l=l.filter(g=>P.favs.includes(g.id)); else if(P.tab==='puzzle'||P.tab==='battle') l=l.filter(g=>g.cat===P.tab);
+  if(q) l=l.filter(g=>(g.name+g.desc).includes(q));
+  return l.slice().sort((a,b)=>P.favs.includes(b.id)-P.favs.includes(a.id));
+}
+function drawList(){
+  const l=filtered(), tn=(TABS.find(t=>t[0]===P.tab)||TABS[0])[1];
+  $('secName').textContent=tn; $('secCount').textContent=l.length+'本';
+  const el=$('list');
+  if(!l.length){ el.innerHTML=`<div class="empty">${P.tab==='fav'?'カードのハートを押すと<br>ここに並ぶよ🐾':'見つからなかったワン…'}</div>`; return; }
+  el.innerHTML=l.map((g,i)=>{
+    const fav=`<button class="fav ${P.favs.includes(g.id)?'on':''}" data-fav="${g.id}" aria-label="お気に入り">❤️</button>`;
+    const badge=g.badge?`<span class="badge ${g.badge}">${BADGE[g.badge]}</span>`:'';
+    if(T()==='natural') return `<a class="gc" href="${g.url}#${T()}" data-id="${g.id}">
+      <div class="thumb"><div class="bg"><img class="ti" src="img/thumb/${g.id}.webp" alt="${g.name}" loading="lazy"></div><img class="sq" src="img/natural/sq${GAMES.indexOf(g)%SQ.natural+1}.webp" alt="">${fav}</div>
+      <div class="gtx"><small>コロン＆ムーンの</small><b>${g.name}</b><p>${g.desc}</p><span class="who">${g.who}</span></div>${badge}<span class="play"><img src="img/natural/bt_play.webp" alt="あそぶ"></span></a>`;
+    const gi=GAMES.indexOf(g), cf=`img/${T()}/card${gi%CARDS[T()]+1}.webp`;
+    const sq=T()==='neon'?`<img class="sq" src="img/neon/sq${gi%SQ.neon+1}.webp" alt="">`:'';
+    const play=T()==='neon'?'<img src="img/neon/bt_play.webp" alt="あそぶ">':'▶ あそぶ';
+    return `<a class="tile" href="${g.url}#${T()}" data-id="${g.id}"><div class="inner"></div>
+      <div class="tw">${thumbHTML(g)}${sq}</div><img class="frame" src="${cf}" alt="">${badge}${fav}
+      <div class="tt"><b>${g.name}</b><p>${g.desc}</p></div><span class="play">${play}</span></a>`;
+  }).join('');
+  el.querySelectorAll('[data-fav]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();actx();
+    const id=b.dataset.fav, i=P.favs.indexOf(id); if(i>=0)P.favs.splice(i,1); else {P.favs.push(id); const r=b.getBoundingClientRect(); burst(r.left+14,r.top+14,['💗','✨'],5,36);}
+    tone(i>=0?500:880,0,.08,'sine',.1); save(); drawList();}));
+  el.querySelectorAll('a[data-id]').forEach(a=>a.addEventListener('click',()=>openGame(a.dataset.id)));
+}
+function drawNav(){
+  const t=T();
+  const btn=t!=='retro';
+  const items=[['home','ホーム',btn?'bt_home':'icon_home'],['search','さがす','icon_search'],['rank','ランク',btn?'bt_rank':'icon_trophy'],['set','せってい',btn?'bt_settings':'icon_settings']];
+  $('bnav').innerHTML=items.map(([k,n,key])=>{ const i=ic(key);
+    return `<button class="nb" data-n="${k}"><span class="ni">${i}</span>${n}</button>`}).join('');
+  $('bnav').querySelectorAll('.nb').forEach(b=>b.onclick=()=>{actx();SFX.tap();nav(b.dataset.n)});
+}
+function nav(k){
+  if(k==='home'){ window.scrollTo({top:0,behavior:'smooth'}); }
+  if(k==='search'){ const s=$('search'); s.classList.toggle('show'); if(s.classList.contains('show')) setTimeout(()=>$('q').focus(),50); else {$('q').value='';drawList()} }
+  if(k==='rank') openRank();
+  if(k==='set') openSet();
+}
+function render(){ document.body.dataset.theme=T(); drawHeader(); drawPlayer(); drawTabs(); drawList(); drawNav(); }
+// --- コイン ---
+function addCoins(n,why){
+  const before=rankOf(P.coins); P.coins+=n; save(); drawPlayer();
+  const after=rankOf(P.coins);
+  if(after.c>before.c){ setTimeout(()=>showGift('ランクアップ！',T()==='retro'?rankIc(after):`<img src="img/${T()}/ac_rankup.webp" alt="">`,after.n+'になった！','つぎのランクも目指そう🐾'),400); SFX.fan(); }
+}
+function openGame(id){
+  actx(); const d=today(); if(P.open.d!==d) P.open={d,n:0};
+  if(P.open.n<10){ P.open.n++; addCoins(1); toast('🪙 +1 コイン'); SFX.coin(); } save();
+}
+function showGift(title,icon,plus,note){ $('gTitle').textContent=title; $('gIc').innerHTML=icon; $('gPlus').textContent=plus; $('gNote').textContent=note; $('mGift').classList.add('show'); }
+$('giftBtn').onclick=e=>{ actx(); if(P.lastBonus===today()){ toast('きょうのボーナスはもらったよ。また明日！'); return; }
+  P.lastBonus=today(); save(); const icon=T()==='retro'?ic('icon_gift'):`<img src="img/${T()}/ac_coins.webp" alt="">`;
+  showGift('ログインボーナス',icon,'+10 コイン','毎日もらえるよ🐾'); SFX.coin(); setTimeout(()=>addCoins(10),300);
+  const r=e.currentTarget.getBoundingClientRect(); burst(r.left+20,r.top+20,['🪙','✨','🐾'],8,70); };
+// --- ランク画面 ---
+function openRank(){
+  const r=rankOf(P.coins), i=RANKS.indexOf(r), nx=RANKS[i+1];
+  $('rkNow').innerHTML=`いま：<b>${r.n}</b>（${P.coins}コイン）`;
+  $('rkBar').style.width=nx?((P.coins-r.c)/(nx.c-r.c)*100)+'%':'100%';
+  $('rkNext').textContent=nx?`${nx.n}まで あと${nx.c-P.coins}コイン`:'最高ランク！';
+  $('rkList').innerHTML=RANKS.map(x=>`<div class="rkRow ${x===r?'cur':''}"><span class="rm">${rankIc(x)}</span><b>${x.n}</b><span>${x.c}コイン〜</span></div>`).join('');
+  $('mRank').classList.add('show');
+}
+// --- 設定 ---
+function openSet(){ drawSet(); $('nameIn').value=P.name; $('mSet').classList.add('show'); }
+function drawSet(){
+  document.querySelectorAll('.th').forEach(b=>b.classList.toggle('on',b.dataset.t===T()));
+  $('swSound').classList.toggle('on',P.sound);
+}
+document.querySelectorAll('.th').forEach(b=>b.onclick=()=>{actx();SFX.tap();P.theme=b.dataset.t;save();render();drawSet()});
+$('swSound').onclick=()=>{P.sound=!P.sound;save();drawSet();SFX.tap()};
+$('nameIn').addEventListener('input',()=>{P.name=$('nameIn').value.trim().slice(0,12);save();drawPlayer()});
+$('pinfo').onclick=$('plProf').onclick=()=>{actx();openSet();setTimeout(()=>$('nameIn').focus(),100)};
+$('plCoin').onclick=()=>{actx();openRank()};
+const THEMES=['natural','retro','neon'], TNAME={natural:'ナチュラル',retro:'レトロ',neon:'サイバーネオン'};
+$('hdrChip').onclick=e=>{ e.stopPropagation(); actx(); P.theme=THEMES[(THEMES.indexOf(T())+1)%3]; save();
+  document.body.style.transition='opacity .18s'; document.body.style.opacity=0;
+  setTimeout(()=>{ render(); document.body.style.opacity=1; toast('🎨 '+TNAME[T()]); [523,784].forEach((f,k)=>tone(f,k*.08,.12,'triangle',.12)); },180); };
+$('hero').addEventListener('click',e=>{ actx(); const r=e.currentTarget.getBoundingClientRect(); bark(e.clientX-r.left<r.width/2?1:2); burst(e.clientX,e.clientY,['💕','🐾','✨'],5,40); });
+$('q').addEventListener('input',drawList);
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove('show'));
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')}));
+render();
+})();
+</script>
+</body>
+</html>
