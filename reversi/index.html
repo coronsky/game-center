@@ -423,6 +423,18 @@ body.replay .btns,body.replay .btns2{opacity:.35;pointer-events:none}
 body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
 body[data-vt=neon] .pkRow button{background:rgba(255,255,255,.06);border-color:#5a3bb0;color:#fff}body[data-vt=neon] .pkRow button.on{border-color:#ff4fd8;background:rgba(255,79,216,.25);box-shadow:0 0 12px #ff4fd8}
 .pkNote{text-align:center;font-size:12px;margin-top:10px;opacity:.8;min-height:16px}
+/* game banners v2 */
+html body[data-vt] .header{aspect-ratio:3/1!important;margin-top:0!important;background-size:cover!important;background-position:center!important}
+html body[data-vt=natural] .header{background-image:url(../img/natural/banner.webp)!important}
+html body[data-vt=retro] .header{background-image:url(../img/retro/banner.webp)!important}
+html body[data-vt=neon] .header{background-image:url(../img/neon/banner.webp)!important}
+html body[data-vt] .ttl{display:none!important}
+html body[data-vt=natural] .gTitle{display:block!important;bottom:4%;font-size:clamp(15px,4.6vw,21px);font-weight:900;color:#5a3d2b;letter-spacing:.06em;background:linear-gradient(#fff8e8,#f1dfbd);border:2.5px solid #b98a52;box-shadow:0 3px 0 #9a6b3a,0 4px 8px rgba(90,61,43,.3);border-radius:16px;padding:2px 18px 3px;text-shadow:0 1px 0 #fff}
+html body[data-vt] .gTitle{bottom:4%;font-size:clamp(15px,4.6vw,21px)}
+html body[data-vt] .header::before{display:none}
+html body[data-vt] .bubble{top:44%!important}
+.app{padding-top:40px}
+html body[data-vt=retro] .gTitle,html body[data-vt=neon] .gTitle{padding:6px 34px 10px}
 </style>
 <link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script></head>
 <body data-vt="natural">
