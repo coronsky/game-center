@@ -317,10 +317,21 @@ const GAMES=[
  {id:'rings',name:'知恵の輪',desc:'ルールを見つけて輪をはずそう',cat:'puzzle',badge:'new',who:'ひとり',emo:'⭕',col:['#9ccbb5','#5f9a82'],dog:'moon',url:'./rings/'},
  {id:'peg',name:'ペグソリティア',desc:'飛びこえて最後の1匹に',cat:'puzzle',badge:'',who:'ひとり',emo:'🎯',col:['#c79563','#8a5a2c'],dog:'colon',url:'./peg/'},
  {id:'slide',name:'15パズル',desc:'バラバラの写真をもとどおりに',cat:'puzzle',badge:'rec',who:'ひとり',emo:'🧩',col:['#8ec5e8','#5fa8d3'],dog:'moon',url:'./slide/'},
- {id:'hanoi',name:'ハノイの塔',desc:'ざぶとんを右の柱へはこぼう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🍡',col:['#f6c97a','#f2b134'],dog:'colon',url:'./hanoi/'}
+ {id:'hanoi',name:'ハノイの塔',desc:'ざぶとんを右の柱へはこぼう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🍡',col:['#f6c97a','#f2b134'],dog:'colon',url:'./hanoi/'},
+ {id:'binary',name:'なかよしミラー',desc:'左右反対に動く2匹をゴールへ',cat:'action',badge:'new',who:'ひとり',emo:'💕',col:['#c79563','#8a5a2c'],dog:'colon',url:'./binary/'},
+ {id:'sokoban',name:'倉庫番',desc:'ホネの箱をおして運ぼう',cat:'puzzle',badge:'new',who:'ひとり',emo:'📦',col:['#c79563','#8a5a2c'],dog:'moon',url:'./sokoban/'},
+ {id:'breakout',name:'ブロックくずし',desc:'ボールでブロックをこわそう',cat:'action',badge:'new',who:'ひとり',emo:'🎾',col:['#c79563','#8a5a2c'],dog:'colon',url:'./breakout/'},
+ {id:'maze',name:'迷路',desc:'ムーンの待つ出口をめざそう',cat:'action',badge:'new',who:'ひとり',emo:'🌀',col:['#c79563','#8a5a2c'],dog:'moon',url:'./maze/'},
+ {id:'sudoku',name:'数独',desc:'4×4・6×6・9×9の数字パズル',cat:'puzzle',badge:'new',who:'ひとり',emo:'🔢',col:['#c79563','#8a5a2c'],dog:'colon',url:'./sudoku/'},
+ {id:'tetris',name:'おちものブロック',desc:'そろえて消す落ちものパズル',cat:'action',badge:'new',who:'ひとり',emo:'🧱',col:['#c79563','#8a5a2c'],dog:'moon',url:'./tetris/'},
+ {id:'crossword',name:'クロスワード',desc:'ヒントから言葉をうめよう',cat:'puzzle',badge:'new',who:'ひとり',emo:'📝',col:['#c79563','#8a5a2c'],dog:'colon',url:'./crossword/'},
+ {id:'shanghai',name:'上海',desc:'同じ絵の牌をペアで消そう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🀄',col:['#c79563','#8a5a2c'],dog:'moon',url:'./shanghai/'},
+ {id:'chess',name:'チェス',desc:'ふたりで交互に対戦',cat:'battle',badge:'new',who:'2人',emo:'♞',col:['#c79563','#8a5a2c'],dog:'colon',url:'./chess/'},
+ {id:'solitaire',name:'ソリティア',desc:'定番クロンダイク（1枚めくり）',cat:'puzzle',badge:'new',who:'ひとり',emo:'🃏',col:['#c79563','#8a5a2c'],dog:'moon',url:'./solitaire/'},
+ {id:'mines',name:'マインスイーパー',desc:'数字をたよりにマスをひらこう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🚩',col:['#c79563','#8a5a2c'],dog:'colon',url:'./mines/'}
 ];
 const BADGE={pop:'人気',rec:'おすすめ',new:'新作'};
-const TABS=[['all','すべて','tab_all','tb_all','🎮'],['pop','人気','tab_popular','tb_popular','👑'],['new','新作','tab_new','tb_new','⭐'],['fav','お気に入り','tab_fav','tb_fav','❤️'],['puzzle','パズル',null,'tb_puzzle','🧩'],['battle','対戦',null,'tb_battle','⚔️']];
+const TABS=[['all','すべて','tab_all','tb_all','🎮'],['pop','人気','tab_popular','tb_popular','👑'],['new','新作','tab_new','tb_new','⭐'],['fav','お気に入り','tab_fav','tb_fav','❤️'],['puzzle','パズル',null,'tb_puzzle','🧩'],['battle','対戦',null,'tb_battle','⚔️'],['action','アクション',null,'tb_action','🕹️']];
 const RANKS=[{n:'ブロンズ',k:'bronze',c:0,e:'🥉'},{n:'シルバー',k:'silver',c:100,e:'🥈'},{n:'ゴールド',k:'gold',c:300,e:'🥇'},{n:'プラチナ',k:'platinum',c:700,e:'💎'}];
 const HEADERS={natural:['img/natural/header3.webp'],retro:['img/retro/header3.webp'],neon:['img/neon/header3.webp']};
 const CARDS={retro:7,neon:7,natural:5}, SQ={neon:16,natural:8};
@@ -360,7 +371,7 @@ function drawTabs(){
   const tabs=TABS;
   if(!tabs.find(t=>t[0]===P.tab)) P.tab='all';
   $('tabs').innerHTML=tabs.map(([k,n,ri,ni,e])=>{
-    const icon = T()==='neon'? `<img src="img/neon/${ni}.webp" alt="">` : T()==='natural'? `<img src="img/natural/${ni.replace('tb_','tc_')}.webp" alt="">` : (ri?`<img src="img/retro/${ri}.webp" alt="">`:e);
+    const icon = !ni ? e : T()==='neon'? `<img src="img/neon/${ni}.webp" alt="">` : T()==='natural'? `<img src="img/natural/${ni.replace('tb_','tc_')}.webp" alt="">` : (ri?`<img src="img/retro/${ri}.webp" alt="">`:e);
     return `<button class="tab ${P.tab===k?'on':''}" data-k="${k}"><span class="ti">${icon}</span><span>${n}</span></button>`;}).join('');
   $('tabs').querySelectorAll('.tab').forEach(b=>b.onclick=()=>{actx();SFX.tap();P.tab=b.dataset.k;save();drawTabs();drawList()});
 }
@@ -370,7 +381,7 @@ function thumbHTML(g){
 function filtered(){
   const q=$('q').value.trim(); let l=GAMES;
   if(P.tab==='pop') l=l.filter(g=>g.badge==='pop'); else if(P.tab==='new') l=l.filter(g=>g.badge==='new');
-  else if(P.tab==='fav') l=l.filter(g=>P.favs.includes(g.id)); else if(P.tab==='puzzle'||P.tab==='battle') l=l.filter(g=>g.cat===P.tab);
+  else if(P.tab==='fav') l=l.filter(g=>P.favs.includes(g.id)); else if(P.tab==='puzzle'||P.tab==='battle'||P.tab==='action') l=l.filter(g=>g.cat===P.tab);
   if(q) l=l.filter(g=>(g.name+g.desc).includes(q));
   return l.slice().sort((a,b)=>P.favs.includes(b.id)-P.favs.includes(a.id));
 }
