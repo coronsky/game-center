@@ -5,6 +5,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Mochiy+Pop+One&family=DotGothic16&display=swap" rel="stylesheet">
 <style>
+.pick .lb{font-weight:900;margin:10px 0 6px;font-size:13px}
+.pkRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pkRow button{border:2.5px solid #e2cfb2;background:#fffaf1;border-radius:16px;padding:10px 4px;font:inherit;font-weight:900;font-size:15px;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pkRow .pa{width:58px;height:58px;border-radius:50%;background-size:cover;background-position:center;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.pkRow button small{font-size:10.5px;font-weight:700;opacity:.7}
+.pkRow button.on{border-color:#5c8858;background:#eef5e6;box-shadow:0 0 0 2px #5c8858}
+.pkNote{text-align:center;font-size:12px;margin-top:10px;opacity:.8;min-height:16px}
+
 .homeBtn{position:absolute;left:8px;top:8px;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;width:44px;height:44px;text-decoration:none;font-weight:900;font-size:9px;line-height:1.1;color:#fff;background:rgba(86,112,90,.92);border:2px solid #fff;border-radius:50%;padding:0;box-shadow:0 3px 8px rgba(0,0,0,.22)}
 .homeBtn:active{transform:scale(.94)}
 :root{--paper:#f4ead9;--ink:#5a3d2b;--ink2:#7b5a43;--green:#5d7a52;--green-d:#4a6342;--cream:#fbf6ec;--wood:#e3c49b;--wood-d:#c9a273;
@@ -95,6 +103,8 @@ body.st-face .st.last::after{width:22%;height:22%;left:85%;top:15%}
 .st.win{animation:win .7s infinite alternate;z-index:2}
 @keyframes win{0%{box-shadow:0 0 0 2px #ffd36b,0 0 6px #ffcd4a}100%{box-shadow:0 0 0 4px #ffd36b,0 0 16px #ffcd4a}}
 .st.drop{animation:sd .2s ease-out}@keyframes sd{0%{transform:scale(1.5);opacity:.3}100%{transform:none;opacity:1}}
+body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
+body[data-vt=neon] .pkRow button{background:rgba(255,255,255,.06);border-color:#5a3bb0;color:#fff}body[data-vt=neon] .pkRow button.on{border-color:#ff4fd8;background:rgba(255,79,216,.25);box-shadow:0 0 12px #ff4fd8}
 
 /* header chips (same as hub) */
 .app .vtBtn,.app .homeBtn{position:absolute;top:8px;bottom:auto;width:auto;height:auto;flex-direction:row;gap:3px;border:2px solid rgba(255,255,255,.75)!important;border-radius:16px;padding:5px 10px;font-size:12px!important;font-weight:900;background:rgba(0,0,0,.45)!important;color:#fff!important;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,.3);line-height:1.2;text-decoration:none;white-space:nowrap;z-index:6}
@@ -223,7 +233,6 @@ body[data-vt=retro] .hole{background:radial-gradient(circle at 50% 40%,#2a1208,#
   <h2>🐾 あそびかた設定</h2>
   <div class="row"><div class="lb">モード</div><div class="seg" data-k="mode"><button data-v="cpu">CPUと対戦</button><button data-v="pvp">2人で対戦</button></div></div>
   <div id="rowCpu">
-  <div class="row"><div class="lb">あなたのワンコ</div><div class="seg" data-k="side"><button data-v="1">コロン（先手）</button><button data-v="2">ムーン（後手）</button></div></div>
   <div class="row"><div class="lb">CPUのつよさ</div><div class="seg" data-k="level"><button data-v="1">やさしい</button><button data-v="2">ふつう</button><button data-v="3">つよい</button></div></div>
   </div>
   <div class="row"><div class="lb">盤の大きさ</div><div class="seg" data-k="size"><button data-v="9">9路<br><small>こども向け</small></button><button data-v="13">13路</button><button data-v="15">15路<br><small>本格</small></button></div></div>
@@ -255,6 +264,26 @@ body[data-vt=retro] .hole{background:radial-gradient(circle at 50% 40%,#2a1208,#
 </div></div>
 <div class="toast" id="toast"></div>
 <script>(()=>{
+const PK={dog:'colon',order:'first'};
+function askPick(onGo,o){ o=o||{};
+  let m=$('mPick');
+  if(!m){ m=document.createElement('div'); m.className='modal'; m.id='mPick';
+    m.innerHTML=`<div class="card pick"><h2>🐾 どっちで遊ぶ？</h2><div class="lb" id="pkL1">あなたのワンコ</div>
+    <div class="pkRow" data-pk="dog"><button data-v="colon"><span class="pa" style="background-image:var(--colon)"></span>コロン</button><button data-v="moon"><span class="pa" style="background-image:var(--moon)"></span>ムーン</button></div>
+    <div class="lb">順番</div><div class="pkRow" data-pk="order"><button data-v="first">⚡ 先手<small>先にはじめる</small></button><button data-v="second">🐢 後手<small>あとからはじめる</small></button></div>
+    <div class="pkNote" id="pkNote"></div><div class="acts"><button class="btn g" id="bPickGo">この順番ではじめる！</button></div></div>`;
+    document.body.appendChild(m);
+    m.querySelectorAll('.pkRow button').forEach(b=>b.onclick=()=>{ try{SFX.tap()}catch(e){} PK[b.parentElement.dataset.pk]=b.dataset.v; pkSync(); });
+  }
+  m._go=onGo; m._pvp=!!o.pvp; PK.dog=o.dog||PK.dog; PK.order=o.order||PK.order;
+  $('pkL1').textContent=o.pvp?'プレイヤー1のワンコ':'あなたのワンコ';
+  $('bPickGo').onclick=()=>{ try{SFX.tap()}catch(e){} closeM('mPick'); m._go&&m._go(PK.dog,PK.order); };
+  pkSync(); openM('mPick');
+}
+function pkSync(){ const m=$('mPick'); m.querySelectorAll('.pkRow').forEach(r=>r.querySelectorAll('button').forEach(b=>b.classList.toggle('on',PK[r.dataset.pk]===b.dataset.v)));
+  const me=PK.dog==='colon'?'コロン':'ムーン', ot=PK.dog==='colon'?'ムーン':'コロン';
+  $('pkNote').textContent=(PK.order==='first'?me:ot)+'が先にはじめるよ'; }
+
 const $=id=>document.getElementById(id);
 const pick=a=>a[(Math.random()*a.length)|0];
 const mkStore=pre=>({get(k,d){try{const v=localStorage.getItem(pre+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(pre+k,JSON.stringify(v))}catch(e){}}});
@@ -388,13 +417,14 @@ function render(){
     else setStatus(ghost>=0?'もう一度タップで置くよ':(S.mode==='pvp'?who+'の番だよ':'あなた('+who+')の番だよ')); }
   $('bUndo').disabled=busy||!hist.length; $('bHint').disabled=over||busy||!isHuman(turn);
 }
+const FIRST=()=>S.order==='second'?3-(+S.side):+S.side;
 function newGame(){
   gen0++; clearTimeout(cpuT);
   if(N!==+S.size||!cells.length) buildUI();
   document.body.classList.toggle('st-face',S.stone==='face');
-  b=new Array(N*N).fill(0); turn=1; hist=[]; over=false; busy=false; last=-1; ghost=-1; hintI=-1; winLine=[];
+  b=new Array(N*N).fill(0); turn=FIRST(); hist=[]; over=false; busy=false; last=-1; ghost=-1; hintI=-1; winLine=[];
   cells.forEach(c=>{c.innerHTML='';c._h=''});
-  if(S.mode==='pvp'){$('tagB').textContent='プレイヤー1';$('tagW').textContent='プレイヤー2'} else {$('tagB').textContent=S.side==='1'?'あなた・先手':'CPU・先手';$('tagW').textContent=S.side==='2'?'あなた・後手':'CPU・後手'}
+  if(S.mode==='pvp'){$('tagB').textContent='プレイヤー1';$('tagW').textContent='プレイヤー2'} else {$('tagB').textContent=(S.side==='1'?'あなた':'CPU')+(FIRST()===1?'・先手':'・後手');$('tagW').textContent=(S.side==='2'?'あなた':'CPU')+(FIRST()===2?'・先手':'・後手')}
   $('info').textContent=(S.mode==='pvp'?'2人で対戦':'CPU：'+{1:'やさしい',2:'ふつう',3:'つよい'}[S.level])+'・'+N+'路盤';
   render(); setTimeout(()=>{sayText(1,'5つならべるワン！');setTimeout(()=>sayText(2,'じゃましちゃうよ♪'),500)},300);
   next();
@@ -434,21 +464,22 @@ function finish(w){
 }
 function undo(){ if(busy||!hist.length) return; gen0++; clearTimeout(cpuT);
   const pop=()=>{ const i=hist.pop(); b[i]=0; };
-  pop(); if(S.mode==='cpu'&&hist.length&&((hist.length%2===0?1:2)!==+S.side)) pop();
-  turn=hist.length%2===0?1:2; last=hist.length?hist[hist.length-1]:-1; over=false; winLine=[]; ghost=-1; hintI=-1; SFX.tap(); toast('待った！'); next(); }
+  pop(); if(S.mode==='cpu'&&hist.length&&((hist.length%2===0?FIRST():3-FIRST())!==+S.side)) pop();
+  turn=hist.length%2===0?FIRST():3-FIRST(); last=hist.length?hist[hist.length-1]:-1; over=false; winLine=[]; ghost=-1; hintI=-1; SFX.tap(); toast('待った！'); next(); }
 function hint(){ if(over||busy||!isHuman(turn)) return; hintI=think(turn,3); ghost=S.confirm?hintI:-1; SFX.tap(); render(); }
 const pend=Object.assign({},S);
 const syncSet=bindSettings($('mSet'),pend,k=>{ if(['talk','sound','confirm'].includes(k)){S[k]=pend[k];SND.on=S.sound;TALK.on=S.talk;store.set('settings',S)}
   if(k==='stone'){S.stone=pend.stone;store.set('settings',S);document.body.classList.toggle('st-face',S.stone==='face')}
   $('rowCpu').style.display=pend.mode==='cpu'?'':'none'; });
 $('bSet').onclick=()=>{actx();Object.assign(pend,S);syncSet();$('rowCpu').style.display=pend.mode==='cpu'?'':'none';openM('mSet')};
-$('bStart').onclick=()=>{Object.assign(S,pend);store.set('settings',S);closeM('mSet');newGame()};
+const PICK=()=>{gen0++;clearTimeout(cpuT);askPick((d,o)=>{S.dog=d;S.order=o;S.side=d==='colon'?'1':'2';store.set('settings',S);newGame()},{pvp:S.mode==='pvp',dog:S.dog||(S.side==='2'?'moon':'colon'),order:S.order})};
+$('bStart').onclick=()=>{Object.assign(S,pend);store.set('settings',S);closeM('mSet');PICK()};
 $('bHelp').onclick=()=>openM('mHelp');
-$('bNew').onclick=()=>{actx();SFX.tap();newGame()};
-$('bAgain').onclick=()=>{closeM('mRes');newGame()};
+$('bNew').onclick=()=>{actx();SFX.tap();PICK()};
+$('bAgain').onclick=()=>{closeM('mRes');PICK()};
 $('bUndo').onclick=()=>{actx();undo()};
 $('bHint').onclick=()=>{actx();hint()};
-newGame();
+newGame(); PICK();
 
 
 ;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();

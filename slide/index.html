@@ -5,6 +5,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Mochiy+Pop+One&family=DotGothic16&display=swap" rel="stylesheet">
 <style>
+.pick .lb{font-weight:900;margin:10px 0 6px;font-size:13px}
+.pkRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pkRow button{border:2.5px solid #e2cfb2;background:#fffaf1;border-radius:16px;padding:10px 4px;font:inherit;font-weight:900;font-size:15px;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pkRow .pa{width:58px;height:58px;border-radius:50%;background-size:cover;background-position:center;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.pkRow button small{font-size:10.5px;font-weight:700;opacity:.7}
+.pkRow button.on{border-color:#5c8858;background:#eef5e6;box-shadow:0 0 0 2px #5c8858}
+.pkNote{text-align:center;font-size:12px;margin-top:10px;opacity:.8;min-height:16px}
+
 .homeBtn{position:absolute;left:8px;top:8px;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;width:44px;height:44px;text-decoration:none;font-weight:900;font-size:9px;line-height:1.1;color:#fff;background:rgba(86,112,90,.92);border:2px solid #fff;border-radius:50%;padding:0;box-shadow:0 3px 8px rgba(0,0,0,.22)}
 .homeBtn:active{transform:scale(.94)}
 :root{--paper:#f4ead9;--ink:#5a3d2b;--ink2:#7b5a43;--green:#5d7a52;--green-d:#4a6342;--cream:#fbf6ec;--wood:#e3c49b;--wood-d:#c9a273;
@@ -110,6 +118,8 @@ body.nums .tl .no{display:block}
 .done{width:140px;aspect-ratio:1;margin:6px auto;border-radius:16px;background-size:cover;border:4px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.2)}
 .btns{grid-template-columns:repeat(3,1fr)}
 #mRes .avs{display:none}
+body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
+body[data-vt=neon] .pkRow button{background:rgba(255,255,255,.06);border-color:#5a3bb0;color:#fff}body[data-vt=neon] .pkRow button.on{border-color:#ff4fd8;background:rgba(255,79,216,.25);box-shadow:0 0 12px #ff4fd8}
 
 /* header chips (same as hub) */
 .app .vtBtn,.app .homeBtn{position:absolute;top:8px;bottom:auto;width:auto;height:auto;flex-direction:row;gap:3px;border:2px solid rgba(255,255,255,.75)!important;border-radius:16px;padding:5px 10px;font-size:12px!important;font-weight:900;background:rgba(0,0,0,.45)!important;color:#fff!important;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,.3);line-height:1.2;text-decoration:none;white-space:nowrap;z-index:6}
@@ -260,6 +270,26 @@ body[data-vt=retro] .hole{background:radial-gradient(circle at 50% 40%,#2a1208,#
 </div></div>
 <div class="toast" id="toast"></div>
 <script>(()=>{
+const PK={dog:'colon',order:'first'};
+function askPick(onGo,o){ o=o||{};
+  let m=$('mPick');
+  if(!m){ m=document.createElement('div'); m.className='modal'; m.id='mPick';
+    m.innerHTML=`<div class="card pick"><h2>🐾 どっちで遊ぶ？</h2><div class="lb" id="pkL1">あなたのワンコ</div>
+    <div class="pkRow" data-pk="dog"><button data-v="colon"><span class="pa" style="background-image:var(--colon)"></span>コロン</button><button data-v="moon"><span class="pa" style="background-image:var(--moon)"></span>ムーン</button></div>
+    <div class="lb">順番</div><div class="pkRow" data-pk="order"><button data-v="first">⚡ 先手<small>先にはじめる</small></button><button data-v="second">🐢 後手<small>あとからはじめる</small></button></div>
+    <div class="pkNote" id="pkNote"></div><div class="acts"><button class="btn g" id="bPickGo">この順番ではじめる！</button></div></div>`;
+    document.body.appendChild(m);
+    m.querySelectorAll('.pkRow button').forEach(b=>b.onclick=()=>{ try{SFX.tap()}catch(e){} PK[b.parentElement.dataset.pk]=b.dataset.v; pkSync(); });
+  }
+  m._go=onGo; m._pvp=!!o.pvp; PK.dog=o.dog||PK.dog; PK.order=o.order||PK.order;
+  $('pkL1').textContent=o.pvp?'プレイヤー1のワンコ':'あなたのワンコ';
+  $('bPickGo').onclick=()=>{ try{SFX.tap()}catch(e){} closeM('mPick'); m._go&&m._go(PK.dog,PK.order); };
+  pkSync(); openM('mPick');
+}
+function pkSync(){ const m=$('mPick'); m.querySelectorAll('.pkRow').forEach(r=>r.querySelectorAll('button').forEach(b=>b.classList.toggle('on',PK[r.dataset.pk]===b.dataset.v)));
+  const me=PK.dog==='colon'?'コロン':'ムーン', ot=PK.dog==='colon'?'ムーン':'コロン';
+  $('pkNote').textContent=(PK.order==='first'?me:ot)+'が先にはじめるよ'; }
+
 const $=id=>document.getElementById(id);
 const pick=a=>a[(Math.random()*a.length)|0];
 const mkStore=pre=>({get(k,d){try{const v=localStorage.getItem(pre+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(pre+k,JSON.stringify(v))}catch(e){}}});
