@@ -240,6 +240,12 @@ html body[data-vt] .gTitle{bottom:4%;font-size:clamp(15px,4.6vw,21px)}
 html body[data-vt] .header::before{display:none}
 html body[data-vt] .bubble{top:44%!important}
 .app{padding-top:40px}
+/* title plate below banner (v3) */
+html body[data-vt] .header{margin-bottom:32px!important}
+html body[data-vt] .gTitle{top:100%!important;bottom:auto!important;transform:translate(-50%,-22%)!important;max-width:92%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(14px,4.3vw,19px)!important;line-height:1.25}
+html body[data-vt] :is(.scores,.hud){margin-top:4px!important}
+html body[data-vt=retro] .gTitle{background:linear-gradient(#8f2a1f,#5a1a10)!important;border:2.5px solid #f2b134!important;border-radius:16px!important;box-shadow:0 0 12px rgba(255,154,46,.6)!important;padding:2px 18px 3px!important}
+html body[data-vt=neon] .gTitle{background:rgba(13,6,38,.9)!important;border:2px solid #ff4fd8!important;border-radius:16px!important;box-shadow:0 0 12px #ff4fd8!important;padding:2px 18px 3px!important}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
