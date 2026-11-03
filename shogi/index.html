@@ -120,9 +120,9 @@ body{min-height:100vh;display:flex;justify-content:center;background:radial-grad
 .prs button:first-child{border-color:#c0281c55;background:#fff4f1}
 
 /* header chips (same as hub) */
-.header .vtBtn,.header .homeBtn{position:absolute;top:auto;bottom:8px;width:auto;height:auto;flex-direction:row;gap:3px;border:2px solid rgba(255,255,255,.75)!important;border-radius:16px;padding:5px 10px;font-size:12px!important;font-weight:900;background:rgba(0,0,0,.45)!important;color:#fff!important;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,.3);line-height:1.2;text-decoration:none;white-space:nowrap;z-index:6}
-.header .vtBtn{right:8px;left:auto}.header .homeBtn{left:8px;right:auto}
-.header .vtBtn:active,.header .homeBtn:active{transform:scale(.92)}
+.app .vtBtn,.app .homeBtn{position:absolute;top:8px;bottom:auto;width:auto;height:auto;flex-direction:row;gap:3px;border:2px solid rgba(255,255,255,.75)!important;border-radius:16px;padding:5px 10px;font-size:12px!important;font-weight:900;background:rgba(0,0,0,.45)!important;color:#fff!important;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,.3);line-height:1.2;text-decoration:none;white-space:nowrap;z-index:6}
+.app .vtBtn{right:8px;left:auto}.header .homeBtn{left:8px;right:auto}
+.app .vtBtn:active,.app .homeBtn:active{transform:scale(.92)}
 body[data-vt=retro] .sw{background:#3a160a;box-shadow:inset 0 0 0 2px #a8651e}body[data-vt=retro] .sw::after{background:#e0b98a}
 body[data-vt=retro] .sw.on{background:linear-gradient(#d0452f,#8f2a1f);box-shadow:inset 0 0 0 2px #f2b134,0 0 10px rgba(255,154,46,.5)}body[data-vt=retro] .sw.on::after{background:#ffe7b0}
 body[data-vt=neon] .sw{background:rgba(20,8,55,.9);box-shadow:inset 0 0 0 1.5px #5a3bb0}body[data-vt=neon] .sw::after{background:#8f7fd0;box-shadow:none}
@@ -863,7 +863,7 @@ $('bRp').onclick=()=>{SFX.tap();rpStart()};
 document.querySelectorAll('[data-rp]').forEach(x=>x.onclick=()=>rpAct(x.dataset.rp));
 
 
-;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(h&&b){h.appendChild(b);b.addEventListener('click',function(e){e.stopPropagation()})}})})();
+;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();
 
 (()=>{const VTS=['natural','retro','neon'],VTN={natural:'ナチュラル',retro:'レトロ',neon:'サイバーネオン'};
 const st={get(){try{return localStorage.getItem('mc_vt')}catch(e){return null}},set(v){try{localStorage.setItem('mc_vt',v)}catch(e){}}};
