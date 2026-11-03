@@ -409,13 +409,18 @@ body[data-vt=neon] .sw.on{background:rgba(255,79,216,.35);box-shadow:inset 0 0 0
 .rpBar .btn{padding:10px 0;font-size:15px}.rpBar #rpPlay{font-size:12px}
 .rpN{grid-column:1/-1;text-align:center;font-weight:900;font-size:13px;opacity:.85}
 body.replay .btns,body.replay .btns2{opacity:.35;pointer-events:none}
+
+/* header chips (same as hub) */
+.header .vtBtn,.header .homeBtn{position:absolute;top:auto;bottom:8px;width:auto;height:auto;flex-direction:row;gap:3px;border:2px solid rgba(255,255,255,.75)!important;border-radius:16px;padding:5px 10px;font-size:12px!important;font-weight:900;background:rgba(0,0,0,.45)!important;color:#fff!important;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,.3);line-height:1.2;text-decoration:none;white-space:nowrap;z-index:6}
+.header .vtBtn{right:8px;left:auto}.header .homeBtn{left:8px;right:auto}
+.header .vtBtn:active,.header .homeBtn:active{transform:scale(.92)}
 </style>
 <link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script></head>
 <body data-vt="natural">
 <div id="bgLayer"></div>
 <div class="app">
-  <a class="homeBtn" id="homeBtn" href="../"><span style="font-size:18px">🏠</span>メニュー</a>
-  <button class="vtBtn" id="vtBtn"><span style="font-size:18px">🎨</span>着せかえ</button>
+  <a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
+  <button class="vtBtn" id="vtBtn">🎨 スキン</button>
   <div class="header" id="header">
     <div class="bubble" id="bubColon"></div>
     <div class="bubble" id="bubMoon"></div>
@@ -1216,6 +1221,7 @@ $('vtBtn').onclick=e=>{ e.stopPropagation(); ctx(); const v=VTS[(VTS.indexOf(doc
 /* init */
 S.side = (S.side==='W'||S.side===2)?W:B;
 pending=Object.assign({},S,{side:S.side===W?'W':'B'});
+;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(h&&b){h.appendChild(b);b.addEventListener('click',function(e){e.stopPropagation()})}})})();
 applyStone(); applyDogs(); buildBoard(); applyLook(); newGame();
 })();
 
