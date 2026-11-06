@@ -129,6 +129,9 @@ body[data-theme=natural] .gc{background:rgba(255,253,248,.88);backdrop-filter:bl
 .gc .thumb .bg{position:absolute;inset:8%;border-radius:6px;overflow:hidden}
 .gc .thumb .sq{position:absolute;inset:-6%;width:112%;height:112%;object-fit:fill;pointer-events:none;z-index:2}
 .gc .thumb .ph{z-index:1}.gc .thumb .ti{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gc .thumb .bg{inset:4%;border-radius:4px}
+.gc .thumb .sq{inset:0;width:100%;height:100%}
+.tile .tw .sq{inset:-3.5%;width:107%;height:107%}
 .thumb .dog{z-index:3}
 /* 縦長タイル（レトロ・ネオン） */
 .tile{position:relative;aspect-ratio:2/3;text-decoration:none;color:var(--ink);display:block;transition:transform .2s ease}
@@ -405,10 +408,10 @@ function drawList(){
     const fav=`<button class="fav ${P.favs.includes(g.id)?'on':''}" data-fav="${g.id}" aria-label="お気に入り">❤️</button>`;
     const badge=g.badge?`<span class="badge ${g.badge}">${BADGE[g.badge]}</span>`:'';
     if(T()==='natural') return `<a class="gc" href="${g.url}#${T()}" data-id="${g.id}">
-      <div class="thumb"><div class="bg"><img class="ti" src="img/thumb/${g.id}.webp" alt="${g.name}" loading="lazy"></div><img class="sq" src="img/natural/sq${GAMES.indexOf(g)%SQ.natural+1}.webp" alt="">${fav}</div>
+      <div class="thumb"><div class="bg"><img class="ti" src="img/thumb/${g.id}.webp" alt="${g.name}" loading="lazy"></div><img class="sq" src="img/natural/tframe.webp?v=1" alt="">${fav}</div>
       <div class="gtx"><small>コロン＆ムーンの</small><b>${g.name}</b><p>${g.desc}</p><span class="who">${g.who}</span></div>${badge}<span class="play"><img src="img/natural/bt_play.webp" alt="あそぶ"></span></a>`;
     const gi=GAMES.indexOf(g), cf=`img/${T()}/card${gi%CARDS[T()]+1}.webp`;
-    const sq=T()==='neon'?`<img class="sq" src="img/neon/sq${gi%SQ.neon+1}.webp" alt="">`:'';
+    const sq=`<img class="sq" src="img/${T()}/tframe.webp?v=1" alt="">`;
     const play=T()==='neon'?'<img src="img/neon/bt_play.webp" alt="あそぶ">':'▶ あそぶ';
     return `<a class="tile" href="${g.url}#${T()}" data-id="${g.id}"><div class="inner"></div>
       <div class="tw">${thumbHTML(g)}${sq}</div><img class="frame" src="${cf}" alt="">${badge}${fav}
