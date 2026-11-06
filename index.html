@@ -151,12 +151,13 @@ body[data-theme=neon] .tile .tt b{font-family:"DotGothic16",monospace;font-weigh
 .tile .play{position:static;flex:none;white-space:nowrap;width:auto;height:26px;border-radius:13px;padding:0 12px;font-size:11.5px;font-weight:900;gap:4px;background:var(--main)}
 body[data-theme=neon] .tile .play{background:none;box-shadow:none;padding:0;height:28px}
 body[data-theme=neon] .tile .play img{height:28px;width:auto;max-width:100%}
-body:is([data-theme=retro],[data-theme=neon]) .tile .frame{display:none}
-body:is([data-theme=retro],[data-theme=neon]) .tile .inner{inset:0;border-radius:16px}
-body:is([data-theme=retro],[data-theme=neon]) .tile .tw{left:11%;right:11%;top:7%}
-body:is([data-theme=retro],[data-theme=neon]) .tile .tb{left:8%;right:8%;top:68%;bottom:7%}
-body[data-theme=retro] .tile .inner{background:linear-gradient(#3a160a,#24100a);border:1.5px solid #5a2a14}
-body[data-theme=neon] .tile .inner{background:rgba(13,6,38,.78);border:1.5px solid rgba(120,80,255,.35)}
+body[data-theme=retro] .tile .frame,body[data-theme=neon] .tile .frame{content:none}
+body:is([data-theme=retro],[data-theme=neon]) .tile .tw .sq{display:none}
+body:is([data-theme=retro],[data-theme=neon]) .tile .inner{inset:3%;border-radius:10px}
+body:is([data-theme=retro],[data-theme=neon]) .tile .tw{left:13%;right:13%;top:8%}
+body:is([data-theme=retro],[data-theme=neon]) .tile .tb{left:11%;right:11%;top:63%;bottom:9%}
+body[data-theme=retro] .tile .inner{background:linear-gradient(#2a1a10,#1c120a)}
+body[data-theme=neon] .tile .inner{background:rgba(13,6,38,.85)}
 .tile .badge{right:auto;left:50%;transform:translateX(-50%);top:3.5%;z-index:4;box-shadow:0 0 8px rgba(0,0,0,.4)}
 .tile .fav{left:auto;right:11%;top:9%;width:26px;height:26px;font-size:13px}
 /* ===== 下のナビ ===== */
@@ -416,7 +417,7 @@ function drawList(){
     if(T()==='natural') return `<a class="gc" href="${g.url}#${T()}" data-id="${g.id}">
       <div class="thumb"><div class="bg"><img class="ti" src="img/thumb/${g.id}.webp" alt="${g.name}" loading="lazy"></div><img class="sq" src="img/natural/tframe.webp?v=1" alt="">${fav}</div>
       <div class="gtx"><small>コロン＆ムーンの</small><b>${g.name}</b><p>${g.desc}</p><span class="who">${g.who}</span></div>${badge}<span class="play"><img src="img/natural/bt_play.webp" alt="あそぶ"></span></a>`;
-    const gi=GAMES.indexOf(g), cf=`img/${T()}/card${gi%CARDS[T()]+1}.webp`;
+    const gi=GAMES.indexOf(g), cf=`img/${T()}/tcard.webp?v=1`;
     const sq=`<img class="sq" src="img/${T()}/tframe.webp?v=1" alt="">`;
     const play=T()==='neon'?'<img src="img/neon/bt_play.webp" alt="あそぶ">':'▶ あそぶ';
     return `<a class="tile" href="${g.url}#${T()}" data-id="${g.id}"><div class="inner"></div>
