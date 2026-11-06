@@ -260,7 +260,12 @@ html body .app .vtBtn,html body .app .homeBtn{width:90px!important;height:30px!i
 html body[data-vt=natural] .app .vtBtn{background-image:url(../img/ui/natural_skin.webp?v=2)!important}html body[data-vt=natural] .app .homeBtn{background-image:url(../img/ui/natural_home.webp?v=2)!important}
 html body[data-vt=retro] .app .vtBtn{background-image:url(../img/ui/retro_skin.webp?v=2)!important}html body[data-vt=retro] .app .homeBtn{background-image:url(../img/ui/retro_home.webp?v=2)!important}
 html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../img/ui/neon_home.webp?v=2)!important}
-</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script></head>
+</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="gframe">
+body[data-vt=natural] :is(.panel,.boardWrap,.frame){border:18px solid transparent!important;border-image:url(../img/natural/gframe.webp?v=1) 40 / 18px stretch!important;border-radius:20px!important;background:#f6ecd8!important;box-shadow:0 6px 14px rgba(90,61,43,.25)!important;padding:2px!important}
+body[data-vt=retro] :is(.panel,.boardWrap,.frame){border:24px solid transparent!important;border-image:url(../img/retro/gframe.webp?v=1) 64 / 24px stretch!important;border-radius:20px!important;background:#2a1208!important;box-shadow:0 6px 16px rgba(0,0,0,.45)!important;padding:2px!important}
+body[data-vt=neon] :is(.panel,.boardWrap,.frame){border:22px solid transparent!important;border-image:url(../img/neon/gframe.webp?v=1) 58 / 22px stretch!important;border-radius:20px!important;background:#0d0626!important;box-shadow:0 0 18px rgba(120,80,255,.45)!important;padding:2px!important}
+</style>
+</head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">脱出ゲーム</div></div>
