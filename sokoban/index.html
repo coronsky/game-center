@@ -137,6 +137,15 @@ body[data-vt=neon] #bd .ce.f{background:#17134e!important;box-shadow:inset 0 0 0
 .ce{position:relative;overflow:visible}
 .pl.joy{animation:joy .55s ease-in-out infinite}
 @keyframes joy{0%,100%{transform:translateY(0) scale(1,1)}20%{transform:translateY(2%) scale(1.06,.92)}50%{transform:translateY(-28%) scale(.96,1.05) rotate(-4deg)}75%{transform:translateY(-10%) rotate(4deg)}}
+
+.lsBtn{display:block;margin:6px auto 0;border:2px solid #e2cfb2;background:#fffaf1;border-radius:999px;padding:7px 20px;font:inherit;font-weight:900;font-size:14px;color:var(--ink);cursor:pointer}
+body:is([data-vt=retro],[data-vt=neon]) .lsBtn{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.3)}
+.qg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:min(calc(52vh / var(--mcz,1)),460px);overflow:auto}
+.qg button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:12px;padding:6px 0;font:inherit;font-weight:900;font-size:13px;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
+.qg button small{font-size:9px;font-weight:700;opacity:.75}
+.qg button.ok{background:#eef5e6;border-color:#9dbb8a}.qg button.cur{box-shadow:0 0 0 2px #f0b429}.qg button.lk{opacity:.45;cursor:default;background:#f1e8d8}.qg button.hd{color:#b5452f}
+body:is([data-vt=retro],[data-vt=neon]) .qg button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.25)}
+body:is([data-vt=retro],[data-vt=neon]) .qg button.ok{background:rgba(120,200,120,.25)}
 .dogPick{display:flex;justify-content:center;gap:8px;margin:6px 0 2px}
 .dogPick button{display:flex;align-items:center;gap:4px;border:2px solid #e2cfb2;background:#fffaf1;border-radius:999px;padding:3px 12px 3px 4px;font:inherit;font-weight:900;font-size:13px;color:var(--ink);cursor:pointer}
 .dogPick button i{width:30px;height:30px;background:center/contain no-repeat}
@@ -286,7 +295,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 
   <div class="hud"><div class="box"><small>ステージ</small><b id="stN"></b></div><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small>おすすめ手数</small><b id="best"></b></div></div>
   <div class="dogPick" id="dogPick"><button data-v="colon"><i style="background-image:url(../img/sk/colon_d0.webp)"></i>コロン</button><button data-v="moon"><i style="background-image:url(../img/sk/moon_d0.webp)"></i>ムーン</button></div>
-  <div class="lvRow" id="lvs"></div>
+  <button class="lsBtn" id="bList">📋 ステージ一覧（全30）</button>
   <div class="panel"><div class="in"><div id="bd"></div></div></div>
   <div class="pad"><button class="u" data-d="u">▲</button><button class="l" data-d="l">◀</button><button class="c" id="bNext">つぎ ▶</button><button class="r" data-d="r">▶</button><button class="d" data-d="d">▼</button></div>
 
@@ -296,11 +305,11 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 倉庫番</h2><p>コロンかムーンを動かして、ホネの箱 📦 を <b>肉球マーク🐾</b> の上へ全部おしてね。</p>
 <p>👆 十字ボタン・画面のスワイプ・矢印キーで動きます。箱は<b>押すだけ</b>で、引っぱれません。</p>
 <p>↩︎「1手戻す」で何回でも戻れます。動けなくなったら「リセット」。</p>
-<p>ステージ1から順にむずかしくなるよ。おすすめ手数以内でクリアすると★3つ！</p>
+<p>📋 全30ステージ。やさしい順にならんでいて、クリアすると次のステージがひらきます（記録は自動で保存）。21番からは上級！おすすめ手数（最短手数）以内でクリアすると★3つ！</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
-
+<div class="modal" id="mList"><div class="card"><h2>📋 ステージ一覧</h2><div style="display:flex;justify-content:space-between;font-weight:900;font-size:13px;margin:0 0 8px"><span>やさしい順・クリアで次がひらく</span><span id="lsSum"></span></div><div class="qg" id="qg"></div><div class="acts"><button class="btn g" data-close="mList">とじる</button></div></div></div>
 <div style="display:none">
 
 </div>
@@ -397,11 +406,10 @@ function keys(cb){ addEventListener('keydown',e=>{const k={ArrowUp:'u',ArrowDown
 function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<button data-i="${i}" class="${i===cur?'on':''}">${n}${starsOf&&starsOf(i)?'<i>'+'★'.repeat(starsOf(i))+'</i>':''}</button>`).join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) el.scrollLeft=on.offsetLeft-el.offsetLeft-(el.clientWidth-on.offsetWidth)/2; }
 if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
-const SOKO=[["#####","#@$.#","#####"],["######","#@ $.#","# $. #","######"],["#######","#     #","# $.$ #","#@ .  #","#######"],[" #####","##   #","# $  #","#  #.##","# @$ .#","##  ###"," ####"],["#######","#.  @ #","# $$  #","#.  # #","#######"],["########","#  .   #","# $#$  #","# .@.  #","#  $#  #","#   .$ #","#      #","########"],["  #####","###   #","#.@$  #","### $.#","#.##$ #","# # . ##","#$ *$$.#","#   .  #","########"],["#######","#  .  #","# $#$ #","#. @ .#","# $#$ #","#  .  #","#######"]];
+const SOKO=[["######", "####.#", "###  #", "##   #", "#@$  #", "#    #", "######"], ["########", "##     #", "#      #", "#  .   #", "##     #", "###    #", "###  $@#", "###    #", "########"], ["#########", "##@ #####", "##$ #####", "#    ####", "#       #", "#       #", "#      .#", "#########"], ["#########", "#. ######", "#   #####", "#   #####", "#       #", "#     $@#", "#       #", "#########"], ["########", "#.     #", "#      #", "#@$    #", "#####  #", "########"], ["#########", "##  . @##", "##    $##", "#      ##", "#      ##", "###     #", "###     #", "#########"], ["#########", "##      #", "#.    $ #", "#     $@#", "# .     #", "#########"], ["######", "# @  #", "#$$  #", "#    #", "#    #", "#   .#", "#    #", "#.  ##", "######"], ["########", "#####  #", "####@$ #", "###  $ #", "#      #", "#      #", "##     #", "##.   .#", "########"], ["########", "####@  #", "####$. #", "####   #", "####   #", "# $    #", "#      #", "#  .  ##", "########"], ["#########", "##  #####", "##. #####", "#    ####", "#   $####", "#   $ ###", "#    $@##", "#.   .  #", "#########"], ["#########", "###    .#", "# $ $   #", "#@$    .#", "###  .  #", "#####   #", "#########"], ["#########", "## . ####", "##      #", "##   $$ #", "#.      #", "#@$   . #", "#########"], ["#########", "#   #####", "#. $#####", "#  @#####", "#  $#####", "#    #  #", "#       #", "#      .#", "#########"], ["#########", "# @######", "# $$ ####", "#    ####", "#    ## #", "#    .  #", "#      .#", "#       #", "#########"], ["#########", "#       #", "#     . #", "#       #", "#    #. #", "#@$ ### #", "# $ #####", "#   #####", "#########"], ["#########", "#      .#", "#    .  #", "#       #", "## $   .#", "##$$   ##", "##@   ###", "#########"], ["#########", "# . #####", "#.   ####", "#      ##", "#    $$ #", "# $  @ .#", "#########"], ["########", "#.    ##", "# $   ##", "#   $###", "#   @###", "#   ####", "#$ . ###", "#  .   #", "########"], ["#########", "###  ####", "## $  ###", "##@$   ##", "###$    #", "###  .  #", "##  .   #", "#      .#", "#########"], ["#########", "##@     #", "# $  . .#", "#*      #", "# $     #", "#.    $ #", "#########"], ["#######", "#..  @#", "#    $#", "##  $ #", "##  $.#", "####  #", "####  #", "#######"], ["#########", "#   .####", "#     # #", "# $     #", "#.$$ .  #", "#$ ##   #", "#@ ##  .#", "#########"], ["#########", "####   .#", "##    . #", "#      .#", "# $     #", "# $$    #", "###@  ###", "#########"], ["#########", "###   .##", "###   .##", "#  @   .#", "# $$    #", "##$   ###", "##   ####", "#########"], ["########", "##### @#", "##### *#", "#####$ #", "### .$ #", "#    $ #", "#..    #", "#     ##", "########"], ["########", "# .#  ##", "#   .$##", "#.    ##", "#    $##", "#     ##", "#    $@#", "#      #", "########"], ["#########", "#. $@####", "# $   $ #", "#  $    #", "#  #    #", "####   .#", "####..  #", "###     #", "#########"], ["#########", "# $   *+#", "#   $ $ #", "#     ###", "#   #####", "#     ###", "# .   ###", "## . ####", "#########"], ["########", "##   $+#", "#  $$$ #", "#.   ###", "#.   ###", "##.  ###", "##   ###", "########"]];
+const PAR=[7, 7, 11, 11, 17, 17, 15, 15, 20, 21, 23, 23, 23, 27, 29, 29, 29, 30, 30, 30, 32, 38, 35, 42, 44, 44, 51, 48, 49, 63];
 
-
-const PAR=[1,4,9,12,14,26,34,41];
-const P=Object.assign({cur:0,stars:{}},store.get('prog',{}));
+const P=Object.assign({cur:0,stars:{}},store.get('prog30',{}));
 let joyT=null, giveT=null, gaveUp=false;
 function sokoSolve(){ const D=[1,-1,W,-W], DN={1:'r',[-1]:'l',[W]:'d',[-W]:'u'};
   const ok=(k,d)=>{const n=k+d; if(n<0||n>=W*H) return -1; if(d===1&&n%W===0||d===-1&&k%W===0) return -1; return g[n]==='f'?n:-1;};
@@ -422,7 +430,7 @@ function giveUp(){ if(done||giveT) return; actx(); if(!confirm('ギブアップ�
 function syncHero(){ document.querySelectorAll('#dogPick button').forEach(b=>b.classList.toggle('on',b.dataset.v===HERO)); }
 document.querySelectorAll('#dogPick button').forEach(b=>b.onclick=()=>{ actx(); SFX.tap(); HERO=b.dataset.v; store.set('hero',HERO); syncHero(); draw(); }); syncHero();
 let W,H,g,pl,bx,goals,mv=0,hist=[],done=false;
-function load(i){ clearInterval(joyT); clearInterval(giveT); giveT=null; gaveUp=false; FACE='d'; FR=0; P.cur=i; store.set('prog',P); const rows=SOKO[i]; H=rows.length; W=Math.max(...rows.map(r=>r.length));
+function load(i){ clearInterval(joyT); clearInterval(giveT); giveT=null; gaveUp=false; FACE='d'; FR=0; P.cur=i; store.set('prog30',P); const rows=SOKO[i]; H=rows.length; W=Math.max(...rows.map(r=>r.length));
   g=[]; bx=[]; goals=[];
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const c=(rows[y][x]||' '); const k=y*W+x;
     g[k]=c==='#'?'w':'f'; if(c==='@'||c==='+')pl=k; if(c==='$'||c==='*')bx.push(k); if(c==='.'||c==='*'||c==='+')goals.push(k); }
@@ -430,27 +438,31 @@ function load(i){ clearInterval(joyT); clearInterval(giveT); giveT=null; gaveUp=
   const reach=new Set([pl]),q=[pl]; while(q.length){const k=q.pop();for(const d of [1,-1,W,-W]){const n=k+d;if(n<0||n>=W*H||g[n]==='w'||reach.has(n))continue;if(d===1&&n%W===0||d===-1&&k%W===0)continue;reach.add(n);q.push(n)}}
   for(let k=0;k<W*H;k++) if(g[k]==='f'&&!reach.has(k)) g[k]='x';
   mv=0; hist=[]; done=false; draw(); $('stN').textContent=(i+1)+'/'+SOKO.length; $('best').textContent=PAR[i];
-  lvRow($('lvs'),SOKO.map((_,k)=>'ステージ'+(k+1)),i,k=>P.stars[k]||0,load);
   setStatus('箱を🐾の上へ運ぼう'); setTimeout(()=>sayText(1,'よいしょ、がんばるワン！'),300); }
 function draw(){ const bd=$('bd'); const cs=Math.min(Math.floor((Math.min(innerWidth/(parseFloat(getComputedStyle(document.body).zoom)||1),480)-44)/W),56);
   bd.style.gridTemplateColumns=`repeat(${W},${cs}px)`;
   bd.innerHTML=''; for(let k=0;k<W*H;k++){ const e=document.createElement('div'); e.className='ce '+(g[k]==='w'?'w v'+((k*7+(k>>3))%3):g[k]==='f'?'f':'')+(goals.includes(k)?' g':'');
     if(bx.includes(k)) e.innerHTML=`<div class="ob bx ${goals.includes(k)?'ok':''}">🦴</div>`;
     if(k===pl) e.innerHTML=`<div class="ob pl${done?' joy':''}" style="background-image:url(../img/sk/${HERO}_${FACE}${FR}.webp)"></div>`;
-    bd.appendChild(e);} $('mv').textContent=mv; $('bUndo').disabled=!hist.length; $('bNext').style.visibility=done&&P.cur<SOKO.length-1?'visible':'hidden'; }
+    bd.appendChild(e);} $('mv').textContent=mv; $('bUndo').disabled=!hist.length; $('bNext').style.visibility=done&&!gaveUp&&P.cur<SOKO.length-1?'visible':'hidden'; }
 function step(d,auto){ if(done||(giveT&&!auto)) return; actx(); FACE=d; const dd={l:-1,r:1,u:-W,d:W}[d]; const n=pl+dd;
   if(g[n]!=='f') {SFX.ng();return;} const bi=bx.indexOf(n);
   if(bi>=0){ const n2=n+dd; if(g[n2]!=='f'||bx.includes(n2)){SFX.ng();return;} hist.push([pl,bx.slice()]); bx[bi]=n2; SFX.put(); }
   else { hist.push([pl,bx.slice()]); SFX.tap(); }
   pl=n; mv++; FR=(FR+1)%4; draw(); check(); }
 function check(){ if(!bx.every(b=>goals.includes(b))) return; done=true; const s=gaveUp?0:mv<=PAR[P.cur]?3:mv<=PAR[P.cur]*1.6?2:1;
-  if(!gaveUp){ P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog',P); report('clear',{stars:s}); } SFX.win(); confetti(['🦴','🐾','✨']);
+  if(!gaveUp){ P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog30',P); report('clear',{stars:s}); } SFX.win(); confetti(['🦴','🐾','✨']);
   FACE='d'; FR=0; sayText(HERO==='colon'?1:2,'できたワン！',true); setTimeout(()=>sayText(HERO==='colon'?2:1,'すごーい♪',true),500); setStatus('クリア！'); draw();
-  lvRow($('lvs'),SOKO.map((_,k)=>'ステージ'+(k+1)),P.cur,k=>P.stars[k]||0,load);
   setStatus(gaveUp?'🏳️ これが答えだよ。つぎはがんばろう！':'🎉 ステージ'+(P.cur+1)+' クリア！ '+'★'.repeat(s)+'☆'.repeat(3-s)+'（'+mv+'手）'); clearInterval(joyT); joyT=setInterval(()=>{ FR=(FR+1)%4; const e=document.querySelector('#bd .pl'); if(e) e.style.backgroundImage=`url(../img/sk/${HERO}_d${FR}.webp)`; },180); }
 $('bAgain').onclick=()=>{closeM('mRes'); load(Math.min(P.cur+1,SOKO.length-1))};
 $('bAgain').textContent='つぎのステージ';
 $('bNext').onclick=()=>load(P.cur+1);
+const isDone=i=>!!P.stars[i], unlocked=i=>i===0||isDone(i-1)||isDone(i);
+function listM(){ const tot=SOKO.reduce((a,_,i)=>a+(P.stars[i]||0),0); $('lsSum').textContent='★ '+tot+' / '+SOKO.length*3;
+  $('qg').innerHTML=SOKO.map((_,i)=>{ const u=unlocked(i); return `<button data-i="${i}" class="${isDone(i)?'ok':''} ${u?'':'lk'} ${i===P.cur?'cur':''} ${i>=20?'hd':''}">${u?'':'🔒'}${i+1}<small>${u?(P.stars[i]?'★'.repeat(P.stars[i]):PAR[i]+'手'):'？'}</small></button>`; }).join('');
+  $('qg').querySelectorAll('button').forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; if(!unlocked(i)){toast('前のステージをクリアするとあくよ');return} actx();SFX.tap();closeM('mList');load(i); }); }
+$('bList').onclick=()=>{actx();SFX.tap();listM();openM('mList')};
+if(!unlocked(P.cur)||P.cur>=SOKO.length) P.cur=0;
 $('bUndo').onclick=()=>{ if(!hist.length) return; [pl,bx]=hist.pop(); mv--; done=false; SFX.tap(); draw(); };
 $('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)};
 document.querySelectorAll('.pad [data-d]').forEach(b=>b.onclick=()=>step(b.dataset.d));
