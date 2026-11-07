@@ -132,7 +132,7 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 #bd .ce.g::after{display:none!important}
 #bd .bx{inset:2%!important;border-radius:0!important;box-shadow:none!important;background:url(../img/sb/natural_box.webp) center/contain no-repeat!important;font-size:0!important;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
 #bd .bx.ok{inset:-6%!important;background-image:url(../img/sb/natural_ok.webp)!important}
-body[data-vt=retro] #bd .ce.f{background:#f0dbb0!important;box-shadow:inset 0 0 0 .5px rgba(140,60,20,.2)!important}body[data-vt=retro] #bd .ce.w{background-image:url(../img/sb/retro_w0.webp)!important}body[data-vt=retro] #bd .ce.w.v1{background-image:url(../img/sb/retro_w1.webp)!important}body[data-vt=retro] #bd .ce.w.v2{background-image:url(../img/sb/retro_w2.webp)!important}body[data-vt=retro] #bd .ce.g.f{background:url(../img/sb/retro_goal.webp) center/92% 92% no-repeat,#f0dbb0!important}body[data-vt=retro] #bd .bx{background-image:url(../img/sb/retro_box.webp)!important}body[data-vt=retro] #bd .bx.ok{background-image:url(../img/sb/retro_ok.webp)!important}
+body[data-vt=retro] #bd .ce.f{background:#e3b25e!important;box-shadow:inset 0 0 0 .5px rgba(110,50,10,.35)!important}body[data-vt=retro] #bd .ce.w{background-image:url(../img/sb/retro_w0.webp)!important}body[data-vt=retro] #bd .ce.w.v1{background-image:url(../img/sb/retro_w1.webp)!important}body[data-vt=retro] #bd .ce.w.v2{background-image:url(../img/sb/retro_w2.webp)!important}body[data-vt=retro] #bd .ce.g.f{background:url(../img/sb/retro_goal.webp) center/92% 92% no-repeat,#e3b25e!important}body[data-vt=retro] #bd .bx{background-image:url(../img/sb/retro_box.webp)!important}body[data-vt=retro] #bd .bx.ok{background-image:url(../img/sb/retro_ok.webp)!important}
 body[data-vt=neon] #bd .ce.f{background:#17134e!important;box-shadow:inset 0 0 0 .5px rgba(63,240,255,.22)!important}body[data-vt=neon] #bd .ce.w{background-image:url(../img/sb/neon_w0.webp)!important}body[data-vt=neon] #bd .ce.w.v1{background-image:url(../img/sb/neon_w1.webp)!important}body[data-vt=neon] #bd .ce.w.v2{background-image:url(../img/sb/neon_w2.webp)!important}body[data-vt=neon] #bd .ce.g.f{background:url(../img/sb/neon_goal.webp) center/92% 92% no-repeat,#17134e!important}body[data-vt=neon] #bd .bx{background-image:url(../img/sb/neon_box.webp)!important}body[data-vt=neon] #bd .bx.ok{background-image:url(../img/sb/neon_ok.webp)!important}
 .ce{position:relative;overflow:visible}
 .pl.joy{animation:joy .55s ease-in-out infinite}
@@ -291,11 +291,11 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="pad"><button class="u" data-d="u">▲</button><button class="l" data-d="l">◀</button><button class="c" id="bNext">つぎ ▶</button><button class="r" data-d="r">▶</button><button class="d" data-d="d">▼</button></div>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
-  <div class="btns gbtns" style="grid-template-columns:repeat(5,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn c" id="bGive">🏳️ギブアップ</button><button class="btn g" id="bHome">🏠一覧へ</button></div>
+  <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠一覧へ</button></div>
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 倉庫番</h2><p>コロンかムーンを動かして、ホネの箱 📦 を <b>肉球マーク🐾</b> の上へ全部おしてね。</p>
 <p>👆 十字ボタン・画面のスワイプ・矢印キーで動きます。箱は<b>押すだけ</b>で、引っぱれません。</p>
-<p>↩︎「1手戻す」で何回でも戻れます。動けなくなったら「リセット」。どうしても解けないときは「🏳️ギブアップ」で答えを再生します（★はつきません）。</p>
+<p>↩︎「1手戻す」で何回でも戻れます。動けなくなったら「リセット」。</p>
 <p>ステージ1から順にむずかしくなるよ。おすすめ手数以内でクリアすると★3つ！</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -452,7 +452,7 @@ $('bAgain').onclick=()=>{closeM('mRes'); load(Math.min(P.cur+1,SOKO.length-1))};
 $('bAgain').textContent='つぎのステージ';
 $('bNext').onclick=()=>load(P.cur+1);
 $('bUndo').onclick=()=>{ if(!hist.length) return; [pl,bx]=hist.pop(); mv--; done=false; SFX.tap(); draw(); };
-$('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)}; $('bGive').onclick=giveUp;
+$('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)};
 document.querySelectorAll('.pad [data-d]').forEach(b=>b.onclick=()=>step(b.dataset.d));
 swipe($('bd'),step); keys(step); addEventListener('resize',draw);
 load(P.cur);
