@@ -118,6 +118,24 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 .bx{border-radius:7px;background:linear-gradient(#e7b56a,#c88a3e);box-shadow:inset 0 0 0 3px #8a5a2c,0 2px 3px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:min(5vw,22px)}
 .bx.ok{background:linear-gradient(#9fd08a,#5d9a4c);box-shadow:inset 0 0 0 3px #3d6a30,0 0 8px #ffe066}
 .pl{inset:-18% -14% -2%;background-position:center bottom!important;background-size:contain!important;background-repeat:no-repeat!important;background-color:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;z-index:3;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+
+/* image skin */
+.panel:has(#bd){background:none!important;box-shadow:none!important;border:0!important;padding:0!important}
+.panel:has(#bd)::before,.panel:has(#bd)::after{display:none!important}
+.panel:has(#bd) .in{background:url(../img/sb/natural_frame.webp) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;padding:11% 9% 9%!important;display:flex;justify-content:center}
+body[data-vt=retro] .panel:has(#bd) .in{background-image:url(../img/sb/retro_frame.webp)!important;padding:16% 10% 12%!important}
+body[data-vt=neon] .panel:has(#bd) .in{background-image:url(../img/sb/neon_frame.webp)!important;padding:13% 10% 10%!important}
+#bd .ce{border-radius:0!important;box-shadow:none!important;background:none}
+#bd .ce.f{background:url(../img/sb/natural_floorc.webp) center/100% 100%!important}
+#bd .ce.w{background:url(../img/sb/natural_w0.webp) center/100% 100% no-repeat!important}
+#bd .ce.w.v1{background-image:url(../img/sb/natural_w1.webp)!important}#bd .ce.w.v2{background-image:url(../img/sb/natural_w2.webp)!important}
+#bd .ce.g{background-image:url(../img/sb/natural_goal.webp)!important;background-size:92% 92%!important;background-repeat:no-repeat!important;background-color:transparent}
+#bd .ce.g.f{background:url(../img/sb/natural_goal.webp) center/92% 92% no-repeat,url(../img/sb/natural_floorc.webp) center/100% 100%!important}
+#bd .ce.g::after{display:none!important}
+#bd .bx{inset:2%!important;border-radius:0!important;box-shadow:none!important;background:url(../img/sb/natural_box.webp) center/contain no-repeat!important;font-size:0!important;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+#bd .bx.ok{inset:-6%!important;background-image:url(../img/sb/natural_ok.webp)!important}
+body[data-vt=retro] #bd .ce.f{background-image:url(../img/sb/retro_floorc.webp)!important}body[data-vt=retro] #bd .ce.w{background-image:url(../img/sb/retro_w0.webp)!important}body[data-vt=retro] #bd .ce.w.v1{background-image:url(../img/sb/retro_w1.webp)!important}body[data-vt=retro] #bd .ce.w.v2{background-image:url(../img/sb/retro_w2.webp)!important}body[data-vt=retro] #bd .ce.g.f{background:url(../img/sb/retro_goal.webp) center/92% 92% no-repeat,url(../img/sb/retro_floorc.webp) center/100% 100%!important}body[data-vt=retro] #bd .bx{background-image:url(../img/sb/retro_box.webp)!important}body[data-vt=retro] #bd .bx.ok{background-image:url(../img/sb/retro_ok.webp)!important}
+body[data-vt=neon] #bd .ce.f{background-image:url(../img/sb/neon_floorc.webp)!important}body[data-vt=neon] #bd .ce.w{background-image:url(../img/sb/neon_w0.webp)!important}body[data-vt=neon] #bd .ce.w.v1{background-image:url(../img/sb/neon_w1.webp)!important}body[data-vt=neon] #bd .ce.w.v2{background-image:url(../img/sb/neon_w2.webp)!important}body[data-vt=neon] #bd .ce.g.f{background:url(../img/sb/neon_goal.webp) center/92% 92% no-repeat,url(../img/sb/neon_floorc.webp) center/100% 100%!important}body[data-vt=neon] #bd .bx{background-image:url(../img/sb/neon_box.webp)!important}body[data-vt=neon] #bd .bx.ok{background-image:url(../img/sb/neon_ok.webp)!important}
 .ce{position:relative;overflow:visible}
 .pl.joy{animation:joy .55s ease-in-out infinite}
 @keyframes joy{0%,100%{transform:translateY(0) scale(1,1)}20%{transform:translateY(2%) scale(1.06,.92)}50%{transform:translateY(-28%) scale(.96,1.05) rotate(-4deg)}75%{transform:translateY(-10%) rotate(4deg)}}
@@ -271,7 +289,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="hud"><div class="box"><small>ステージ</small><b id="stN"></b></div><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small>おすすめ手数</small><b id="best"></b></div></div>
   <div class="dogPick" id="dogPick"><button data-v="colon"><i style="background-image:url(../img/sk/colon_d0.webp)"></i>コロン</button><button data-v="moon"><i style="background-image:url(../img/sk/moon_d0.webp)"></i>ムーン</button></div>
   <div class="lvRow" id="lvs"></div>
-  <div class="panel"><div class="in" style="padding:6px"><div id="bd"></div></div></div>
+  <div class="panel"><div class="in"><div id="bd"></div></div></div>
   <div class="pad"><button class="u" data-d="u">▲</button><button class="l" data-d="l">◀</button><button class="c" id="bNext">つぎ ▶</button><button class="r" data-d="r">▶</button><button class="d" data-d="d">▼</button></div>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
@@ -400,9 +418,9 @@ function load(i){ clearInterval(joyT); FACE='d'; FR=0; P.cur=i; store.set('prog'
   mv=0; hist=[]; done=false; draw(); $('stN').textContent=(i+1)+'/'+SOKO.length; $('best').textContent=PAR[i];
   lvRow($('lvs'),SOKO.map((_,k)=>'ステージ'+(k+1)),i,k=>P.stars[k]||0,load);
   setStatus('箱を🐾の上へ運ぼう'); setTimeout(()=>sayText(1,'よいしょ、がんばるワン！'),300); }
-function draw(){ const bd=$('bd'); const cs=Math.min(Math.floor((Math.min(innerWidth,480)-40)/W),46);
+function draw(){ const bd=$('bd'); const cs=Math.min(Math.floor((Math.min(innerWidth/(parseFloat(getComputedStyle(document.body).zoom)||1),480)-40)*0.8/W),44);
   bd.style.gridTemplateColumns=`repeat(${W},${cs}px)`;
-  bd.innerHTML=''; for(let k=0;k<W*H;k++){ const e=document.createElement('div'); e.className='ce '+(g[k]==='w'?'w':g[k]==='f'?'f':'')+(goals.includes(k)?' g':'');
+  bd.innerHTML=''; for(let k=0;k<W*H;k++){ const e=document.createElement('div'); e.className='ce '+(g[k]==='w'?'w v'+((k*7+(k>>3))%3):g[k]==='f'?'f':'')+(goals.includes(k)?' g':'');
     if(bx.includes(k)) e.innerHTML=`<div class="ob bx ${goals.includes(k)?'ok':''}">🦴</div>`;
     if(k===pl) e.innerHTML=`<div class="ob pl${done?' joy':''}" style="background-image:url(../img/sk/${HERO}_${FACE}${FR}.webp)"></div>`;
     bd.appendChild(e);} $('mv').textContent=mv; $('bUndo').disabled=!hist.length; $('bNext').style.visibility=done&&P.cur<SOKO.length-1?'visible':'hidden'; }
