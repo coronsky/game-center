@@ -2,7 +2,7 @@
 (()=>{
 const PK='mcgc_p', MK='mcgc_m', CAP=300;
 const GN={reversi:'リバーシ',shogi:'将棋',wanko:'ワンコしょうぎ',gomoku:'五目ならべ',memory:'神経衰弱',escape:'箱入りワンコ',rings:'知恵の輪',peg:'ペグソリティア',slide:'15パズル',hanoi:'ハノイの塔'};
-const BATTLE=['reversi','shogi','wanko','gomoku','memory'], PUZZLE=['escape','rings','peg','slide','hanoi'];
+const BATTLE=['reversi','shogi','wanko','gomoku','memory'], PUZZLE=['escape','peg','slide','hanoi'];
 const RANKS=[{n:'ブロンズ',c:0},{n:'シルバー',c:100},{n:'ゴールド',c:300},{n:'プラチナ',c:700}];
 const rankOf=c=>{let r=RANKS[0]; for(const x of RANKS) if(c>=x.c) r=x; return r};
 const get=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}};
@@ -18,7 +18,7 @@ function makeMissions(d){
 }
 function state(){
   let m=get(MK,null); const d=today();
-  if(!m||m.d!==d) { m={d,list:makeMissions(d),prog:{},done:{},kinds:[],earned:0,bonus:false}; put(MK,m); }
+  if(!m||m.d!==d||m.list.some(x=>x.g==='rings'||x.g==='wire')) { m={d,list:makeMissions(d),prog:{},done:{},kinds:[],earned:0,bonus:false}; put(MK,m); }
   return m;
 }
 function addCoins(n){ const P=get(PK,{}); const before=rankOf(P.coins||0); P.coins=(P.coins||0)+n; put(PK,P); return {coins:P.coins,up:rankOf(P.coins).c>before.c?rankOf(P.coins):null}; }
