@@ -119,6 +119,8 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 .bx.ok{background:linear-gradient(#9fd08a,#5d9a4c);box-shadow:inset 0 0 0 3px #3d6a30,0 0 8px #ffe066}
 .pl{inset:-18% -14% -2%;background-position:center bottom!important;background-size:contain!important;background-repeat:no-repeat!important;background-color:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;z-index:3;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
 .ce{position:relative;overflow:visible}
+.pl.joy{animation:joy .55s ease-in-out infinite}
+@keyframes joy{0%,100%{transform:translateY(0) scale(1,1)}20%{transform:translateY(2%) scale(1.06,.92)}50%{transform:translateY(-28%) scale(.96,1.05) rotate(-4deg)}75%{transform:translateY(-10%) rotate(4deg)}}
 .dogPick{display:flex;justify-content:center;gap:8px;margin:6px 0 2px}
 .dogPick button{display:flex;align-items:center;gap:4px;border:2px solid #e2cfb2;background:#fffaf1;border-radius:999px;padding:3px 12px 3px 4px;font:inherit;font-weight:900;font-size:13px;color:var(--ink);cursor:pointer}
 .dogPick button i{width:30px;height:30px;background:center/contain no-repeat}
@@ -384,11 +386,11 @@ const SOKO=[["#####","#@$.#","#####"],["######","#@ $.#","# $. #","######"],["##
 
 const PAR=[1,4,9,12,14,26,34,41];
 const P=Object.assign({cur:0,stars:{}},store.get('prog',{}));
-let HERO=store.get('hero','colon'), FACE='d', FR=0; [0,1,2,3].forEach(i=>['u','r','d','l'].forEach(d=>['colon','moon'].forEach(h=>{const im=new Image();im.src=`../img/sk/${h}_${d}${i}.webp`})));
+let joyT=null; let HERO=store.get('hero','colon'), FACE='d', FR=0; [0,1,2,3].forEach(i=>['u','r','d','l'].forEach(d=>['colon','moon'].forEach(h=>{const im=new Image();im.src=`../img/sk/${h}_${d}${i}.webp`})));
 function syncHero(){ document.querySelectorAll('#dogPick button').forEach(b=>b.classList.toggle('on',b.dataset.v===HERO)); }
 document.querySelectorAll('#dogPick button').forEach(b=>b.onclick=()=>{ actx(); SFX.tap(); HERO=b.dataset.v; store.set('hero',HERO); syncHero(); draw(); }); syncHero();
 let W,H,g,pl,bx,goals,mv=0,hist=[],done=false;
-function load(i){ FACE='d'; FR=0; P.cur=i; store.set('prog',P); const rows=SOKO[i]; H=rows.length; W=Math.max(...rows.map(r=>r.length));
+function load(i){ clearInterval(joyT); FACE='d'; FR=0; P.cur=i; store.set('prog',P); const rows=SOKO[i]; H=rows.length; W=Math.max(...rows.map(r=>r.length));
   g=[]; bx=[]; goals=[];
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const c=(rows[y][x]||' '); const k=y*W+x;
     g[k]=c==='#'?'w':'f'; if(c==='@'||c==='+')pl=k; if(c==='$'||c==='*')bx.push(k); if(c==='.'||c==='*'||c==='+')goals.push(k); }
@@ -402,7 +404,7 @@ function draw(){ const bd=$('bd'); const cs=Math.min(Math.floor((Math.min(innerW
   bd.style.gridTemplateColumns=`repeat(${W},${cs}px)`;
   bd.innerHTML=''; for(let k=0;k<W*H;k++){ const e=document.createElement('div'); e.className='ce '+(g[k]==='w'?'w':g[k]==='f'?'f':'')+(goals.includes(k)?' g':'');
     if(bx.includes(k)) e.innerHTML=`<div class="ob bx ${goals.includes(k)?'ok':''}">🦴</div>`;
-    if(k===pl) e.innerHTML=`<div class="ob pl" style="background-image:url(../img/sk/${HERO}_${FACE}${FR}.webp)"></div>`;
+    if(k===pl) e.innerHTML=`<div class="ob pl${done?' joy':''}" style="background-image:url(../img/sk/${HERO}_${FACE}${FR}.webp)"></div>`;
     bd.appendChild(e);} $('mv').textContent=mv; $('bUndo').disabled=!hist.length; $('bNext').style.visibility=done&&P.cur<SOKO.length-1?'visible':'hidden'; }
 function step(d){ if(done) return; actx(); FACE=d; const dd={l:-1,r:1,u:-W,d:W}[d]; const n=pl+dd;
   if(g[n]!=='f') {SFX.ng();return;} const bi=bx.indexOf(n);
@@ -413,7 +415,7 @@ function check(){ if(!bx.every(b=>goals.includes(b))) return; done=true; const s
   P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog',P); report('clear',{stars:s}); SFX.win(); confetti(['🦴','🐾','✨']);
   FACE='d'; FR=0; sayText(HERO==='colon'?1:2,'できたワン！',true); setTimeout(()=>sayText(HERO==='colon'?2:1,'すごーい♪',true),500); setStatus('クリア！'); draw();
   lvRow($('lvs'),SOKO.map((_,k)=>'ステージ'+(k+1)),P.cur,k=>P.stars[k]||0,load);
-  showResult({winner:1,title:'🎉 ステージ'+(P.cur+1)+' クリア！',score:mv+'手',msg:'★'.repeat(s)+'☆'.repeat(3-s),rec:'おすすめ：'+PAR[P.cur]+'手'}); }
+  setStatus('🎉 ステージ'+(P.cur+1)+' クリア！ '+'★'.repeat(s)+'☆'.repeat(3-s)+'（'+mv+'手）'); clearInterval(joyT); joyT=setInterval(()=>{ FR=(FR+1)%4; const e=document.querySelector('#bd .pl'); if(e) e.style.backgroundImage=`url(../img/sk/${HERO}_d${FR}.webp)`; },180); }
 $('bAgain').onclick=()=>{closeM('mRes'); load(Math.min(P.cur+1,SOKO.length-1))};
 $('bAgain').textContent='つぎのステージ';
 $('bNext').onclick=()=>load(P.cur+1);
