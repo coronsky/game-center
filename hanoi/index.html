@@ -457,7 +457,7 @@ function draw(){
     anim(e,PX[p],y);
     e.classList.toggle('hint',!!hintM&&hintM[0]===p&&top(p)===d); }
   document.querySelectorAll('.pole').forEach((e,i)=>{ e.classList.toggle('sel',i===sel); e.classList.toggle('hintTo',!!hintM&&hintM[1]===i); });
-  $('dogTop').classList.toggle('show',done); $('dogTop').style.left=PX[2]+'%'; $('dogTop').style.top=Math.max(0,Math.min(...yb)-22)+'%';
+  $('dogTop').classList.remove('show'); $('dogTop').style.left=PX[2]+'%'; $('dogTop').style.top=Math.max(0,Math.min(...yb)-22)+'%';
 }
 new MutationObserver(()=>{ try{draw()}catch(e){} }).observe(document.body,{attributes:true,attributeFilter:['data-vt']});
 function hud(){ $('mv').textContent=moves; if(course==='lim'){ $('tmL').textContent='のこり'; $('tm').textContent=Math.max(0,stMin()-moves)+'手'; } else { $('tmL').textContent='タイム'; $('tm').textContent=t0?fmt(Date.now()-t0):'0:00'; } $('bUndo').disabled=!hist.length||demo||done; $('bHint').disabled=demo||done; $('bDemo').textContent=demo?'⏹ とめる':'🎬 見本'; $('bDemo').disabled=done; }
