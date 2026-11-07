@@ -109,20 +109,37 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 .dog.c{background-image:var(--colon)}.dog.m{background-image:var(--moon)}
 .help p{font-size:14px;line-height:1.65;margin:0 0 8px}
 
-#bd{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;padding:6px;touch-action:none}
-.ce{aspect-ratio:1;border-radius:6px;background:#eaf3dc;position:relative}
-.ce.w{background:linear-gradient(135deg,#7fae6b,#4f7a4c);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
-.ce.mid{background:linear-gradient(#c79563,#8a5a2c)}
-.ce.gc,.ce.gm{background:#ffe9b8;box-shadow:inset 0 0 0 2px #f0b429}
-.ce.gc::after,.ce.gm::after{content:"💕";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:min(4vw,18px);opacity:.6}
-.ce .dog{position:absolute;inset:6%;z-index:2}
-.ce.heart{background:#ffd6e0}.ce.heart::after{content:"💗";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:min(5vw,22px)}
+.bwrap{position:relative;width:min(100%,380px);margin:0 auto;background:center/100% 100% no-repeat}
+#bd{position:absolute;display:grid;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(8,1fr);gap:1px;touch-action:none}
+.ce{position:relative;background:center/100% 100% no-repeat;border-radius:4px}
+.ce.mcol{grid-column:5;grid-row:2 / span 7;background-size:100% 100%}
+.ce .dog{position:absolute;inset:-4%;z-index:2;background:center/contain no-repeat!important;border:0!important;box-shadow:none!important;border-radius:0!important;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
 .legend{display:flex;justify-content:center;gap:14px;font-size:12px;font-weight:900;margin-top:6px}
-.legend span{display:flex;align-items:center;gap:4px}.legend .dog{width:20px;height:20px}
-body[data-vt=retro] .ce{background:#4a2a14}body[data-vt=retro] .ce.w{background:linear-gradient(135deg,#8f2a1f,#5a1a10);box-shadow:inset 0 0 0 2px #f2b134}
-body[data-vt=neon] .ce{background:#140a3a}body[data-vt=neon] .ce.w{background:#2a1a6a;box-shadow:inset 0 0 0 1.5px #3ff0ff}
-body[data-vt=neon] .ce.mid{background:#ff4fd8;box-shadow:0 0 8px #ff4fd8}
-body[data-vt=retro] .ce.mid{background:linear-gradient(#f2b134,#a8651e)}body[data-vt=retro] .ce.gc,body[data-vt=retro] .ce.gm,body[data-vt=neon] .ce.gc,body[data-vt=neon] .ce.gm{background:#ffe9b8}body:is([data-vt=retro],[data-vt=neon]) .ce.heart{background:#ffd6e0}
+.legend span{display:flex;align-items:center;gap:4px}.legend .dog{width:24px;height:24px;background:center/contain no-repeat!important;border:0!important;box-shadow:none!important}
+.panel.bpn{background:none!important;box-shadow:none!important;border:0!important;padding:0!important}.panel.bpn::before,.panel.bpn::after{display:none!important}.panel.bpn .in{background:none!important;box-shadow:none!important;border:0!important;padding:0!important}
+.pad button{border:0!important;box-shadow:none!important;background:center/contain no-repeat!important;color:transparent!important;font-size:0!important}
+.pad button#bNext{background-size:100% 100%!important;color:#5a3d2b!important;font-size:15px!important;font-weight:900}
+.lsBtn{display:block;margin:6px auto 0;border:2px solid #e2cfb2;background:#fffaf1;border-radius:999px;padding:7px 20px;font:inherit;font-weight:900;font-size:14px;color:var(--ink);cursor:pointer}
+body:is([data-vt=retro],[data-vt=neon]) .lsBtn{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.3)}
+.qg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:55vh;overflow:auto}
+.qg button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:12px;padding:6px 0;font:inherit;font-weight:900;font-size:13px;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
+.qg button small{font-size:9px;font-weight:700;opacity:.75}
+.qg button.ok{background:#eef5e6;border-color:#9dbb8a}.qg button.cur{box-shadow:0 0 0 2px #f0b429}.qg button.lk{opacity:.45;cursor:default;background:#f1e8d8}.qg button.hd{color:#b5452f}
+body:is([data-vt=retro],[data-vt=neon]) .qg button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.25)}
+body:is([data-vt=retro],[data-vt=neon]) .qg button.ok{background:rgba(120,200,120,.25)}
+body .bwrap{aspect-ratio:634/623;background-image:url(../img/bn/natural_board.webp)}body #bd{top:13.3%;right:7.2%;bottom:5.6%;left:7.0%}
+body .ce{background-image:url(../img/bn/natural_f0.webp)}body .ce.heart{background-image:url(../img/bn/natural_heart.webp)}body .ce.gc,body .ce.gm{background-image:url(../img/bn/natural_goal.webp)}body .ce.mcol{background-image:url(../img/bn/natural_col.webp);border-radius:0}
+body .ce.w.v0{background-image:url(../img/bn/natural_w0.webp)}body .ce.w.v1{background-image:url(../img/bn/natural_w1.webp)}body .ce.w.v2{background-image:url(../img/bn/natural_w2.webp)}body .ce.w.v3{background-image:url(../img/bn/natural_w0.webp)}
+body .dog.c{background-image:url(../img/bn/natural_colon.webp)!important}body .dog.m{background-image:url(../img/bn/natural_moon.webp)!important}body .pad button[data-d=u]{background-image:url(../img/bn/natural_up.webp)!important}body .pad button[data-d=d]{background-image:url(../img/bn/natural_down.webp)!important}body .pad button[data-d=l]{background-image:url(../img/bn/natural_left.webp)!important}body .pad button[data-d=r]{background-image:url(../img/bn/natural_right.webp)!important}body .pad button#bNext{background-image:url(../img/bn/natural_btn.webp)!important}
+body[data-vt=retro] .bwrap{aspect-ratio:616/640;background-image:url(../img/bn/retro_board.webp)}body[data-vt=retro] #bd{top:19.4%;right:9.6%;bottom:10.6%;left:10.2%}
+body[data-vt=retro] .ce{background-image:url(../img/bn/retro_f0.webp)}body[data-vt=retro] .ce.heart{background-image:url(../img/bn/retro_heart.webp)}body[data-vt=retro] .ce.gc,body[data-vt=retro] .ce.gm{background-image:url(../img/bn/retro_goal.webp)}body[data-vt=retro] .ce.mcol{background-image:url(../img/bn/retro_col.webp);border-radius:0}
+body[data-vt=retro] .ce.w.v0{background-image:url(../img/bn/retro_f1.webp)}body[data-vt=retro] .ce.w.v1{background-image:url(../img/bn/retro_f2.webp)}body[data-vt=retro] .ce.w.v2{background-image:url(../img/bn/retro_w1.webp)}body[data-vt=retro] .ce.w.v3{background-image:url(../img/bn/retro_w2.webp)}
+body[data-vt=retro] .dog.c{background-image:url(../img/bn/retro_colon.webp)!important}body[data-vt=retro] .dog.m{background-image:url(../img/bn/retro_moon.webp)!important}body[data-vt=retro] .pad button[data-d=u]{background-image:url(../img/bn/retro_up.webp)!important}body[data-vt=retro] .pad button[data-d=d]{background-image:url(../img/bn/retro_down.webp)!important}body[data-vt=retro] .pad button[data-d=l]{background-image:url(../img/bn/retro_left.webp)!important}body[data-vt=retro] .pad button[data-d=r]{background-image:url(../img/bn/retro_right.webp)!important}body[data-vt=retro] .pad button#bNext{background-image:url(../img/bn/retro_btn.webp)!important}
+body[data-vt=neon] .bwrap{aspect-ratio:619/641;background-image:url(../img/bn/neon_board.webp)}body[data-vt=neon] #bd{top:18.3%;right:10%;bottom:13.9%;left:10%}
+body[data-vt=neon] .ce{background-image:url(../img/bn/neon_f0.webp)}body[data-vt=neon] .ce.heart{background-image:url(../img/bn/neon_heart.webp)}body[data-vt=neon] .ce.gc,body[data-vt=neon] .ce.gm{background-image:url(../img/bn/neon_goal.webp)}body[data-vt=neon] .ce.mcol{background-image:url(../img/bn/neon_col.webp);border-radius:0}
+body[data-vt=neon] .ce.w.v0{background-image:url(../img/bn/neon_f1.webp)}body[data-vt=neon] .ce.w.v1{background-image:url(../img/bn/neon_w1.webp)}body[data-vt=neon] .ce.w.v2{background-image:url(../img/bn/neon_w2.webp)}body[data-vt=neon] .ce.w.v3{background-image:url(../img/bn/neon_f1.webp)}
+body[data-vt=neon] .dog.c{background-image:url(../img/bn/neon_colon.webp)!important}body[data-vt=neon] .dog.m{background-image:url(../img/bn/neon_moon.webp)!important}body[data-vt=neon] .pad button[data-d=u]{background-image:url(../img/bn/neon_up.webp)!important}body[data-vt=neon] .pad button[data-d=d]{background-image:url(../img/bn/neon_down.webp)!important}body[data-vt=neon] .pad button[data-d=l]{background-image:url(../img/bn/neon_left.webp)!important}body[data-vt=neon] .pad button[data-d=r]{background-image:url(../img/bn/neon_right.webp)!important}body[data-vt=neon] .pad button#bNext{background-image:url(../img/bn/neon_btn.webp)!important}
+body[data-vt=retro] .pad button#bNext{color:#7a2a10!important}body[data-vt=neon] .pad button#bNext{color:#fff!important;text-shadow:0 0 6px #3ff0ff}
 body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
 body[data-vt=neon] .pkRow button{background:rgba(255,255,255,.06);border-color:#5a3bb0;color:#fff}body[data-vt=neon] .pkRow button.on{border-color:#ff4fd8;background:rgba(255,79,216,.25);box-shadow:0 0 12px #ff4fd8}
 
@@ -263,8 +280,8 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">なかよしミラー</div></div>
 
   <div class="hud"><div class="box"><small>ステージ</small><b id="stN"></b></div><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small>最短</small><b id="best"></b></div></div>
-  <div class="lvRow" id="lvs"></div>
-  <div class="panel"><div class="in"><div id="bd"></div></div></div>
+  <button class="lsBtn" id="bList">📋 ステージ一覧（全60）</button>
+  <div class="panel bpn"><div class="in"><div class="bwrap"><div id="bd"></div></div></div></div>
   <div class="legend"><span><i class="dog c"></i>コロン：ボタンと同じ向き</span><span><i class="dog m"></i>ムーン：左右が反対</span></div>
   <div class="pad"><button class="u" data-d="u">▲</button><button class="l" data-d="l">◀</button><button class="c" id="bNext">つぎ ▶</button><button class="r" data-d="r">▶</button><button class="d" data-d="d">▼</button></div>
 
@@ -274,11 +291,11 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 なかよしミラー</h2><p>コロン（左）とムーン（右）を<b>同時に</b>動かして、まんなかのハート💗の両どなり💕へ連れていこう！</p>
 <p>⬆️⬇️ 上下はふたりとも同じ向き。⬅️➡️ 左右は<b>ムーンだけ反対</b>に動きます。</p>
 <p>🌳 しげみにぶつかったワンコはその場で止まるよ。これを使ってふたりの位置をそろえよう。</p>
-<p>ふたりが<b>同時に</b>💕に着いたらクリア！最短手数でクリアすると★3つ。</p>
+<p>ふたりが<b>同時に</b>💕に着いたらクリア！最短手数でクリアすると★3つ。</p><p>📋 全60ステージ。やさしい順にならんでいて、クリアすると次のステージがひらきます（記録は自動で保存）。46番からは上級！</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
-
+<div class="modal" id="mList"><div class="card"><h2>📋 ステージ一覧</h2><div style="display:flex;justify-content:space-between;font-weight:900;font-size:13px;margin:0 0 8px"><span>やさしい順・クリアで次がひらく</span><span id="lsSum"></span></div><div class="qg" id="qg"></div><div class="acts"><button class="btn g" data-close="mList">とじる</button></div></div></div>
 <div style="display:none">
 
 </div>
@@ -375,28 +392,34 @@ function keys(cb){ addEventListener('keydown',e=>{const k={ArrowUp:'u',ArrowDown
 function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<button data-i="${i}" class="${i===cur?'on':''}">${n}${starsOf&&starsOf(i)?'<i>'+'★'.repeat(starsOf(i))+'</i>':''}</button>`).join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
 if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
-const LV=[{"d": 7, "g": "000010000001010000100010100010010011000010000010010000001010000000010000", "c": 66, "m": 68}, {"d": 9, "g": "000010000000110000110010101000110000000010101001010000000010010000110110", "c": 64, "m": 68}, {"d": 12, "g": "000010000110010010010010000100110000000110001001011000001011100000010000", "c": 66, "m": 71}, {"d": 14, "g": "000010000011110000010010001000010010001010000010010000000110000100110000", "c": 65, "m": 69}, {"d": 16, "g": "000010000000010010000110100000011001110010100000111000011010110000011000", "c": 65, "m": 69}, {"d": 18, "g": "000010000101010010011011100000011000110010000010110010000010101000010000", "c": 65, "m": 71}];
+const LV=[{"d": 5, "g": "011010111100010000010010110001010111111010001000010010100011110000011100", "c": 48, "m": 50}, {"d": 5, "g": "001010100110010100000010000001010100000010001001010000001010110011010000", "c": 48, "m": 50}, {"d": 5, "g": "000010000011010000010010100000010100110010000000010000000010000001010110", "c": 48, "m": 50}, {"d": 6, "g": "011010010101010011010010010010011001100111010100110011001010100000111001", "c": 47, "m": 51}, {"d": 6, "g": "000010100011010000000010100000010000100110000000011011000011000010111010", "c": 47, "m": 51}, {"d": 6, "g": "000010000010010010000010010100110010000010100000110110000010000000011000", "c": 47, "m": 50}, {"d": 7, "g": "100010011111010111010010111000010010001110111000010100101111111011010100", "c": 46, "m": 50}, {"d": 7, "g": "100010000001110100000011000000010001000010001101010000000010100100110101", "c": 46, "m": 52}, {"d": 7, "g": "101010100001010000010010110010010000100010001000010000010010000000010000", "c": 57, "m": 68}, {"d": 7, "g": "000010100000010000000010000000110010100010000000110000110010010000010001", "c": 46, "m": 50}, {"d": 8, "g": "110010111101010000010010001110010001000111001011110100111111110011010101", "c": 45, "m": 52}, {"d": 8, "g": "000010011010010010000110010000011000010011000110010000010010010000011000", "c": 65, "m": 69}, {"d": 8, "g": "000010100000010100000010100001010100011010111000010000000010000000010100", "c": 66, "m": 60}, {"d": 8, "g": "000010010000010000001010001001010000001010001000010000001010001000011000", "c": 66, "m": 69}, {"d": 9, "g": "010010111101010011110010100011010011001010011110010010111111010110110000", "c": 47, "m": 68}, {"d": 9, "g": "000010010000010010001111010000010000010010011100010101000010000100010001", "c": 56, "m": 59}, {"d": 9, "g": "010010000000010001000010010110010100100010001000010100000110010100010000", "c": 66, "m": 50}, {"d": 9, "g": "000010000000010000010010010100010000001010100000010000101010100000010110", "c": 66, "m": 52}, {"d": 10, "g": "100010111010110101100010011111010001000010011110111011100010011010111001", "c": 55, "m": 51}, {"d": 10, "g": "010010000000010001100010111100110000100110000001011000000010100000010001", "c": 63, "m": 70}, {"d": 10, "g": "000010111101010000000010001000110001000010000000010000000110100010011000", "c": 47, "m": 69}, {"d": 10, "g": "000010000110010001000010001000110000101010100000010001000010000000110000", "c": 45, "m": 70}, {"d": 11, "g": "010010011100110001001110111010110100001010010001011011111110011101110011", "c": 46, "m": 51}, {"d": 11, "g": "000010000000110001100011011000010000101011100101010000000110001000111000", "c": 65, "m": 71}, {"d": 11, "g": "010010000000010000100011010001110100100110000001110101000010000000110000", "c": 64, "m": 52}, {"d": 11, "g": "001010010000010011000110001100110000001010000000010010000110000000110000", "c": 64, "m": 70}, {"d": 12, "g": "010010011101011011011011001101011100110011101000111101010111001001111000", "c": 63, "m": 70}, {"d": 12, "g": "000010110110010100000110001001110000000010100000010000101010010001111001", "c": 55, "m": 70}, {"d": 12, "g": "000010000000110001100011001000111100000010010100110010010010000100010001", "c": 66, "m": 69}, {"d": 12, "g": "000010000000010011000010111000010000000011000100110100010011010000010010", "c": 63, "m": 71}, {"d": 13, "g": "110010000011011110110011000110111000100010101101111101101011100111010010", "c": 46, "m": 71}, {"d": 13, "g": "000010100000010101100010010100010000000111110011010000011111001000011000", "c": 63, "m": 50}, {"d": 13, "g": "000010000010010000000111100000010001001110100101111001100110001000010000", "c": 63, "m": 69}, {"d": 13, "g": "000010000010010100001111000101110010001010100100111000001010000000010000", "c": 66, "m": 69}, {"d": 14, "g": "101010111111010101001010010111011010010010010100110100101010001101110100", "c": 64, "m": 71}, {"d": 14, "g": "000010001010110100001011001011110000000010101101010100100111010000010000", "c": 66, "m": 50}, {"d": 14, "g": "000010001000010100001110101001010011000010000010010010100011000000111011", "c": 63, "m": 69}, {"d": 14, "g": "000010010011010011101011000000011100001010000010011000000010100001010000", "c": 64, "m": 68}, {"d": 15, "g": "001010001100011100010011100000110100100111110101111000111111011110110010", "c": 46, "m": 68}, {"d": 15, "g": "010010011000010110011010001000111000000010000000110000000111100110011001", "c": 66, "m": 69}, {"d": 15, "g": "101010000011010100000010010011010100000010100011110000000010111000010000", "c": 66, "m": 70}, {"d": 16, "g": "111010011111011000101010011110011001011010101001011000011010010000010011", "c": 45, "m": 68}, {"d": 16, "g": "000010001001110001000011101100010000000110011101010101101010001000010100", "c": 65, "m": 71}, {"d": 16, "g": "000010000000011010110011100101011010010011000100011000101010010000010000", "c": 63, "m": 69}, {"d": 17, "g": "011010111010010110000110101001010111010010111000110110100010000100110100", "c": 64, "m": 71}, {"d": 17, "g": "100010000010010100101011110110011100001010001000010001010010000010110100", "c": 63, "m": 68}, {"d": 17, "g": "100010110000110000010010001000011101001010101010010000100110100000010001", "c": 63, "m": 68}, {"d": 18, "g": "001010110011010000110011110110011000100010011100110011001010110001010001", "c": 63, "m": 70}, {"d": 18, "g": "011010000100010100010010110100010010110011110001010010110011000000010000", "c": 63, "m": 68}, {"d": 18, "g": "000010001000110000001010100000011001100010011101110101001010001000011000", "c": 66, "m": 69}, {"d": 19, "g": "011010011100011010000110000000010000011110111000110010110111010101011000", "c": 56, "m": 53}, {"d": 19, "g": "100010011011010001100010000001010000010110010010110111010010010000011000", "c": 57, "m": 71}, {"d": 19, "g": "001010001010011001000010001001110110001010010000110110011010100000010000", "c": 66, "m": 70}, {"d": 20, "g": "100010011100010011001011000010111110000010010110011010111010010000011000", "c": 65, "m": 69}, {"d": 20, "g": "010010110000010100011110000000110010110010000001011100110010010100011000", "c": 64, "m": 69}, {"d": 20, "g": "011010000111011100100010001000010100000110000011010011010011000000110000", "c": 48, "m": 71}, {"d": 21, "g": "000010100000110101011110000000011100100011110010110100010110100000010001", "c": 45, "m": 68}, {"d": 21, "g": "000010000011011101000111100010011000100011100010010110010010010000110000", "c": 64, "m": 59}, {"d": 21, "g": "000010111010110011100011000000011010001010110100010010010010100000110000", "c": 63, "m": 50}, {"d": 22, "g": "000010100111010000110010110000011000000010000000110011001010100100010000", "c": 66, "m": 62}];
 const W=9,H=8;
-const P=Object.assign({cur:0,stars:{}},store.get('prog',{}));
+const P=Object.assign({cur:0,stars:{}},store.get('prog60',{}));
 let g,c,m,gc=3,gm=5,mv=0,hist=[],done=false;
-function load(i){ P.cur=i; store.set('prog',P); const L=LV[i]; g=L.g.split('').map(Number); c=L.c; m=L.m; mv=0; hist=[]; done=false;
-  $('stN').textContent=(i+1)+'/'+LV.length; $('best').textContent=L.d; lvRow($('lvs'),LV.map((_,k)=>'ステージ'+(k+1)),i,k=>P.stars[k]||0,load);
+function load(i){ P.cur=i; store.set('prog60',P); const L=LV[i]; g=L.g.split('').map(Number); c=L.c; m=L.m; mv=0; hist=[]; done=false;
+  $('stN').textContent=(i+1)+'/'+LV.length; $('best').textContent=L.d; 
   draw(); setStatus('ふたりを💕へ連れていこう'); setTimeout(()=>{sayText(1,'いっしょに行こう！');setTimeout(()=>sayText(2,'ムーンは反対に動くよ♪'),500)},300); }
-function draw(){ const bd=$('bd'); bd.innerHTML=''; for(let k=0;k<W*H;k++){ const e=document.createElement('div'); const x=k%W;
-  e.className='ce'+(k===4?' heart':x===4?' mid':g[k]?' w':'')+(k===gc?' gc':'')+(k===gm?' gm':'');
+function draw(){ const bd=$('bd'); bd.innerHTML=''; const mc=document.createElement('div'); mc.className='ce mcol'; bd.appendChild(mc);
+  for(let k=0;k<W*H;k++){ const x=k%W; if(x===4&&k!==4) continue; const e=document.createElement('div');
+  e.className='ce'+(k===4?' heart':g[k]?' w v'+((k*7+(k>>2))%4):'')+(k===gc?' gc':'')+(k===gm?' gm':'');
   if(k===c) e.innerHTML='<i class="dog c"></i>'; if(k===m) e.innerHTML='<i class="dog m"></i>'; bd.appendChild(e); }
-  $('mv').textContent=mv; $('bUndo').disabled=!hist.length; $('bNext').style.visibility=done&&P.cur<LV.length-1?'visible':'hidden'; }
+  $('mv').textContent=mv; $('bUndo').disabled=!hist.length; $('bNext').style.visibility=done&&P.cur<LV.length-1?'visible':'hidden'; $('bNext').textContent='つぎ ▶'; }
 function mvp(p,dx,dy){ const x=p%W+dx,y=((p/W)|0)+dy; if(x<0||x>=W||y<0||y>=H) return p; const n=y*W+x; return (g[n]||x===4)?p:n; }
 function step(d){ if(done) return; actx(); const [dx,dy]={l:[-1,0],r:[1,0],u:[0,-1],d:[0,1]}[d];
   const nc=mvp(c,dx,dy), nm=mvp(m,-dx,dy); if(nc===c&&nm===m){SFX.ng();return;}
   hist.push([c,m]); c=nc; m=nm; mv++; SFX.tap(); draw();
-  if(c===gc&&m===gm){ done=true; const L=LV[P.cur]; const s=mv<=L.d?3:mv<=L.d*1.5?2:1; P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog',P);
+  if(c===gc&&m===gm){ done=true; const L=LV[P.cur]; const s=mv<=L.d?3:mv<=L.d*1.5?2:1; P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog60',P);
     report('clear',{stars:s}); SFX.win(); confetti(['💕','🐾','✨']); sayText(1,'やったね！',true); sayText(2,'なかよし〜♪',true); setStatus('クリア！'); draw();
-    lvRow($('lvs'),LV.map((_,k)=>'ステージ'+(k+1)),P.cur,k=>P.stars[k]||0,load);
     showResult({winner:0,title:'💕 ステージ'+(P.cur+1)+' クリア！',score:mv+'手',msg:'★'.repeat(s)+'☆'.repeat(3-s),rec:'最短：'+L.d+'手'}); } }
 $('bUndo').onclick=()=>{ if(!hist.length) return; [c,m]=hist.pop(); mv--; done=false; SFX.tap(); draw(); };
 $('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)}; $('bNext').onclick=()=>load(P.cur+1);
 $('bAgain').textContent='つぎのステージ'; $('bAgain').onclick=()=>{closeM('mRes');load(Math.min(P.cur+1,LV.length-1))};
+const isDone=i=>!!P.stars[i], unlocked=i=>i===0||isDone(i-1)||isDone(i);
+function listM(){ const tot=LV.reduce((a,_,i)=>a+(P.stars[i]||0),0); $('lsSum').textContent='★ '+tot+' / '+LV.length*3;
+  $('qg').innerHTML=LV.map((L,i)=>{ const u=unlocked(i); return `<button data-i="${i}" class="${isDone(i)?'ok':''} ${u?'':'lk'} ${i===P.cur?'cur':''} ${i>=45?'hd':''}">${u?'':'🔒'}${i+1}<small>${u?(P.stars[i]?'★'.repeat(P.stars[i]):'最短'+L.d+'手'):'？'}</small></button>`; }).join('');
+  $('qg').querySelectorAll('button').forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; if(!unlocked(i)){toast('前のステージをクリアするとあくよ');return} actx();SFX.tap();closeM('mList');load(i); }); }
+$('bList').onclick=()=>{actx();SFX.tap();listM();openM('mList')};
+if(!unlocked(P.cur)) P.cur=0;
 document.querySelectorAll('.pad [data-d]').forEach(b=>b.onclick=()=>step(b.dataset.d)); swipe($('bd'),step); keys(step);
 load(P.cur);
 
