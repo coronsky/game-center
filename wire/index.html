@@ -109,7 +109,12 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 .dog.c{background-image:var(--colon)}.dog.m{background-image:var(--moon)}
 .help p{font-size:14px;line-height:1.65;margin:0 0 8px}
 
-#cv{display:block;width:100%;height:auto;touch-action:manipulation;border-radius:12px}
+#cv{display:block;width:min(100%,340px);margin:0 auto;height:auto;touch-action:manipulation}
+.wrp{background:none!important;box-shadow:none!important;border:0!important;padding:0!important}.wrp::before,.wrp::after{display:none!important}.wrp .in{background:none!important;box-shadow:none!important;border:0!important}
+#bRot{border:0!important;box-shadow:none!important;background:url(../img/wr/natural_b0.webp) center/100% 100% no-repeat!important;min-width:250px;height:52px;font-weight:900;color:#5a3d2b!important;padding:0 26px}
+body[data-vt=retro] #bRot{background-image:url(../img/wr/retro_b0.webp)!important;color:#5a2a00!important}
+body[data-vt=neon] #bRot{background-image:url(../img/wr/neon_b0.webp)!important;color:#fff!important;text-shadow:0 0 6px #3ff0ff}
+#bRot:disabled{opacity:.55;filter:grayscale(.4)}
 .legend2{display:flex;justify-content:center;gap:10px;font-size:12px;font-weight:900;margin:6px 0 0;flex-wrap:wrap}
 body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
 body[data-vt=neon] .pkRow button{background:rgba(255,255,255,.06);border-color:#5a3bb0;color:#fff}body[data-vt=neon] .pkRow button.on{border-color:#ff4fd8;background:rgba(255,79,216,.25);box-shadow:0 0 12px #ff4fd8}
@@ -252,8 +257,8 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 
   <div class="hud"><div class="box"><small>ステージ</small><b id="stN"></b></div><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small>最短</small><b id="best"></b></div></div>
   <div class="lvRow" id="lvs"></div>
-  <div class="panel"><div class="in" style="padding:6px"><canvas id="cv" width="400" height="480"></canvas></div></div>
-  <div class="legend2"><span>⭕ 広い所＝輪を回せる</span><span>▮ すき間＝輪の向きが合えば通れる</span></div>
+  <div class="panel wrp"><div class="in" style="padding:0;background:none"><canvas id="cv" width="400" height="640"></canvas></div></div>
+  <div class="legend2"><span>⭕ 広い所＝輪を回せる</span><span>◌ 金具のすき間＝点線の輪と同じ向きなら通れる</span></div>
   <div class="lvRow"><button id="bRot">↻ 輪を回す</button></div>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
@@ -261,7 +266,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 知恵の輪はずし</h2><p>針金にかかった<b>リング</b>を動かして、右下の<b>出口🏁</b>からはずそう！</p>
 <p>👆 リングのとなりの点をタップすると、針金にそって移動します。</p>
-<p>▮ の<b>すき間</b>は、リングの向き（よこ・ななめ・たて）が同じときだけ通れます。リングの向きは、⭕<b>広い所</b>にいるときだけ「↻輪を回す」で変えられます。</p>
+<p>金具の<b>すき間</b>（点線の輪）は、リングの向き（よこ・ななめ・たて）が同じときだけ通れます。リングの向きは、⭕<b>広い所</b>にいるときだけ「↻輪を回す」で変えられます。</p>
 <p>最短手数でとけたら★3つ！</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -367,22 +372,31 @@ const LV=[{"e": [[6, 10, 2], [14, 18, 1], [1, 2, 2], [12, 13, 1], [10, 11, 1], [
 const W=4,H=5; const cv=$('cv'),cx=cv.getContext('2d');
 const P=Object.assign({cur:0,stars:{}},store.get('prog',{}));
 let L,pos,ori,mv,hist,done,anim=0;
-const XY=n=>[60+(n%W)*93,60+((n/W)|0)*90];
+const XY=n=>[85+(n%W)*77,150+((n/W)|0)*95];
+const RA=g=>ANG[g];
+const IMG={}; function img(k){ if(!IMG[k]){ const im=new Image(); im.onload=()=>draw(); im.src='../img/wr/'+k+'.webp'; IMG[k]=im; } return IMG[k]; }
+function dimg(k,x,y,w,h){ const im=img(k); if(im.complete&&im.naturalWidth) cx.drawImage(im,x,y,w,h); }
 const ANG=[0,Math.PI/4,Math.PI/2], ONM=['よこ','ななめ','たて'];
 function load(i){ P.cur=i; store.set('prog',P); L=LV[i]; pos=L.s; ori=0; mv=0; hist=[]; done=false; $('stN').textContent=(i+1)+'/'+LV.length; $('best').textContent=L.d;
   lvRow($('lvs'),LV.map((_,k)=>'ステージ'+(k+1)),i,k=>P.stars[k]||0,load); draw(); setStatus('リングを🏁まで運んではずそう'); setTimeout(()=>sayText(1,'むずかしそうだワン'),300); }
 function nb(n){ const r=[]; for(const [a,b,g] of L.e){ if(a===n) r.push([b,g]); if(b===n) r.push([a,g]); } return r; }
-function draw(){ const vt=document.body.dataset.vt||'natural'; const bg={natural:'#fbf3e3',retro:'#2a1208',neon:'#0b0626'}[vt], wire={natural:'#8a8f98',retro:'#f2b134',neon:'#3ff0ff'}[vt];
-  cx.fillStyle=bg; cx.fillRect(0,0,400,480); cx.lineCap='round';
-  for(const [a,b,g] of L.e){ const [x1,y1]=XY(a),[x2,y2]=XY(b); cx.strokeStyle=wire; cx.lineWidth=7; if(vt==='neon'){cx.shadowColor=wire;cx.shadowBlur=8} cx.beginPath(); cx.moveTo(x1,y1); cx.lineTo(x2,y2); cx.stroke(); cx.shadowBlur=0;
-    if(g>=0){ const mx=(x1+x2)/2,my=(y1+y2)/2; cx.save(); cx.translate(mx,my); cx.rotate(ANG[g]+Math.PI/2); cx.fillStyle={natural:'#5a3d2b',retro:'#e0452f',neon:'#ff4fd8'}[vt]; cx.fillRect(-15,-5,9,10); cx.fillRect(6,-5,9,10); cx.restore(); } }
+function draw(){ const vt=document.body.dataset.vt||'natural'; const T=k=>vt+'_'+k;
+  cx.clearRect(0,0,400,640); dimg(T('board'),0,0,400,640); cx.lineCap='round';
+  const WC={natural:['#5f6670','#b9bec6','#f4f6f8'],retro:['#6b4a12','#d9a640','#fff0b8'],neon:['#1f6f88','#3ff0ff','#e8ffff']}[vt];
+  for(const [a,b] of L.e){ const [x1,y1]=XY(a),[x2,y2]=XY(b);
+    [[10,WC[0]],[6,WC[1]],[1.8,WC[2]]].forEach(([w,c],k)=>{ cx.strokeStyle=c; cx.lineWidth=w; if(vt==='neon'&&k===1){cx.shadowColor='#3ff0ff';cx.shadowBlur=10} cx.beginPath(); cx.moveTo(x1+(k===2?-1:0),y1+(k===2?-1:0)); cx.lineTo(x2+(k===2?-1:0),y2+(k===2?-1:0)); cx.stroke(); cx.shadowBlur=0; }); }
+  for(let n=0;n<W*H;n++){ if(L.wide.includes(n)){ const [x,y]=XY(n); dimg(T('p0'),x-30,y-29,60,58); } }
+  for(const [a,b,g] of L.e){ if(g<0) continue; const [x1,y1]=XY(a),[x2,y2]=XY(b); cx.save(); cx.translate((x1+x2)/2,(y1+y2)/2); cx.rotate(Math.atan2(y2-y1,x2-x1)-Math.PI/2);
+    dimg(T('gL'),-34,-16,26,30); dimg(T('gR'),8,-16,26,30); cx.restore();
+    cx.save(); cx.translate((x1+x2)/2,(y1+y2)/2); cx.rotate(ANG[g]); cx.setLineDash([4,3]); cx.lineWidth=3; cx.strokeStyle={natural:'#c0392b',retro:'#ffd36b',neon:'#ff4fd8'}[vt]; cx.beginPath(); cx.ellipse(0,0,17,10,0,0,7); cx.stroke(); cx.setLineDash([]); cx.restore(); }
   const reach=done?[]:nb(pos);
-  for(let n=0;n<W*H;n++){ if(!L.e.some(e=>e[0]===n||e[1]===n)) continue; const [x,y]=XY(n);
-    if(L.wide.includes(n)){ cx.strokeStyle={natural:'#5d7a52',retro:'#7ac36a',neon:'#7dff8a'}[vt]; cx.lineWidth=3; cx.beginPath(); cx.arc(x,y,22,0,7); cx.stroke(); }
-    const can=reach.find(r=>r[0]===n); cx.fillStyle=can?(can[1]<0||can[1]===ori?'#4caf50':'#e57373'):wire; cx.beginPath(); cx.arc(x,y,can?9:6,0,7); cx.fill(); }
-  const [tx,ty]=XY(L.t); cx.font='26px sans-serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('🏁',tx+28,ty+20);
-  const [rx,ry]=XY(pos); cx.save(); cx.translate(rx,ry); cx.rotate(ANG[ori]+Math.PI/2); cx.strokeStyle={natural:'#e0a020',retro:'#ffd36b',neon:'#ff4fd8'}[vt]; cx.lineWidth=6; if(vt==='neon'){cx.shadowColor='#ff4fd8';cx.shadowBlur=12}
-  cx.beginPath(); cx.ellipse(0,0,24,9,0,0,7); cx.stroke(); cx.restore(); cx.shadowBlur=0;
+  for(let n=0;n<W*H;n++){ if(!L.e.some(e=>e[0]===n||e[1]===n)) continue; const [x,y]=XY(n); const can=reach.find(r=>r[0]===n);
+    if(can){ const ok=can[1]<0||can[1]===ori; cx.fillStyle=ok?'rgba(76,175,80,.55)':'rgba(229,115,115,.55)'; cx.beginPath(); cx.arc(x,y,15,0,7); cx.fill(); cx.strokeStyle=ok?'#2e7d32':'#c62828'; cx.lineWidth=2.5; cx.stroke(); }
+    dimg(T('n0'),x-8,y-8,16,16); }
+  const [sx,sy]=XY(L.s); dimg(T('paw'),sx-38,sy-34,26,24);
+  const [tx,ty]=XY(L.t); dimg(T('flag'),tx+6,ty-50,34,46);
+  const [rx,ry]=XY(pos); cx.save(); cx.translate(rx,ry); cx.rotate(RA(ori)); if(vt==='neon'){cx.shadowColor='#ff4fd8';cx.shadowBlur=14}
+  dimg(T('r'+(P.cur%6)),-38,-24,76,48); cx.restore(); cx.shadowBlur=0;
   $('mv').textContent=mv; $('bUndo').disabled=!hist.length; $('bRot').disabled=done||!L.wide.includes(pos); $('bRot').textContent='↻ 輪を回す（いま：'+ONM[ori]+'）'; }
 function go(n){ if(done) return; actx(); const r=nb(pos).find(q=>q[0]===n); if(!r) return;
   if(r[1]>=0&&r[1]!==ori){ SFX.ng(); toast('リングの向きが合わないよ（すき間は'+ONM[r[1]]+'）',true); return; }
@@ -390,7 +404,7 @@ function go(n){ if(done) return; actx(); const r=nb(pos).find(q=>q[0]===n); if(!
 function win(){ done=true; const s=mv<=L.d?3:mv<=L.d*1.5?2:1; P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog',P); report('clear',{stars:s}); SFX.win(); confetti(['⭕','🐾','✨']);
   sayText(2,'はずれた〜♪',true); setStatus('リングがはずれた！'); draw(); lvRow($('lvs'),LV.map((_,k)=>'ステージ'+(k+1)),P.cur,k=>P.stars[k]||0,load);
   showResult({winner:0,title:'⭕ はずれた！',score:mv+'手',msg:'★'.repeat(s)+'☆'.repeat(3-s),rec:'最短：'+L.d+'手'}); }
-cv.addEventListener('click',e=>{ const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*400,y=(e.clientY-r.top)/r.height*480; let best=-1,bd=40;
+cv.addEventListener('click',e=>{ const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*400,y=(e.clientY-r.top)/r.height*640; let best=-1,bd=40;
   for(let n=0;n<W*H;n++){ const [nx,ny]=XY(n),d=Math.hypot(nx-x,ny-y); if(d<bd){bd=d;best=n} } if(best>=0) go(best); });
 $('bRot').onclick=()=>{ if(done||!L.wide.includes(pos)) return; actx(); hist.push([pos,ori]); ori=(ori+1)%3; mv++; SFX.put(); draw(); };
 $('bUndo').onclick=()=>{ const h=hist.pop(); if(!h) return; [pos,ori]=h; mv--; done=false; SFX.tap(); draw(); };
