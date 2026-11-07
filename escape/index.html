@@ -450,7 +450,7 @@ function loadStage(i){
   $('stName').textContent=`${i+1}．${st.name}`; $('stMin').textContent=st.min;
   const bs=P.best[i]; $('stBest').textContent=bs?`${bs.m}手・${fmt(bs.t)}`:'—';
   draw(true); updateHUD();
-  setStatus(HNAME[S.hero]+'を出口から出そう！');
+  setStatus('コロンとムーンを出口から出そう！');
   setTimeout(()=>{ sayText(heroP(),pick(['出して〜！','ここから出たいワン','がんばって〜'])); setTimeout(()=>sayText(otherP(),'こっちだよ〜！'),600); },300);
 }
 const fmt=ms=>{const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
@@ -551,13 +551,7 @@ $('bStages').onclick=()=>{actx();SFX.tap();renderStages();openM('mStage')};
 $('bAgain').onclick=()=>{closeM('mRes');usedDemo=false;loadStage(stage)};
 $('bNextSt').onclick=()=>{closeM('mRes');usedDemo=false;loadStage(stage+1)};
 loadStage(Math.min(P.cur||0,STAGES.length-1));
-(function(){ const m=document.createElement('div'); m.className='modal show'; m.id='mHero';
-  m.innerHTML=`<div class="card pick"><h2>🐾 どっちを箱から出す？</h2><div class="pkRow"><button data-v="colon"><span class="pa" style="background-image:var(--colon)"></span>コロン</button><button data-v="moon"><span class="pa" style="background-image:var(--moon)"></span>ムーン</button></div><div class="pkNote">えらんだワンコが箱に入るよ</div></div>`;
-  document.body.appendChild(m);
-  const sync=()=>m.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.hero)); sync();
-  m.querySelectorAll('button').forEach(b=>b.onclick=()=>{ actx(); SFX.tap(); S.hero=b.dataset.v; store.set('settings',S); m.classList.remove('show'); loadStage(stage);
-    if(!store.get('seenHelp',false)){ store.set('seenHelp',true); setTimeout(()=>openM('mHelp'),400); } });
-})();
+if(!store.get('seenHelp',false)){ store.set('seenHelp',true); setTimeout(()=>openM('mHelp'),600); }
 
 
 ;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();
