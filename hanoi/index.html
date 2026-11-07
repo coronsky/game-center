@@ -154,6 +154,12 @@ body[data-vt=neon] .cu::after{background:linear-gradient(90deg,#1c7f9e,#d8fbff 4
 body:is([data-vt=retro],[data-vt=neon]) .cob{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.3)}body:is([data-vt=retro],[data-vt=neon]) .cob .cp{color:#ffd36b}
 .btns2{display:grid!important;grid-template-columns:repeat(3,1fr);gap:6px}
 .pole .lb.goal{filter:drop-shadow(0 0 4px #ffd36b)}
+#clearBan{position:absolute;left:50%;top:34%;transform:translate(-50%,-50%) scale(0);z-index:30;display:flex;flex-direction:column;align-items:center;padding:12px 26px;border-radius:18px;background:rgba(255,250,240,.95);border:3px solid #e2b06e;box-shadow:0 8px 20px rgba(0,0,0,.25);pointer-events:none;opacity:0}
+#clearBan b{font-size:30px;color:#c0392b;letter-spacing:.06em;white-space:nowrap}#clearBan small{font-size:12px;font-weight:900;color:#8a5a2c}
+#clearBan.show{animation:cban 2.6s ease forwards}
+@keyframes cban{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}12%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}20%{transform:translate(-50%,-50%) scale(1)}85%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-60%) scale(.95)}}
+body[data-vt=retro] #clearBan{background:rgba(90,20,10,.92);border-color:#f2b134}body[data-vt=retro] #clearBan b{color:#ffd36b}body[data-vt=retro] #clearBan small{color:#ffe9b8}
+body[data-vt=neon] #clearBan{background:rgba(20,10,60,.92);border-color:#ff4fd8;box-shadow:0 0 18px #ff4fd8}body[data-vt=neon] #clearBan b{color:#fff;text-shadow:0 0 10px #3ff0ff}body[data-vt=neon] #clearBan small{color:#bff8ff}
 #dogTop{position:absolute;left:83.333%;width:20%;aspect-ratio:1;transform:translate(-50%,0) scale(0);border-radius:50%;background:var(--colon) center/cover;border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.3);transition:transform .4s cubic-bezier(.3,1.6,.5,1) .3s;z-index:3}
 #dogTop.show{transform:translate(-50%,0) scale(1)}
 body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
@@ -298,7 +304,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="hud"><div class="box st"><small>ステージ</small><b id="stName"></b></div><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small id="tmL">タイム</small><b id="tm">0:00</b></div></div>
   <div class="panel"><div class="in"><div id="stage"><div class="floor"></div>
     <div class="pole" style="left:21%"><span class="lb">スタート</span></div><div class="pole" style="left:50%"><span class="lb">まんなか</span></div><div class="pole" style="left:79%"><span class="lb">ゴール</span></div>
-    <div id="dogTop"></div></div></div></div>
+    <div id="dogTop"></div><div id="clearBan"><b>🎉 クリア！</b><small>ざぶとんタワー完成</small></div></div></div></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns"><button class="btn g" id="bHint">💡ヒント</button><button class="btn c" id="bUndo">↩︎戻す</button><button class="btn c" id="bReset">⟳やり直し</button><button class="btn g" id="bSet">⚙︎設定</button></div>
   <div class="btns2"><button class="btn c" id="bCourse">🧭 コース</button><button class="btn c" id="bStages">🗝️ ステージ</button><button class="btn c" id="bDemo">🎬 見本</button></div>
@@ -414,7 +420,7 @@ let n=3, lv=0, pos=[], sel=-1, moves=0, hist=[], t0=0, tick=null, done=false, hi
 const fmt=ms=>{const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
 const minM=k=>(1<<k)-1; const stMin=()=>ST?ST.m:minM(n);
 const top=p=>{ let t=-1; for(let d=0;d<n;d++) if(pos[d]===p){ t=d; break; } return t; }; // d=0 が一番小さい
-function load(i){ clearTimeout(demoT); clearInterval(tick); demo=false; lv=i; P.cur=i; CO.last=course; saveP(); ST=LV[i]; n=ST.n; T=ST.t;
+function load(i){ $('clearBan')&&$('clearBan').classList.remove('show'); clearTimeout(demoT); clearInterval(tick); demo=false; lv=i; P.cur=i; CO.last=course; saveP(); ST=LV[i]; n=ST.n; T=ST.t;
   pos=ST.s.slice(); sel=-1; moves=0; hist=[]; t0=0; done=false; hints=0; usedDemo=false; hintM=null;
   $('stName').textContent=`${CINFO[course].ico}${i+1}・${n}まい`; $('stMin').textContent=stMin();
   const b=P.best[i]; $('stBest').textContent=b?`${b.m}手・${fmt(b.t)}`:'—';
@@ -463,7 +469,7 @@ function tapPole(p){ if(done||demo) return; actx();
   move(sel,p); }
 function move(a,b){ if(!t0){t0=Date.now();tick=setInterval(hud,500);} const d=top(a); hist.push(pos.slice()); pos[d]=b; moves++; sel=-1; hintM=null;
   tone(300-d*15,0,.1,'triangle',.22); tone(150,.05,.06,'sine',.15); draw(); hud();
-  if(pos.every(x=>x===T)) win(); else if(course==='lim'&&moves>=stMin()) fail(); else if(Math.random()<.08) sayText(pick([1,2]),pick(['よいしょ','ふかふか〜','いい感じ！'])); }
+  if(pos.every(x=>x===T)){ done=true; clearInterval(tick); hud(); setTimeout(win,800); } else if(course==='lim'&&moves>=stMin()) fail(); else if(Math.random()<.08) sayText(pick([1,2]),pick(['よいしょ','ふかふか〜','いい感じ！'])); }
 function nextMove(k,target){ // 小さいほうからk枚(0..k-1)をtargetへ集める最初の一手
   if(k===0) return null; const d=k-1; if(pos[d]===target) return nextMove(k-1,target);
   const other=3-pos[d]-target;
@@ -475,7 +481,7 @@ function hint(){ if(done||demo) return; actx(); hints++; hintM=nextMove(n,T); se
 function demoPlay(){ if(done) return; actx(); if(demo){demo=false;clearTimeout(demoT);hud();return}
   demo=true; usedDemo=true; hud(); const go=()=>{ if(!demo) return; const m=nextMove(n,T); if(!m) return; demo=false; move(m[0],m[1]); if(!done){demo=true;hud();setStatus(`見本：あと${remaining()}手`);demoT=setTimeout(go,n>=7?220:450)} }; go(); }
 function undo(){ if(!hist.length||demo||done) return; pos=hist.pop(); moves++; sel=-1; hintM=null; SFX.tap(); draw(); hud(); toast('もどした（+1手）'); }
-function win(){ done=true; clearInterval(tick); const t=Date.now()-t0, mn=stMin();
+function win(){ done=true; clearInterval(tick); const cb=$('clearBan'); cb.classList.remove('show'); void cb.offsetWidth; cb.classList.add('show'); const t=Date.now()-t0, mn=stMin();
   let stars=0; if(!usedDemo){ stars=moves<=mn?3:moves<=Math.ceil(mn*1.5)?2:1; if(course==='lim') stars=hints?2:3; if(hints) stars=Math.min(stars,2); }
   P.clear[lv]=1; if(stars>(P.stars[lv]||0)) P.stars[lv]=stars;
   let nb=false; if(!usedDemo){ const b=P.best[lv]; if(!b||moves<b.m||(moves===b.m&&t<b.t)){P.best[lv]={m:moves,t};nb=true} }
@@ -485,7 +491,7 @@ function win(){ done=true; clearInterval(tick); const t=Date.now()-t0, mn=stMin(
   setTimeout(()=>{ SFX.win(); confetti(['🐾','✨','🎉','🍡']); bark(1); sayText(1,'ふかふかで最高だワン！',true); sayText(2,'ずるーい、ムーンも〜',true); },500);
   $('bNextSt').style.display=LV[lv+1]?'':'none';
   showResult({winner:1,title:'🎉 タワー完成！',score:`${moves}手・${fmt(t)}`,msg:usedDemo?'見本で解きました（★なし）':moves<=mn?'最短手数！名人ワン！🏅':`最短は${mn}手。もっと少なくできるかな？`,
-    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}`,rec:course==='lim'?`${mn}手以内でクリア！`:`★3：${mn}手　★2：${Math.ceil(mn*1.5)}手以内`,delay:1400}); }
+    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}`,delay:2600,rec:course==='lim'?`${mn}手以内でクリア！`:`★3：${mn}手　★2：${Math.ceil(mn*1.5)}手以内`}); }
 function fail(){ done=true; clearInterval(tick); draw(); hud(); setStatus('手数オーバー…もう一回！'); SFX.ng(); sayText(2,'おしい〜！もう一回やってみよう',true);
   $('bNextSt').style.display='none'; showResult({winner:0,title:'⏱️ 手数オーバー',score:`${moves}手`,msg:`${stMin()}手以内で全部つめなかったよ。ヒントや見本で道すじを確認してみよう！`,rec:`目標：${stMin()}手以内`,delay:500}); }
 function renderCourses(){ const g=$('coGrid'); g.innerHTML=''; Object.keys(CINFO).forEach(k=>{ const I=CINFO[k], L=COURSES[k], Q=CO[k]; const st=L.reduce((a,_,i)=>a+(Q.stars[i]||0),0), cl=L.filter((_,i)=>Q.clear[i]).length;
