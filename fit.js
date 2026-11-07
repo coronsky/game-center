@@ -11,13 +11,13 @@
     s=s*lv.m;
     if(w<700) s=Math.min(s,w/340);       // スマホでは幅がくずれない範囲まで
     s=Math.max(.7,Math.min(s,2.4));
-    document.body.style.zoom=s;
+    document.body.style.zoom=s; document.documentElement.style.setProperty('--mcz',s);
     var b=document.getElementById('mcSizeBtn'); if(b) b.innerHTML='<b>'+lv.n+'</b>';
   }
   function btn(){
     if(document.getElementById('mcSizeBtn')) return;
     var st=document.createElement('style');
-    st.textContent='#mcSizeBtn{position:absolute;right:104px;top:6px;z-index:31;width:90px;height:30px;border:0;padding:0;background:url('+BASE+'img/ui/natural_zoom.webp?v=2) center/contain no-repeat;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25));cursor:pointer;font-size:0}#mcSizeBtn b{position:absolute;right:-3px;top:-5px;width:16px;height:16px;border-radius:50%;background:#f2b134;color:#5a2a00;border:1.5px solid #fff;font:900 9px/13px sans-serif;text-align:center}#mcSizeBtn:active{transform:scale(.92)}'+'body[data-vt=retro] #mcSizeBtn,body[data-theme=retro] #mcSizeBtn{background-image:url('+BASE+'img/ui/retro_zoom.webp?v=2)}body[data-vt=neon] #mcSizeBtn,body[data-theme=neon] #mcSizeBtn{background-image:url('+BASE+'img/ui/neon_zoom.webp?v=2)}#mcSizeTip{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:46;background:rgba(0,0,0,.7);color:#fff;font:900 18px sans-serif;padding:10px 22px;border-radius:20px;pointer-events:none;opacity:0;transition:opacity .2s}#mcSizeTip.on{opacity:1}';
+    st.textContent='.modal .card{max-height:calc(92vh / var(--mcz,1))!important;max-height:calc(92dvh / var(--mcz,1))!important}#mcSizeBtn{position:absolute;right:104px;top:6px;z-index:31;width:90px;height:30px;border:0;padding:0;background:url('+BASE+'img/ui/natural_zoom.webp?v=2) center/contain no-repeat;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25));cursor:pointer;font-size:0}#mcSizeBtn b{position:absolute;right:-3px;top:-5px;width:16px;height:16px;border-radius:50%;background:#f2b134;color:#5a2a00;border:1.5px solid #fff;font:900 9px/13px sans-serif;text-align:center}#mcSizeBtn:active{transform:scale(.92)}'+'body[data-vt=retro] #mcSizeBtn,body[data-theme=retro] #mcSizeBtn{background-image:url('+BASE+'img/ui/retro_zoom.webp?v=2)}body[data-vt=neon] #mcSizeBtn,body[data-theme=neon] #mcSizeBtn{background-image:url('+BASE+'img/ui/neon_zoom.webp?v=2)}#mcSizeTip{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:46;background:rgba(0,0,0,.7);color:#fff;font:900 18px sans-serif;padding:10px 22px;border-radius:20px;pointer-events:none;opacity:0;transition:opacity .2s}#mcSizeTip.on{opacity:1}';
     document.head.appendChild(st);
     var b=document.createElement('button'); b.id='mcSizeBtn'; b.type='button'; b.setAttribute('aria-label','文字と画面の大きさ');
     var tip=document.createElement('div'); tip.id='mcSizeTip';
