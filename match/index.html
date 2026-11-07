@@ -126,6 +126,25 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 body[data-vt=retro] .sk.on{background:linear-gradient(90deg,#ffd36b,#f2b134)}
 body[data-vt=neon] .sk.on{background:#3ff0ff;box-shadow:0 0 8px #3ff0ff}body[data-vt=neon] .sk.on::after{background:#ff4fd8;box-shadow:0 0 6px #ff4fd8}
 body:is([data-vt=retro],[data-vt=neon]) .sk.off{outline-color:rgba(255,255,255,.25);background:rgba(255,255,255,.05)}
+
+/* image skin */
+.panel .in{background:url(../img/mt/bg_natural.webp) center/cover!important;aspect-ratio:16/10;display:flex;align-items:center;justify-content:center}
+body[data-vt=retro] .panel .in{background-image:url(../img/mt/bg_retro.webp)!important}body[data-vt=neon] .panel .in{background-image:url(../img/mt/bg_neon.webp)!important}
+#eq{width:100%;padding:0 4%}
+.sk.on,.sk.on.fix{background:url(../img/mt/stick_natural_h.webp) center/100% 100% no-repeat!important;box-shadow:none!important;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+.sk.v.on{background-image:url(../img/mt/stick_natural_v.webp)!important}
+body[data-vt=retro] .sk.on{background-image:url(../img/mt/stick_retro_h.webp)!important}body[data-vt=retro] .sk.v.on{background-image:url(../img/mt/stick_retro_v.webp)!important}
+body[data-vt=neon] .sk.on{background-image:url(../img/mt/stick_neon_h.webp)!important;filter:none}body[data-vt=neon] .sk.v.on{background-image:url(../img/mt/stick_neon_v.webp)!important}
+.sk.on::after{display:none!important}
+.sk.off{outline:none!important;background:url(../img/mt/slot_h.webp) center/100% 100% no-repeat!important;opacity:.55;filter:brightness(.55) sepia(1) saturate(1.5)}
+.sk.v.off{background-image:url(../img/mt/slot_v.webp)!important}
+body[data-vt=retro] .sk.off{filter:sepia(1) saturate(2) brightness(.95)}body[data-vt=neon] .sk.off{filter:drop-shadow(0 0 3px #3ff0ff);opacity:.6}
+.sk.pick{opacity:1!important;transform:translateY(-6%) scale(1.06);filter:drop-shadow(0 0 6px #ffd23a) drop-shadow(0 0 2px #fff)!important}
+.sk.h{height:8.5%}.dg .g{top:45.7%}.sk.v{width:14.5%}
+.op{width:13%}.op .h{height:13%!important;top:43.5%}.op .v{width:20%!important;left:40%}.op.eqs .h1{top:28%}.op.eqs .h2{top:59%}
+.dg .f,.dg .e{left:1%}.dg .b,.dg .c{right:1%}
+.fxw{position:absolute;inset:0;pointer-events:none;background:url(../img/mt/fx.webp) center/contain no-repeat;animation:fxw 1.6s ease-out forwards}
+@keyframes fxw{0%{opacity:0;transform:scale(.5)}25%{opacity:1;transform:scale(1.05)}100%{opacity:0;transform:scale(1.2)}}
 body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
 body[data-vt=neon] .pkRow button{background:rgba(255,255,255,.06);border-color:#5a3bb0;color:#fff}body[data-vt=neon] .pkRow button.on{border-color:#ff4fd8;background:rgba(255,79,216,.25);box-shadow:0 0 12px #ff4fd8}
 
@@ -399,7 +418,7 @@ function check(){ const n=x=>S2D[[...x].sort().join('')]; const a=n(st[0]),b=n(s
   if(a===undefined||b===undefined||c===undefined){ setStatus('数字の形になってないよ'); SFX.ng(); return; }
   const ok=(st[1]?a+b:a-b)===c; const txt=a+(st[1]?'+':'-')+b+'='+c;
   if(!ok){ setStatus(txt+' はまちがい…'); SFX.ng(); return; }
-  done=true; P.done[P.cur]=1; store.set('prog',P); report('clear',{stars:3}); SFX.win(); confetti(['🔥','🐾','✨']); sayText(2,'せいかい♪',true); setStatus('せいかい！ '+txt);
+  done=true; { const fx=document.createElement('div'); fx.className='fxw'; document.querySelector('.panel .in').appendChild(fx); setTimeout(()=>fx.remove(),1700); } P.done[P.cur]=1; store.set('prog',P); report('clear',{stars:3}); SFX.win(); confetti(['🔥','🐾','✨']); sayText(2,'せいかい♪',true); setStatus('せいかい！ '+txt);
   lvRow($('lvs'),Q.map((_,k)=>'もんだい'+(k+1)),P.cur,k=>P.done[k]?1:0,load); showResult({winner:0,title:'🎉 せいかい！',score:txt,msg:'1本で正しい式になったね'}); }
 $('bUndo').onclick=()=>{ if(!hist.length) return; st=hist.pop(); moved=false; pk=null; SFX.tap(); draw(); setStatus('1本動かして式を正しくしよう'); };
 $('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)};
