@@ -117,7 +117,13 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 .ob{position:absolute;inset:6%;transition:transform .12s}
 .bx{border-radius:7px;background:linear-gradient(#e7b56a,#c88a3e);box-shadow:inset 0 0 0 3px #8a5a2c,0 2px 3px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:min(5vw,22px)}
 .bx.ok{background:linear-gradient(#9fd08a,#5d9a4c);box-shadow:inset 0 0 0 3px #3d6a30,0 0 8px #ffe066}
-.pl{inset:4%}
+.pl{inset:-18% -14% -2%;background-position:center bottom!important;background-size:contain!important;background-repeat:no-repeat!important;background-color:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;z-index:3;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+.ce{position:relative;overflow:visible}
+.dogPick{display:flex;justify-content:center;gap:8px;margin:6px 0 2px}
+.dogPick button{display:flex;align-items:center;gap:4px;border:2px solid #e2cfb2;background:#fffaf1;border-radius:999px;padding:3px 12px 3px 4px;font:inherit;font-weight:900;font-size:13px;color:var(--ink);cursor:pointer}
+.dogPick button i{width:30px;height:30px;background:center/contain no-repeat}
+.dogPick button.on{border-color:#f0b429;box-shadow:0 0 0 2px #f0b429}
+body:is([data-vt=retro],[data-vt=neon]) .dogPick button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.3)}
 body[data-vt=retro] .ce.f{background:#4a2a14}body[data-vt=retro] .ce.w{background:linear-gradient(135deg,#8f2a1f,#5a1a10);box-shadow:inset 0 0 0 2px #f2b134}
 body[data-vt=neon] .ce.f{background:#140a3a}body[data-vt=neon] .ce.w{background:#2a1a6a;box-shadow:inset 0 0 0 1.5px #3ff0ff,0 0 6px rgba(63,240,255,.5)}
 body[data-vt=neon] .ce.g::after{filter:drop-shadow(0 0 4px #ff4fd8)}
@@ -261,6 +267,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">倉庫番</div></div>
 
   <div class="hud"><div class="box"><small>ステージ</small><b id="stN"></b></div><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small>おすすめ手数</small><b id="best"></b></div></div>
+  <div class="dogPick" id="dogPick"><button data-v="colon"><i style="background-image:url(../img/sk/colon_d0.webp)"></i>コロン</button><button data-v="moon"><i style="background-image:url(../img/sk/moon_d0.webp)"></i>ムーン</button></div>
   <div class="lvRow" id="lvs"></div>
   <div class="panel"><div class="in" style="padding:6px"><div id="bd"></div></div></div>
   <div class="pad"><button class="u" data-d="u">▲</button><button class="l" data-d="l">◀</button><button class="c" id="bNext">つぎ ▶</button><button class="r" data-d="r">▶</button><button class="d" data-d="d">▼</button></div>
@@ -268,7 +275,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠一覧へ</button></div>
 </div>
-<div class="modal" id="mHelp"><div class="card help"><h2>📖 倉庫番</h2><p>コロンを動かして、ホネの箱 📦 を <b>肉球マーク🐾</b> の上へ全部おしてね。</p>
+<div class="modal" id="mHelp"><div class="card help"><h2>📖 倉庫番</h2><p>コロンかムーンを動かして、ホネの箱 📦 を <b>肉球マーク🐾</b> の上へ全部おしてね。</p>
 <p>👆 十字ボタン・画面のスワイプ・矢印キーで動きます。箱は<b>押すだけ</b>で、引っぱれません。</p>
 <p>↩︎「1手戻す」で何回でも戻れます。動けなくなったら「リセット」。</p>
 <p>ステージ1から順にむずかしくなるよ。おすすめ手数以内でクリアすると★3つ！</p>
@@ -377,8 +384,11 @@ const SOKO=[["#####","#@$.#","#####"],["######","#@ $.#","# $. #","######"],["##
 
 const PAR=[1,4,9,12,14,26,34,41];
 const P=Object.assign({cur:0,stars:{}},store.get('prog',{}));
+let HERO=store.get('hero','colon'), FACE='d', FR=0; [0,1,2,3].forEach(i=>['u','r','d','l'].forEach(d=>['colon','moon'].forEach(h=>{const im=new Image();im.src=`../img/sk/${h}_${d}${i}.webp`})));
+function syncHero(){ document.querySelectorAll('#dogPick button').forEach(b=>b.classList.toggle('on',b.dataset.v===HERO)); }
+document.querySelectorAll('#dogPick button').forEach(b=>b.onclick=()=>{ actx(); SFX.tap(); HERO=b.dataset.v; store.set('hero',HERO); syncHero(); draw(); }); syncHero();
 let W,H,g,pl,bx,goals,mv=0,hist=[],done=false;
-function load(i){ P.cur=i; store.set('prog',P); const rows=SOKO[i]; H=rows.length; W=Math.max(...rows.map(r=>r.length));
+function load(i){ FACE='d'; FR=0; P.cur=i; store.set('prog',P); const rows=SOKO[i]; H=rows.length; W=Math.max(...rows.map(r=>r.length));
   g=[]; bx=[]; goals=[];
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){ const c=(rows[y][x]||' '); const k=y*W+x;
     g[k]=c==='#'?'w':'f'; if(c==='@'||c==='+')pl=k; if(c==='$'||c==='*')bx.push(k); if(c==='.'||c==='*'||c==='+')goals.push(k); }
@@ -392,16 +402,16 @@ function draw(){ const bd=$('bd'); const cs=Math.min(Math.floor((Math.min(innerW
   bd.style.gridTemplateColumns=`repeat(${W},${cs}px)`;
   bd.innerHTML=''; for(let k=0;k<W*H;k++){ const e=document.createElement('div'); e.className='ce '+(g[k]==='w'?'w':g[k]==='f'?'f':'')+(goals.includes(k)?' g':'');
     if(bx.includes(k)) e.innerHTML=`<div class="ob bx ${goals.includes(k)?'ok':''}">🦴</div>`;
-    if(k===pl) e.innerHTML=`<div class="ob pl dog c"></div>`;
+    if(k===pl) e.innerHTML=`<div class="ob pl" style="background-image:url(../img/sk/${HERO}_${FACE}${FR}.webp)"></div>`;
     bd.appendChild(e);} $('mv').textContent=mv; $('bUndo').disabled=!hist.length; $('bNext').style.visibility=done&&P.cur<SOKO.length-1?'visible':'hidden'; }
-function step(d){ if(done) return; actx(); const dd={l:-1,r:1,u:-W,d:W}[d]; const n=pl+dd;
+function step(d){ if(done) return; actx(); FACE=d; const dd={l:-1,r:1,u:-W,d:W}[d]; const n=pl+dd;
   if(g[n]!=='f') {SFX.ng();return;} const bi=bx.indexOf(n);
   if(bi>=0){ const n2=n+dd; if(g[n2]!=='f'||bx.includes(n2)){SFX.ng();return;} hist.push([pl,bx.slice()]); bx[bi]=n2; SFX.put(); }
   else { hist.push([pl,bx.slice()]); SFX.tap(); }
-  pl=n; mv++; draw(); check(); }
+  pl=n; mv++; FR=(FR+1)%4; draw(); check(); }
 function check(){ if(!bx.every(b=>goals.includes(b))) return; done=true; const s=mv<=PAR[P.cur]?3:mv<=PAR[P.cur]*1.6?2:1;
   P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog',P); report('clear',{stars:s}); SFX.win(); confetti(['🦴','🐾','✨']);
-  sayText(1,'できたワン！',true); setTimeout(()=>sayText(2,'すごーい♪',true),500); setStatus('クリア！'); draw();
+  FACE='d'; FR=0; sayText(HERO==='colon'?1:2,'できたワン！',true); setTimeout(()=>sayText(HERO==='colon'?2:1,'すごーい♪',true),500); setStatus('クリア！'); draw();
   lvRow($('lvs'),SOKO.map((_,k)=>'ステージ'+(k+1)),P.cur,k=>P.stars[k]||0,load);
   showResult({winner:1,title:'🎉 ステージ'+(P.cur+1)+' クリア！',score:mv+'手',msg:'★'.repeat(s)+'☆'.repeat(3-s),rec:'おすすめ：'+PAR[P.cur]+'手'}); }
 $('bAgain').onclick=()=>{closeM('mRes'); load(Math.min(P.cur+1,SOKO.length-1))};
