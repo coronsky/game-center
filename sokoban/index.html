@@ -122,9 +122,7 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 /* image skin */
 .panel:has(#bd){background:none!important;box-shadow:none!important;border:0!important;padding:0!important}
 .panel:has(#bd)::before,.panel:has(#bd)::after{display:none!important}
-.panel:has(#bd) .in{background:url(../img/sb/natural_frame.webp) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;padding:11% 9% 9%!important;display:flex;justify-content:center}
-body[data-vt=retro] .panel:has(#bd) .in{background-image:url(../img/sb/retro_frame.webp)!important;padding:16% 10% 12%!important}
-body[data-vt=neon] .panel:has(#bd) .in{background-image:url(../img/sb/neon_frame.webp)!important;padding:13% 10% 10%!important}
+.panel:has(#bd) .in{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;display:flex;justify-content:center}
 #bd .ce{border-radius:0!important;box-shadow:none!important;background:none}
 #bd .ce.f{background:url(../img/sb/natural_floorc.webp) center/100% 100%!important}
 #bd .ce.w{background:url(../img/sb/natural_w0.webp) center/100% 100% no-repeat!important}
@@ -418,7 +416,7 @@ function load(i){ clearInterval(joyT); FACE='d'; FR=0; P.cur=i; store.set('prog'
   mv=0; hist=[]; done=false; draw(); $('stN').textContent=(i+1)+'/'+SOKO.length; $('best').textContent=PAR[i];
   lvRow($('lvs'),SOKO.map((_,k)=>'ステージ'+(k+1)),i,k=>P.stars[k]||0,load);
   setStatus('箱を🐾の上へ運ぼう'); setTimeout(()=>sayText(1,'よいしょ、がんばるワン！'),300); }
-function draw(){ const bd=$('bd'); const cs=Math.min(Math.floor((Math.min(innerWidth/(parseFloat(getComputedStyle(document.body).zoom)||1),480)-40)*0.8/W),44);
+function draw(){ const bd=$('bd'); const cs=Math.min(Math.floor((Math.min(innerWidth/(parseFloat(getComputedStyle(document.body).zoom)||1),480)-16)/W),60);
   bd.style.gridTemplateColumns=`repeat(${W},${cs}px)`;
   bd.innerHTML=''; for(let k=0;k<W*H;k++){ const e=document.createElement('div'); e.className='ce '+(g[k]==='w'?'w v'+((k*7+(k>>3))%3):g[k]==='f'?'f':'')+(goals.includes(k)?' g':'');
     if(bx.includes(k)) e.innerHTML=`<div class="ob bx ${goals.includes(k)?'ok':''}">🦴</div>`;
