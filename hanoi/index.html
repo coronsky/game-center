@@ -148,6 +148,12 @@ body[data-vt=neon] .cu::after{background:linear-gradient(90deg,#1c7f9e,#d8fbff 4
 @keyframes land{0%{transform:translateX(-50%) scale(1.04,.86)}45%{transform:translateX(-50%) scale(.98,1.05)}100%{transform:translateX(-50%) scale(1,1)}}
 .cu{transform-origin:50% 85%}
 .cu.lift{filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))}
+.coGrid{display:flex;flex-direction:column;gap:8px}
+.cob{display:flex;align-items:center;gap:10px;text-align:left;border:2px solid #e2cfb2;background:#fffaf1;border-radius:14px;padding:9px 12px;font:inherit;color:var(--ink);cursor:pointer}
+.cob.cur{box-shadow:0 0 0 3px #f0b429}.cob .ci{font-size:28px}.cob .ct{display:flex;flex-direction:column;gap:2px}.cob b{font-size:15px}.cob small{font-size:11px;opacity:.8;line-height:1.35}.cob .cp{font-weight:900;opacity:1;color:#8a5a2c}
+body:is([data-vt=retro],[data-vt=neon]) .cob{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.3)}body:is([data-vt=retro],[data-vt=neon]) .cob .cp{color:#ffd36b}
+.btns2{display:grid!important;grid-template-columns:repeat(3,1fr);gap:6px}
+.pole .lb.goal{filter:drop-shadow(0 0 4px #ffd36b)}
 #dogTop{position:absolute;left:83.333%;width:20%;aspect-ratio:1;transform:translate(-50%,0) scale(0);border-radius:50%;background:var(--colon) center/cover;border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.3);transition:transform .4s cubic-bezier(.3,1.6,.5,1) .3s;z-index:3}
 #dogTop.show{transform:translate(-50%,0) scale(1)}
 body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
@@ -289,17 +295,18 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">ハノイの塔</div></div>
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">ハノイの塔</div></div>
 
-  <div class="hud"><div class="box st"><small>ステージ</small><b id="stName"></b></div><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
+  <div class="hud"><div class="box st"><small>ステージ</small><b id="stName"></b></div><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small id="tmL">タイム</small><b id="tm">0:00</b></div></div>
   <div class="panel"><div class="in"><div id="stage"><div class="floor"></div>
     <div class="pole" style="left:21%"><span class="lb">スタート</span></div><div class="pole" style="left:50%"><span class="lb">まんなか</span></div><div class="pole" style="left:79%"><span class="lb">ゴール</span></div>
     <div id="dogTop"></div></div></div></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns"><button class="btn g" id="bHint">💡ヒント</button><button class="btn c" id="bUndo">↩︎戻す</button><button class="btn c" id="bReset">⟳やり直し</button><button class="btn g" id="bSet">⚙︎設定</button></div>
-  <div class="btns2"><button class="btn c" id="bStages">🗝️ ステージをえらぶ</button><button class="btn c" id="bDemo">🎬 見本</button></div>
+  <div class="btns2"><button class="btn c" id="bCourse">🧭 コース</button><button class="btn c" id="bStages">🗝️ ステージ</button><button class="btn c" id="bDemo">🎬 見本</button></div>
   <div class="foot"><span>最短 <b id="stMin"></b> 手</span><span>ベスト：<b id="stBest"></b></span></div>
 </div>
 <div class="modal" id="mStage"><div class="card"><h2>🗝️ ステージ</h2><div class="sgrid" id="stGrid"></div>
   <div class="acts"><button class="btn g" data-close="mStage">とじる</button></div></div></div>
+<div class="modal" id="mCourse"><div class="card"><h2>🧭 コースをえらぶ</h2><div class="coGrid" id="coGrid"></div><div class="acts"><button class="btn g" data-close="mCourse">このままあそぶ</button></div></div></div>
 <div class="modal" id="mSet"><div class="card"><h2>🐾 設定</h2>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
@@ -309,6 +316,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <p>👆 柱をタップするといちばん上のざぶとんが持ち上がります。運びたい柱をタップして置きます。</p>
   <p>📏 ルール：一度に1枚だけ。<b>大きいざぶとんを小さいざぶとんの上には置けません</b>。</p>
   <p>🔢 最短手数は「2の枚数乗−1」。8まいだと255手！最短で運べたら★3つ。</p>
+  <p>🧭 <b>コース</b>：🏁標準スタート・🌀バラバラスタート・🎯ゴールがちがう・⏱️手数チャレンジ から選べます。クリアすると次のステージがひらきます。</p>
   <div class="acts"><button class="btn g" data-close="mHelp">はじめる！</button></div></div></div>
 <div style="display:none">
 
@@ -394,20 +402,27 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
 const store=mkStore('mchn_');
 const S=Object.assign({talk:true,sound:true},store.get('settings',{}));
 SND.on=S.sound; TALK.on=S.talk;
-const P=Object.assign({stars:{},best:{},clear:{},cur:0},store.get('prog',{}));
-const saveP=()=>store.set('prog',P);
-const LV=[3,4,5,6,7,8];
+const P0=store.get('prog',{});
+const CO=store.get('course',null)||{std:{stars:P0.stars||{},best:P0.best||{},clear:P0.clear||{},cur:P0.cur||0},mix:{},goal:{},lim:{},last:'std'};
+['std','mix','goal','lim'].forEach(k=>CO[k]=Object.assign({stars:{},best:{},clear:{},cur:0},CO[k]||{}));
+const saveP=()=>store.set('course',CO);
+const COURSES={"std": [{"n": 3, "s": [0, 0, 0], "t": 2, "m": 7}, {"n": 4, "s": [0, 0, 0, 0], "t": 2, "m": 15}, {"n": 5, "s": [0, 0, 0, 0, 0], "t": 2, "m": 31}, {"n": 6, "s": [0, 0, 0, 0, 0, 0], "t": 2, "m": 63}, {"n": 7, "s": [0, 0, 0, 0, 0, 0, 0], "t": 2, "m": 127}, {"n": 8, "s": [0, 0, 0, 0, 0, 0, 0, 0], "t": 2, "m": 255}], "mix": [{"n": 3, "s": [2, 0, 1], "t": 2, "m": 5}, {"n": 3, "s": [1, 2, 0], "t": 2, "m": 7}, {"n": 4, "s": [1, 0, 1, 0], "t": 2, "m": 11}, {"n": 4, "s": [0, 1, 2, 0], "t": 2, "m": 15}, {"n": 4, "s": [2, 1, 1, 1], "t": 2, "m": 15}, {"n": 5, "s": [0, 0, 2, 0, 1], "t": 2, "m": 23}, {"n": 5, "s": [0, 1, 2, 2, 0], "t": 2, "m": 29}, {"n": 5, "s": [1, 0, 0, 0, 0], "t": 2, "m": 31}, {"n": 5, "s": [2, 2, 1, 1, 1], "t": 2, "m": 31}, {"n": 6, "s": [2, 1, 2, 2, 0, 0], "t": 2, "m": 51}, {"n": 6, "s": [2, 2, 1, 0, 0, 0], "t": 2, "m": 59}, {"n": 6, "s": [0, 1, 1, 1, 2, 0], "t": 2, "m": 63}, {"n": 6, "s": [2, 2, 1, 0, 2, 1], "t": 2, "m": 63}, {"n": 7, "s": [1, 1, 1, 0, 0, 2, 0], "t": 2, "m": 103}, {"n": 7, "s": [2, 0, 0, 1, 2, 2, 0], "t": 2, "m": 119}, {"n": 7, "s": [1, 2, 2, 2, 1, 1, 1], "t": 2, "m": 126}, {"n": 7, "s": [2, 2, 0, 0, 2, 2, 0], "t": 2, "m": 127}, {"n": 8, "s": [1, 2, 2, 2, 0, 2, 1, 1], "t": 2, "m": 223}, {"n": 8, "s": [1, 1, 0, 2, 0, 1, 2, 0], "t": 2, "m": 251}, {"n": 8, "s": [2, 0, 1, 2, 2, 1, 0, 0], "t": 2, "m": 255}], "goal": [{"n": 3, "s": [0, 0, 0], "t": 1, "m": 7}, {"n": 3, "s": [2, 2, 2], "t": 0, "m": 7}, {"n": 4, "s": [1, 1, 1, 1], "t": 2, "m": 15}, {"n": 4, "s": [2, 2, 2, 2], "t": 1, "m": 15}, {"n": 5, "s": [1, 1, 1, 1, 1], "t": 0, "m": 31}, {"n": 5, "s": [0, 0, 0, 0, 0], "t": 1, "m": 31}, {"n": 6, "s": [2, 2, 2, 2, 2, 2], "t": 0, "m": 63}, {"n": 6, "s": [1, 1, 1, 1, 1, 1], "t": 2, "m": 63}, {"n": 7, "s": [2, 2, 2, 2, 2, 2, 2], "t": 1, "m": 127}, {"n": 7, "s": [1, 1, 1, 1, 1, 1, 1], "t": 0, "m": 127}, {"n": 8, "s": [0, 0, 0, 0, 0, 0, 0, 0], "t": 1, "m": 255}, {"n": 8, "s": [2, 2, 2, 2, 2, 2, 2, 2], "t": 0, "m": 255}], "lim": [{"n": 3, "s": [0, 2, 0], "t": 2, "m": 6}, {"n": 3, "s": [2, 2, 0], "t": 2, "m": 7}, {"n": 4, "s": [2, 2, 0, 0], "t": 2, "m": 12}, {"n": 4, "s": [1, 1, 0, 0], "t": 2, "m": 15}, {"n": 4, "s": [2, 2, 2, 1], "t": 2, "m": 15}, {"n": 5, "s": [1, 2, 2, 0, 0], "t": 2, "m": 25}, {"n": 5, "s": [1, 2, 1, 1, 1], "t": 2, "m": 30}, {"n": 5, "s": [2, 0, 1, 2, 0], "t": 2, "m": 31}, {"n": 6, "s": [1, 1, 2, 2, 0, 0], "t": 2, "m": 51}, {"n": 6, "s": [1, 0, 2, 2, 2, 0], "t": 2, "m": 61}, {"n": 6, "s": [1, 2, 2, 1, 1, 1], "t": 2, "m": 63}, {"n": 7, "s": [2, 2, 1, 0, 1, 2, 1], "t": 2, "m": 111}, {"n": 7, "s": [1, 2, 0, 2, 2, 2, 1], "t": 2, "m": 125}, {"n": 7, "s": [2, 1, 1, 2, 2, 2, 0], "t": 2, "m": 127}, {"n": 8, "s": [1, 0, 1, 1, 1, 1, 0, 0], "t": 2, "m": 254}]};
+const CINFO={std:{name:'標準スタート',ico:'🏁',desc:'左の柱から右の柱へぜんぶ運ぶ、いつものハノイの塔'},mix:{name:'バラバラスタート',ico:'🌀',desc:'ざぶとんがバラバラの状態から、ゴールに全部つもう'},goal:{name:'ゴールがちがう',ico:'🎯',desc:'スタートとゴールの柱がステージごとに変わるよ'},lim:{name:'手数チャレンジ',ico:'⏱️',desc:'決められた手数以内でクリア！こえたら失敗'}};
+let course=CO.last||'std'; let P=CO[course]; let LV=COURSES[course]; let ST=null, T=2;
 const COLS=['#e07a5f','#f2b134','#81b29a','#5fa8d3','#b388eb','#f28bb3','#a0c45a','#d4a373'];
 let n=3, lv=0, pos=[], sel=-1, moves=0, hist=[], t0=0, tick=null, done=false, hints=0, usedDemo=false, demo=false, demoT=null, hintM=null;
 const fmt=ms=>{const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
-const minM=k=>(1<<k)-1;
+const minM=k=>(1<<k)-1; const stMin=()=>ST?ST.m:minM(n);
 const top=p=>{ let t=-1; for(let d=0;d<n;d++) if(pos[d]===p){ t=d; break; } return t; }; // d=0 が一番小さい
-function load(i){ clearTimeout(demoT); clearInterval(tick); demo=false; lv=i; P.cur=i; saveP(); n=LV[i];
-  pos=new Array(n).fill(0); sel=-1; moves=0; hist=[]; t0=0; done=false; hints=0; usedDemo=false; hintM=null;
-  $('stName').textContent=`ざぶとん${n}まい`; $('stMin').textContent=minM(n);
+function load(i){ clearTimeout(demoT); clearInterval(tick); demo=false; lv=i; P.cur=i; CO.last=course; saveP(); ST=LV[i]; n=ST.n; T=ST.t;
+  pos=ST.s.slice(); sel=-1; moves=0; hist=[]; t0=0; done=false; hints=0; usedDemo=false; hintM=null;
+  $('stName').textContent=`${CINFO[course].ico}${i+1}・${n}まい`; $('stMin').textContent=stMin();
   const b=P.best[i]; $('stBest').textContent=b?`${b.m}手・${fmt(b.t)}`:'—';
-  build(); draw(); hud(); setStatus('ざぶとんを右の柱へ全部うつそう！');
-  setTimeout(()=>{sayText(1,'右の柱にのせてほしいワン');setTimeout(()=>sayText(2,'大きいのは小さいのの上にのせちゃダメだよ♪'),600)},300); }
+  const PN=['ひだり','まんなか','みぎ']; document.querySelectorAll('.pole .lb').forEach((e,k)=>{ e.textContent=k===T?'ゴール':(course==='std'&&k===0)||(course==='goal'&&k===ST.s[0])?'スタート':PN[k]; e.classList.toggle('goal',k===T); });
+  build(); draw(); hud();
+  const tn=['左','まんなか','右'][T];
+  setStatus(course==='lim'?`${stMin()}手以内で${tn}の柱に全部つもう！`:course==='mix'?`バラバラのざぶとんを${tn}の柱に全部つもう！`:`ざぶとんを${tn}の柱へ全部うつそう！`);
+  setTimeout(()=>{sayText(1,`${tn}の柱にのせてほしいワン`);setTimeout(()=>sayText(2,'大きいのは小さいのの上にのせちゃダメだよ♪'),600)},300); }
 function build(){ const st=$('stage'); st.querySelectorAll('.cu').forEach(e=>e.remove());
   for(let d=n-1;d>=0;d--){ const e=document.createElement('div'); e.className='cu'; e.dataset.d=d; const w=34+ (d/(Math.max(n-1,1)))*58;
     e.dataset.c=d%8; e.innerHTML=''; st.appendChild(e); } }
@@ -439,7 +454,7 @@ function draw(){
   $('dogTop').classList.toggle('show',done); $('dogTop').style.left=PX[2]+'%'; $('dogTop').style.top=Math.max(0,Math.min(...yb)-22)+'%';
 }
 new MutationObserver(()=>{ try{draw()}catch(e){} }).observe(document.body,{attributes:true,attributeFilter:['data-vt']});
-function hud(){ $('mv').textContent=moves; $('tm').textContent=t0?fmt(Date.now()-t0):'0:00'; $('bUndo').disabled=!hist.length||demo||done; $('bHint').disabled=demo||done; $('bDemo').textContent=demo?'⏹ とめる':'🎬 見本'; $('bDemo').disabled=done; }
+function hud(){ $('mv').textContent=moves; if(course==='lim'){ $('tmL').textContent='のこり'; $('tm').textContent=Math.max(0,stMin()-moves)+'手'; } else { $('tmL').textContent='タイム'; $('tm').textContent=t0?fmt(Date.now()-t0):'0:00'; } $('bUndo').disabled=!hist.length||demo||done; $('bHint').disabled=demo||done; $('bDemo').textContent=demo?'⏹ とめる':'🎬 見本'; $('bDemo').disabled=done; }
 function tapPole(p){ if(done||demo) return; actx();
   if(sel<0){ if(top(p)<0){ SFX.ng(); return; } sel=p; SFX.tap(); hintM=null; draw(); return; }
   if(sel===p){ sel=-1; draw(); return; }
@@ -448,20 +463,20 @@ function tapPole(p){ if(done||demo) return; actx();
   move(sel,p); }
 function move(a,b){ if(!t0){t0=Date.now();tick=setInterval(hud,500);} const d=top(a); hist.push(pos.slice()); pos[d]=b; moves++; sel=-1; hintM=null;
   tone(300-d*15,0,.1,'triangle',.22); tone(150,.05,.06,'sine',.15); draw(); hud();
-  if(pos.every(x=>x===2)) win(); else if(Math.random()<.08) sayText(pick([1,2]),pick(['よいしょ','ふかふか〜','いい感じ！'])); }
+  if(pos.every(x=>x===T)) win(); else if(course==='lim'&&moves>=stMin()) fail(); else if(Math.random()<.08) sayText(pick([1,2]),pick(['よいしょ','ふかふか〜','いい感じ！'])); }
 function nextMove(k,target){ // 小さいほうからk枚(0..k-1)をtargetへ集める最初の一手
   if(k===0) return null; const d=k-1; if(pos[d]===target) return nextMove(k-1,target);
   const other=3-pos[d]-target;
   for(let j=0;j<d;j++) if(pos[j]!==other) return nextMove(d,other);
   return [pos[d],target]; }
 function remaining(){ // 最短の残り手数
-  let r=0, target=2; for(let d=n-1;d>=0;d--){ if(pos[d]!==target){ r+=1<<d; target=3-pos[d]-target; } } return r; }
-function hint(){ if(done||demo) return; actx(); hints++; hintM=nextMove(n,2); sel=-1; draw(); setStatus(`光る柱から点線の柱へ（あと最短${remaining()}手）`); SFX.tap(); }
+  let r=0, target=T; for(let d=n-1;d>=0;d--){ if(pos[d]!==target){ r+=1<<d; target=3-pos[d]-target; } } return r; }
+function hint(){ if(done||demo) return; actx(); hints++; hintM=nextMove(n,T); sel=-1; draw(); setStatus(`光る柱から点線の柱へ（あと最短${remaining()}手）`); SFX.tap(); }
 function demoPlay(){ if(done) return; actx(); if(demo){demo=false;clearTimeout(demoT);hud();return}
-  demo=true; usedDemo=true; hud(); const go=()=>{ if(!demo) return; const m=nextMove(n,2); if(!m) return; demo=false; move(m[0],m[1]); if(!done){demo=true;hud();setStatus(`見本：あと${remaining()}手`);demoT=setTimeout(go,n>=7?220:450)} }; go(); }
+  demo=true; usedDemo=true; hud(); const go=()=>{ if(!demo) return; const m=nextMove(n,T); if(!m) return; demo=false; move(m[0],m[1]); if(!done){demo=true;hud();setStatus(`見本：あと${remaining()}手`);demoT=setTimeout(go,n>=7?220:450)} }; go(); }
 function undo(){ if(!hist.length||demo||done) return; pos=hist.pop(); moves++; sel=-1; hintM=null; SFX.tap(); draw(); hud(); toast('もどした（+1手）'); }
-function win(){ done=true; clearInterval(tick); const t=Date.now()-t0, mn=minM(n);
-  let stars=0; if(!usedDemo){ stars=moves<=mn?3:moves<=Math.ceil(mn*1.5)?2:1; if(hints) stars=Math.min(stars,2); }
+function win(){ done=true; clearInterval(tick); const t=Date.now()-t0, mn=stMin();
+  let stars=0; if(!usedDemo){ stars=moves<=mn?3:moves<=Math.ceil(mn*1.5)?2:1; if(course==='lim') stars=hints?2:3; if(hints) stars=Math.min(stars,2); }
   P.clear[lv]=1; if(stars>(P.stars[lv]||0)) P.stars[lv]=stars;
   let nb=false; if(!usedDemo){ const b=P.best[lv]; if(!b||moves<b.m||(moves===b.m&&t<b.t)){P.best[lv]={m:moves,t};nb=true} }
   saveP(); draw(); hud(); setStatus('ざぶとんタワー完成！🎉');
@@ -470,10 +485,15 @@ function win(){ done=true; clearInterval(tick); const t=Date.now()-t0, mn=minM(n
   setTimeout(()=>{ SFX.win(); confetti(['🐾','✨','🎉','🍡']); bark(1); sayText(1,'ふかふかで最高だワン！',true); sayText(2,'ずるーい、ムーンも〜',true); },500);
   $('bNextSt').style.display=LV[lv+1]?'':'none';
   showResult({winner:1,title:'🎉 タワー完成！',score:`${moves}手・${fmt(t)}`,msg:usedDemo?'見本で解きました（★なし）':moves<=mn?'最短手数！名人ワン！🏅':`最短は${mn}手。もっと少なくできるかな？`,
-    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}`,rec:`★3：${mn}手　★2：${Math.ceil(mn*1.5)}手以内`,delay:1400}); }
+    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}`,rec:course==='lim'?`${mn}手以内でクリア！`:`★3：${mn}手　★2：${Math.ceil(mn*1.5)}手以内`,delay:1400}); }
+function fail(){ done=true; clearInterval(tick); draw(); hud(); setStatus('手数オーバー…もう一回！'); SFX.ng(); sayText(2,'おしい〜！もう一回やってみよう',true);
+  $('bNextSt').style.display='none'; showResult({winner:0,title:'⏱️ 手数オーバー',score:`${moves}手`,msg:`${stMin()}手以内で全部つめなかったよ。ヒントや見本で道すじを確認してみよう！`,rec:`目標：${stMin()}手以内`,delay:500}); }
+function renderCourses(){ const g=$('coGrid'); g.innerHTML=''; Object.keys(CINFO).forEach(k=>{ const I=CINFO[k], L=COURSES[k], Q=CO[k]; const st=L.reduce((a,_,i)=>a+(Q.stars[i]||0),0), cl=L.filter((_,i)=>Q.clear[i]).length;
+  const b=document.createElement('button'); b.className='cob'+(k===course?' cur':''); b.innerHTML=`<span class="ci">${I.ico}</span><span class="ct"><b>${I.name}</b><small>${I.desc}</small><small class="cp">${cl}/${L.length}ステージ・★${st}/${L.length*3}</small></span>`;
+  b.onclick=()=>{ actx(); SFX.tap(); course=k; P=CO[k]; LV=COURSES[k]; closeM('mCourse'); load(Math.min(P.cur||0,LV.length-1)); }; g.appendChild(b); }); }
 function renderStages(){ const g=$('stGrid'); g.innerHTML='';
   LV.forEach((k,i)=>{ const ok=i===0||P.clear[i-1]; const sv=P.stars[i]||0; const b=document.createElement('button'); b.className='stb'+(ok?'':' lock')+(i===lv?' cur':'');
-    b.innerHTML=`<span class="no">${ok?k:'🔒'}</span><b>${ok?k+'まい':'？？？'}</b><small>${ok?'最短'+minM(k)+'手':''}</small><span class="sr">${[1,2,3].map(x=>`<i class="${x<=sv?'on':''}">★</i>`).join('')}</span>`;
+    b.innerHTML=`<span class="no">${ok?i+1:'🔒'}</span><b>${ok?k.n+'まい':'？？？'}</b><small>${ok?(course==='lim'?k.m+'手以内':'最短'+k.m+'手'):''}</small><span class="sr">${[1,2,3].map(x=>`<i class="${x<=sv?'on':''}">★</i>`).join('')}</span>`;
     if(ok) b.onclick=()=>{closeM('mStage');load(i)}; g.appendChild(b); }); }
 $('mRes').querySelector('.card').insertAdjacentHTML('beforeend','<div class="acts"><button class="btn g" id="bNextSt">次のステージへ ▶︎</button></div>');
 document.querySelectorAll('.pole').forEach((e,i)=>e.addEventListener('click',()=>tapPole(i)));
@@ -485,8 +505,10 @@ $('bUndo').onclick=()=>{actx();undo()}; $('bReset').onclick=()=>{actx();SFX.tap(
 $('bHint').onclick=hint; $('bDemo').onclick=demoPlay;
 $('bStages').onclick=()=>{actx();renderStages();openM('mStage')};
 $('bAgain').onclick=()=>{closeM('mRes');load(lv)}; $('bNextSt').onclick=()=>{closeM('mRes');load(lv+1)};
+$('bCourse').onclick=()=>{actx();renderCourses();openM('mCourse')};
 load(Math.min(P.cur||0,LV.length-1));
 if(!store.get('seenHelp',false)){ store.set('seenHelp',true); setTimeout(()=>openM('mHelp'),600); }
+else setTimeout(()=>{renderCourses();openM('mCourse')},250);
 
 
 ;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();
