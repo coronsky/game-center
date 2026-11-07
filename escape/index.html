@@ -291,7 +291,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <h2>🗝️ ステージ</h2>
   <div class="subTitle"><span>旅館の部屋から脱出！</span><span id="totStars"></span></div>
   <div class="sgrid" id="stGrid"></div>
-  <div class="rec">赤い番号は上級ステージ。17〜20は本家よりむずかしい！クリアすると次のステージが開くよ</div>
+  <div class="rec">赤い番号は上級ステージ。17〜21は本家よりむずかしい！クリアすると次のステージが開くよ</div>
   <div class="acts"><button class="btn g" data-close="mStage">とじる</button></div>
 </div></div>
 <div class="modal" id="mSet"><div class="card">
@@ -307,7 +307,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <p>👆 駒を<b>指でスライド</b>して動かします。動ける方向が1つだけなら、タップでも動きます。</p>
   <p>🔢 同じ駒を続けて動かすのは何マスでも<b>1手</b>。最短手数で解けたら★3つ！</p>
   <p>💡 ヒント：次に動かす駒が光って、行き先が点線で出ます（★は最大2つ）。<br>🎬 見本：最後まで自動で解いてくれます（★なし）。</p>
-  <p>🗝️ 全20ステージ。やさしい順にならんでいて、クリアすると次のステージが開きます（記録は自動で保存）。16番が本家「箱入り娘」（最短81手）、20番「星の間」は最短135手の最難関！</p>
+  <p>🗝️ 全21ステージ。やさしい順にならんでいて、クリアすると次のステージが開きます（記録は自動で保存）。16番が本家「箱入り娘」（最短81手）、20番「星の間」は135手、21番「月の間」は最短138手の最難関！</p>
   <div class="acts"><button class="btn g" data-close="mHelp">はじめる！</button></div>
 </div></div>
 <div style="display:none">
@@ -426,7 +426,7 @@ function kParse(rows){ // 文字列レイアウト → 駒
   return ps; }
 if(typeof module!=='undefined') module.exports={kSolve,kParse,kKey,kMoves,kApply,kSolved};
 
-const STAGES=[{"name": "げんかん", "rows": ["..BB", "..XX", "..XX", ".CCA", ".D.A"], "min": 3}, {"name": "げた箱", "rows": ["ADE.", "ABXX", ".BXX", "..CC", "...."], "min": 5}, {"name": "ろうか", "rows": [".XX.", "BXX.", "BACC", ".ADD", "...."], "min": 7}, {"name": "ちゃの間", "rows": ["....", "A.XX", "AEXX", "FBDD", ".BCC"], "min": 9}, {"name": "えんがわ", "rows": ["ABGE", "ABXX", "DCXX", "DCH.", "J.IF"], "min": 11}, {"name": "なかにわ", "rows": ["CCDH", "BAXX", "BAXX", "J.FI", "GE.K"], "min": 14}, {"name": "だいどころ", "rows": ["GXXA", "JXXA", "EIHC", "D.BC", "D.BF"], "min": 18}, {"name": "おふろ", "rows": ["DDBB", ".EXX", "HIXX", "FJAA", "GCC."], "min": 23}, {"name": "ゆかた部屋", "rows": ["ACCG", "AXXH", "JXX.", "BBE.", "DDFI"], "min": 28}, {"name": "卓球台", "rows": ["DFGC", "DXXC", "HXX.", "AI.B", "AEEB"], "min": 34}, {"name": "売店", "rows": ["CCXX", "AHXX", "ADD.", ".BIF", "GBEE"], "min": 40}, {"name": "まくら投げの間", "rows": ["FXXI", "AXXJ", "ACCB", ".H.B", "GEDD"], "min": 47}, {"name": "竹の間", "rows": ["FHAI", "XXAG", "XXEE", ".BB.", "DDCC"], "min": 55}, {"name": "梅の間", "rows": ["..XX", "ABXX", "ABFG", "CCDD", "HIEE"], "min": 63}, {"name": "松の間", "rows": ["I.CC", "BXXH", "BXX.", "DDFA", "GEEA"], "min": 72}, {"name": "箱入り娘（本家）", "rows": ["ABBC", "ABBC", "DEEF", "DGHF", "I..J"], "min": 81}, {"name": "鶴の間", "rows": ["XXF.", "XXAG", "EEA.", "IBCC", "HBDD"], "min": 95}, {"name": "亀の間", "rows": ["IXXF", ".XXG", "BDD.", "BEEA", "CCHA"], "min": 108}, {"name": "天の間", "rows": ["GXXI", "BXXH", "BCCF", ".EEA", ".DDA"], "min": 121}, {"name": "星の間", "rows": ["XXBC", "XX.C", ".GEE", "IGHH", "FDJJ"], "min": 135}];
+const STAGES=[{"name": "げんかん", "rows": ["..BB", "..XX", "..XX", ".CCA", ".D.A"], "min": 3}, {"name": "げた箱", "rows": ["ADE.", "ABXX", ".BXX", "..CC", "...."], "min": 5}, {"name": "ろうか", "rows": [".XX.", "BXX.", "BACC", ".ADD", "...."], "min": 7}, {"name": "ちゃの間", "rows": ["....", "A.XX", "AEXX", "FBDD", ".BCC"], "min": 9}, {"name": "えんがわ", "rows": ["ABGE", "ABXX", "DCXX", "DCH.", "J.IF"], "min": 11}, {"name": "なかにわ", "rows": ["CCDH", "BAXX", "BAXX", "J.FI", "GE.K"], "min": 14}, {"name": "だいどころ", "rows": ["GXXA", "JXXA", "EIHC", "D.BC", "D.BF"], "min": 18}, {"name": "おふろ", "rows": ["DDBB", ".EXX", "HIXX", "FJAA", "GCC."], "min": 23}, {"name": "ゆかた部屋", "rows": ["ACCG", "AXXH", "JXX.", "BBE.", "DDFI"], "min": 28}, {"name": "卓球台", "rows": ["DFGC", "DXXC", "HXX.", "AI.B", "AEEB"], "min": 34}, {"name": "売店", "rows": ["CCXX", "AHXX", "ADD.", ".BIF", "GBEE"], "min": 40}, {"name": "まくら投げの間", "rows": ["FXXI", "AXXJ", "ACCB", ".H.B", "GEDD"], "min": 47}, {"name": "竹の間", "rows": ["FHAI", "XXAG", "XXEE", ".BB.", "DDCC"], "min": 55}, {"name": "梅の間", "rows": ["..XX", "ABXX", "ABFG", "CCDD", "HIEE"], "min": 63}, {"name": "松の間", "rows": ["I.CC", "BXXH", "BXX.", "DDFA", "GEEA"], "min": 72}, {"name": "箱入り娘（本家）", "rows": ["ABBC", "ABBC", "DEEF", "DGHF", "I..J"], "min": 81}, {"name": "鶴の間", "rows": ["XXF.", "XXAG", "EEA.", "IBCC", "HBDD"], "min": 95}, {"name": "亀の間", "rows": ["IXXF", ".XXG", "BDD.", "BEEA", "CCHA"], "min": 108}, {"name": "天の間", "rows": ["GXXI", "BXXH", "BCCF", ".EEA", ".DDA"], "min": 121}, {"name": "星の間", "rows": ["XXBC", "XX.C", ".GEE", "IGHH", "FDJJ"], "min": 135}, {"name": "月の間", "rows": ["BJHI", "BDXX", "CDXX", "CFFG", "..EE"], "min": 138}];
 // ===== 箱入りワンコ（スライド脱出パズル） =====
 $('mRes').querySelector('.card').insertAdjacentHTML('beforeend','<div class="acts"><button class="btn g" id="bNextSt">次のステージへ ▶︎</button></div>');
 const store=mkStore('mcbx_');
