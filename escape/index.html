@@ -296,7 +296,6 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 </div></div>
 <div class="modal" id="mSet"><div class="card">
   <h2>🐾 設定</h2>
-  <div class="row"><div class="lb">箱に入っているワンコ</div><div class="seg" data-k="hero"><button data-v="colon">コロン</button><button data-v="moon">ムーン</button></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="acts"><button class="btn c" id="bHelp">あそびかた</button><button class="btn g" id="bStart">決定</button></div>
@@ -438,7 +437,7 @@ const EMO={V:['🦴','🧸','🎋','🏮','🪵','🌂'],H:['🛋️','🍵','�
 const HNAME={colon:'コロン',moon:'ムーン'};
 let stage=0, ps=[], start=[], hist=[], moves=0, lastPiece=-1, t0=0, tick=null, cleared=false, hints=0, demo=false, demoT=null, hintMv=null, gen0=0;
 const boardEl=$('kb');
-function heroP(){ return S.hero==='colon'?1:2; }
+function heroP(){ return 1; }
 function otherP(){ return 3-heroP(); }
 function loadStage(i){
   gen0++; clearTimeout(demoT); clearInterval(tick); demo=false;
