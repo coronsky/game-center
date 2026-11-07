@@ -159,6 +159,16 @@ body[data-vt=neon] #eq.picking .sk.off{filter:drop-shadow(0 0 5px #3ff0ff)}
 .qg button.lk{opacity:.45;cursor:default;background:#f1e8d8}
 body:is([data-vt=retro],[data-vt=neon]) .qg button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.25)}
 body:is([data-vt=retro],[data-vt=neon]) .qg button.ok{background:rgba(120,200,120,.25)}
+
+/* stronger board (natural/retro) */
+body:is([data-vt=natural],[data-vt=retro]) .panel .in{background-size:135% auto!important;background-position:center!important}
+body:is([data-vt=natural],[data-vt=retro]) .panel .in::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,.28) 100%)}
+body:is([data-vt=natural],[data-vt=retro]) #eq{position:relative;z-index:1;width:92%;padding:5% 4%;border-radius:18px}
+body[data-vt=natural] #eq{background:rgba(255,251,242,.86);box-shadow:0 0 0 3px #c9a06a,0 6px 16px rgba(90,61,43,.35),inset 0 0 0 1px #fff}
+body[data-vt=retro] #eq{background:rgba(32,14,6,.82);box-shadow:0 0 0 3px #f2b134,0 0 0 6px #7a2a10,0 8px 18px rgba(0,0,0,.5)}
+body[data-vt=retro] #eq .sk.off{filter:grayscale(1) brightness(2.2)}
+body[data-vt=retro] .panel .in{background-size:175% auto!important}
+body[data-vt=natural] #eq .sk.off{opacity:.14;filter:grayscale(1) brightness(.6)}
 body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
 body[data-vt=neon] .pkRow button{background:rgba(255,255,255,.06);border-color:#5a3bb0;color:#fff}body[data-vt=neon] .pkRow button.on{border-color:#ff4fd8;background:rgba(255,79,216,.25);box-shadow:0 0 12px #ff4fd8}
 
