@@ -290,14 +290,15 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">マッチ棒パズル</div></div>
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">マッチ棒パズル</div></div>
 
-  <div class="hud"><div class="box"><small>もんだい</small><b id="stN"></b></div><div class="box"><small>ルール</small><b>1本うごかす</b></div></div>
+  <div class="hud"><div class="box"><small>もんだい</small><b id="stN"></b></div><div class="box"><small>のこり</small><b id="left"></b></div></div>
+  <div class="lvRow" id="kRow"></div>
   <div class="lvRow" id="lvs"></div>
   <div class="panel"><div class="in"><div id="eq"></div></div></div>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠一覧へ</button></div>
 </div>
-<div class="modal" id="mHelp"><div class="card help"><h2>📖 マッチ棒パズル</h2><p>マッチ棒で書かれたまちがった式を、<b>1本だけ動かして</b>正しい式にしよう！</p>
+<div class="modal" id="mHelp"><div class="card help"><h2>📖 マッチ棒パズル</h2><p>マッチ棒で書かれたまちがった式を、決められた本数だけ動かして正しい式にしよう！「1本」「2本」「3本」の問題があるよ。</p>
 <p>👆 動かしたい棒をタップ → 点線の空いている場所をタップで置きます。もう一度同じ棒をタップで取り消し。</p>
 <p>＋の縦棒も動かせるよ（取ると−になる）。＝は動かせません。「1手戻す」で元にもどせます。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
@@ -400,36 +401,37 @@ function keys(cb){ addEventListener('keydown',e=>{const k={ArrowUp:'u',ArrowDown
 function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<button data-i="${i}" class="${i===cur?'on':''}">${n}${starsOf&&starsOf(i)?'<i>'+'★'.repeat(starsOf(i))+'</i>':''}</button>`).join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
 if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
-const Q=["3-7=4", "8-1=1", "0+1=8", "0-9=3", "1-1=6", "0-5=1", "3-8=3", "1-0=7", "1-9=4", "3-9=6", "8+0=5", "7+7=9"];
+const Q={"1": ["3-7=4", "8-1=1", "0+1=8", "0-9=3", "1-1=6", "0-5=1", "3-8=3", "1-0=7", "1-9=4", "3-9=6", "8+0=5", "7+7=9", "3-6=4", "3-4=1", "2+4=9", "8+2=6", "6-8=8", "6-0=8", "6+2=6", "6-3=4"], "2": ["7+9=6", "2+7=8", "3+7=0", "3+4=1", "4+1=9", "4+2=1", "4-5=5", "4+6=8", "4-3=3", "4+7=3", "2-6=4", "0+1=9", "2+5=2", "0+2=1", "0+4=5", "0+0=1"], "3": ["6-6=4", "0+0=7", "1+6=4", "0+2=4", "6-6=1", "0-1=2", "6+7=4", "7+5=6", "9-4=4", "8+1=8", "5+7=4", "0-1=0"]};
 const D={0:'abcdef',1:'bc',2:'abdeg',3:'abcdg',4:'bcfg',5:'acdfg',6:'acdefg',7:'abc',8:'abcdefg',9:'abcdfg'};
 const S2D={}; for(const k in D) S2D[[...D[k]].sort().join('')]=+k;
-const P=Object.assign({cur:0,done:{}},store.get('prog',{}));
-let st,pk=null,moved=false,hist=[],done=false;
-function load(i){ P.cur=i; store.set('prog',P); const q=Q[i]; st=[new Set(D[q[0]]),q[1]==='+',new Set(D[q[2]]),new Set(D[q[4]])]; pk=null; moved=false; hist=[]; done=false;
-  $('stN').textContent=(i+1)+'/'+Q.length; lvRow($('lvs'),Q.map((_,k)=>'もんだい'+(k+1)),i,k=>P.done[k]?1:0,load); draw(); setStatus('1本動かして式を正しくしよう'); setTimeout(()=>sayText(1,'どれを動かすワン？'),300); }
+const P=Object.assign({k:'1',cur:0,done:{}},store.get('prog2',{})); const QS=()=>Q[P.k]; const save=()=>store.set('prog2',P);
+let st,pk=null,moved=0,hist=[],done=false;
+function kRow(){ lvRow($('kRow'),['1本うごかす','2本うごかす','3本うごかす'],+P.k-1,k=>QS&&Q[String(k+1)].filter((_,i)=>P.done[(k+1)+'-'+i]).length===Q[String(k+1)].length?1:0,k=>{P.k=String(k+1);P.cur=0;save();kRow();load(0)}); }
+function load(i){ P.cur=i; save(); const q=QS()[i]; st=[new Set(D[q[0]]),q[1]==='+',new Set(D[q[2]]),new Set(D[q[4]])]; pk=null; moved=0; hist=[]; done=false;
+  $('stN').textContent=(i+1)+'/'+QS().length; lvRow($('lvs'),QS().map((_,k)=>'もんだい'+(k+1)),i,k=>P.done[P.k+'-'+k]?1:0,load); draw(); setStatus(P.k+'本動かして式を正しくしよう'); setTimeout(()=>sayText(1,'どれを動かすワン？'),300); }
 function digit(p){ const e=document.createElement('div'); e.className='dg';
   'abcdefg'.split('').forEach(s=>{ const k=document.createElement('i'); const on=st[p].has(s); k.className='sk '+('adg'.includes(s)?'h':'v')+' '+s+' '+(on?'on':'off')+(pk&&pk[0]===p&&pk[1]===s?' pick':''); k.onclick=()=>tap(p,s); e.appendChild(k); }); return e; }
 function draw(){ const eq=$('eq'); eq.innerHTML=''; eq.classList.toggle('picking',!!pk); eq.appendChild(digit(0));
   const op=document.createElement('div'); op.className='op'; op.innerHTML='<i class="sk h on fix"></i>'; const v=document.createElement('i'); v.className='sk v '+(st[1]?'on':'off')+(pk&&pk[0]===1?' pick':''); v.onclick=()=>tap(1,'v'); op.appendChild(v); eq.appendChild(op);
-  eq.appendChild(digit(2)); const e=document.createElement('div'); e.className='op eqs'; e.innerHTML='<i class="sk h h1 on fix"></i><i class="sk h h2 on fix"></i>'; eq.appendChild(e); eq.appendChild(digit(3)); $('bUndo').disabled=!hist.length; }
+  eq.appendChild(digit(2)); const e=document.createElement('div'); e.className='op eqs'; e.innerHTML='<i class="sk h h1 on fix"></i><i class="sk h h2 on fix"></i>'; eq.appendChild(e); eq.appendChild(digit(3)); $('bUndo').disabled=!hist.length; $('left').textContent='あと'+(+P.k-moved)+'本'; }
 const has=(p,s)=>p===1?st[1]:st[p].has(s);
 function tap(p,s){ if(done) return; actx();
   if(pk){ if(pk[0]===p&&pk[1]===s){pk=null;SFX.tap();draw();return}
     if(has(p,s)){ pk=[p,s]; SFX.tap(); draw(); return; }
-    if(moved){ toast('動かせるのは1本だけ！「1手戻す」でやり直してね',true); SFX.ng(); return; }
+    if(moved>=+P.k){ toast('動かせるのは'+P.k+'本まで！「1手戻す」でやり直してね',true); SFX.ng(); return; }
     hist.push(st.map(x=>x instanceof Set?new Set(x):x)); const [fp,fs]=pk; if(fp===1) st[1]=false; else st[fp].delete(fs); if(p===1) st[1]=true; else st[p].add(s);
-    pk=null; moved=true; SFX.put(); draw(); check(); return; }
-  if(!has(p,s)){ toast('先に動かす棒をえらんでね'); return; } if(moved){ toast('動かせるのは1本だけ！「1手戻す」でやり直してね',true); return; } pk=[p,s]; SFX.tap(); draw(); }
+    pk=null; moved++; SFX.put(); draw(); if(moved>=+P.k) check(); else setStatus('あと'+(+P.k-moved)+'本動かそう'); return; }
+  if(!has(p,s)){ toast('先に動かす棒をえらんでね'); return; } if(moved>=+P.k){ toast('動かせるのは'+P.k+'本まで！「1手戻す」でやり直してね',true); return; } pk=[p,s]; SFX.tap(); draw(); }
 function check(){ const n=x=>S2D[[...x].sort().join('')]; const a=n(st[0]),b=n(st[2]),c=n(st[3]);
   if(a===undefined||b===undefined||c===undefined){ setStatus('数字の形になってないよ'); SFX.ng(); return; }
   const ok=(st[1]?a+b:a-b)===c; const txt=a+(st[1]?'+':'-')+b+'='+c;
   if(!ok){ setStatus(txt+' はまちがい…'); SFX.ng(); return; }
-  done=true; { const fx=document.createElement('div'); fx.className='fxw'; document.querySelector('.panel .in').appendChild(fx); setTimeout(()=>fx.remove(),1700); } P.done[P.cur]=1; store.set('prog',P); report('clear',{stars:3}); SFX.win(); confetti(['🔥','🐾','✨']); sayText(2,'せいかい♪',true); setStatus('せいかい！ '+txt);
-  lvRow($('lvs'),Q.map((_,k)=>'もんだい'+(k+1)),P.cur,k=>P.done[k]?1:0,load); showResult({winner:0,title:'🎉 せいかい！',score:txt,msg:'1本で正しい式になったね'}); }
-$('bUndo').onclick=()=>{ if(!hist.length) return; st=hist.pop(); moved=false; pk=null; SFX.tap(); draw(); setStatus('1本動かして式を正しくしよう'); };
+  done=true; { const fx=document.createElement('div'); fx.className='fxw'; document.querySelector('.panel .in').appendChild(fx); setTimeout(()=>fx.remove(),1700); } P.done[P.k+'-'+P.cur]=1; save(); kRow(); report('clear',{stars:3}); SFX.win(); confetti(['🔥','🐾','✨']); sayText(2,'せいかい♪',true); setStatus('せいかい！ '+txt);
+  lvRow($('lvs'),QS().map((_,k)=>'もんだい'+(k+1)),P.cur,k=>P.done[P.k+'-'+k]?1:0,load); showResult({winner:0,title:'🎉 せいかい！',score:txt,msg:P.k+'本で正しい式になったね'}); }
+$('bUndo').onclick=()=>{ if(!hist.length) return; st=hist.pop(); moved=Math.max(0,moved-1); pk=null; done=false; SFX.tap(); draw(); setStatus('あと'+(+P.k-moved)+'本動かそう'); };
 $('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)};
-$('bAgain').textContent='つぎのもんだい'; $('bAgain').onclick=()=>{closeM('mRes');load((P.cur+1)%Q.length)};
-load(P.cur);
+$('bAgain').textContent='つぎのもんだい'; $('bAgain').onclick=()=>{closeM('mRes');load((P.cur+1)%QS().length)};
+kRow(); load(P.cur);
 
 
 ;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();
