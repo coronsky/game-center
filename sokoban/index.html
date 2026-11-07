@@ -386,7 +386,7 @@ const SOKO=[["#####","#@$.#","#####"],["######","#@ $.#","# $. #","######"],["##
 
 const PAR=[1,4,9,12,14,26,34,41];
 const P=Object.assign({cur:0,stars:{}},store.get('prog',{}));
-let joyT=null; let HERO=store.get('hero','colon'), FACE='d', FR=0; [0,1,2,3].forEach(i=>['u','r','d','l'].forEach(d=>['colon','moon'].forEach(h=>{const im=new Image();im.src=`../img/sk/${h}_${d}${i}.webp`})));
+let joyT=null; setInterval(()=>{ if(done) return; FR=(FR+1)%4; const e=document.querySelector('#bd .pl'); if(e) e.style.backgroundImage=`url(../img/sk/${HERO}_${FACE}${FR}.webp)`; },300); let HERO=store.get('hero','colon'), FACE='d', FR=0; [0,1,2,3].forEach(i=>['u','r','d','l'].forEach(d=>['colon','moon'].forEach(h=>{const im=new Image();im.src=`../img/sk/${h}_${d}${i}.webp`})));
 function syncHero(){ document.querySelectorAll('#dogPick button').forEach(b=>b.classList.toggle('on',b.dataset.v===HERO)); }
 document.querySelectorAll('#dogPick button').forEach(b=>b.onclick=()=>{ actx(); SFX.tap(); HERO=b.dataset.v; store.set('hero',HERO); syncHero(); draw(); }); syncHero();
 let W,H,g,pl,bx,goals,mv=0,hist=[],done=false;
