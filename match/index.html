@@ -140,8 +140,14 @@ body[data-vt=neon] .sk.on{background-image:url(../img/mt/stick_neon_h.webp)!impo
 .sk.v.off{background-image:url(../img/mt/slot_v.webp)!important}
 body[data-vt=retro] .sk.off{filter:sepia(1) saturate(2) brightness(.95)}body[data-vt=neon] .sk.off{filter:drop-shadow(0 0 3px #3ff0ff);opacity:.6}
 .sk.pick{opacity:1!important;transform:translateY(-6%) scale(1.06);filter:drop-shadow(0 0 6px #ffd23a) drop-shadow(0 0 2px #fff)!important}
-.sk.h{height:8.5%}.dg .g{top:45.7%}.sk.v{width:14.5%}
-.op{width:13%}.op .h{height:13%!important;top:43.5%}.op .v{width:20%!important;left:40%}.op.eqs .h1{top:28%}.op.eqs .h2{top:59%}
+.dg .sk.h{height:10.5%;left:15%;width:70%}.dg .a{top:0}.dg .g{top:44.75%}.dg .d{bottom:0}
+.dg .sk.v{width:18%;height:40%}.dg .f,.dg .e{left:0}.dg .b,.dg .c{right:0}.dg .f,.dg .b{top:7%}.dg .e,.dg .c{bottom:7%;top:auto}
+.op{width:14%;aspect-ratio:.58}.op .h{height:10.5%!important;top:44.75%;left:0;width:100%}.op .v{width:18%!important;height:62%!important;left:41%;top:19%}
+.op.eqs .h1{top:33%}.op.eqs .h2{top:56%}
+#eq .sk.off{opacity:.1;filter:grayscale(1) brightness(1.4)}
+#eq.picking .sk.off{opacity:.9;filter:drop-shadow(0 0 4px #ffe066) brightness(1.2);animation:slotP 1s ease-in-out infinite}
+body[data-vt=neon] #eq.picking .sk.off{filter:drop-shadow(0 0 5px #3ff0ff)}
+@keyframes slotP{50%{opacity:.5}}
 .dg .f,.dg .e{left:1%}.dg .b,.dg .c{right:1%}
 .fxw{position:absolute;inset:0;pointer-events:none;background:url(../img/mt/fx.webp) center/contain no-repeat;animation:fxw 1.6s ease-out forwards}
 @keyframes fxw{0%{opacity:0;transform:scale(.5)}25%{opacity:1;transform:scale(1.05)}100%{opacity:0;transform:scale(1.2)}}
@@ -403,7 +409,7 @@ function load(i){ P.cur=i; store.set('prog',P); const q=Q[i]; st=[new Set(D[q[0]
   $('stN').textContent=(i+1)+'/'+Q.length; lvRow($('lvs'),Q.map((_,k)=>'もんだい'+(k+1)),i,k=>P.done[k]?1:0,load); draw(); setStatus('1本動かして式を正しくしよう'); setTimeout(()=>sayText(1,'どれを動かすワン？'),300); }
 function digit(p){ const e=document.createElement('div'); e.className='dg';
   'abcdefg'.split('').forEach(s=>{ const k=document.createElement('i'); const on=st[p].has(s); k.className='sk '+('adg'.includes(s)?'h':'v')+' '+s+' '+(on?'on':'off')+(pk&&pk[0]===p&&pk[1]===s?' pick':''); k.onclick=()=>tap(p,s); e.appendChild(k); }); return e; }
-function draw(){ const eq=$('eq'); eq.innerHTML=''; eq.appendChild(digit(0));
+function draw(){ const eq=$('eq'); eq.innerHTML=''; eq.classList.toggle('picking',!!pk); eq.appendChild(digit(0));
   const op=document.createElement('div'); op.className='op'; op.innerHTML='<i class="sk h on fix"></i>'; const v=document.createElement('i'); v.className='sk v '+(st[1]?'on':'off')+(pk&&pk[0]===1?' pick':''); v.onclick=()=>tap(1,'v'); op.appendChild(v); eq.appendChild(op);
   eq.appendChild(digit(2)); const e=document.createElement('div'); e.className='op eqs'; e.innerHTML='<i class="sk h h1 on fix"></i><i class="sk h h2 on fix"></i>'; eq.appendChild(e); eq.appendChild(digit(3)); $('bUndo').disabled=!hist.length; }
 const has=(p,s)=>p===1?st[1]:st[p].has(s);
