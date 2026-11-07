@@ -151,6 +151,14 @@ body[data-vt=neon] #eq.picking .sk.off{filter:drop-shadow(0 0 5px #3ff0ff)}
 .dg .f,.dg .e{left:1%}.dg .b,.dg .c{right:1%}
 .fxw{position:absolute;inset:0;pointer-events:none;background:url(../img/mt/fx.webp) center/contain no-repeat;animation:fxw 1.6s ease-out forwards}
 @keyframes fxw{0%{opacity:0;transform:scale(.5)}25%{opacity:1;transform:scale(1.05)}100%{opacity:0;transform:scale(1.2)}}
+.lvRow button:disabled{opacity:.45}
+.qg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:55vh;overflow:auto}
+.qg button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:12px;padding:6px 0;font:inherit;font-weight:900;font-size:13px;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
+.qg button small{font-size:9px;font-weight:700;opacity:.7}
+.qg button.ok{background:#eef5e6;border-color:#9dbb8a}.qg button.cur{box-shadow:0 0 0 2px #f0b429}
+.qg button.lk{opacity:.45;cursor:default;background:#f1e8d8}
+body:is([data-vt=retro],[data-vt=neon]) .qg button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.25)}
+body:is([data-vt=retro],[data-vt=neon]) .qg button.ok{background:rgba(120,200,120,.25)}
 body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
 body[data-vt=neon] .pkRow button{background:rgba(255,255,255,.06);border-color:#5a3bb0;color:#fff}body[data-vt=neon] .pkRow button.on{border-color:#ff4fd8;background:rgba(255,79,216,.25);box-shadow:0 0 12px #ff4fd8}
 
@@ -293,6 +301,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="hud"><div class="box"><small>もんだい</small><b id="stN"></b></div><div class="box"><small>のこり</small><b id="left"></b></div></div>
   <div class="lvRow" id="kRow"></div>
   <div class="lvRow" id="lvs"></div>
+  <div class="lvRow"><button id="bList">📋 問題一覧</button></div>
   <div class="panel"><div class="in"><div id="eq"></div></div></div>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
@@ -304,7 +313,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
-
+<div class="modal" id="mList"><div class="card"><h2>📋 問題一覧</h2><div class="lvRow" id="lkRow" style="margin:0 0 10px"></div><div class="qg" id="qg"></div><div class="acts"><button class="btn g" data-close="mList">とじる</button></div></div></div>
 <div style="display:none">
 
 </div>
@@ -408,7 +417,7 @@ const P=Object.assign({k:'1',cur:0,done:{}},store.get('prog2',{})); const QS=()=
 let st,pk=null,moved=0,hist=[],done=false;
 function kRow(){ lvRow($('kRow'),['1本うごかす','2本うごかす','3本うごかす'],+P.k-1,k=>QS&&Q[String(k+1)].filter((_,i)=>P.done[(k+1)+'-'+i]).length===Q[String(k+1)].length?1:0,k=>{P.k=String(k+1);P.cur=0;save();kRow();load(0)}); }
 function load(i){ P.cur=i; save(); const q=QS()[i]; st=[new Set(D[q[0]]),q[1]==='+',new Set(D[q[2]]),new Set(D[q[4]])]; pk=null; moved=0; hist=[]; done=false;
-  $('stN').textContent=(i+1)+'/'+QS().length; lvRow($('lvs'),QS().map((_,k)=>'もんだい'+(k+1)),i,k=>P.done[P.k+'-'+k]?1:0,load); draw(); setStatus(P.k+'本動かして式を正しくしよう'); setTimeout(()=>sayText(1,'どれを動かすワン？'),300); }
+  $('stN').textContent=(i+1)+'/'+QS().length; lvs(); draw(); setStatus(P.k+'本動かして式を正しくしよう'); setTimeout(()=>sayText(1,'どれを動かすワン？'),300); }
 function digit(p){ const e=document.createElement('div'); e.className='dg';
   'abcdefg'.split('').forEach(s=>{ const k=document.createElement('i'); const on=st[p].has(s); k.className='sk '+('adg'.includes(s)?'h':'v')+' '+s+' '+(on?'on':'off')+(pk&&pk[0]===p&&pk[1]===s?' pick':''); k.onclick=()=>tap(p,s); e.appendChild(k); }); return e; }
 function draw(){ const eq=$('eq'); eq.innerHTML=''; eq.classList.toggle('picking',!!pk); eq.appendChild(digit(0));
@@ -427,10 +436,21 @@ function check(){ const n=x=>S2D[[...x].sort().join('')]; const a=n(st[0]),b=n(s
   const ok=(st[1]?a+b:a-b)===c; const txt=a+(st[1]?'+':'-')+b+'='+c;
   if(!ok){ setStatus(txt+' はまちがい…'); SFX.ng(); return; }
   done=true; { const fx=document.createElement('div'); fx.className='fxw'; document.querySelector('.panel .in').appendChild(fx); setTimeout(()=>fx.remove(),1700); } P.done[P.k+'-'+P.cur]=1; save(); kRow(); report('clear',{stars:3}); SFX.win(); confetti(['🔥','🐾','✨']); sayText(2,'せいかい♪',true); setStatus('せいかい！ '+txt);
-  lvRow($('lvs'),QS().map((_,k)=>'もんだい'+(k+1)),P.cur,k=>P.done[P.k+'-'+k]?1:0,load); showResult({winner:0,title:'🎉 せいかい！',score:txt,msg:P.k+'本で正しい式になったね'}); }
+  lvs(); showResult({winner:0,title:'🎉 せいかい！',score:txt,msg:P.k+'本で正しい式になったね'}); }
 $('bUndo').onclick=()=>{ if(!hist.length) return; st=hist.pop(); moved=Math.max(0,moved-1); pk=null; done=false; SFX.tap(); draw(); setStatus('あと'+(+P.k-moved)+'本動かそう'); };
 $('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)};
-$('bAgain').textContent='つぎのもんだい'; $('bAgain').onclick=()=>{closeM('mRes');load((P.cur+1)%QS().length)};
+$('bAgain').textContent='つぎのもんだい'; $('bAgain').onclick=()=>{closeM('mRes'); if(P.cur+1<QS().length) load(P.cur+1); else { toast('この本数の問題は全部クリア！'); listM(P.k); openM('mList'); } };
+
+const isDone=(k,i)=>!!P.done[k+'-'+i];
+const unlocked=(k,i)=>i===0||isDone(k,i-1)||isDone(k,i);
+function lvs(){ const el=$('lvs'); el.innerHTML=QS().map((_,i)=>{ const u=unlocked(P.k,i); return `<button data-i="${i}" class="${i===P.cur?'on':''}" ${u?'':'disabled'}>${u?'':'🔒'}もんだい${i+1}${isDone(P.k,i)?'<i>★</i>':''}</button>`; }).join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; if(!unlocked(P.k,i)){toast('前の問題をクリアするとあくよ');return} actx();SFX.tap();load(i); });
+  const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
+function listM(k){ lvRow($('lkRow'),['1本','2本','3本'],+k-1,null,j=>listM(String(j+1)));
+  const qs=Q[k]; $('qg').innerHTML=qs.map((q,i)=>{ const u=unlocked(k,i),d=isDone(k,i); return `<button data-i="${i}" class="${d?'ok':''} ${!u?'lk':''} ${k===P.k&&i===P.cur?'cur':''}">${!u?'🔒':d?'★':'・'}${i+1}<small>${u?q:'？'}</small></button>`; }).join('');
+  $('qg').querySelectorAll('button').forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; if(!unlocked(k,i)){toast('前の問題をクリアするとあくよ');return} actx();SFX.tap(); closeM('mList'); P.k=k; kRow(); load(i); }); }
+$('bList').onclick=()=>{actx();SFX.tap();listM(P.k);openM('mList')};
+if(!unlocked(P.k,P.cur)) P.cur=0;
 kRow(); load(P.cur);
 
 
