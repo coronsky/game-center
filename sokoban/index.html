@@ -395,7 +395,7 @@ function swipe(el,cb){ let sx=0,sy=0,on=false; el.addEventListener('touchstart',
     cb(Math.abs(dx)>Math.abs(dy)?(dx>0?'r':'l'):(dy>0?'d':'u')); },{passive:true}); }
 function keys(cb){ addEventListener('keydown',e=>{const k={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'}[e.key]; if(k){e.preventDefault();cb(k)}}); }
 function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<button data-i="${i}" class="${i===cur?'on':''}">${n}${starsOf&&starsOf(i)?'<i>'+'★'.repeat(starsOf(i))+'</i>':''}</button>`).join('');
-  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) el.scrollLeft=on.offsetLeft-el.offsetLeft-(el.clientWidth-on.offsetWidth)/2; }
 if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
 const SOKO=[["#####","#@$.#","#####"],["######","#@ $.#","# $. #","######"],["#######","#     #","# $.$ #","#@ .  #","#######"],[" #####","##   #","# $  #","#  #.##","# @$ .#","##  ###"," ####"],["#######","#.  @ #","# $$  #","#.  # #","#######"],["########","#  .   #","# $#$  #","# .@.  #","#  $#  #","#   .$ #","#      #","########"],["  #####","###   #","#.@$  #","### $.#","#.##$ #","# # . ##","#$ *$$.#","#   .  #","########"],["#######","#  .  #","# $#$ #","#. @ .#","# $#$ #","#  .  #","#######"]];
 
