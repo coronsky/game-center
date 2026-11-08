@@ -1,10 +1,10 @@
 // ホーム画面のBGMプレイヤー（オン/オフ・次の曲・ランダム/順番・ミュート）
 (function(){
-  const N=15, TITLE=i=>i<11?`Coron & Moon ${i+1}`:`Every Day's a Fantasy ${i-10}`;
+  const TT=["Sunny Paw Parade", "Biscuit Breeze", "Moonlight Ribbon", "Caramel Coin Rush", "Fluffy Tail Waltz", "Cocoa Arcade Lights", "Marshmallow Dreams", "Puppy Star Express", "Honey Bone Boogie", "Twin Paws Serenade", "Velvet Night Cruise", "Everyday Fantasy", "Cotton Cloud Holiday", "Starlit Treat Box", "Sweet Ending Lullaby"], N=TT.length, TITLE=i=>TT[i];
   const K='mc_bgm', ld=()=>{try{return JSON.parse(localStorage.getItem(K))||{}}catch(e){return {}}};
   const S=Object.assign({on:true,mute:false,shuffle:true,i:Math.floor(Math.random()*N),t:0},ld());
   const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
-  const au=new Audio(); au.preload='none'; au.volume=0.35; au.muted=S.mute;
+  const au=new Audio(); au.preload='none'; au.volume=0.12; au.muted=S.mute;
   let started=false;
   const src=i=>'bgm/t'+String(i+1).padStart(2,'0')+'.mp3';
   function pick(){ if(S.shuffle){ let n; do{ n=Math.floor(Math.random()*N) }while(n===S.i&&N>1); return n; } return (S.i+1)%N; }
