@@ -18,32 +18,40 @@
   addEventListener('pointerdown',first,{once:true,capture:true}); addEventListener('keydown',first,{once:true,capture:true});
 
   const css=document.createElement('style'); css.textContent=`
-#mcBgm{position:absolute;left:8px;top:4px;z-index:40;display:flex;align-items:center;gap:4px;font-family:inherit}
-#mcBgm button{width:34px;height:34px;border-radius:50%;border:2px solid #e2b06e;background:#fffaf1;color:#5a3d2b;font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer;padding:0}
+#mcBgm{position:absolute;left:8px;top:2px;z-index:40;font-family:inherit}
+#mcBgm button{border:0;padding:0;background-color:transparent;background-position:center;background-size:contain;background-repeat:no-repeat;cursor:pointer;font-size:0;color:transparent}
 #mcBgm button:active{transform:scale(.92)}
-#mcBgm .pn{display:none;align-items:center;gap:4px;background:rgba(255,250,240,.95);border:2px solid #e2b06e;border-radius:999px;padding:3px 10px 3px 4px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#bgMain{width:38px;height:38px;background-image:url(img/bg/natural_main.webp);filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+#mcBgm .pn{display:none;position:absolute;left:0;top:42px;width:270px;flex-direction:column;align-items:center;gap:4px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35))}
 #mcBgm.open .pn{display:flex}
-#mcBgm .pn button{width:32px;height:32px;font-size:15px;box-shadow:none}
-#mcBgm .pn button.sm{width:auto;border-radius:999px;padding:0 9px;font-size:11px;font-weight:900}
-#mcBgm .ttl{width:96px;font-size:11px;font-weight:900;color:#5a3d2b;white-space:nowrap;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+#mcBgm .pb{position:relative;width:100%;aspect-ratio:640/169;background:url(img/bg/natural_panel.webp) center/100% 100% no-repeat}
+#mcBgm .ttl{position:absolute;left:24.5%;right:6.7%;top:31.4%;bottom:26.6%;display:flex;align-items:center;font-size:12px;font-weight:900;color:#5a3d2b;white-space:nowrap;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 #mcBgm .ttl i{display:inline-block;font-style:normal;padding-left:100%;animation:bgMq 9s linear infinite}
 @keyframes bgMq{from{transform:translateX(0)}to{transform:translateX(-100%)}}
-#mcBgm #bgMain.on{background:#ffe7a8}
-body[data-theme=retro] #mcBgm button,body[data-theme=retro] #mcBgm .pn{background:#3a1a0e;border-color:#f2b134;color:#ffe9b8}body[data-theme=retro] #mcBgm .ttl{color:#ffe9b8}body[data-theme=retro] #mcBgm #bgMain.on{background:#7a2a10}
-body[data-theme=neon] #mcBgm button,body[data-theme=neon] #mcBgm .pn{background:#1a1050;border-color:#ff4fd8;color:#fff;box-shadow:0 0 8px rgba(255,79,216,.5)}body[data-theme=neon] #mcBgm .ttl{color:#bff8ff}body[data-theme=neon] #mcBgm #bgMain.on{background:#3a1a8a}
-@keyframes bgPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
-#mcBgm #bgMain.playing span{display:inline-block;animation:bgPulse 1s infinite}`;
+#bgPlay{position:absolute;left:4%;top:20%;height:62%;aspect-ratio:1}
+#mcBgm .row{display:flex;align-items:center;justify-content:center;gap:6px}
+#bgNext,#bgMute,#bgPlay{width:auto}
+#bgNext,#bgMute{width:40px;height:40px}
+#bgMode{width:96px;height:34px;position:relative}
+#bgMode b{position:absolute;left:44%;top:0;bottom:0;display:flex;align-items:center;font-size:12px;color:#5a3d2b;font-weight:900}
+body[data-theme=retro] #mcBgm .pb{aspect-ratio:640/219}body[data-theme=retro] #mcBgm .ttl{left:24.1%;right:10.6%;top:50.2%;bottom:20.1%;color:#ffd36b;text-shadow:0 0 4px #ff9a3a}body[data-theme=retro] #bgPlay{left:8%;top:47%;height:38%}body[data-theme=retro] #bgMode b{color:#a01e14}
+body[data-theme=neon] #mcBgm .pb{aspect-ratio:640/212}body[data-theme=neon] #mcBgm .ttl{left:24.2%;right:9.1%;top:42.5%;bottom:23.1%;color:#bff8ff;text-shadow:0 0 6px #3ff0ff}body[data-theme=neon] #bgPlay{left:6.2%;top:41%;height:42%}body[data-theme=neon] #bgMode b{color:#bff8ff;text-shadow:0 0 5px #3ff0ff}
+@keyframes bgPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+#bgMain.playing{animation:bgPulse 1.2s infinite}
+#mcBgm #bgMain{background-image:url(img/bg/natural_main.webp)}#mcBgm .pb{background-image:url(img/bg/natural_panel.webp)}#mcBgm #bgNext{background-image:url(img/bg/natural_next.webp)}#mcBgm #bgPlay{background-image:url(img/bg/natural_pause.webp)}#mcBgm #bgPlay.st{background-image:url(img/bg/natural_play.webp)}#mcBgm #bgMute{background-image:url(img/bg/natural_vol.webp)}#mcBgm #bgMute.st{background-image:url(img/bg/natural_mute.webp)}#mcBgm #bgMode{background-image:url(img/bg/natural_shuf.webp)}#mcBgm #bgMode.st{background-image:url(img/bg/natural_rep.webp)}
+body[data-theme=retro] #bgMain{background-image:url(img/bg/retro_main.webp)}body[data-theme=retro] #mcBgm .pb{background-image:url(img/bg/retro_panel.webp)}body[data-theme=retro] #bgNext{background-image:url(img/bg/retro_next.webp)}body[data-theme=retro] #bgPlay{background-image:url(img/bg/retro_pause.webp)}body[data-theme=retro] #bgPlay.st{background-image:url(img/bg/retro_play.webp)}body[data-theme=retro] #bgMute{background-image:url(img/bg/retro_vol.webp)}body[data-theme=retro] #bgMute.st{background-image:url(img/bg/retro_mute.webp)}body[data-theme=retro] #bgMode{background-image:url(img/bg/retro_shuf.webp)}body[data-theme=retro] #bgMode.st{background-image:url(img/bg/retro_rep.webp)}
+body[data-theme=neon] #bgMain{background-image:url(img/bg/neon_main.webp)}body[data-theme=neon] #mcBgm .pb{background-image:url(img/bg/neon_panel.webp)}body[data-theme=neon] #bgNext{background-image:url(img/bg/neon_next.webp)}body[data-theme=neon] #bgPlay{background-image:url(img/bg/neon_pause.webp)}body[data-theme=neon] #bgPlay.st{background-image:url(img/bg/neon_play.webp)}body[data-theme=neon] #bgMute{background-image:url(img/bg/neon_vol.webp)}body[data-theme=neon] #bgMute.st{background-image:url(img/bg/neon_mute.webp)}body[data-theme=neon] #bgMode{background-image:url(img/bg/neon_shuf.webp)}body[data-theme=neon] #bgMode.st{background-image:url(img/bg/neon_rep.webp)}
+`;
   document.head.appendChild(css);
   const w=document.createElement('div'); w.id='mcBgm';
-  w.innerHTML=`<button id="bgMain" aria-label="音楽"><span>🎵</span></button><div class="pn"><button id="bgPlay" aria-label="再生/停止">⏸</button><button id="bgNext" aria-label="次の曲">⏭</button><button id="bgMode" class="sm"></button><button id="bgMute" aria-label="ミュート">🔊</button><span class="ttl" id="bgTtl"></span></div>`;
+  w.innerHTML=`<button id="bgMain" aria-label="音楽"></button><div class="pn"><div class="pb"><button id="bgPlay" aria-label="再生/停止"></button><span class="ttl" id="bgTtl"></span></div><div class="row"><button id="bgNext" aria-label="次の曲"></button><button id="bgMode" aria-label="選曲"><b></b></button><button id="bgMute" aria-label="ミュート"></button></div></div>`;
   const mount=()=>{ document.body.appendChild(w); ui(); };
   if(document.body) mount(); else addEventListener('DOMContentLoaded',mount);
   function $(id){ return w.querySelector('#'+id); }
   function ui(){ if(!w.isConnected) return; const pl=!au.paused;
-    $('bgMain').classList.toggle('on',S.on); $('bgMain').classList.toggle('playing',pl&&!S.mute);
-    $('bgMain').querySelector('span').textContent=S.mute?'🔇':'🎵';
-    $('bgPlay').textContent=pl?'⏸':'▶'; $('bgMode').textContent=S.shuffle?'🔀 ランダム':'🔁 順番';
-    $('bgMute').textContent=S.mute?'🔇':'🔊'; if($('bgTtl').dataset.t!==TITLE(S.i)){ $('bgTtl').dataset.t=TITLE(S.i); $('bgTtl').innerHTML='<i>♪ '+TITLE(S.i)+'</i>'; } }
+    $('bgMain').classList.toggle('playing',pl&&!S.mute);
+    $('bgPlay').classList.toggle('st',!pl); $('bgMode').classList.toggle('st',!S.shuffle); $('bgMode').querySelector('b').textContent=S.shuffle?'ランダム':'順番';
+    $('bgMute').classList.toggle('st',S.mute); if($('bgTtl').dataset.t!==TITLE(S.i)){ $('bgTtl').dataset.t=TITLE(S.i); $('bgTtl').innerHTML='<i>♪ '+TITLE(S.i)+'</i>'; } }
   au.addEventListener('play',ui); au.addEventListener('pause',ui);
   w.addEventListener('pointerdown',e=>e.stopPropagation());
   w.addEventListener('click',e=>{ e.stopPropagation(); const b=e.target.closest('button'); if(!b) return;
