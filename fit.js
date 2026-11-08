@@ -53,3 +53,32 @@
     ask(function(){ location.href=url; });
   },true);
 })();
+// スキン切り替えのお知らせ看板（ホーム・ゲーム共通）
+(function(){
+  var BASE=(document.currentScript&&document.currentScript.src||'').replace(/fit\.js.*$/,'');
+  var NM={natural:'ナチュラル',retro:'レトロ',neon:'サイバーネオン'};
+  function th(){ var b=document.body; return b&&(b.dataset.theme||b.dataset.vt)||''; }
+  function init(){
+    var st=document.createElement('style'); st.textContent=
+    '#mcSkinPop{position:fixed;left:50%;top:40%;z-index:2147482000;width:min(80vw,330px);aspect-ratio:720/225;transform:translate(-50%,-50%) scale(.4);opacity:0;pointer-events:none;background:center/100% 100% no-repeat;transition:transform .32s cubic-bezier(.2,1.6,.4,1),opacity .2s;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}'+
+    '#mcSkinPop.on{transform:translate(-50%,-50%) scale(1);opacity:1}'+
+    '#mcSkinPop .ic{position:absolute;left:-7%;top:50%;height:100%;aspect-ratio:1;transform:translateY(-50%) rotate(-8deg);background:center/contain no-repeat}'+
+    '#mcSkinPop b{position:absolute;left:20%;right:6%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font:900 22px/1 "Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;letter-spacing:.06em;white-space:nowrap}'+
+    '#mcSkinPop i{position:absolute;width:15%;aspect-ratio:1;background:center/contain no-repeat;opacity:0;transform:scale(.3)}'+
+    '#mcSkinPop.on i{animation:mcSpD .9s ease-out forwards}'+
+    '#mcSkinPop i:nth-of-type(1){right:-4%;top:-26%;animation-delay:.12s!important}#mcSkinPop i:nth-of-type(2){right:20%;bottom:-30%;animation-delay:.22s!important}#mcSkinPop i:nth-of-type(3){left:34%;top:-30%;animation-delay:.3s!important}'+
+    '@keyframes mcSpD{0%{opacity:0;transform:scale(.3) rotate(-20deg)}50%{opacity:1;transform:scale(1.15) rotate(8deg)}100%{opacity:1;transform:scale(1) rotate(0)}}'+
+    '#mcSkinPop.natural b{color:#5a3d2b;text-shadow:0 1px 0 #fff8e6}#mcSkinPop.retro b{color:#8a1e12;text-shadow:0 1px 0 #ffe9b8}#mcSkinPop.neon b{color:#fff;text-shadow:0 0 8px #ff4fd8,0 0 14px #3ff0ff}';
+    document.head.appendChild(st);
+    var p=document.createElement('div'); p.id='mcSkinPop'; p.innerHTML='<span class="ic"></span><b></b><i></i><i></i><i></i>'; document.body.appendChild(p);
+    var last=th(), t=null;
+    function show(v){ if(!NM[v]) return; var U=BASE+'img/sp/'+v+'_';
+      p.className=v; p.style.backgroundImage='url('+U+'plate.webp)'; p.querySelector('.ic').style.backgroundImage='url('+U+'icon.webp)';
+      p.querySelector('b').textContent=NM[v]; var d=p.querySelectorAll('i'); for(var k=0;k<3;k++) d[k].style.backgroundImage='url('+U+'d'+k+'.webp)';
+      void p.offsetWidth; p.classList.add('on'); clearTimeout(t); t=setTimeout(function(){ p.classList.remove('on'); },1300); }
+    new MutationObserver(function(){ var v=th(); if(v&&v!==last){ last=v; show(v); } }).observe(document.body,{attributes:true,attributeFilter:['data-theme','data-vt']});
+    ['natural','retro','neon'].forEach(function(v){ var im=new Image(); im.src=BASE+'img/sp/'+v+'_plate.webp'; });
+    window.mcSkinPop=show;
+  }
+  if(document.body) init(); else addEventListener('DOMContentLoaded',init);
+})();

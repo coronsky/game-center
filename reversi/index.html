@@ -1263,7 +1263,7 @@ function setVT(v,anim){ if(!VTS.includes(v)) v='natural'; document.body.dataset.
   try{ const base=$('bHint').querySelector('.ii').dataset.base||($('bHint').querySelector('.ii').dataset.base=$('bHint').querySelector('.ii').getAttribute('src').replace(/natural\/.*$/,''));
     const set={bHint:v+'/rv_bt_hint.webp?v=4',bUndo:v+'/rv_bt_undo.webp?v=4',bNew:v+'/rv_bt_new.webp?v=4',bSet:v==='retro'?'retro/icon_settings.webp':v+'/bt_settings.webp'};
     for(const k in set) $(k).querySelector('.ii').src=base+set[k]; }catch(e){}
-  if(anim) toast('🎨 '+VTN[v]); }
+   }
 const hv=(location.hash||'').slice(1);
 setVT(VTS.includes(hv)?hv:store.get('vt','natural'));
 window.addEventListener('hashchange',()=>{const h=location.hash.slice(1); if(VTS.includes(h)&&h!==document.body.dataset.vt) setVT(h);});

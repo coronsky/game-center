@@ -482,7 +482,7 @@ $('plCoin').onclick=()=>{actx();openRank()};
 const THEMES=['natural','retro','neon'], TNAME={natural:'ナチュラル',retro:'レトロ',neon:'サイバーネオン'};
 $('hdrChip').onclick=e=>{ e.stopPropagation(); actx(); P.theme=THEMES[(THEMES.indexOf(T())+1)%3]; save();
   document.body.style.transition='opacity .18s'; document.body.style.opacity=0;
-  setTimeout(()=>{ render(); document.body.style.opacity=1; toast('🎨 '+TNAME[T()]); [523,784].forEach((f,k)=>tone(f,k*.08,.12,'triangle',.12)); },180); };
+  setTimeout(()=>{ render(); document.body.style.opacity=1; [523,784].forEach((f,k)=>tone(f,k*.08,.12,'triangle',.12)); },180); };
 $('hero').addEventListener('click',e=>{ actx(); const r=e.currentTarget.getBoundingClientRect(); bark(e.clientX-r.left<r.width/2?1:2); burst(e.clientX,e.clientY,['💕','🐾','✨'],5,40); });
 $('q').addEventListener('input',drawList);
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove('show'));
