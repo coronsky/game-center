@@ -82,3 +82,17 @@
   }
   if(document.body) init(); else addEventListener('DOMContentLoaded',init);
 })();
+// パズルの盤面をさわっている間は、画面がスクロールしないようにする
+(function(){
+  var SEL='#bd,#board,#kb,#stage,#cv,#grid,#gb,#gw,#scene,#pb,#rg,#tb,#sb,#eq,#fd';
+  function init(){
+    if(/\/(osanpo|ponpon)\//.test(location.pathname)) return;
+    var st=document.createElement('style'); st.textContent=SEL.split(',').map(function(s){return s+','+s+' *'}).join(',')+'{touch-action:none!important;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}';
+    document.head.appendChild(st);
+    var on=false;
+    document.addEventListener('touchstart',function(e){ on=!!(e.target.closest&&e.target.closest(SEL)); },{passive:true,capture:true});
+    document.addEventListener('touchmove',function(e){ if(on&&e.cancelable) e.preventDefault(); },{passive:false,capture:true});
+    document.addEventListener('touchend',function(){ on=false; },{passive:true,capture:true});
+  }
+  if(document.body) init(); else addEventListener('DOMContentLoaded',init);
+})();
