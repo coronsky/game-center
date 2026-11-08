@@ -1,4 +1,4 @@
-// ホーム画面のBGMプレイヤー（オン/オフ・次の曲・ランダム/順番・ミュート）
+// BGMプレイヤー（ホームとゲームで共通・ページを移っても同じ曲の続きから）
 (function(){
   const CS=document.currentScript, BASE=((CS&&CS.src)||'').replace(/bgm\.js.*$/,''), MOUNT=CS&&CS.dataset&&CS.dataset.mount;
   const TT=["Sunny Paw Parade", "Biscuit Breeze", "Moonlight Ribbon", "Caramel Coin Rush", "Fluffy Tail Waltz", "Cocoa Arcade Lights", "Marshmallow Dreams", "Puppy Star Express", "Honey Bone Boogie", "Twin Paws Serenade", "Velvet Night Cruise", "Everyday Fantasy", "Cotton Cloud Holiday", "Starlit Treat Box", "Sweet Ending Lullaby"], N=TT.length, TITLE=i=>TT[i];
@@ -11,13 +11,16 @@
   const src=i=>BASE+'bgm/t'+String(i+1).padStart(2,'0')+'.mp3';
   function pick(){ if(S.shuffle){ let n; do{ n=Math.floor(Math.random()*N) }while(n===S.i&&N>1); return n; } return (S.i+1)%N; }
   function load(i,t){ S.i=i; au.src=src(i); if(t) au.addEventListener('loadedmetadata',()=>{ try{au.currentTime=Math.min(t,(au.duration||t)-1)}catch(e){} },{once:true}); save(); ui(); }
-  function play(){ graph(); if(!au.src) load(S.i,S.t); const p=au.play(); if(p&&p.catch) p.catch(()=>{}); started=true; ui(); }
+  function play(){ graph(); if(!au.src) load(S.i,S.t); const p=au.play(); started=true; if(p&&p.catch) p.catch(()=>{ started=false; }); ui(); }
   function stop(){ au.pause(); ui(); }
   au.addEventListener('ended',()=>{ load(pick(),0); if(S.on) play(); });
   addEventListener('pagehide',()=>{ S.t=au.currentTime||0; save(); });
   document.addEventListener('visibilitychange',()=>{ if(document.hidden){ S.t=au.currentTime||0; save(); au.pause(); } else if(S.on&&started) play(); });
-  const first=()=>{ if(S.on&&!started) play(); };
-  addEventListener('pointerdown',first,{once:true,capture:true}); addEventListener('keydown',first,{once:true,capture:true});
+  const first=()=>{ if(AC&&AC.state!=='running') try{AC.resume()}catch(e){} if(S.on&&(!started||au.paused)) play(); };
+  ['pointerdown','touchend','keydown'].forEach(ev=>addEventListener(ev,first,{capture:true,passive:true}));
+  setInterval(()=>{ if(!au.paused){ S.t=au.currentTime||0; save(); } },1000);
+  // ページを移っても同じ曲の続きから：開いたらすぐ再生を試す（ブラウザが止めた場合は最初のタップで再開）
+  if(S.on) setTimeout(()=>{ load(S.i,S.t); play(); },0);
 
   const css=document.createElement('style'); css.textContent=`
 #mcBgm{position:absolute;left:6px;top:1px;z-index:40;font-family:inherit;display:flex;align-items:center;gap:3px}
