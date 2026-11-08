@@ -124,7 +124,7 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
 @media (max-height:760px){.overlay{gap:7px}.char ul{line-height:1.32}.char{padding:6px 6px 8px;gap:2px}#title>p{display:none}.btn{padding:9px 20px}}
 @media (prefers-reduced-motion:reduce){#skillBtn.ready{animation:none}}
 </style>
-<style id="mcStrip">body{padding-top:calc(max(8px,env(safe-area-inset-top,0px)) + 28px)!important}</style></head>
+<style id="mcStrip">body{padding-bottom:calc(max(8px,env(safe-area-inset-bottom,0px)) + 36px)!important}</style></head>
 <body>
 
 
@@ -1107,6 +1107,6 @@ showBest();updateControls();
 requestAnimationFrame(loop);
 </script>
 
-<script src="../coins.js"></script><script src="../home.js"></script>
+<script src="../coins.js"></script><script src="../home.js" data-pos="bottom"></script>
 </body>
 </html>
