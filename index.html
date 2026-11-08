@@ -165,7 +165,7 @@ body[data-theme=neon] .tile .inner{background:rgba(13,6,38,.85)}
 body[data-theme=natural] .bnav{background:rgba(255,253,248,.92);border:1.5px solid var(--line);box-shadow:0 6px 18px rgba(86,112,90,.2);backdrop-filter:blur(8px)}
 body[data-theme=retro] .bnav{background:linear-gradient(#5a2412,#3a160a);border:3px solid var(--gold);box-shadow:0 0 14px rgba(255,154,46,.5)}
 body[data-theme=neon] .bnav{background:rgba(14,6,40,.82);border:1.5px solid rgba(63,240,255,.6);box-shadow:0 0 16px rgba(255,79,216,.45);backdrop-filter:blur(8px)}
-.nb{border:none;background:none;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;font-weight:900;padding:2px 6px;color:var(--ink);transition:transform .15s}
+.nb{border:none;background:none;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10px;font-weight:900;padding:2px 2px;white-space:nowrap;color:var(--ink);transition:transform .15s}
 .nb .ni{font-size:22px;height:30px;display:flex;align-items:center}.nb .ni img{height:30px;width:auto}
 body[data-theme=neon] .nb .ni img,body[data-theme=natural] .nb .ni img{height:36px}
 .nb:active{transform:scale(.92)}
@@ -430,7 +430,7 @@ function drawList(){
 function drawNav(){
   const t=T();
   const btn=t!=='retro';
-  const items=[['home','ホーム',btn?'bt_home':'icon_home'],['search','さがす','icon_search'],['rank','ランク',btn?'bt_rank':'icon_trophy'],['set','せってい',btn?'bt_settings':'icon_settings']];
+  const items=[['home','ホーム',btn?'bt_home':'icon_home'],['cont','つづきから','bt_cont'],['fav','お気に入り','bt_fav'],['rank','ランク',btn?'bt_rank':'icon_trophy'],['set','せってい',btn?'bt_settings':'icon_settings']];
   $('bnav').innerHTML=items.map(([k,n,key])=>{ const i=ic(key);
     return `<button class="nb" data-n="${k}"><span class="ni">${i}</span>${n}</button>`}).join('');
   $('bnav').querySelectorAll('.nb').forEach(b=>b.onclick=()=>{actx();SFX.tap();nav(b.dataset.n)});
@@ -438,6 +438,8 @@ function drawNav(){
 function nav(k){
   if(k==='home'){ window.scrollTo({top:0,behavior:'smooth'}); }
   if(k==='search'){ const s=$('search'); s.classList.toggle('show'); if(s.classList.contains('show')) setTimeout(()=>$('q').focus(),50); else {$('q').value='';drawList()} }
+  if(k==='cont'){ const g=GAMES.find(x=>x.id===P.last); if(!g){ toast('まだ遊んだゲームがないよ🐾'); return; } openGame(g.id); location.href=g.url+'#'+T(); }
+  if(k==='fav'){ P.tab='fav'; save(); drawTabs(); drawList(); const l=$('list'); if(l) l.scrollIntoView({behavior:'smooth',block:'start'}); }
   if(k==='rank') openRank();
   if(k==='set') openSet();
 }
@@ -449,7 +451,7 @@ function addCoins(n,why){
   if(after.c>before.c){ setTimeout(()=>showGift('ランクアップ！',T()==='retro'?rankIc(after):`<img src="img/${T()}/ac_rankup.webp" alt="">`,after.n+'になった！','つぎのランクも目指そう🐾'),400); SFX.fan(); }
 }
 function openGame(id){
-  actx(); const d=today(); if(P.open.d!==d) P.open={d,n:0};
+  actx(); P.last=id; const d=today(); if(P.open.d!==d) P.open={d,n:0};
   if(P.open.n<10){ P.open.n++; addCoins(1); toast('🪙 +1 コイン'); SFX.coin(); } save();
 }
 function showGift(title,icon,plus,note){ $('gTitle').textContent=title; $('gIc').innerHTML=icon; $('gPlus').textContent=plus; $('gNote').textContent=note; $('mGift').classList.add('show'); }
