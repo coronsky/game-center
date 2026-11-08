@@ -1,5 +1,5 @@
 // オフライン対応（ページは最新を優先、画像などはキャッシュを優先）
-const V='gc-v17';
+const V='gc-v18';
 const CORE=['./','index.html','coins.js','backup.js','manifest.webmanifest','icons/icon-192.png',
  ...['reversi','shogi','wanko','gomoku','memory','escape','rings','peg','slide','hanoi'].map(g=>g+'/')];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
