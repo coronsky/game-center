@@ -47,7 +47,7 @@
     m.classList.add('on');
   }
   document.addEventListener('click',function(e){
-    var t=e.target.closest&&e.target.closest('#homeBtn,#bHome'); if(!t) return;
+    var t=e.target.closest&&e.target.closest('#homeBtn,#bHome,#bHome2'); if(!t) return;
     e.preventDefault(); e.stopImmediatePropagation();
     var hb=document.getElementById('homeBtn'); var url=(hb&&hb.href)||'../';
     ask(function(){ location.href=url; });

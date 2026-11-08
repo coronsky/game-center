@@ -6,7 +6,7 @@
   const S=Object.assign({on:true,mute:false,shuffle:true,i:Math.floor(Math.random()*N),t:0},ld());
   const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
   const au=new Audio(); au.preload='none'; au.volume=1; const VOL=0.06; let AC=null;
-  function graph(){ try{ if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(!C){ au.volume=VOL; return; } AC=new C(); const g=AC.createGain(); g.gain.value=VOL; AC.createMediaElementSource(au).connect(g); g.connect(AC.destination); } if(AC.state!=='running') AC.resume(); }catch(e){ au.volume=VOL; } } au.muted=S.mute;
+  function graph(){ try{ if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(!C){ au.volume=VOL; return; } AC=new C(); const g=AC.createGain(); g.gain.value=VOL; AC.createMediaElementSource(au).connect(g); g.connect(AC.destination); } if(AC.state!=='running') AC.resume(); }catch(e){ au.volume=VOL; } } au.muted=false; S.mute=false;
   let started=false;
   const src=i=>BASE+'bgm/t'+String(i+1).padStart(2,'0')+'.mp3';
   function pick(){ if(S.shuffle){ let n; do{ n=Math.floor(Math.random()*N) }while(n===S.i&&N>1); return n; } return (S.i+1)%N; }
@@ -51,7 +51,7 @@ body:is([data-theme=neon],[data-vt=neon]) #mcBgm #bgMain{background-image:url(${
 `;
   document.head.appendChild(css);
   const w=document.createElement('div'); w.id='mcBgm';
-  w.innerHTML=`<button id="bgMain" aria-label="音楽"></button><div class="bgPn"><div class="bgPb"><button id="bgPlay" aria-label="再生/停止"></button><span class="bgTt" id="bgTtl"></span></div><div class="bgRow"><button id="bgNext" aria-label="次の曲"></button><button id="bgMode" aria-label="選曲"><b></b></button><button id="bgMute" aria-label="ミュート"></button></div></div>`;
+  w.innerHTML=`<button id="bgMain" aria-label="音楽"></button><div class="bgPn"><div class="bgPb"><button id="bgPlay" aria-label="再生/停止"></button><span class="bgTt" id="bgTtl"></span></div><div class="bgRow"><button id="bgNext" aria-label="次の曲"></button><button id="bgMode" aria-label="選曲"><b></b></button></div></div>`;
   function align(){ const z=document.getElementById('mcSizeBtn')||document.getElementById('hdrChip')||document.getElementById('vtBtn'); if(!z||!w.isConnected) return;
     const r=z.getBoundingClientRect(), m=w.querySelector('#bgMain').getBoundingClientRect(); if(!r.height||!m.height) return;
     const cur=parseFloat(getComputedStyle(w).top)||0; w.style.top=(cur+(r.top+r.height/2)-(m.top+m.height/2))+'px'; }
@@ -61,7 +61,7 @@ body:is([data-theme=neon],[data-vt=neon]) #mcBgm #bgMain{background-image:url(${
   function ui(){ if(!w.isConnected) return; const pl=!au.paused;
     $('bgMain').classList.toggle('playing',pl&&!S.mute);
     $('bgPlay').classList.toggle('st',!pl); $('bgMode').classList.toggle('st',!S.shuffle); $('bgMode').querySelector('b').textContent=S.shuffle?'ランダム':'順番';
-    $('bgMute').classList.toggle('st',S.mute); if($('bgTtl').dataset.t!==TITLE(S.i)){ $('bgTtl').dataset.t=TITLE(S.i); $('bgTtl').innerHTML='<i><span>♪ '+TITLE(S.i)+'</span><span>♪ '+TITLE(S.i)+'</span></i>'; } }
+    if($('bgTtl').dataset.t!==TITLE(S.i)){ $('bgTtl').dataset.t=TITLE(S.i); $('bgTtl').innerHTML='<i><span>♪ '+TITLE(S.i)+'</span><span>♪ '+TITLE(S.i)+'</span></i>'; } }
   au.addEventListener('play',ui); au.addEventListener('pause',ui);
   w.addEventListener('pointerdown',e=>e.stopPropagation());
   w.addEventListener('click',e=>{ e.stopPropagation(); const b=e.target.closest('button'); if(!b) return;
@@ -69,6 +69,5 @@ body:is([data-theme=neon],[data-vt=neon]) #mcBgm #bgMain{background-image:url(${
     if(b.id==='bgPlay'){ if(au.paused){ S.on=true; play(); } else { S.on=false; stop(); } save(); }
     if(b.id==='bgNext'){ load(pick(),0); S.on=true; save(); play(); }
     if(b.id==='bgMode'){ S.shuffle=!S.shuffle; save(); ui(); }
-    if(b.id==='bgMute'){ S.mute=!S.mute; au.muted=S.mute; save(); ui(); }
   });
 })();
