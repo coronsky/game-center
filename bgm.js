@@ -4,12 +4,13 @@
   const K='mc_bgm', ld=()=>{try{return JSON.parse(localStorage.getItem(K))||{}}catch(e){return {}}};
   const S=Object.assign({on:true,mute:false,shuffle:true,i:Math.floor(Math.random()*N),t:0},ld());
   const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
-  const au=new Audio(); au.preload='none'; au.volume=0.04; au.muted=S.mute;
+  const au=new Audio(); au.preload='none'; au.volume=1; const VOL=0.06; let AC=null;
+  function graph(){ try{ if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(!C){ au.volume=VOL; return; } AC=new C(); const g=AC.createGain(); g.gain.value=VOL; AC.createMediaElementSource(au).connect(g); g.connect(AC.destination); } if(AC.state!=='running') AC.resume(); }catch(e){ au.volume=VOL; } } au.muted=S.mute;
   let started=false;
   const src=i=>'bgm/t'+String(i+1).padStart(2,'0')+'.mp3';
   function pick(){ if(S.shuffle){ let n; do{ n=Math.floor(Math.random()*N) }while(n===S.i&&N>1); return n; } return (S.i+1)%N; }
   function load(i,t){ S.i=i; au.src=src(i); if(t) au.addEventListener('loadedmetadata',()=>{ try{au.currentTime=Math.min(t,(au.duration||t)-1)}catch(e){} },{once:true}); save(); ui(); }
-  function play(){ if(!au.src) load(S.i,S.t); const p=au.play(); if(p&&p.catch) p.catch(()=>{}); started=true; ui(); }
+  function play(){ graph(); if(!au.src) load(S.i,S.t); const p=au.play(); if(p&&p.catch) p.catch(()=>{}); started=true; ui(); }
   function stop(){ au.pause(); ui(); }
   au.addEventListener('ended',()=>{ load(pick(),0); if(S.on) play(); });
   addEventListener('pagehide',()=>{ S.t=au.currentTime||0; save(); });
