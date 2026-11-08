@@ -25,7 +25,9 @@
 #mcBgm.open .pn{display:flex}
 #mcBgm .pn button{width:32px;height:32px;font-size:15px;box-shadow:none}
 #mcBgm .pn button.sm{width:auto;border-radius:999px;padding:0 9px;font-size:11px;font-weight:900}
-#mcBgm .ttl{max-width:84px;font-size:11px;font-weight:900;color:#5a3d2b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mcBgm .ttl{width:96px;font-size:11px;font-weight:900;color:#5a3d2b;white-space:nowrap;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+#mcBgm .ttl i{display:inline-block;font-style:normal;padding-left:100%;animation:bgMq 9s linear infinite}
+@keyframes bgMq{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 #mcBgm #bgMain.on{background:#ffe7a8}
 body[data-theme=retro] #mcBgm button,body[data-theme=retro] #mcBgm .pn{background:#3a1a0e;border-color:#f2b134;color:#ffe9b8}body[data-theme=retro] #mcBgm .ttl{color:#ffe9b8}body[data-theme=retro] #mcBgm #bgMain.on{background:#7a2a10}
 body[data-theme=neon] #mcBgm button,body[data-theme=neon] #mcBgm .pn{background:#1a1050;border-color:#ff4fd8;color:#fff;box-shadow:0 0 8px rgba(255,79,216,.5)}body[data-theme=neon] #mcBgm .ttl{color:#bff8ff}body[data-theme=neon] #mcBgm #bgMain.on{background:#3a1a8a}
@@ -41,7 +43,7 @@ body[data-theme=neon] #mcBgm button,body[data-theme=neon] #mcBgm .pn{background:
     $('bgMain').classList.toggle('on',S.on); $('bgMain').classList.toggle('playing',pl&&!S.mute);
     $('bgMain').querySelector('span').textContent=S.mute?'🔇':'🎵';
     $('bgPlay').textContent=pl?'⏸':'▶'; $('bgMode').textContent=S.shuffle?'🔀 ランダム':'🔁 順番';
-    $('bgMute').textContent=S.mute?'🔇':'🔊'; $('bgTtl').textContent=TITLE(S.i); }
+    $('bgMute').textContent=S.mute?'🔇':'🔊'; if($('bgTtl').dataset.t!==TITLE(S.i)){ $('bgTtl').dataset.t=TITLE(S.i); $('bgTtl').innerHTML='<i>♪ '+TITLE(S.i)+'</i>'; } }
   au.addEventListener('play',ui); au.addEventListener('pause',ui);
   w.addEventListener('pointerdown',e=>e.stopPropagation());
   w.addEventListener('click',e=>{ e.stopPropagation(); const b=e.target.closest('button'); if(!b) return;
