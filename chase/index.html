@@ -371,7 +371,7 @@ function swipe(el,cb){ let sx=0,sy=0,on=false; el.addEventListener('touchstart',
 function keys(cb){ addEventListener('keydown',e=>{const k={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'}[e.key]; if(k){e.preventDefault();cb(k)}}); }
 function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<button data-i="${i}" class="${i===cur?'on':''}">${n}${starsOf&&starsOf(i)?'<i>'+'★'.repeat(starsOf(i))+'</i>':''}</button>`).join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
-if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>{modeSync();openM('mMode')},400); }
+setTimeout(()=>{ try{modeSync()}catch(e){} openM('mMode') },400);
 
 const LVN=8;
 const CFG=i=>({n:[9,9,11,11,13,13,15,15][i],obs:[.10,.14,.16,.18,.18,.20,.20,.22][i],moons:1+(i>=3)+(i>=6),mv:[.52,.58,.62,.62,.66,.70,.72,.76][i],sn:[5,6,7,8,9,10,11,12][i]});
