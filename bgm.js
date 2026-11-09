@@ -1,7 +1,7 @@
 // BGMプレイヤー（ホームとゲームで共通・ページを移っても同じ曲の続きから）
 (function(){
   const CS=document.currentScript, BASE=((CS&&CS.src)||'').replace(/bgm\.js.*$/,''), MOUNT=CS&&CS.dataset&&CS.dataset.mount;
-  const TT=["Sunny Paw Parade", "Biscuit Breeze", "Moonlight Ribbon", "Caramel Coin Rush", "Fluffy Tail Waltz", "Cocoa Arcade Lights", "Marshmallow Dreams", "Puppy Star Express", "Honey Bone Boogie", "Twin Paws Serenade", "Velvet Night Cruise", "Everyday Fantasy", "Cotton Cloud Holiday", "Starlit Treat Box", "Sweet Ending Lullaby"], N=TT.length, TITLE=i=>TT[i];
+  const TT=["Sunny Paw Parade", "Biscuit Breeze", "Moonlight Ribbon", "Caramel Coin Rush", "Fluffy Tail Waltz", "Cocoa Arcade Lights", "Marshmallow Dreams", "Puppy Star Express", "Honey Bone Boogie", "Twin Paws Serenade", "Velvet Night Cruise", "Everyday Fantasy", "Cotton Cloud Holiday", "Starlit Treat Box", "Sweet Ending Lullaby", "별빛 아케이드 Starlight Arcade", "해피 해피 Happy Happy", "레벨 업! Level Up!"], N=TT.length, TITLE=i=>TT[i];
   const K='mc_bgm', ld=()=>{try{return JSON.parse(localStorage.getItem(K))||{}}catch(e){return {}}};
   const S=Object.assign({on:true,mute:false,shuffle:true,i:Math.floor(Math.random()*N),t:0},ld());
   const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
