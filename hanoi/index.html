@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>コロン＆ムーンのハノイの塔</title>
+<title>コロン＆ムーンのざぶとんタワー</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Mochiy+Pop+One&family=DotGothic16&display=swap" rel="stylesheet">
 <style>
@@ -356,8 +356,8 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
-  <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">ハノイの塔</div></div>
-  <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">ハノイの塔</div></div>
+  <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">ざぶとんタワー</div></div>
+  <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">ざぶとんタワー</div></div>
 
   <div class="hud"><div class="box st"><small>ステージ</small><b id="stName"></b></div><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small id="tmL">タイム</small><b id="tm">0:00</b></div></div>
   <div class="panel"><div class="in"><div id="stage"><div class="floor"></div>
@@ -376,7 +376,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="acts"><button class="btn c" id="bHelp">あそびかた</button><button class="btn g" data-close="mSet">とじる</button></div></div></div>
-<div class="modal" id="mHelp"><div class="card help"><h2>📖 ハノイの塔</h2>
+<div class="modal" id="mHelp"><div class="card help"><h2>📖 ざぶとんタワー</h2>
   <p>コロンのために、ざぶとんを<b>左の柱から右の柱へ</b>ぜんぶ運んであげよう！</p>
   <p>👆 柱をタップするといちばん上のざぶとんが持ち上がります。運びたい柱をタップして置きます。</p>
   <p>📏 ルール：一度に1枚だけ。<b>大きいざぶとんを小さいざぶとんの上には置けません</b>。</p>
@@ -463,7 +463,7 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
   setTimeout(()=>openM('mRes'),o.delay??900);
 }
 
-// ===== ハノイの塔（ざぶとんタワー） =====
+// ===== ざぶとんタワー（ざぶとんタワー） =====
 const store=mkStore('mchn_');
 const S=Object.assign({talk:true,sound:true},store.get('settings',{}));
 SND.on=S.sound; TALK.on=S.talk;
