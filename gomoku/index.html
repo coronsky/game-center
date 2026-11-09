@@ -256,7 +256,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <h2>🐾 あそびかた設定</h2>
   <div class="row"><div class="lb">モード</div><div class="seg" data-k="mode"><button data-v="cpu">CPUと対戦</button><button data-v="pvp">2人で対戦</button></div></div>
   <div id="rowCpu">
-  <div class="row"><div class="lb">CPUのつよさ</div><div class="seg" data-k="level"><button data-v="1">やさしい</button><button data-v="2">ふつう</button><button data-v="3">つよい</button></div></div>
+  <div class="row"><div class="lb">CPUのつよさ</div><div class="seg" data-k="level"><button data-v="1">やさしい</button><button data-v="2">ふつう<br>（弱め）</button><button data-v="3">ふつう<br>（強め）</button><button data-v="4">つよい</button></div></div>
   </div>
   <div class="row"><div class="lb">盤の大きさ</div><div class="seg" data-k="size"><button data-v="9">9路<br><small>こども向け</small></button><button data-v="13">13路</button><button data-v="15">15路<br><small>本格</small></button></div></div>
   <div class="row"><div class="lb">石のデザイン</div><div class="seg" data-k="stone"><button data-v="plain">ふつう</button><button data-v="face">ワンコの顔</button></div></div>
@@ -358,6 +358,7 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
 // ===== 五目ならべ =====
 const store=mkStore('mcgm_');
 const S=Object.assign({mode:'cpu',side:'1',level:'2',size:'15',stone:'face',confirm:true,talk:true,sound:true},store.get('settings',{}));
+if(S.lvv!==2){ S.lvv=2; try{ const R=store.get('rec',{}),R2={}; for(const k in R){ const m=/^lv([23])_(.*)$/.exec(k); R2[m?'lv'+(+m[1]+1)+'_'+m[2]:k]=R[k]; } store.set('rec',R2); }catch(e){} if(S.level==='3') S.level='4'; else if(S.level==='2') S.level='3'; store.set('settings',S); }
 SND.on=S.sound; TALK.on=S.talk;
 let rec=store.get('rec',{});
 let N=15, b=[], turn=1, hist=[], over=false, busy=false, last=-1, ghost=-1, hintI=-1, cpuT=null, gen0=0, winLine=[];
@@ -391,11 +392,11 @@ function think(p,lv){
   const o=3-p, cs=candidates();
   // 勝てる手・止める手
   let w=winningMoves(p); if(w.length) return w[0];
-  w=winningMoves(o); if(w.length&&lv>1) return w[0];
-  let scored=cs.map(i=>{ const a=cellScore(i,p), d=cellScore(i,o); return [i, a*1.0 + d*(lv===1?0.5:0.95) + Math.random()*(lv===1?800:lv===2?30:5)]; }).sort((x,y)=>y[1]-x[1]);
+  w=winningMoves(o); if(w.length&&(lv>2||(lv===2&&Math.random()<.7))) return w[0];
+  let scored=cs.map(i=>{ const a=cellScore(i,p), d=cellScore(i,o); return [i, a*1.0 + d*[0,0.5,0.55,0.92,0.95][lv] + Math.random()*[0,800,260,45,5][lv]]; }).sort((x,y)=>y[1]-x[1]);
   if(lv===1&&w.length&&Math.random()<.6) return w[0];
-  if(lv<3) return scored[0][0];
-  // つよい：上位候補を2手読み
+  if(lv<4) return scored[0][0];
+  // つよい（4）：上位候補を2手読み
   const top=scored.slice(0,10); let best=top[0][0], bv=-Infinity;
   for(const [i,base] of top){
     b[i]=p;
@@ -448,7 +449,7 @@ function newGame(){
   b=new Array(N*N).fill(0); turn=FIRST(); hist=[]; over=false; busy=false; last=-1; ghost=-1; hintI=-1; winLine=[];
   cells.forEach(c=>{c.innerHTML='';c._h=''});
   if(S.mode==='pvp'){$('tagB').textContent='プレイヤー1';$('tagW').textContent='プレイヤー2'} else {$('tagB').textContent=(S.side==='1'?'あなた':'CPU')+(FIRST()===1?'・先手':'・後手');$('tagW').textContent=(S.side==='2'?'あなた':'CPU')+(FIRST()===2?'・先手':'・後手')}
-  $('info').textContent=(S.mode==='pvp'?'2人で対戦':'CPU：'+{1:'やさしい',2:'ふつう',3:'つよい'}[S.level])+'・'+N+'路盤';
+  $('info').textContent=(S.mode==='pvp'?'2人で対戦':'CPU：'+{1:'やさしい',2:'ふつう（弱め）',3:'ふつう（強め）',4:'つよい'}[S.level])+'・'+N+'路盤';
   render(); setTimeout(()=>{sayText(1,'5つならべるワン！');setTimeout(()=>sayText(2,'じゃましちゃうよ♪'),500)},300);
   next();
 }
