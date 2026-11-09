@@ -433,7 +433,8 @@ document.querySelectorAll('.pad [data-d]').forEach(b=>{ const d=b.dataset.d; b.a
   const move=e=>{ if(!st||e.pointerId!==pid) return; let dx=e.clientX-st.x,dy=e.clientY-st.y; const L=Math.hypot(dx,dy),k=Math.min(L,RAD); const nx=L?dx/L*k:0,ny=L?dy/L*k:0; knob.style.transform='translate('+nx+'px,'+ny+'px)';
     const m=k/RAD; IN.t=m<.12?{x:0,y:0}:{x:(nx/RAD),y:(ny/RAD)}; };
   const up=e=>{ if(!st||e.pointerId!==pid) return; st=null; pid=null; IN.t=null; base.style.display='none'; };
-  for(const el of [cv,$('stickZone')]){ el.addEventListener('pointerdown',down); el.addEventListener('pointermove',move); el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up); el.addEventListener('contextmenu',e=>e.preventDefault()); } })();
+  const stop=e=>{ if(e.cancelable) e.preventDefault(); }; document.addEventListener('touchmove',e=>{ if(st) stop(e); },{passive:false});
+  for(const el of [cv,$('stickZone')]){ el.addEventListener('touchstart',stop,{passive:false}); el.addEventListener('touchmove',stop,{passive:false}); el.addEventListener('pointerdown',down); el.addEventListener('pointermove',move); el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up); el.addEventListener('contextmenu',e=>e.preventDefault()); } })();
 function onOri(e){ if(e.beta==null&&e.gamma==null) return; IN.g={b:e.beta,g:e.gamma}; ROLL.gyroOk=true; }
 async function rollOn(){ actx(); try{ if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){ const r=await DeviceOrientationEvent.requestPermission(); if(r!=='granted') toast('センサーが許可されなかったよ',true); } }catch(e){}
   addEventListener('deviceorientation',onOri); ROLL.on=true; ROLL.gyroOk=false; ROLL.calib=true; $('bRoll').textContent='📱 かたむけ：ON'; $('bRoll').classList.add('on');
