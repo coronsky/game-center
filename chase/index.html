@@ -254,12 +254,18 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv" width="600" height="600"></canvas></div></div>
   <div class="pad"><button class="u" data-d="u">▲</button><button class="l" data-d="l">◀</button><button class="c" id="bNext">つぎ ▶</button><button class="r" data-d="r">▶</button><button class="d" data-d="d">▼</button></div>
 
-  <div class="btns" style="grid-template-columns:1fr;margin:6px 0 2px"><button class="btn c" id="bRoll">📱 かたむけ操作：OFF</button></div>
+  <div class="btns" style="grid-template-columns:1fr 1fr;margin:6px 0 2px"><button class="btn c" id="bMode">🎮 キャラ・モード</button><button class="btn c" id="bRoll">📱 かたむけ：OFF</button></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns gbtns" style="grid-template-columns:repeat(3,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
 </div>
+<div class="modal" id="mMode"><div class="card pick"><h2>🎮 あそびかた</h2><div class="lb">あなたのワンコ</div>
+<div class="pkRow" data-k="me"><button data-v="colon"><span class="pa" style="background-image:var(--colon)"></span>コロン<small>ムーンがおってくる</small></button><button data-v="moon"><span class="pa" style="background-image:var(--moon)"></span>ムーン<small>コロンがおってくる</small></button></div>
+<div class="lb">モード</div><div class="pkRow" data-k="mode" style="grid-template-columns:1fr 1fr 1fr"><button data-v="stage">🏁<small>ステージ</small></button><button data-v="endless">♾️<small>ずっとにげる</small></button><button data-v="mission">🎯<small>ミッション</small></button></div>
+<div class="pkNote" id="modeNote"></div><div class="acts"><button class="btn g" id="bModeGo">この設定ではじめる！</button></div></div></div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 おいかけっこ</h2><p>コロンを動かして、ゴールの🏠まで走ろう！ムーンが<b>おじゃましに追いかけてくる</b>から、つかまったらアウトだよ。</p>
 <p>👆 画面をなぞる（なぞった向きに走る）・十字ボタン・矢印キー・「かたむけ操作」で動かせます。</p>
+<p>⚡ダッシュ：しばらく速く走れる ／ 🛡️バリア：1回つかまってもセーフ ／ ❄️こおり：おいかけ役が数秒止まる ／ ⭐金のおやつ：500点 ／ 🌿くさむら：かくれるとムーンが見失う。</p>
+<p>🏁ステージ：ゴールをめざす ♾️ずっとにげる：ゴールなしで、どこまでにげられるか ／ 🎯ミッション：目標をクリアしてゴール。</p>
 <p>🦴 おやつをたくさん取るほど高得点！ゴールすると、ボーナスと早さの点も入ります。ステージが進むと、ムーンが速くなったり、増えたりするよ。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -360,34 +366,53 @@ function swipe(el,cb){ let sx=0,sy=0,on=false; el.addEventListener('touchstart',
 function keys(cb){ addEventListener('keydown',e=>{const k={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'}[e.key]; if(k){e.preventDefault();cb(k)}}); }
 function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<button data-i="${i}" class="${i===cur?'on':''}">${n}${starsOf&&starsOf(i)?'<i>'+'★'.repeat(starsOf(i))+'</i>':''}</button>`).join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
-if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
+if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>{modeSync();openM('mMode')},400); }
 
 const LVN=8;
 const CFG=i=>({n:[9,9,11,11,13,13,15,15][i],obs:[.10,.14,.16,.18,.18,.20,.20,.22][i],moons:1+(i>=3)+(i>=6),mv:[.52,.58,.62,.62,.66,.70,.72,.76][i],sn:[5,6,7,8,9,10,11,12][i]});
-const P=Object.assign({cur:0,best:{}},store.get('prog',{}));
-const VP=4, R=.27, CATCH=.55;
-let N,obs,snacks=new Set(),snTot=0,pl,moons=[],t0=0,tick=null,done=false,lost=false,last=0,raf=0,warn=0,near=0;
+const MIS=[{t:'おやつを4こ とってゴール',sn:4},{t:'40びょう いないにゴール',time:40},{t:'⚡ダッシュを1回つかってゴール',dash:1},{t:'🛡️バリアで1回まもられてゴール',bar:1},{t:'❄️こおりで おいかけ役を1回とめてゴール',ice:1},{t:'おやつをぜんぶ とってゴール',all:1},{t:'🌿くさむらに 3びょう かくれてゴール',hide:3},{t:'⭐金のおやつ＋おやつ6こで ゴール',gold:1,sn:6}];
+const ST=Object.assign({me:'colon',mode:'stage'},store.get('cfg',{}));
+const P=Object.assign({cur:0,curM:0,best:{},bestM:{},bestE:0},store.get('prog',{}));
+const VP=4, R=.27;
+const ITM={dash:{e:'⚡',c:'rgba(80,160,255,.6)'},bar:{e:'🛡️',c:'rgba(120,220,140,.65)'},ice:{e:'❄️',c:'rgba(150,220,255,.75)'},gold:{e:'⭐',c:'rgba(255,215,60,.8)'}};
+let N,obs,bush,snacks=new Set(),items=new Map(),snTot=0,RC=[],pl,moons=[],t0=0,tick=null,done=false,lost=false,last=0,raf=0,near=0,score=0,wait=0,S2,fx,E={};
 const cv=$('cv'),cx=cv.getContext('2d');
 const SPR={colon:new Image(),moon:new Image()}; SPR.colon.src='../img/chase/colon.webp'; SPR.moon.src='../img/chase/moon.webp';
 SPR.colon.onload=SPR.moon.onload=()=>draw();
 const ROW={r:0,l:1,u:2,d:3};
+const other=()=>ST.me==='colon'?'moon':'colon', CN=()=>ST.me==='colon'?'ムーン':'コロン', chP=()=>ST.me==='colon'?2:1, meP=()=>ST.me==='colon'?1:2;
+const lv=()=>ST.mode==='mission'?P.curM:P.cur;
 const nb=(k,d)=>k+{u:-N,d:N,l:-1,r:1}[d];
 function okDir(k,d){ const x=k%N,y=(k/N)|0; if(d==='u'&&y===0||d==='d'&&y===N-1||d==='l'&&x===0||d==='r'&&x===N-1) return false; return !obs[nb(k,d)]; }
 function bfs(from){ const dist=new Array(N*N).fill(-1),q=[from]; dist[from]=0; for(let h=0;h<q.length;h++){ const k=q[h]; for(const d of ['u','r','d','l']) if(okDir(k,d)){ const n=nb(k,d); if(dist[n]<0){dist[n]=dist[k]+1;q.push(n)} } } return dist; }
-function build(){ const c=CFG(P.cur); N=c.n; const goal=N*N-1; let dist;
+const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const used=()=>new Set([...snacks,...items.keys()]);
+function mkMoon(k){ return {x:(k%N)+.5,y:((k/N)|0)+.5,tx:(k%N)+.5,ty:((k/N)|0)+.5,dir:'d',an:Math.random()}; }
+function build(){ const e=ST.mode==='endless',c=e?{n:13,obs:.14,moons:1,mv:.55,sn:6}:CFG(lv()); N=c.n; const goal=N*N-1; let dist;
   for(let t=0;t<60;t++){ obs=new Uint8Array(N*N); for(let k=0;k<N*N;k++){ const x=k%N,y=(k/N)|0; obs[k]=((x<2&&y<2)||(x>=N-2&&y>=N-2)||Math.random()>=c.obs)?0:1; }
-    dist=bfs(0); if(dist[goal]>=0&&dist.filter(v=>v>=0).length>N*N*.7) break; if(t===59){obs.fill(0);dist=bfs(0)} }
-  const cells=[]; for(let k=0;k<N*N;k++) if(dist[k]>=0) cells.push(k);
-  const sh=a=>{for(let i=a.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-  snacks=new Set(); for(const k of sh(cells.filter(k=>dist[k]>=3&&k!==goal))){ if(snacks.size>=c.sn) break; snacks.add(k); } snTot=snacks.size;
-  moons=[]; const far=sh(cells.filter(k=>dist[k]>=Math.max(6,N*.9)&&k!==goal)); for(let i=0;i<c.moons;i++){ const k=far[i%Math.max(1,far.length)]||goal-1; moons.push({x:(k%N)+.5,y:((k/N)|0)+.5,tx:(k%N)+.5,ty:((k/N)|0)+.5,dir:'d',an:Math.random()}); }
-  pl={x:.5,y:.5,dir:'d',an:0,mv:false}; }
-function load(i){ clearInterval(tick); cancelAnimationFrame(raf); P.cur=i; store.set('prog',P); build(); t0=0; done=false; lost=false; score=0; wait=0; ROLL.calib=true;
-  $('stN').textContent=(i+1)+'/'+LVN; $('tm').textContent='0:00'; $('bNext').style.visibility='hidden'; snUpd(); $('bAgain').textContent='つぎのステージ';
-  lvRow($('lvs'),Array.from({length:LVN},(_,k)=>'ステージ'+(k+1)),i,k=>P.best[k]?1:0,load); setStatus('にげて、🏠へ！おやつをとるほど高得点'); draw();
-  setTimeout(()=>sayText(2,'まてまて〜♪'),300); last=0; raf=requestAnimationFrame(loop); }
-let score=0,wait=0;
-function snUpd(){ $('sn').textContent=(snTot-snacks.size)+'/'+snTot; $('sc').textContent=score; }
+    dist=bfs(0); if((e||dist[goal]>=0)&&dist.filter(v=>v>=0).length>N*N*.7) break; if(t===59){obs.fill(0);dist=bfs(0)} }
+  RC=[]; for(let k=0;k<N*N;k++) if(dist[k]>=0) RC.push(k);
+  bush=new Uint8Array(N*N); for(const k of RC){ const x=k%N,y=(k/N)|0; if(!((x<2&&y<2)||(x>=N-2&&y>=N-2))&&Math.random()<.09) bush[k]=1; }
+  snacks=new Set(); items=new Map(); const pool=shuf(RC.filter(k=>dist[k]>=3&&k!==goal));
+  for(let i=0;i<c.sn&&pool.length;i++) snacks.add(pool.pop()); snTot=snacks.size;
+  const its=e?[]:['dash','bar','ice','gold']; for(const t of its){ if(pool.length) items.set(pool.pop(),t); }
+  moons=[]; const far=shuf(RC.filter(k=>dist[k]>=Math.max(6,N*.9)&&k!==goal)); for(let i=0;i<c.moons;i++) moons.push(mkMoon(far[i%Math.max(1,far.length)]||goal-1));
+  pl={x:.5,y:.5,dir:'d',an:0,mv:false,bar:false,inv:0}; }
+function modeName(){ return ST.mode==='endless'?'ずっとにげる':ST.mode==='mission'?'ミッション':'ステージ'; }
+function names(){ return Array.from({length:LVN},(_,k)=>(ST.mode==='mission'?'ミッション':'ステージ')+(k+1)); }
+function load(i){ clearInterval(tick); cancelAnimationFrame(raf); if(ST.mode==='mission') P.curM=i; else if(ST.mode==='stage') P.cur=i; store.set('prog',P);
+  build(); t0=0; done=false; lost=false; score=0; wait=0; ROLL.calib=true; S2={dash:0,bar:0,ice:0,hide:0,gold:0,sn:0}; fx={dash:0,ice:0}; E={add:25,item:9,el:0,mvx:0};
+  const en=ST.mode==='endless'; $('lvs').style.display=en?'none':''; $('stN').previousElementSibling.textContent=modeName();
+  $('stN').textContent=en?'∞':(lv()+1)+'/'+LVN; $('tm').textContent='0:00'; $('bNext').style.visibility='hidden'; $('bAgain').textContent='つぎへ';
+  if(!en) lvRow($('lvs'),names(),lv(),k=>(ST.mode==='mission'?P.bestM:P.best)[k]?1:0,load);
+  snUpd(); setStatus(statusMsg()); draw(); setTimeout(()=>sayText(chP(),'まてまて〜♪'),300); last=0; raf=requestAnimationFrame(loop); }
+function mInfo(){ const m=MIS[P.curM],el=t0?(Date.now()-t0)/1000:0; const ck=[]; if(m.sn) ck.push([S2.sn>=m.sn,'おやつ '+Math.min(S2.sn,m.sn)+'/'+m.sn]);
+  if(m.all) ck.push([!snacks.size,'おやつ '+(snTot-snacks.size)+'/'+snTot]); if(m.dash) ck.push([S2.dash>=m.dash,'ダッシュ '+S2.dash+'/'+m.dash]); if(m.bar) ck.push([S2.bar>=m.bar,'バリア '+S2.bar+'/'+m.bar]);
+  if(m.ice) ck.push([S2.ice>=m.ice,'こおり '+S2.ice+'/'+m.ice]); if(m.hide) ck.push([S2.hide>=m.hide,'かくれ '+Math.floor(Math.min(S2.hide,m.hide))+'/'+m.hide+'びょう']); if(m.gold) ck.push([S2.gold>=m.gold,'⭐ '+S2.gold+'/'+m.gold]);
+  if(m.time) ck.push([el<=m.time,'のこり '+Math.max(0,Math.ceil(m.time-el))+'びょう']);
+  return {m,ok:ck.every(c=>c[0]),text:m.t+'（'+ck.map(c=>c[1]).join('・')+'）'}; }
+function statusMsg(){ return ST.mode==='mission'?'🎯 '+mInfo().text:ST.mode==='endless'?'つかまらずに どこまでにげられるかな？':CN()+'からにげて、🏠へ！おやつをとるほど高得点'; }
+function snUpd(){ const e=ST.mode==='endless'; $('sn').textContent=e?String(S2.sn):(snTot-snacks.size)+'/'+snTot; $('sc').textContent=score+(e&&t0?Math.floor((Date.now()-t0)/1000)*5:0); }
 // ---- 入力
 const IN={k:{u:0,d:0,l:0,r:0},t:null,g:null,b0:0};
 const ROLL={on:false,gyroOk:false,calib:true};
@@ -403,55 +428,78 @@ document.querySelectorAll('.pad [data-d]').forEach(b=>{ const d=b.dataset.d; b.a
   ['pointerup','pointercancel'].forEach(ev=>cv.addEventListener(ev,()=>{st=null;IN.t=null})); })();
 function onOri(e){ if(e.beta==null&&e.gamma==null) return; IN.g={b:e.beta,g:e.gamma}; ROLL.gyroOk=true; }
 async function rollOn(){ actx(); try{ if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){ const r=await DeviceOrientationEvent.requestPermission(); if(r!=='granted') toast('センサーが許可されなかったよ',true); } }catch(e){}
-  addEventListener('deviceorientation',onOri); ROLL.on=true; ROLL.gyroOk=false; ROLL.calib=true; $('bRoll').textContent='📱 かたむけ操作：ON'; $('bRoll').classList.add('on');
+  addEventListener('deviceorientation',onOri); ROLL.on=true; ROLL.gyroOk=false; ROLL.calib=true; $('bRoll').textContent='📱 かたむけ：ON'; $('bRoll').classList.add('on');
   setTimeout(()=>{ if(ROLL.on&&!ROLL.gyroOk) toast('ジャイロが使えないよ。画面をなぞってね') },1200); }
-function rollOff(){ ROLL.on=false; removeEventListener('deviceorientation',onOri); $('bRoll').textContent='📱 かたむけ操作：OFF'; $('bRoll').classList.remove('on'); }
+function rollOff(){ ROLL.on=false; removeEventListener('deviceorientation',onOri); $('bRoll').textContent='📱 かたむけ：OFF'; $('bRoll').classList.remove('on'); }
 $('bRoll').onclick=()=>{ SFX.tap(); ROLL.on?rollOff():rollOn(); };
+// ---- キャラ・モード選択
+function modeSync(){ const m=$('mMode'); m.querySelectorAll('.pkRow').forEach(r=>r.querySelectorAll('button').forEach(b=>b.classList.toggle('on',ST[r.dataset.k]===b.dataset.v)));
+  $('modeNote').textContent=(ST.me==='colon'?'コロン':'ムーン')+'でにげるよ。おいかけ役は'+CN()+'！'; }
+$('mMode').querySelectorAll('.pkRow button').forEach(b=>b.onclick=()=>{ SFX.tap(); ST[b.parentElement.dataset.k]=b.dataset.v; modeSync(); });
+$('bMode').onclick=()=>{ actx(); SFX.tap(); modeSync(); openM('mMode'); };
+$('bModeGo').onclick=()=>{ SFX.tap(); store.set('cfg',ST); closeM('mMode'); load(lv()); };
 // ---- 動き
 function resolve(){ pl.x=Math.max(R,Math.min(N-R,pl.x)); pl.y=Math.max(R,Math.min(N-R,pl.y));
   const x0=Math.floor(pl.x)-1,y0=Math.floor(pl.y)-1; for(let cy=y0;cy<=y0+2;cy++) for(let cxx=x0;cxx<=x0+2;cxx++){ if(cxx<0||cy<0||cxx>=N||cy>=N||!obs[cy*N+cxx]) continue;
     const px=Math.max(cxx,Math.min(cxx+1,pl.x)),py=Math.max(cy,Math.min(cy+1,pl.y)); let dx=pl.x-px,dy=pl.y-py,d=Math.hypot(dx,dy);
     if(d<R){ if(d<1e-6){ dx=pl.x-(cxx+.5);dy=pl.y-(cy+.5);d=Math.hypot(dx,dy)||1 } pl.x=px+dx/d*R; pl.y=py+dy/d*R; } } }
-function nextCell(from,to){ const opts=['u','r','d','l'].filter(d=>okDir(from,d));
-  if(Math.random()<.15&&opts.length) return nb(from,pick(opts)); if(from===to) return from;
+function nextCell(from,to,wander){ const opts=['u','r','d','l'].filter(d=>okDir(from,d));
+  if((wander||Math.random()<.15)&&opts.length) return nb(from,pick(opts)); if(from===to) return from;
   const prev=new Array(N*N).fill(-2),q=[from]; prev[from]=-1; for(let h=0;h<q.length;h++){ const k=q[h]; if(k===to) break; for(const d of ['u','r','d','l']) if(okDir(k,d)){ const n=nb(k,d); if(prev[n]===-2){prev[n]=k;q.push(n)} } }
   if(prev[to]===-2) return from; let c=to; while(prev[c]!==from) c=prev[c]; return c; }
+function pickItem(t){ SFX.ok(); const q=pl; if(t==='dash'){fx.dash=3.5;S2.dash++;sayText(meP(),'ダッシュ！⚡',true)} else if(t==='bar'){q.bar=true;sayText(meP(),'バリア！🛡️',true)} else if(t==='ice'){fx.ice=4;S2.ice++;sayText(chP(),'うごけない〜❄️',true)} else if(t==='gold'){score+=500;S2.gold++;sayText(meP(),'金のおやつ！⭐',true)} snUpd(); }
+function burst(k,em){ const r=cv.getBoundingClientRect(); burstAt(r.left+((k%N)+.5)*r.width/N,r.top+(((k/N)|0)+.5)*r.height/N,em,6,40); }
 function loop(ts){ raf=requestAnimationFrame(loop); const dt=Math.min(.05,(ts-(last||ts))/1000); last=ts; if(done) return; if(document.querySelector('.modal.show')) return;
-  const [vx,vy]=vec(), L=Math.hypot(vx,vy);
-  if(L>.05){ if(!t0){t0=Date.now();wait=1.4;tick=setInterval(()=>$('tm').textContent=fmt(Date.now()-t0),500)}
-    pl.x+=vx*VP*dt; resolve(); pl.y+=vy*VP*dt; resolve(); pl.mv=true; pl.dir=Math.abs(vx)>Math.abs(vy)?(vx>0?'r':'l'):(vy>0?'d':'u'); pl.an+=dt*10*Math.max(.6,L); } else pl.mv=false;
-  const pc=Math.floor(pl.y)*N+Math.floor(pl.x);
-  for(const k of [...snacks]) if(Math.hypot(pl.x-((k%N)+.5),pl.y-(((k/N)|0)+.5))<.5){ snacks.delete(k); score+=100; snUpd(); SFX.ok(); sayText(1,pick(['おやつ！','もぐもぐ♪','おいしい〜']),true); burstAt(cv.getBoundingClientRect().left+((k%N)+.5)*cv.getBoundingClientRect().width/N,cv.getBoundingClientRect().top+(((k/N)|0)+.5)*cv.getBoundingClientRect().height/N,['🦴','✨'],6,40); }
-  if(t0){ if(wait>0) wait-=dt; else { let dmin=99; const sp=VP*CFG(P.cur).mv;
-    for(const m of moons){ let rem=sp*dt; while(rem>0){ const ddx=m.tx-m.x,ddy=m.ty-m.y,dd=Math.hypot(ddx,ddy);
-        if(dd<1e-4){ const from=Math.floor(m.y)*N+Math.floor(m.x),nx=nextCell(from,pc); if(nx===from) break; m.tx=(nx%N)+.5; m.ty=((nx/N)|0)+.5; continue; }
-        const mm=Math.min(rem,dd); m.x+=ddx/dd*mm; m.y+=ddy/dd*mm; rem-=mm; m.dir=Math.abs(ddx)>Math.abs(ddy)?(ddx>0?'r':'l'):(ddy>0?'d':'u'); m.an+=mm*3; }
-      const dm=Math.hypot(pl.x-m.x,pl.y-m.y); dmin=Math.min(dmin,dm); if(dm<CATCH){ lose(); return; } }
-    const n=Date.now(); if(dmin<2.2&&n-near>2500){ near=n; bark(2); sayText(2,'つかまえるよ〜！',true); } } }
-  if(Math.hypot(pl.x-(N-.5),pl.y-(N-.5))<.5){ win(); return; }
+  const [vx,vy]=vec(), L=Math.hypot(vx,vy), en=ST.mode==='endless';
+  if(L>.05){ if(!t0){t0=Date.now();wait=1.4;tick=setInterval(()=>{$('tm').textContent=fmt(Date.now()-t0);snUpd();if(ST.mode==='mission')setStatus(statusMsg())},500)}
+    const sp=VP*(fx.dash>0?1.7:1); pl.x+=vx*sp*dt; resolve(); pl.y+=vy*sp*dt; resolve(); pl.mv=true; pl.dir=Math.abs(vx)>Math.abs(vy)?(vx>0?'r':'l'):(vy>0?'d':'u'); pl.an+=dt*10*Math.max(.6,L)*(fx.dash>0?1.4:1); } else pl.mv=false;
+  const pc=Math.floor(pl.y)*N+Math.floor(pl.x), hid=!!bush[pc]; if(t0){ fx.dash=Math.max(0,fx.dash-dt); fx.ice=Math.max(0,fx.ice-dt); pl.inv=Math.max(0,pl.inv-dt); if(hid) S2.hide+=dt; }
+  for(const k of [...snacks]) if(Math.hypot(pl.x-((k%N)+.5),pl.y-(((k/N)|0)+.5))<.5){ snacks.delete(k); score+=100; S2.sn++; snUpd(); SFX.ok(); sayText(meP(),pick(['おやつ！','もぐもぐ♪','おいしい〜']),true); burst(k,['🦴','✨']); }
+  for(const [k,t] of [...items]) if(Math.hypot(pl.x-((k%N)+.5),pl.y-(((k/N)|0)+.5))<.5){ items.delete(k); pickItem(t); burst(k,[ITM[t].e,'✨']); }
+  if(t0){ const el=(Date.now()-t0)/1000;
+    if(en){ E.el=el; if(el>=E.add&&moons.length<4){ E.add+=25; const d=bfs(pc),c=RC.filter(k=>d[k]>=Math.max(6,N*.8)); if(c.length){ moons.push(mkMoon(pick(c))); toast('おいかけ役がふえた！',true); SFX.alarm() } }
+      if(snacks.size<5){ const c=RC.filter(k=>!used().has(k)&&Math.hypot((k%N)+.5-pl.x,((k/N)|0)+.5-pl.y)>3); if(c.length) snacks.add(pick(c)); }
+      if(el>=E.item&&items.size<3){ E.item=el+9; const c=RC.filter(k=>!used().has(k)&&Math.hypot((k%N)+.5-pl.x,((k/N)|0)+.5-pl.y)>3); if(c.length) items.set(pick(c),pick(['dash','bar','ice','gold','dash','bar','ice'])); } }
+    if(ST.mode==='mission'&&MIS[P.curM].time&&el>MIS[P.curM].time){ return finish('timeup'); }
+    if(wait>0) wait-=dt; else { let dmin=99; const mvr=en?Math.min(.85,.55+.03*Math.floor(el/10)):CFG(lv()).mv, sp=VP*mvr*(1);
+      for(const m of moons){ let rem=fx.ice>0?0:sp*dt; while(rem>0){ const ddx=m.tx-m.x,ddy=m.ty-m.y,dd=Math.hypot(ddx,ddy);
+          if(dd<1e-4){ const from=Math.floor(m.y)*N+Math.floor(m.x),nx=nextCell(from,pc,hid); if(nx===from) break; m.tx=(nx%N)+.5; m.ty=((nx/N)|0)+.5; continue; }
+          const mm=Math.min(rem,dd); m.x+=ddx/dd*mm; m.y+=ddy/dd*mm; rem-=mm; m.dir=Math.abs(ddx)>Math.abs(ddy)?(ddx>0?'r':'l'):(ddy>0?'d':'u'); m.an+=mm*3; }
+        const dm=Math.hypot(pl.x-m.x,pl.y-m.y); dmin=Math.min(dmin,dm);
+        if(dm<(hid?.35:.55)&&pl.inv<=0){ if(pl.bar){ pl.bar=false; pl.inv=1.6; S2.bar++; SFX.put(); toast('🛡️ バリアでまもられた！'); sayText(chP(),'あっ！にげられた〜',true); fx.ice=Math.max(fx.ice,1.6); } else { return finish('caught'); } } }
+      const n=Date.now(); if(dmin<2.2&&n-near>2500&&fx.ice<=0){ near=n; bark(chP()); sayText(chP(),'つかまえるよ〜！',true); } } }
+  if(!en&&Math.hypot(pl.x-(N-.5),pl.y-(N-.5))<.5){ if(ST.mode==='mission'&&!mInfo().ok){ const n=Date.now(); if(n-near>1500){near=n; toast('ミッションがまだだよ！',true); SFX.ng()} } else return finish('goal'); }
   draw(); }
-function lose(){ done=true; clearInterval(tick); lost=true; SFX.lose(); sayText(2,'つかまえた〜！',true); draw(); $('bAgain').textContent='もう一回';
-  showResult({winner:2,title:'😱 つかまっちゃった…',score:score+'点',msg:'おやつ'+(snTot-snacks.size)+'こ。つぎはにげきろう！',rec:'ハイスコア：'+(P.best[P.cur]||0)+'点',delay:500}); }
-function win(){ done=true; clearInterval(tick); const t=(Date.now()-t0)/1000,par=N*2.5,bonus=Math.max(0,Math.round(par-t))*10,pts=score+300+bonus; score=pts; snUpd();
-  if(!P.best[P.cur]||pts>P.best[P.cur]) P.best[P.cur]=pts; store.set('prog',P); report('clear',{stars:3}); SFX.win(); confetti(['🦴','💕','✨']); sayText(1,'にげきった！',true); setStatus('ゴール！');
-  $('bNext').style.visibility=P.cur<LVN-1?'visible':'hidden'; $('bAgain').textContent=P.cur<LVN-1?'つぎのステージ':'もう一回'; lvRow($('lvs'),Array.from({length:LVN},(_,k)=>'ステージ'+(k+1)),P.cur,k=>P.best[k]?1:0,load);
-  showResult({winner:1,title:'🏆 ゴール！',score:pts+'点',msg:'おやつ'+(snTot-snacks.size)+'こ＋ゴールボーナス'+(300+bonus)+'点！',rec:'ハイスコア：'+P.best[P.cur]+'点'}); }
+function finish(kind){ done=true; clearInterval(tick); const el=t0?(Date.now()-t0)/1000:0,en=ST.mode==='endless',ms=ST.mode==='mission';
+  if(kind==='goal'){ const par=N*2.5,bonus=Math.max(0,Math.round(par-el))*10,gain=300+bonus+(ms?200:0),pts=score+gain; score=pts; snUpd(); const bk=ms?P.bestM:P.best; if(!bk[lv()]||pts>bk[lv()]) bk[lv()]=pts; store.set('prog',P);
+    report('clear',{stars:3}); SFX.win(); confetti(['🦴','💕','✨']); sayText(meP(),'にげきった！',true); setStatus('ゴール！'); lost=false; const has=lv()<LVN-1; $('bNext').style.visibility=has?'visible':'hidden'; $('bAgain').textContent=has?'つぎへ':'もう一回'; if(!has) lost=true;
+    lvRow($('lvs'),names(),lv(),k=>(ms?P.bestM:P.best)[k]?1:0,load);
+    showResult({winner:1,title:ms?'🎯 ミッションクリア！':'🏆 ゴール！',score:pts+'点',msg:'おやつ'+S2.sn+'こ＋ボーナス'+gain+'点！',rec:'ハイスコア：'+bk[lv()]+'点'}); return; }
+  lost=true; SFX.lose(); sayText(chP(),'つかまえた〜！',true); draw(); $('bAgain').textContent='もう一回';
+  if(en){ const pts=score+Math.floor(el)*5; if(pts>P.bestE){P.bestE=pts;store.set('prog',P)} showResult({winner:2,title:'😱 つかまっちゃった…',score:pts+'点',msg:fmt(el*1000)+'にげたよ！おやつ'+S2.sn+'こ',rec:'ハイスコア：'+P.bestE+'点',delay:500}); return; }
+  const bk=(ms?P.bestM:P.best)[lv()]||0; showResult({winner:2,title:kind==='timeup'?'⏰ じかんぎれ…':'😱 つかまっちゃった…',score:score+'点',msg:kind==='timeup'?'ミッションの じかんが すぎちゃった':'おやつ'+S2.sn+'こ。つぎはにげきろう！',rec:'ハイスコア：'+bk+'点',delay:500}); }
 // ---- 描画
-function draw(){ const W=cv.width,c=W/N,vt=document.body.dataset.vt;
-  const T={natural:{bg:'#dfeec0',bg2:'#d3e6b0',ob:'#6f9a55',ob2:'#4f7a3c'},retro:{bg:'#4a2410',bg2:'#42200e',ob:'#8a4a1c',ob2:'#f2b134'},neon:{bg:'#120a3a',bg2:'#0e0830',ob:'#241466',ob2:'#3ff0ff'}}[vt]||{bg:'#dfeec0',bg2:'#d3e6b0',ob:'#6f9a55',ob2:'#4f7a3c'};
+function draw(){ const W=cv.width,c=W/N,vt=document.body.dataset.vt,en=ST.mode==='endless';
+  const T={natural:{bg:'#dfeec0',bg2:'#d3e6b0',ob:'#6f9a55',ob2:'#4f7a3c',bu:'rgba(90,170,70,.55)'},retro:{bg:'#4a2410',bg2:'#42200e',ob:'#8a4a1c',ob2:'#f2b134',bu:'rgba(120,170,40,.5)'},neon:{bg:'#120a3a',bg2:'#0e0830',ob:'#241466',ob2:'#3ff0ff',bu:'rgba(60,255,160,.35)'}}[vt]||{bg:'#dfeec0',bg2:'#d3e6b0',ob:'#6f9a55',ob2:'#4f7a3c',bu:'rgba(90,170,70,.55)'};
   for(let k=0;k<N*N;k++){ cx.fillStyle=((k%N)+((k/N)|0))%2?T.bg2:T.bg; cx.fillRect((k%N)*c,((k/N)|0)*c,c+1,c+1); }
   cx.textAlign='center'; cx.textBaseline='middle';
-  for(let k=0;k<N*N;k++) if(obs[k]){ const x=(k%N)*c,y=((k/N)|0)*c; cx.fillStyle=T.ob; cx.strokeStyle=T.ob2; cx.lineWidth=Math.max(2,c*.06); cx.beginPath(); cx.roundRect(x+c*.06,y+c*.06,c*.88,c*.88,c*.2); cx.fill(); cx.stroke(); cx.font=Math.round(c*.6)+'px sans-serif'; cx.fillStyle='#000'; cx.fillText('🌳',x+c/2,y+c*.54); }
-  cx.font=Math.round(c*.7)+'px sans-serif'; cx.fillStyle='#000'; cx.fillText('🏠',(N-.5)*c,(N-.47)*c);
+  for(let k=0;k<N*N;k++){ const x=(k%N)*c,y=((k/N)|0)*c; if(bush[k]){ cx.fillStyle=T.bu; cx.beginPath(); cx.roundRect(x+c*.04,y+c*.04,c*.92,c*.92,c*.3); cx.fill(); cx.font=Math.round(c*.55)+'px sans-serif'; cx.fillStyle='#000'; cx.fillText('🌿',x+c/2,y+c*.54); }
+    if(obs[k]){ cx.fillStyle=T.ob; cx.strokeStyle=T.ob2; cx.lineWidth=Math.max(2,c*.06); cx.beginPath(); cx.roundRect(x+c*.06,y+c*.06,c*.88,c*.88,c*.2); cx.fill(); cx.stroke(); cx.font=Math.round(c*.6)+'px sans-serif'; cx.fillStyle='#000'; cx.fillText('🌳',x+c/2,y+c*.54); } }
+  if(!en){ cx.font=Math.round(c*.7)+'px sans-serif'; cx.fillStyle='#000'; cx.fillText('🏠',(N-.5)*c,(N-.47)*c); }
   for(const k of snacks){ cx.beginPath(); cx.arc(((k%N)+.5)*c,(((k/N)|0)+.5)*c,c*.3,0,7); cx.fillStyle='rgba(255,170,60,.55)'; cx.fill(); cx.font=Math.round(c*.5)+'px sans-serif'; cx.fillStyle='#000'; cx.fillText('🦴',((k%N)+.5)*c,(((k/N)|0)+.55)*c); }
-  const list=[{o:pl,s:SPR.colon,mv:pl.mv},...moons.map(m=>({o:m,s:SPR.moon,mv:t0&&wait<=0}))].sort((a,b)=>a.o.y-b.o.y);
+  for(const [k,t] of items){ cx.beginPath(); cx.arc(((k%N)+.5)*c,(((k/N)|0)+.5)*c,c*.36,0,7); cx.fillStyle=ITM[t].c; cx.fill(); cx.lineWidth=2; cx.strokeStyle='#fff'; cx.stroke(); cx.font=Math.round(c*.55)+'px sans-serif'; cx.fillStyle='#000'; cx.fillText(ITM[t].e,((k%N)+.5)*c,(((k/N)|0)+.55)*c); }
+  const pc=Math.floor(pl.y)*N+Math.floor(pl.x),hid=!!bush[pc]&&t0;
+  const list=[{o:pl,s:SPR[ST.me],mv:pl.mv,me:1},...moons.map(m=>({o:m,s:SPR[other()],mv:t0&&wait<=0&&fx.ice<=0}))].sort((a,b)=>a.o.y-b.o.y);
   for(const e of list){ const o=e.o,x=o.x*c,y=o.y*c,sz=c*1.0; cx.fillStyle='rgba(60,40,20,.22)'; cx.beginPath(); cx.ellipse(x,y+sz*.32,sz*.3,sz*.09,0,0,7); cx.fill();
-    const img=e.s; if(img.complete&&img.naturalWidth){ const C=img.naturalWidth/6,col=e.mv?Math.floor(o.an)%6:0; cx.drawImage(img,col*C,ROW[o.dir]*C,C,C,x-sz/2,y-sz*.58,sz,sz); } }
-}
+    const img=e.s; if(img.complete&&img.naturalWidth){ const C=img.naturalWidth/6,col=e.mv?Math.floor(o.an)%6:0; cx.save(); if(e.me&&hid) cx.globalAlpha=.5; if(e.me&&o.inv>0&&Math.floor(Date.now()/100)%2) cx.globalAlpha=.4; cx.drawImage(img,col*C,ROW[o.dir]*C,C,C,x-sz/2,y-sz*.58,sz,sz); cx.restore(); }
+    if(e.me&&o.bar){ cx.font=Math.round(c*.4)+'px sans-serif'; cx.fillStyle='#000'; cx.fillText('🛡️',x+sz*.3,y-sz*.42); }
+    if(!e.me&&fx.ice>0){ cx.font=Math.round(c*.45)+'px sans-serif'; cx.fillStyle='#000'; cx.fillText('❄️',x,y-sz*.5); } }
+  const tags=[]; if(fx.dash>0) tags.push('⚡'+Math.ceil(fx.dash)); if(pl.bar) tags.push('🛡️'); if(fx.ice>0) tags.push('❄️'+Math.ceil(fx.ice)); if(hid) tags.push('🌿かくれ中');
+  if(tags.length){ cx.font='bold '+Math.round(W*.04)+'px sans-serif'; cx.textAlign='left'; const w=cx.measureText(tags.join(' ')).width+W*.04; cx.fillStyle='rgba(255,255,255,.8)'; cx.beginPath(); cx.roundRect(W*.015,W*.015,w,W*.065,W*.03); cx.fill(); cx.fillStyle='#5a3d2b'; cx.fillText(tags.join(' '),W*.03,W*.048); cx.textAlign='center'; } }
 new MutationObserver(draw).observe(document.body,{attributes:true,attributeFilter:['data-vt']});
-$('bNext').onclick=()=>load(P.cur+1); $('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)};
-$('bAgain').onclick=()=>{closeM('mRes');load(lost?P.cur:Math.min(P.cur+1,LVN-1))};
-load(P.cur);
+$('bNext').onclick=()=>load(lv()+1); $('bReset').onclick=()=>{actx();SFX.tap();load(lv())};
+$('bAgain').onclick=()=>{closeM('mRes');load(lost||ST.mode==='endless'?lv():Math.min(lv()+1,LVN-1))};
+load(lv());
 
 ;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();
 
