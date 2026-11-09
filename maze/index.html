@@ -254,11 +254,13 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv" width="600" height="600"></canvas></div></div>
   <div class="pad"><button class="u" data-d="u">▲</button><button class="l" data-d="l">◀</button><button class="c" id="bNext">つぎ ▶</button><button class="r" data-d="r">▶</button><button class="d" data-d="d">▼</button></div>
 
+  <div class="btns" style="grid-template-columns:1fr;margin:6px 0 2px"><button class="btn c" id="bRoll">🎱 コロコロモード：OFF</button></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns gbtns" style="grid-template-columns:repeat(3,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 迷路</h2><p>コロンを動かして、出口で待っている<b>ムーン</b>のところまで行こう！</p>
 <p>👆 十字ボタン・迷路のスワイプ・矢印キーで動きます。ボタンを押しっぱなしにすると、分かれ道まで進みます。</p>
+<p>🎱 「コロコロモード」をONにすると、スマホをかたむけてコロンをころがせます（指でなぞっても、矢印キーでもOK）。iPhoneは最初にセンサーの許可が出ます。</p>
 <p>通った道には足あと🐾が残るよ。ステージが進むほど迷路が大きくなります。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -371,7 +373,7 @@ function gen(n){ // walls[k]=[up,right,down,left]
     if(y>0&&!seen[k-n])nb.push([k-n,0,2]); if(x<n-1&&!seen[k+1])nb.push([k+1,1,3]); if(y<n-1&&!seen[k+n])nb.push([k+n,2,0]); if(x>0&&!seen[k-1])nb.push([k-1,3,1]);
     if(!nb.length){st.pop();continue} const [m,a,b]=pick(nb); w[k][a]=0; w[m][b]=0; seen[m]=true; st.push(m); }
   return w; }
-function load(i){ clearInterval(tick); P.cur=i; store.set('prog',P); N=SIZES[i]; walls=gen(N); pos=0; trail=new Set([0]); mv=0; t0=0; done=false;
+function load(i){ clearInterval(tick); P.cur=i; store.set('prog',P); N=SIZES[i]; walls=gen(N); pos=0; trail=new Set([0]); mv=0; t0=0; done=false; rollReset();
   $('stN').textContent=(i+1)+'/'+SIZES.length; $('mv').textContent=0; $('tm').textContent='0:00'; $('bNext').style.visibility='hidden';
   lvRow($('lvs'),SIZES.map((s,k)=>s+'×'+s),i,k=>P.best[k]?1:0,load); draw(); setStatus('ムーンの待つ出口をめざそう！');
   setTimeout(()=>{sayText(2,'こっちだよ〜♪');},300); }
@@ -387,15 +389,15 @@ function draw(){ const W=cv.width, c=W/N, vt=document.body.dataset.vt;
     if(w[0]){cx.moveTo(x,y);cx.lineTo(x+c,y)} if(w[3]){cx.moveTo(x,y);cx.lineTo(x,y+c)}
     if(w[1]&&!(k===N*N-1)){cx.moveTo(x+c,y);cx.lineTo(x+c,y+c)} if(w[2]){cx.moveTo(x,y+c);cx.lineTo(x+c,y+c)} }
   cx.stroke(); cx.shadowBlur=0;
-  const face=(img,k,ring)=>{ const x=(k%N+.5)*c,y=(((k/N)|0)+.5)*c,r=c*.4; cx.save(); cx.beginPath(); cx.arc(x,y,r,0,7); cx.closePath(); cx.fillStyle='#fff'; cx.fill(); cx.clip(); if(img.complete&&img.naturalWidth) cx.drawImage(img,x-r,y-r,r*2,r*2); cx.restore();
+  const face=(img,k,ring,bx,by)=>{ const rl=bx!=null, x=rl?bx*c:(k%N+.5)*c,y=rl?by*c:(((k/N)|0)+.5)*c,r=rl?c*.3:c*.4; cx.save(); cx.beginPath(); cx.arc(x,y,r,0,7); cx.closePath(); cx.fillStyle='#fff'; cx.fill(); cx.clip(); if(img.complete&&img.naturalWidth){ if(rl){cx.translate(x,y);cx.rotate(rb.a);cx.drawImage(img,-r,-r,r*2,r*2)} else cx.drawImage(img,x-r,y-r,r*2,r*2); } cx.restore();
     cx.beginPath(); cx.arc(x,y,r,0,7); cx.strokeStyle=ring; cx.lineWidth=Math.max(2,c*.07); cx.stroke(); };
-  face(imgM,N*N-1,'#2fa8ff'); face(imgC,pos,'#ff8a1f'); }
+  face(imgM,N*N-1,'#2fa8ff'); rb?face(imgC,0,'#ff8a1f',rb.x,rb.y):face(imgC,pos,'#ff8a1f'); }
 function can(k,d){ return !walls[k][{u:0,r:1,d:2,l:3}[d]]; }
-function step(d,run){ if(done) return; actx(); if(!can(pos,d)){ if(!run) SFX.ng(); return false; }
+function step(d,run){ if(done||ROLL.on) return; actx(); if(!can(pos,d)){ if(!run) SFX.ng(); return false; }
   if(!t0){t0=Date.now();tick=setInterval(()=>$('tm').textContent=fmt(Date.now()-t0),500)}
   pos+={u:-N,d:N,l:-1,r:1}[d]; trail.add(pos); mv++; $('mv').textContent=mv; if(!run) SFX.tap(); draw();
   if(pos===N*N-1){ win(); return false; } return true; }
-function runTo(d){ if(!step(d,true)) return; const opp={u:'d',d:'u',l:'r',r:'l'}[d];
+function runTo(d){ if(ROLL.on||!step(d,true)) return; const opp={u:'d',d:'u',l:'r',r:'l'}[d];
   const exits=['u','r','d','l'].filter(x=>x!==opp&&can(pos,x)); if(exits.length===1) setTimeout(()=>runTo(exits[0]),45); }
 function win(){ done=true; clearInterval(tick); const t=Date.now()-t0; const b=P.best[P.cur]; if(!b||t<b) P.best[P.cur]=t; store.set('prog',P);
   report('clear',{stars:3}); SFX.win(); confetti(['🐾','💕','✨']); sayText(1,'ムーン、見つけた！',true); setTimeout(()=>sayText(2,'おかえり〜♪',true),500);
@@ -403,12 +405,62 @@ function win(){ done=true; clearInterval(tick); const t=Date.now()-t0; const b=P
   showResult({winner:1,title:'🎉 ゴール！',score:fmt(t)+'・'+mv+'歩',msg:'コロンとムーンが会えたよ！',rec:'ベスト：'+fmt(P.best[P.cur])}); }
 let hold=null;
 document.querySelectorAll('.pad [data-d]').forEach(b=>{ const d=b.dataset.d;
-  b.addEventListener('pointerdown',e=>{e.preventDefault(); step(d); clearTimeout(hold); hold=setTimeout(()=>runTo(d),350);});
-  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>clearTimeout(hold))); });
+  b.addEventListener('pointerdown',e=>{e.preventDefault(); if(ROLL.on){ROLL.k[d]=1;actx();return} step(d); clearTimeout(hold); hold=setTimeout(()=>runTo(d),350);});
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{clearTimeout(hold);ROLL.k[d]=0}));});
 swipe(cv,d=>runTo(d)); keys(step);
 $('bNext').onclick=()=>load(P.cur+1); $('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)};
 $('bAgain').textContent='つぎの迷路'; $('bAgain').onclick=()=>{closeM('mRes');load(Math.min(P.cur+1,SIZES.length-1))};
 new MutationObserver(draw).observe(document.body,{attributes:true,attributeFilter:['data-vt']});
+
+// ===== コロコロモード（ジャイロ／指／キーでころがす） =====
+const ROLL={on:false,k:{u:0,d:0,l:0,r:0},t:null,g:null,b0:null,calib:true,raf:0,last:0,bump:0,gyroOk:false};
+let rb=null; const BR=.3, HW=.06;
+function rollReset(){ rb=ROLL.on?{x:.5,y:.5,vx:0,vy:0,a:0}:null; ROLL.calib=true; if(ROLL.on) rollStart(); }
+function segs(){ const L=[]; for(let k=0;k<N*N;k++){ const x=k%N,y=(k/N)|0,w=walls[k];
+  if(w[0])L.push([x,y,x+1,y]); if(w[3])L.push([x,y,x,y+1]); if(w[1])L.push([x+1,y,x+1,y+1]); if(w[2])L.push([x,y+1,x+1,y+1]); } return L; }
+let SEG=[],SEGN=-1,SEGW=null;
+function rollAcc(){ let ax=0,ay=0; const A=18;
+  if(ROLL.g&&ROLL.gyroOk){ if(ROLL.calib&&ROLL.g.b!=null){ROLL.b0=ROLL.g.b;ROLL.calib=false}
+    const dz=v=>Math.abs(v)<2?0:v-Math.sign(v)*2, cl=v=>Math.max(-1,Math.min(1,v));
+    ax+=cl(dz(ROLL.g.g||0)/22)*A; ay+=cl(dz((ROLL.g.b||0)-(ROLL.b0||0))/22)*A; }
+  if(ROLL.t){ ax+=ROLL.t.x*A; ay+=ROLL.t.y*A; }
+  ax+=(ROLL.k.r-ROLL.k.l)*A*.8; ay+=(ROLL.k.d-ROLL.k.u)*A*.8;
+  return [ax,ay]; }
+function rollStep(dt){ if(SEGW!==walls){SEG=segs();SEGW=walls}
+  const [ax,ay]=rollAcc(); rb.vx+=ax*dt; rb.vy+=ay*dt; const f=Math.pow(.35,dt); rb.vx*=f; rb.vy*=f;
+  const sp=Math.hypot(rb.vx,rb.vy), VM=7; if(sp>VM){rb.vx*=VM/sp;rb.vy*=VM/sp}
+  rb.x+=rb.vx*dt; rb.y+=rb.vy*dt; rb.a+=rb.vx*dt/BR;
+  const cxm=Math.floor(rb.x),cym=Math.floor(rb.y);
+  for(const [x1,y1,x2,y2] of SEG){ if(x2<rb.x-1||x1>rb.x+1||y2<rb.y-1||y1>rb.y+1) continue;
+    const px=Math.max(x1,Math.min(x2,rb.x)),py=Math.max(y1,Math.min(y2,rb.y)); let dx=rb.x-px,dy=rb.y-py,d=Math.hypot(dx,dy),m=BR+HW;
+    if(d<m){ if(d<1e-6){dx=x1===x2?1:0;dy=x1===x2?0:1;d=1} const nx=dx/d,ny=dy/d; rb.x=px+nx*m; rb.y=py+ny*m;
+      const vn=rb.vx*nx+rb.vy*ny; if(vn<0){ rb.vx-=(1+.35)*vn*nx; rb.vy-=(1+.35)*vn*ny; const n=Date.now(); if(-vn>2.5&&n-ROLL.bump>140){ROLL.bump=n;tone(180,0,.06,'sine',.08)} } } }
+  rb.x=Math.max(BR,Math.min(N-BR,rb.x)); rb.y=Math.max(BR,Math.min(N-BR,rb.y)); }
+function rollLoop(ts){ ROLL.raf=0; if(!ROLL.on||done) return; const dt=Math.min(.05,(ts-(ROLL.last||ts))/1000); ROLL.last=ts;
+  const n=Math.max(1,Math.ceil(dt/.008)); for(let i=0;i<n;i++) rollStep(dt/n);
+  const k=Math.floor(rb.y)*N+Math.floor(rb.x); if(k!==pos){ if(!t0){t0=Date.now();tick=setInterval(()=>$('tm').textContent=fmt(Date.now()-t0),500)} pos=k; trail.add(k); mv++; $('mv').textContent=mv; }
+  if(!t0&&Math.hypot(rb.vx,rb.vy)>.3){t0=Date.now();tick=setInterval(()=>$('tm').textContent=fmt(Date.now()-t0),500)}
+  draw();
+  if(Math.hypot(rb.x-(N-.5),rb.y-(N-.5))<.4){ win(); return; }
+  ROLL.raf=requestAnimationFrame(rollLoop); }
+function rollStart(){ if(!ROLL.raf){ROLL.last=0;ROLL.raf=requestAnimationFrame(rollLoop)} }
+function onOri(e){ if(e.beta==null&&e.gamma==null) return; ROLL.g={b:e.beta,g:e.gamma}; ROLL.gyroOk=true; }
+async function rollOn(){ actx();
+  try{ if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){ const r=await DeviceOrientationEvent.requestPermission(); if(r!=='granted') toast('センサーが許可されなかったよ。指でなぞってね',true); } }catch(e){}
+  addEventListener('deviceorientation',onOri);
+  ROLL.on=true; ROLL.gyroOk=false; ROLL.g=null; ROLL.calib=true; cv.style.touchAction='none'; $('bRoll').textContent='🎱 コロコロモード：ON'; $('bRoll').classList.add('on');
+  if(!rb) rb={x:(pos%N)+.5,y:((pos/N)|0)+.5,vx:0,vy:0,a:0};
+  setStatus('スマホをかたむけてね！（指でなぞってもOK）'); draw(); rollStart();
+  setTimeout(()=>{ if(ROLL.on&&!ROLL.gyroOk) toast('ジャイロが使えないよ。指でなぞって動かしてね') },1200); }
+function rollOff(){ ROLL.on=false; removeEventListener('deviceorientation',onOri); cancelAnimationFrame(ROLL.raf); ROLL.raf=0; ROLL.t=null; ROLL.k={u:0,d:0,l:0,r:0}; rb=null; cv.style.touchAction=''; $('bRoll').textContent='🎱 コロコロモード：OFF'; $('bRoll').classList.remove('on'); setStatus('ムーンの待つ出口をめざそう！'); draw(); }
+$('bRoll').onclick=()=>{ SFX.tap(); if(ROLL.on) rollOff(); else rollOn(); };
+(()=>{ let st=null; const upd=e=>{ if(!ROLL.on||!st) return; const t=e.touches[0]; ROLL.t={x:Math.max(-1,Math.min(1,(t.clientX-st.x)/50)),y:Math.max(-1,Math.min(1,(t.clientY-st.y)/50))}; e.preventDefault(); };
+  cv.addEventListener('touchstart',e=>{ if(!ROLL.on) return; const t=e.touches[0]; st={x:t.clientX,y:t.clientY}; ROLL.t={x:0,y:0}; },{passive:true});
+  cv.addEventListener('touchmove',upd,{passive:false});
+  ['touchend','touchcancel'].forEach(ev=>cv.addEventListener(ev,()=>{st=null;ROLL.t=null},{passive:true}));
+  const km={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'};
+  addEventListener('keydown',e=>{ if(ROLL.on&&km[e.key]){ROLL.k[km[e.key]]=1;e.preventDefault()} });
+  addEventListener('keyup',e=>{ if(km[e.key]) ROLL.k[km[e.key]]=0; }); })();
 load(P.cur);
 
 
