@@ -243,7 +243,12 @@ html body .app .vtBtn,html body .app .homeBtn{width:90px!important;height:30px!i
 html body[data-vt=natural] .app .vtBtn{background-image:url(../img/ui/natural_skin.webp?v=2)!important}html body[data-vt=natural] .app .homeBtn{background-image:url(../img/ui/natural_home.webp?v=2)!important}
 html body[data-vt=retro] .app .vtBtn{background-image:url(../img/ui/retro_skin.webp?v=2)!important}html body[data-vt=retro] .app .homeBtn{background-image:url(../img/ui/retro_home.webp?v=2)!important}
 html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../img/ui/neon_home.webp?v=2)!important}
-</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
+</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style><style id="stickCss">#stickZone{margin:8px 12px 0;height:120px;border:2.5px dashed rgba(120,90,60,.35);border-radius:22px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:700;color:rgba(90,61,43,.6);touch-action:none;user-select:none;-webkit-user-select:none;padding:0 14px}
+body[data-vt=retro] #stickZone{border-color:rgba(242,177,52,.5);color:rgba(242,177,52,.8)}body[data-vt=neon] #stickZone{border-color:rgba(63,240,255,.5);color:rgba(63,240,255,.8)}
+#stBase{position:fixed;z-index:60;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;background:rgba(255,255,255,.28);border:3px solid rgba(255,255,255,.75);box-shadow:0 0 0 2px rgba(90,61,43,.25),0 4px 14px rgba(0,0,0,.25);pointer-events:none;display:none}
+#stKnob{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#ffd9a0 60%,#e0a04a);border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+#cv{touch-action:none}</style>
+</head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">おいかけっこ</div></div>
@@ -252,7 +257,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="hud"><div class="box"><small>ステージ</small><b id="stN"></b></div><div class="box"><small>ポイント</small><b id="sc">0</b></div><div class="box"><small>おやつ🦴</small><b id="sn">0/0</b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
   <div class="lvRow" id="lvs"></div>
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv" width="600" height="600"></canvas></div></div>
-  <div class="pad"><button class="u" data-d="u">▲</button><button class="l" data-d="l">◀</button><button class="c" id="bNext">つぎ ▶</button><button class="r" data-d="r">▶</button><button class="d" data-d="d">▼</button></div>
+  <div id="stickZone"><span>👆 ここをなぞると、スティックが出てくるよ（画面のワクの中ならどこでもOK）</span><button id="bNext" style="display:none"></button></div>
 
   <div class="btns" style="grid-template-columns:1fr 1fr;margin:6px 0 2px"><button class="btn c" id="bMode">🎮 キャラ・モード</button><button class="btn c" id="bRoll">📱 かたむけ：OFF</button></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
@@ -263,7 +268,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 <div class="lb">モード</div><div class="pkRow" data-k="mode" style="grid-template-columns:1fr 1fr 1fr"><button data-v="stage">🏁<small>ステージ</small></button><button data-v="endless">♾️<small>ずっとにげる</small></button><button data-v="mission">🎯<small>ミッション</small></button></div>
 <div class="pkNote" id="modeNote"></div><div class="acts"><button class="btn g" id="bModeGo">この設定ではじめる！</button></div></div></div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 おいかけっこ</h2><p>コロンを動かして、ゴールの🏠まで走ろう！ムーンが<b>おじゃましに追いかけてくる</b>から、つかまったらアウトだよ。</p>
-<p>👆 画面をなぞる（なぞった向きに走る）・十字ボタン・矢印キー・「かたむけ操作」で動かせます。</p>
+<p>👆 画面をなぞるとスティックが出て、倒した向きに走ります（倒すほど速い）。矢印キーや「かたむけ」でも動かせます。</p>
 <p>⚡ダッシュ：しばらく速く走れる ／ 🛡️バリア：1回つかまってもセーフ ／ ❄️こおり：おいかけ役が数秒止まる ／ ⭐金のおやつ：500点 ／ 🌿くさむら：かくれるとムーンが見失う。</p>
 <p>🏁ステージ：ゴールをめざす ♾️ずっとにげる：ゴールなしで、どこまでにげられるか ／ 🎯ミッション：目標をクリアしてゴール。</p>
 <p>🦴 おやつをたくさん取るほど高得点！ゴールすると、ボーナスと早さの点も入ります。ステージが進むと、ムーンが速くなったり、増えたりするよ。</p>
@@ -422,10 +427,13 @@ function vec(){ let x=IN.k.r-IN.k.l,y=IN.k.d-IN.k.u; if(IN.t){x+=IN.t.x;y+=IN.t.
 document.querySelectorAll('.pad [data-d]').forEach(b=>{ const d=b.dataset.d; b.addEventListener('pointerdown',e=>{e.preventDefault();actx();IN.k[d]=1}); ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{IN.k[d]=0})); });
 (()=>{ const km={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r',w:'u',s:'d',a:'l',d:'r'};
   addEventListener('keydown',e=>{ const k=km[e.key]; if(k){IN.k[k]=1;e.preventDefault();actx()} }); addEventListener('keyup',e=>{ const k=km[e.key]; if(k) IN.k[k]=0; });
-  let st=null; cv.style.touchAction='none';
-  cv.addEventListener('pointerdown',e=>{ actx(); st={x:e.clientX,y:e.clientY}; IN.t={x:0,y:0}; try{cv.setPointerCapture(e.pointerId)}catch(_){} });
-  cv.addEventListener('pointermove',e=>{ if(!st) return; const dx=e.clientX-st.x,dy=e.clientY-st.y,L=Math.hypot(dx,dy); if(L<8){IN.t={x:0,y:0};return} const m=Math.min(1,L/45); IN.t={x:dx/L*m,y:dy/L*m}; });
-  ['pointerup','pointercancel'].forEach(ev=>cv.addEventListener(ev,()=>{st=null;IN.t=null})); })();
+  const base=document.createElement('div'); base.id='stBase'; base.innerHTML='<div id="stKnob"></div>'; document.body.appendChild(base); const knob=base.firstChild;
+  let st=null,pid=null; const RAD=48;
+  const down=e=>{ if(st) return; actx(); st={x:e.clientX,y:e.clientY}; pid=e.pointerId; IN.t={x:0,y:0}; base.style.left=st.x+'px'; base.style.top=st.y+'px'; base.style.display='block'; knob.style.transform='translate(0,0)'; try{e.currentTarget.setPointerCapture(e.pointerId)}catch(_){} e.preventDefault(); };
+  const move=e=>{ if(!st||e.pointerId!==pid) return; let dx=e.clientX-st.x,dy=e.clientY-st.y; const L=Math.hypot(dx,dy),k=Math.min(L,RAD); const nx=L?dx/L*k:0,ny=L?dy/L*k:0; knob.style.transform='translate('+nx+'px,'+ny+'px)';
+    const m=k/RAD; IN.t=m<.12?{x:0,y:0}:{x:(nx/RAD),y:(ny/RAD)}; };
+  const up=e=>{ if(!st||e.pointerId!==pid) return; st=null; pid=null; IN.t=null; base.style.display='none'; };
+  for(const el of [cv,$('stickZone')]){ el.addEventListener('pointerdown',down); el.addEventListener('pointermove',move); el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up); el.addEventListener('contextmenu',e=>e.preventDefault()); } })();
 function onOri(e){ if(e.beta==null&&e.gamma==null) return; IN.g={b:e.beta,g:e.gamma}; ROLL.gyroOk=true; }
 async function rollOn(){ actx(); try{ if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){ const r=await DeviceOrientationEvent.requestPermission(); if(r!=='granted') toast('センサーが許可されなかったよ',true); } }catch(e){}
   addEventListener('deviceorientation',onOri); ROLL.on=true; ROLL.gyroOk=false; ROLL.calib=true; $('bRoll').textContent='📱 かたむけ：ON'; $('bRoll').classList.add('on');
