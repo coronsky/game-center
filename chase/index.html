@@ -498,16 +498,15 @@ function finish(kind){ done=true; clearInterval(tick); const el=t0?(Date.now()-t
   if(en){ const pts=score+Math.floor(el)*5; if(pts>P.bestE){P.bestE=pts;store.set('prog',P)} showResult({winner:2,title:'😱 つかまっちゃった…',score:pts+'点',msg:fmt(el*1000)+'にげたよ！おやつ'+S2.sn+'こ',rec:'ハイスコア：'+P.bestE+'点',delay:500}); return; }
   const bk=(ms?P.bestM:P.best)[lv()]||0; showResult({winner:2,title:kind==='timeup'?'⏰ じかんぎれ…':'😱 つかまっちゃった…',score:score+'点',msg:kind==='timeup'?'ミッションの じかんが すぎちゃった':'おやつ'+S2.sn+'こ。つぎはにげきろう！',rec:'ハイスコア：'+bk+'点',delay:500}); }
 // ---- 描画
-const FR={natural:[.0853,.0901,.9123,.9035],retro:[.0981,.1116,.9027,.882],neon:[.0877,.0941,.9115,.8987]},TG={natural:5,retro:4,neon:1};
+const FR={natural:[.0367,.0375,.9633,.9625],retro:[.0383,.0423,.9617,.9577],neon:[.0375,.0415,.9625,.9569]};
 const SK={}; let BX=0,BY=0,BC=1;
 function skin(){ const vt=document.body.dataset.vt||'natural'; if(!SK[vt]){ const o={}; for(const n of ['snack','dash','bar','ice','gold','bush','wood','stone','house','frame','tileA','tileB']){ const i=new Image(); i.src='../img/chase/'+vt+'/'+n+'.webp'; i.onload=()=>draw(); o[n]=i; } SK[vt]=o; } return SK[vt]; }
 function draw(){ const W=cv.width,vt=document.body.dataset.vt||'natural',S=skin(),en=ST.mode==='endless',fr=FR[vt]||FR.natural;
-  const ix=fr[0]*W,iy=fr[1]*W,iw=(fr[2]-fr[0])*W,ih=(fr[3]-fr[1])*W,bs=Math.min(iw,ih)*.9; BC=bs/N; BX=ix+(iw-bs)/2; BY=iy+(ih-bs)/2; const c=BC;
+  const ix=fr[0]*W,iy=fr[1]*W,iw=(fr[2]-fr[0])*W,ih=(fr[3]-fr[1])*W,bs=Math.min(iw,ih)*.95; BC=bs/N; BX=ix+(iw-bs)/2; BY=iy+(ih-bs)/2; const c=BC;
   cx.setTransform(1,0,0,1,0,0); cx.clearRect(0,0,W,W); cx.save(); cx.beginPath(); cx.rect(ix,iy,iw,ih); cx.clip();
   cx.fillStyle={natural:'#d9ecb0',retro:'#3a1a0c',neon:'#0f0830'}[vt]; cx.fillRect(ix,iy,iw,ih); cx.translate(BX,BY);
   const ok=i=>i&&i.complete&&i.naturalWidth, pic=(i,x,y,z)=>{ if(ok(i)) cx.drawImage(i,x-z/2,y-z/2,z,z); };
-  const g=TG[vt]||1;
-  for(let k=0;k<N*N;k++){ const x=k%N,y=(k/N)|0,t=(x+y)%2?S.tileB:S.tileA; if(ok(t)){ const sz=t.naturalWidth/g; cx.drawImage(t,(x%g)*sz,(y%g)*sz,sz,sz,x*c,y*c,c+1,c+1); } else { cx.fillStyle=(x+y)%2?'#c9dd9c':'#d9ecb0'; cx.fillRect(x*c,y*c,c+1,c+1); } }
+  for(let k=0;k<N*N;k++){ const x=k%N,y=(k/N)|0,t=(x+y)%2?S.tileB:S.tileA; if(ok(t)){ const sz=t.naturalWidth/N; cx.drawImage(t,x*sz,y*sz,sz,sz,x*c,y*c,c+1,c+1); } else { cx.fillStyle=(x+y)%2?'#c9dd9c':'#d9ecb0'; cx.fillRect(x*c,y*c,c+1,c+1); } }
   for(let k=0;k<N*N;k++){ const x=k%N,y=(k/N)|0; if(bush[k]) pic(S.bush,(x+.5)*c,(y+.5)*c,c*.98); }
   for(let k=0;k<N*N;k++){ if(obs[k]){ const x=k%N,y=(k/N)|0; pic((((k*2654435761)>>>0)>>>7)%2?S.stone:S.wood,(x+.5)*c,(y+.5)*c,c*1.02); } }
   if(!en) pic(S.house,(N-.5)*c,(N-.5)*c,c*1.05);
