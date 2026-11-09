@@ -309,7 +309,6 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 <script>(function(){var a=document.querySelector(".app")||document.body,r=document.createElement("div");r.className="btns";r.id="bHomeRow";r.style.cssText="grid-template-columns:1fr;margin:10px 12px 0;display:grid";r.innerHTML='<button class="btn g" id="bHome2" type="button">🏠ホームへ戻る</button>';a.appendChild(r);r.firstChild.onclick=function(){var h=document.getElementById("homeBtn");location.href=h?h.href:"../"}})()</script>
 <div class="modal" id="mSet"><div class="card"><h2>🐾 設定</h2>
   <div class="row"><div class="lb">写真</div><div class="seg" data-k="pic"><button data-v="colon">コロン</button><button data-v="moon">ムーン</button><button data-v="custom">自分の写真</button></div></div>
-  <div class="row"><button class="btn c" id="bUpload" style="width:100%">📷 写真をえらぶ（うちの子で遊べる！）</button></div>
   <div class="row"><div class="lb">大きさ</div><div class="seg" data-k="size"><button data-v="3">3×3</button><button data-v="4">4×4</button><button data-v="5">5×5</button></div></div>
   <div class="tg"><span>タイルに番号を表示</span><div class="sw" data-k="nums"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -481,7 +480,8 @@ const syncSet=bindSettings($('mSet'),pend,k=>{ if(['talk','sound','nums'].includ
   if(k==='pic'&&pend.pic==='custom'&&!custom){ $('upFile').click(); } });
 $('bSet').onclick=()=>{actx();Object.assign(pend,S);syncSet();openM('mSet')};
 $('bStart').onclick=()=>{ if(pend.pic==='custom'&&!custom){ toast('先に写真をえらんでね',true); return; } Object.assign(S,pend); store.set('settings',Object.assign({},S,{pic:S.pic==='custom'?'colon':S.pic})); closeM('mSet'); newGame(); };
-$('bUpload').onclick=()=>$('upFile').click();
+// 「自分の写真」をもう一度タップすると、写真をえらび直せる
+document.querySelector('.seg[data-k=pic] [data-v=custom]').addEventListener('click',()=>{ if(pend.pic==='custom'&&custom) $('upFile').click(); },true);
 $('bHelp').onclick=()=>openM('mHelp');
 $('bNew').onclick=()=>{actx();SFX.tap();boardEl.classList.remove('win');newGame()};
 $('bAgain').onclick=()=>{closeM('mRes');boardEl.classList.remove('win');newGame()};
