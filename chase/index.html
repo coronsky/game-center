@@ -520,7 +520,13 @@ function draw(){ const W=cv.width,vt=document.body.dataset.vt||'natural',S=skin(
     if(!e.me&&fx.ice>0) pic(S.ice,x,y-sz*.5,c*.5); }
   cx.restore(); cx.setTransform(1,0,0,1,0,0); if(ok(S.frame)) cx.drawImage(S.frame,0,0,W,W);
   cx.textAlign='center'; cx.textBaseline='middle';
-  if(cd>0){ cx.fillStyle='rgba(0,0,0,.28)'; cx.fillRect(0,0,W,W); const big=cd>.6; cx.font='900 '+Math.round(W*(big?.34:.16))+'px "Zen Maru Gothic",sans-serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.lineWidth=W*.02; cx.strokeStyle='#8a5a2c'; cx.fillStyle='#fff'; const t=big?String(Math.ceil(cd-.6)):'スタート！'; cx.strokeText(t,W/2,W/2); cx.fillText(t,W/2,W/2); }
+  if(cd>0){ cx.fillStyle='rgba(0,0,0,.28)'; cx.fillRect(0,0,W,W); const big=cd>.6; cx.font='900 '+Math.round(W*(big?.34:.16))+'px "Zen Maru Gothic",sans-serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.lineWidth=W*.02; cx.strokeStyle='#8a5a2c'; cx.fillStyle='#fff'; const t=big?String(Math.ceil(cd-.6)):'スタート！'; cx.strokeText(t,W/2,W/2); cx.fillText(t,W/2,W/2);
+    if(ST.mode==='mission'){ const m=MIS[P.curM]; if(m){ const fs=Math.round(W*.05); cx.font='900 '+fs+'px "Zen Maru Gothic",sans-serif'; const mw=W*.8; let lines=[m.t];
+        if(cx.measureText(m.t).width>mw){ const sp=[...m.t].map((c,i)=>c===' '||c==='　'?i:-1).filter(i=>i>=0); const mid=m.t.length/2; let at=sp.length?sp.reduce((q,i)=>Math.abs(i-mid)<Math.abs(q-mid)?i:q,sp[0]):Math.ceil(mid); lines=[m.t.slice(0,at).trim(),m.t.slice(at).trim()].filter(Boolean); }
+        const lh=fs*1.35, bh=lh*(lines.length+1)+fs*.5, bw=Math.min(W*.9,Math.max(...lines.map(l=>cx.measureText(l).width),W*.3)+fs*1.6), by=W*.70;
+        cx.fillStyle='rgba(40,25,12,.82)'; cx.strokeStyle='#ffd36b'; cx.lineWidth=W*.006; cx.beginPath(); cx.roundRect(W/2-bw/2,by,bw,bh,fs*.6); cx.fill(); cx.stroke();
+        cx.lineWidth=0; cx.fillStyle='#ffd36b'; cx.font='900 '+Math.round(fs*.8)+'px "Zen Maru Gothic",sans-serif'; cx.fillText('🎯 ミッション',W/2,by+lh*.75);
+        cx.fillStyle='#fff'; cx.font='900 '+fs+'px "Zen Maru Gothic",sans-serif'; lines.forEach((l,i)=>cx.fillText(l,W/2,by+lh*(i+1.75))); } } }
   const tags=[]; if(fx.dash>0) tags.push('⚡'+Math.ceil(fx.dash)); if(pl.bar) tags.push('🛡️'); if(fx.ice>0) tags.push('❄️'+Math.ceil(fx.ice)); if(hid) tags.push('🌿かくれ中');
   if(tags.length){ cx.font='bold '+Math.round(W*.04)+'px sans-serif'; cx.textAlign='left'; const w=cx.measureText(tags.join(' ')).width+W*.04; cx.fillStyle='rgba(255,255,255,.8)'; cx.beginPath(); cx.roundRect(W*.015,W*.015,w,W*.065,W*.03); cx.fill(); cx.fillStyle='#5a3d2b'; cx.fillText(tags.join(' '),W*.03,W*.048); cx.textAlign='center'; } }
 new MutationObserver(()=>{draw();modeSync()}).observe(document.body,{attributes:true,attributeFilter:['data-vt']});
