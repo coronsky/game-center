@@ -259,6 +259,9 @@ html body[data-vt=retro] .app .vtBtn{background-image:url(../img/ui/retro_skin.w
 html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../img/ui/neon_home.webp?v=2)!important}
 
 /* ---- sudoku image skin ---- */
+.modeRow{margin:10px 10px 0}.modeRow .btn{width:100%;padding:8px 4px;font-size:clamp(12px,3.6vw,14px)}
+html body .num button.arm{transform:scale(1.12);filter:drop-shadow(0 0 6px #ffd400) drop-shadow(0 0 3px #ffd400)}
+html body .num button:not(.ib).arm{box-shadow:0 0 0 3px #ffd400,0 0 10px #ffd400}
 body[data-vt=natural]{--frm:url(../img/sd/natural_frame.webp);--ins:2.9%}
 body[data-vt=retro]{--frm:url(../img/sd/retro_frame.webp);--ins:5.1%}
 body[data-vt=neon]{--frm:url(../img/sd/neon_frame.webp);--ins:6%}
@@ -286,6 +289,7 @@ html body .num button.ib:active{transform:scale(.9)}
   <div class="hud"><div class="box"><small>サイズ</small><b id="szN"></b></div><div class="box"><small>ミス</small><b id="miss">0</b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
   <div class="lvRow" id="lvs"></div>
   <div class="panel"><div class="in"><div id="bdWrap"><div id="bd"></div></div></div></div>
+  <div class="modeRow"><button class="btn c" id="bMode"></button></div>
   <div class="num" id="num"></div>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
@@ -296,6 +300,7 @@ html body .num button.ib:active{transform:scale(.9)}
 <p>📏 入門4×4（1〜4）・初級6×6（1〜6）・通常9×9（1〜9）。まちがった数字は赤くなるよ。</p>
 <p>全部うまったらクリア！ミスが少ないほど★が増えます。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
+  <div class="tg"><span>数字を先に選ぶ</span><div class="sw" data-k="numfirst"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
 
@@ -382,8 +387,8 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
 const GID='sudoku';
 
 const store=mkStore('mc_'+GID+'_');
-const S=Object.assign({sound:true,talk:true},store.get('settings',{})); SND.on=S.sound; TALK.on=S.talk;
-const syncHelp=bindSettings($('mHelp'),S,()=>{SND.on=S.sound;TALK.on=S.talk;store.set('settings',S)}); syncHelp();
+const S=Object.assign({sound:true,talk:true,numfirst:false},store.get('settings',{})); SND.on=S.sound; TALK.on=S.talk;
+const syncHelp=bindSettings($('mHelp'),S,()=>{SND.on=S.sound;TALK.on=S.talk;store.set('settings',S);armed=null;modeSync();try{draw()}catch(e){}}); syncHelp();
 $('bHelp').onclick=()=>{actx();SFX.tap();syncHelp();openM('mHelp')};
 $('bHome').onclick=()=>{location.href=$('homeBtn').href};
 function report(t,o){try{window.MC&&MC.report(GID,t,o||{})}catch(e){}}
@@ -413,19 +418,23 @@ function load(i){ clearInterval(tick); P.cur=i; store.set('prog',P); L=LVS[i]; N
   lvRow($('lvs'),LVS.map(l=>l.name),i,k=>P.stars[k]||0,load);
   $('num').style.gridTemplateColumns=`repeat(${N<=6?N+1:5},1fr)`;
   $('num').innerHTML=[...Array(N)].map((_,k)=>`<button data-v="${k+1}">${k+1}</button>`).join('')+'<button data-v="0">けす</button>';
-  $('num').querySelectorAll('button').forEach(b=>b.onclick=()=>put(+b.dataset.v)); numSkin();
+  $('num').querySelectorAll('button').forEach(b=>b.onclick=()=>numTap(+b.dataset.v)); numSkin(); armed=null;
   draw(); setStatus('マスをえらんで数字を入れてね'); setTimeout(()=>sayText(2,'じっくり考えよう♪'),300); }
+let armed=null;
+function modeSync(){ const b=$('bMode'); if(b) b.textContent=S.numfirst?'🔢 数字を先に選ぶ（ON）':'👆 マスを先に選ぶ（ふつう）'; }
+function numTap(v){ actx(); if(S.numfirst){ SFX.tap(); armed=(armed===v)?null:v; if(armed!=null){ sayText(1,v?'数字をタップで入れるよ':'マスをタップで消すよ'); } draw(); } else put(v); }
 const VT=()=>document.body.dataset.vt||'natural';
 function numSkin(){ $('num').querySelectorAll('button').forEach(b=>{const v=+b.dataset.v; if(v){b.classList.add('ib');b.textContent='';b.style.backgroundImage=`url(../img/sd/${VT()}_b${v}.webp)`;b.setAttribute('aria-label',v)}}); }
 function draw(){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${N},1fr)`; bd.innerHTML='';
   const fs=N===9?'min(5.4vw,24px)':N===6?'min(7vw,30px)':'min(10vw,40px)';
-  const sv=sel>=0?cur[sel]:0, sr=(sel/N)|0, sc=sel%N;
+  const sv=(S.numfirst&&armed>0)?armed:(sel>=0?cur[sel]:0), sr=(sel/N)|0, sc=sel%N;
   for(let i=0;i<N*N;i++){ const e=document.createElement('div'); const r=(i/N)|0,c=i%N;
     let cl='sc'; if(giv[i]) cl+=' giv'; if(i===sel) cl+=' sel'; else if(sel>=0&&(r===sr||c===sc||(Math.floor(r/L.bh)===Math.floor(sr/L.bh)&&Math.floor(c/L.bw)===Math.floor(sc/L.bw)))) cl+=' peer';
     if(sv&&cur[i]===sv&&i!==sel) cl+=' same'; if(cur[i]&&!giv[i]&&cur[i]!==sol[i]) cl+=' err';
     if((c+1)%L.bw===0&&c<N-1) cl+=' bR'; if((r+1)%L.bh===0&&r<N-1) cl+=' bB';
-    e.className=cl; e.style.fontSize=fs; if(cur[i]){const d=document.createElement('b');d.className='dg';d.style.backgroundImage=`url(../img/sd/${VT()}_${giv[i]?'g':'u'}${cur[i]}.webp)`;e.appendChild(d)}  e.onclick=()=>{actx();SFX.tap();sel=i;draw()}; bd.appendChild(e); }
+    e.className=cl; e.style.fontSize=fs; if(cur[i]){const d=document.createElement('b');d.className='dg';d.style.backgroundImage=`url(../img/sd/${VT()}_${giv[i]?'g':'u'}${cur[i]}.webp)`;e.appendChild(d)}  e.onclick=()=>{actx(); if(S.numfirst&&armed!=null){ if(giv[i]){SFX.ng();return} sel=i; put(armed&&cur[i]===armed?0:armed); return } SFX.tap();sel=i;draw()}; bd.appendChild(e); }
   for(let v=1;v<=N;v++){ const b=$('num').querySelector(`[data-v="${v}"]`); if(b) b.classList.toggle('dim',cur.filter((x,i)=>x===v&&x===sol[i]).length>=N); }
+  $('num').querySelectorAll('button').forEach(b=>b.classList.toggle('arm',S.numfirst&&armed!=null&&+b.dataset.v===armed));
   $('bUndo').disabled=!hist.length; }
 function put(v){ if(done) return; actx(); if(sel<0){toast('先にマスをえらんでね');return} if(giv[sel]){SFX.ng();return}
   if(!t0){t0=Date.now();tick=setInterval(()=>$('tm').textContent=fmt(Date.now()-t0),500)}
@@ -440,7 +449,7 @@ $('bUndo').onclick=()=>{ if(!hist.length) return; const [i,v]=hist.pop(); cur[i]
 $('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)};
 $('bAgain').textContent='新しい問題'; $('bAgain').onclick=()=>{closeM('mRes');load(P.cur)};
 addEventListener('keydown',e=>{ if(/^[0-9]$/.test(e.key)) put(+e.key); if(e.key==='Backspace') put(0); });
-load(P.cur);
+modeSync(); load(P.cur);
 new MutationObserver(()=>{numSkin();draw()}).observe(document.body,{attributes:true,attributeFilter:['data-vt']});
 
 
