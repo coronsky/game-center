@@ -236,7 +236,23 @@ html body .app .vtBtn,html body .app .homeBtn{width:90px!important;height:30px!i
 html body[data-vt=natural] .app .vtBtn{background-image:url(../img/ui/natural_skin.webp?v=2)!important}html body[data-vt=natural] .app .homeBtn{background-image:url(../img/ui/natural_home.webp?v=2)!important}
 html body[data-vt=retro] .app .vtBtn{background-image:url(../img/ui/retro_skin.webp?v=2)!important}html body[data-vt=retro] .app .homeBtn{background-image:url(../img/ui/retro_home.webp?v=2)!important}
 html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../img/ui/neon_home.webp?v=2)!important}
-</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
+</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style><style id="gmArt">
+.boardWrap{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important}
+#gb{background-size:100% 100%!important;background-repeat:no-repeat!important;box-shadow:none!important;border-radius:0!important}
+.lines{inset:9%;width:82%;height:82%}.pts{inset:9%}
+.st.B,.st.W{background-size:100% 100%!important;background-color:transparent!important;box-shadow:none!important;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}
+body[data-vt=natural] #gb{background-image:url(../img/gomoku/board_natural.webp?v=1)!important}
+body[data-vt=natural] .st.B{background-image:url(../img/gomoku/stone_natural_B.webp?v=1)!important}
+body[data-vt=natural] .st.W{background-image:url(../img/gomoku/stone_natural_W.webp?v=1)!important}
+body[data-vt=retro] #gb{background-image:url(../img/gomoku/board_retro.webp?v=1)!important}
+body[data-vt=retro] .st.B{background-image:url(../img/gomoku/stone_retro_B.webp?v=1)!important}
+body[data-vt=retro] .st.W{background-image:url(../img/gomoku/stone_retro_W.webp?v=1)!important}
+body[data-vt=retro] .lines line{stroke:#f2c25a;stroke-opacity:.8}body[data-vt=retro] .lines .edge{stroke:#f2c25a}body[data-vt=retro] .lines circle{fill:#f2c25a}
+body[data-vt=neon] #gb{background-image:url(../img/gomoku/board_neon.webp?v=1)!important}
+body[data-vt=neon] .st.B{background-image:url(../img/gomoku/stone_neon_B.webp?v=1)!important}
+body[data-vt=neon] .st.W{background-image:url(../img/gomoku/stone_neon_W.webp?v=1)!important}
+</style>
+</head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">五目ならべ</div></div>
