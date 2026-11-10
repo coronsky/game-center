@@ -306,7 +306,7 @@ html body .num button.ib:active{transform:scale(.9)}
   <div class="num" id="num"></div>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
-  <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
+  <div class="btns gbtns" style="grid-template-columns:repeat(3,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">🔁同じ問題でやり直す</button><button class="btn c" id="bNew">🆕新しい問題</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 数独</h2><p>たて・よこ・太いわくの中に、<b>同じ数字が1回ずつ</b>入るように空いているマスをうめよう。</p>
 <p>👆 マスをタップしてから、下の数字ボタンを押します。「けす」で消せます。</p>
@@ -325,7 +325,7 @@ html body .num button.ib:active{transform:scale(.9)}
   <div class="avs"><div id="avB"><div class="crown"></div><div class="ph" style="background-image:var(--colon)"></div>コロン</div>
     <div id="avW"><div class="crown"></div><div class="ph" style="background-image:var(--moon)"></div>ムーン</div></div>
   <div class="big" id="resScore"></div><div class="msg" id="resMsg"></div><div id="resExtra"></div><div class="rec" id="resRec"></div>
-  <div class="acts"><button class="btn c" data-close="mRes">盤面を見る</button><button class="btn g" id="bAgain">もう一回！</button></div>
+  <div class="acts" style="flex-wrap:wrap"><button class="btn g" id="bRetryR" style="flex:1 1 100%">🔁 同じ問題をもう一度（ミスなしにちょうせん）</button><button class="btn c" data-close="mRes">盤面を見る</button><button class="btn g" id="bAgain">もう一回！</button></div>
 </div></div>
 <div class="toast" id="toast"></div>
 <script>(()=>{
@@ -416,7 +416,7 @@ if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400);
 
 const LVS=[{n:4,bw:2,bh:2,name:'入門 4×4',holes:9},{n:6,bw:3,bh:2,name:'初級 6×6',holes:20},{n:9,bw:3,bh:3,name:'通常 9×9 やさしい',holes:40},{n:9,bw:3,bh:3,name:'通常 9×9 ふつう',holes:48}];
 const P=Object.assign({cur:0,stars:{}},store.get('prog',{}));
-let L,N,sol,cur,giv,sel=-1,miss=0,hist=[],t0=0,tick=null,done=false;
+let orig=[],L,N,sol,cur,giv,sel=-1,miss=0,hist=[],t0=0,tick=null,done=false;
 function box(i){const r=(i/N)|0,c=i%N;return ((r/L.bh)|0)*L.bh*0+((r/L.bh)|0)*(N/L.bw)+((c/L.bw)|0)}
 function okAt(a,i,v){ const r=(i/N)|0,c=i%N; for(let k=0;k<N;k++){ if(a[r*N+k]===v||a[k*N+c]===v) return false; }
   const br=r-r%L.bh, bc=c-c%L.bw; for(let y=br;y<br+L.bh;y++)for(let x=bc;x<bc+L.bw;x++) if(a[y*N+x]===v) return false; return true; }
@@ -426,7 +426,7 @@ function count(a,lim){ let i=a.indexOf(0); if(i<0) return 1; let n=0; for(let v=
 function load(i){ clearInterval(tick); P.cur=i; store.set('prog',P); L=LVS[i]; N=L.n;
   sol=new Array(N*N).fill(0); fill(sol); const a=sol.slice(); const idx=[...Array(N*N).keys()].sort(()=>Math.random()-.5); let removed=0;
   for(const k of idx){ if(removed>=L.holes) break; const v=a[k]; a[k]=0; if(count(a.slice(),2)!==1) a[k]=v; else removed++; }
-  cur=a.slice(); giv=a.map(v=>v>0); sel=-1; miss=0; hist=[]; t0=0; done=false;
+  cur=a.slice(); orig=a.slice(); giv=a.map(v=>v>0); sel=-1; miss=0; hist=[]; t0=0; done=false;
   $('szN').textContent=N+'×'+N; $('miss').textContent=0; $('tm').textContent='0:00';
   lvRow($('lvs'),LVS.map(l=>l.name),i,k=>P.stars[k]||0,load);
   $('num').style.gridTemplateColumns=`repeat(${N<=6?N+1:5},1fr)`;
@@ -459,7 +459,8 @@ function win(){ done=true; clearInterval(tick); const t=Date.now()-t0; const s=m
   lvRow($('lvs'),LVS.map(l=>l.name),P.cur,k=>P.stars[k]||0,load);
   showResult({winner:0,title:'🎉 '+L.name+' クリア！',score:fmt(t)+'・ミス'+miss,msg:'★'.repeat(s)+'☆'.repeat(3-s)}); }
 $('bUndo').onclick=()=>{ if(!hist.length) return; const [i,v]=hist.pop(); cur[i]=v; sel=i; SFX.tap(); draw(); };
-$('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)};
+function retrySame(){ actx(); SFX.tap(); clearInterval(tick); closeM('mRes'); cur=orig.slice(); sel=-1; miss=0; hist=[]; t0=0; done=false; $('miss').textContent=0; $('tm').textContent='0:00'; draw(); setStatus('同じ問題をもう一度！'); toast('同じ問題をやり直し'); }
+$('bReset').onclick=retrySame; $('bNew').onclick=()=>{actx();SFX.tap();load(P.cur)}; $('bRetryR').onclick=retrySame;
 $('bAgain').textContent='新しい問題'; $('bAgain').onclick=()=>{closeM('mRes');load(P.cur)};
 addEventListener('keydown',e=>{ if(/^[0-9]$/.test(e.key)) put(+e.key); if(e.key==='Backspace') put(0); });
 $('bMode').onclick=()=>{ actx(); SFX.tap(); S.numfirst=!S.numfirst; store.set('settings',S); armed=null; modeSync(); syncHelp(); draw(); toast(S.numfirst?'数字を先に選ぶモード':'マスを先に選ぶモード'); };
