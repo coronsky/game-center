@@ -319,7 +319,7 @@ html body #bd .pl{inset:-8% -8% -8%;background-position:center!important}
   <div class="avs"><div id="avB"><div class="crown"></div><div class="ph" style="background-image:var(--colon)"></div>コロン</div>
     <div id="avW"><div class="crown"></div><div class="ph" style="background-image:var(--moon)"></div>ムーン</div></div>
   <div class="big" id="resScore"></div><div class="msg" id="resMsg"></div><div id="resExtra"></div><div class="rec" id="resRec"></div>
-  <div class="acts"><button class="btn c" data-close="mRes">盤面を見る</button><button class="btn g" id="bAgain">もう一回！</button></div>
+  <div class="acts" style="flex-wrap:wrap"><button class="btn g" id="bRetry" style="flex:1 1 100%">🔁 もう一度やり直す（最短にちょうせん）</button><button class="btn c" data-close="mRes">盤面を見る</button><button class="btn g" id="bAgain">もう一回！</button></div>
 </div></div>
 <div class="toast" id="toast"></div>
 <script>(()=>{
@@ -455,6 +455,7 @@ function check(){ if(!bx.every(b=>goals.includes(b))) return; done=true; const s
   if(!gaveUp){ P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog30',P); report('clear',{stars:s}); } SFX.win(); confetti(['🦴','🐾','✨']);
   FACE='d'; FR=0; sayText(HERO==='colon'?1:2,'できたワン！',true); setTimeout(()=>sayText(HERO==='colon'?2:1,'すごーい♪',true),500); setStatus('クリア！'); draw();
   setStatus(gaveUp?'🏳️ これが答えだよ。つぎはがんばろう！':'🎉 ステージ'+(P.cur+1)+' クリア！ '+'★'.repeat(s)+'☆'.repeat(3-s)+'（'+mv+'手）'); clearInterval(joyT); joyT=setInterval(()=>{ FR=(FR+1)%4; const e=document.querySelector('#bd .pl'); if(e) e.style.backgroundImage=`url(${HI()})`; },180); }
+$('bRetry').onclick=()=>{closeM('mRes');load(P.cur)};
 $('bAgain').onclick=()=>{closeM('mRes'); load(Math.min(P.cur+1,SOKO.length-1))};
 $('bAgain').textContent='つぎのステージ';
 $('bNext').onclick=()=>load(P.cur+1);
