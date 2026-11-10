@@ -462,6 +462,7 @@ $('bUndo').onclick=()=>{ if(!hist.length) return; const [i,v]=hist.pop(); cur[i]
 $('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)};
 $('bAgain').textContent='新しい問題'; $('bAgain').onclick=()=>{closeM('mRes');load(P.cur)};
 addEventListener('keydown',e=>{ if(/^[0-9]$/.test(e.key)) put(+e.key); if(e.key==='Backspace') put(0); });
+$('bMode').onclick=()=>{ actx(); SFX.tap(); S.numfirst=!S.numfirst; store.set('settings',S); armed=null; modeSync(); syncHelp(); draw(); toast(S.numfirst?'数字を先に選ぶモード':'マスを先に選ぶモード'); };
 modeSync(); load(P.cur);
 new MutationObserver(()=>{numSkin();draw()}).observe(document.body,{attributes:true,attributeFilter:['data-vt']});
 
