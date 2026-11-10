@@ -272,7 +272,7 @@ body[data-vt=neon]{--t0:url(../img/pz/neon_t0.webp);--t1:url(../img/pz/neon_t1.w
 body[data-vt=neon] .panel{padding:0;border:solid transparent;border-width:17px 16px;border-image:url(../img/pz/neon_board.webp) 51 46 fill/17px 16px stretch;background:none;box-shadow:none;border-radius:0}
 body[data-vt=neon] .panel .in{background:none;box-shadow:none;border-radius:0}
 body[data-vt=neon] .tray{padding:0;border:solid transparent;border-width:10px 10px;border-image:url(../img/pz/neon_tray.webp) 34 32 fill/10px 10px stretch;margin:8px 4px 0}
-.bc{border-radius:0}.pc i{border-radius:0}.pc{background:transparent!important;border-radius:10px}.pc.sel{background:rgba(255,230,120,.35)!important}
+.tray{align-items:flex-start;align-content:flex-start}.pc{align-content:start;align-self:flex-start}.bc{border-radius:0}.pc i{border-radius:0}.pc{background:transparent!important;border-radius:10px}.pc.sel{background:rgba(255,230,120,.35)!important}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -440,7 +440,7 @@ function draw(){ const bd=$('bd'); const cs=Math.max(24,Math.min(Math.floor((Mat
 let drag=null, pend=null;
 function geom(){ const c=$('bd').children; const r0=c[0].getBoundingClientRect(); const r1=c[1]?c[1].getBoundingClientRect():r0; return {ox:r0.left,oy:r0.top,cs:r0.width,pitch:(c[1]&&r1.top===r0.top)?r1.left-r0.left:r0.width+2}; }
 function buildGhost(d){ const p=pieces[d.k], g=d.g; d.mw=Math.max(...p.c.map(q=>q[0]))+1; d.mh=Math.max(...p.c.map(q=>q[1]))+1; if(d.el) d.el.remove();
-  const el=document.createElement('div'); el.style.cssText=`position:fixed;z-index:60;pointer-events:none;display:grid;gap:${g.pitch-g.cs}px;grid-template-columns:repeat(${d.mw},${g.cs}px);opacity:.96;filter:drop-shadow(0 10px 10px rgba(0,0,0,.38));left:-999px;top:0;transition:transform .12s`;
+  const el=document.createElement('div'); el.style.cssText=`position:fixed;z-index:60;pointer-events:none;display:grid;gap:${g.pitch-g.cs}px;grid-template-columns:repeat(${d.mw},${g.cs}px);opacity:.96;filter:drop-shadow(0 10px 10px rgba(0,0,0,.38));left:-999px;top:0;transition:transform .12s,left .06s,top .06s`;
   for(let y=0;y<d.mh;y++)for(let x=0;x<d.mw;x++){ const i=document.createElement('i'); i.style.cssText=`width:${g.cs}px;height:${g.cs}px;`+(p.c.some(q=>q[0]===x&&q[1]===y)?`background:${p.col}`:''); el.appendChild(i); }
   document.body.appendChild(el); d.el=el; }
 function holdRot(flipIt){ const d=drag; if(!d) return; const p=pieces[d.k]; p.c=flipIt?flip(p.c):rot(p.c); SFX.tap(); try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}
@@ -456,8 +456,10 @@ function dragTarget(d,gx,gy){ const p=pieces[d.k], fx=(gx-d.g.ox)/d.g.pitch, fy=
   return best; }
 function moveDrag(ev){ const d=drag; if(!d) return; d.last=ev; if(Math.hypot(ev.clientX-d.sx,ev.clientY-d.sy)>6) d.moved=true;
   const w=d.mw*d.g.pitch-(d.g.pitch-d.g.cs), h=d.mh*d.g.pitch-(d.g.pitch-d.g.cs), gx=ev.clientX-(d.grab?d.grab.x:w/2), gy=ev.clientY-d.lift-(d.grab?d.grab.y:h/2);
-  d.el.style.left=gx+'px'; d.el.style.top=gy+'px';
-  const at=d.moved?dragTarget(d,gx,gy):null; const bdc=$('bd').children; d.pv.forEach(i=>bdc[i]&&bdc[i].classList.remove('prev')); d.pv=[]; d.at=at;
+  const at=d.moved?dragTarget(d,gx,gy):null;
+  if(at!=null){ const a0=pieces[d.k].c[0]; d.el.style.left=(d.g.ox+((at%W)-a0[0])*d.g.pitch)+'px'; d.el.style.top=(d.g.oy+(((at/W)|0)-a0[1])*d.g.pitch)+'px'; d.el.style.transform='scale(1)'; }
+  else { d.el.style.left=gx+'px'; d.el.style.top=gy+'px'; d.el.style.transform='scale(1.07)'; }
+   const bdc=$('bd').children; d.pv.forEach(i=>bdc[i]&&bdc[i].classList.remove('prev')); d.pv=[]; d.at=at;
   if(at!=null){ d.pv=cellsAt(pieces[d.k],at); d.pv.forEach(i=>bdc[i].classList.add('prev')); } }
 function endDrag(ev,cancel){ const d=drag; if(!d) return; drag=null; d.el.remove(); const bdc=$('bd').children; d.pv.forEach(i=>bdc[i]&&bdc[i].classList.remove('prev'));
   if(!cancel&&d.at!=null){ const k=d.k, at=d.at; cellsAt(pieces[k],at).forEach(c=>place[c]=k); pieces[k].at=at; hist.push(['add',k]); SFX.put(); const nx=pieces.findIndex(q=>q.at<0); sel=nx; hover=-1; draw(); if(nx<0) win(); }
