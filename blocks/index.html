@@ -268,7 +268,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 ピタッとパズル</h2><p>下のブロックを全部使って、<b>わくをすきまなくうめよう</b>！</p>
-<p>👆 ブロックをタップでえらぶ → ↻回転・⇋裏返しで向きを変える → わくのマスをタップで置きます（タップしたマスにブロックの左上がきます）。</p>
+<p>👆 ブロックをタップでえらぶ → ↻回転・⇋裏返しで向きを変える → わくのマスをタップで置きます（ブロックのどのマスで押してもOK。はまる位置に自動であわせます）。</p>
 <p>置いたブロックをタップすると下にもどります。全30ステージ（5段階）＋♾️エンドレス（毎回ちがう問題）。必ずとけるよ。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -399,9 +399,12 @@ function loadEnd(t){ endT=t; P.endT=t; svP(); const T=TI[t],g=T.g[(Math.random()
 function rot(c){return norm(c.map(([x,y])=>[-y,x]))} function flip(c){return norm(c.map(([x,y])=>[-x,y]))}
 function randOrient(c){ let r=c; for(let k=(Math.random()*4)|0;k>0;k--) r=rot(r); if(Math.random()<.5) r=flip(r); return r; }
 function cellsAt(p,at){ const ax=at%W,ay=(at/W)|0, a0=p.c[0]; return p.c.map(([x,y])=>{const X=ax+x-a0[0],Y=ay+y-a0[1]; return (X<0||X>=W||Y<0||Y>=H)?-1:Y*W+X}); }
+function resolve(k,i){ const p=pieces[k],a0=p.c[0],tx=i%W,ty=(i/W)|0; const mx=p.c.reduce((a,q)=>a+q[0],0)/p.c.length,my=p.c.reduce((a,q)=>a+q[1],0)/p.c.length; let best=-1,bd=1e9;
+  for(const q of p.c){ const X=tx+a0[0]-q[0],Y=ty+a0[1]-q[1]; if(X<0||X>=W||Y<0||Y>=H) continue; const at=Y*W+X; if(!fits(k,at)) continue; const d=Math.hypot(q[0]-mx,q[1]-my); if(d<bd){bd=d;best=at} }
+  return best>=0?best:i; }
 function fits(k,at){ const cs=cellsAt(pieces[k],at); return cs.every(c=>c>=0&&place[c]<0); }
 function draw(){ const bd=$('bd'); const cs=Math.min(Math.floor((Math.min(innerWidth,480)-50)/W),48); bd.style.gridTemplateColumns=`repeat(${W},${cs}px)`; bd.innerHTML='';
-  const pv=sel>=0&&hover>=0&&pieces[sel].at<0?cellsAt(pieces[sel],hover):[]; const pvOk=pv.length&&pv.every(c=>c>=0&&place[c]<0);
+  const pv=sel>=0&&hover>=0&&pieces[sel].at<0?cellsAt(pieces[sel],resolve(sel,hover)):[]; const pvOk=pv.length&&pv.every(c=>c>=0&&place[c]<0);
   for(let i=0;i<W*H;i++){ const e=document.createElement('div'); e.className='bc'+(pv.includes(i)?' prev'+(pvOk?'':' bad'):''); if(place[i]>=0) e.style.background=pieces[place[i]].col;
     e.onclick=()=>tapCell(i); e.onmouseenter=()=>{hover=i;draw()}; bd.appendChild(e); }
   const tr=$('tray'); tr.innerHTML=''; pieces.forEach((p,k)=>{ const mw=Math.max(...p.c.map(q=>q[0]))+1; const mh=Math.max(...p.c.map(q=>q[1]))+1; const e=document.createElement('div');
@@ -411,7 +414,7 @@ function draw(){ const bd=$('bd'); const cs=Math.min(Math.floor((Math.min(innerW
   $('left').textContent=pieces.filter(p=>p.at<0).length; $('bUndo').disabled=!hist.length; }
 function tapCell(i){ actx(); if(place[i]>=0){ const k=place[i]; hist.push(['rm',k,pieces[k].at]); for(let j=0;j<W*H;j++) if(place[j]===k) place[j]=-1; pieces[k].at=-1; sel=k; SFX.tap(); draw(); return; }
   if(sel<0||pieces[sel].at>=0){ toast('下のブロックをえらんでね'); return; }
-  if(!fits(sel,i)){ SFX.ng(); hover=i; draw(); return; } cellsAt(pieces[sel],i).forEach(c=>place[c]=sel); pieces[sel].at=i; hist.push(['add',sel]); SFX.put();
+  const at=resolve(sel,i); if(!fits(sel,at)){ SFX.ng(); hover=i; draw(); return; } cellsAt(pieces[sel],at).forEach(c=>place[c]=sel); pieces[sel].at=at; hist.push(['add',sel]); SFX.put();
   const nx=pieces.findIndex(p=>p.at<0); sel=nx; hover=-1; draw(); if(nx<0) win(); }
 function win(){ report('clear',{stars:3}); SFX.win(); confetti(['🧩','🐾','✨']); sayText(2,'ぴったり♪',true); setStatus('ぴったり完成！');
   let msg=pieces.length+'個のブロックでぴったり！';
