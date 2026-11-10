@@ -273,11 +273,24 @@ html body #bd{margin:0!important;border:none!important;border-radius:0!important
 body[data-vt=natural] #bd{background:#c9a273}
 body[data-vt=retro] #bd{background:#1d3a2a}
 body[data-vt=neon] #bd{background:#6a3bd0}
-.sc .dg{display:block;width:88%;height:88%;background-size:contain;background-repeat:no-repeat;background-position:center;pointer-events:none}
+body[data-vt=natural]{--dgf:"Zen Maru Gothic",sans-serif;--dgw:900;--dgc:#5a3a1e;--dgcu:#1f7a6a;--dgs:none;--ln:#cdb08a;--lnb:#8a5a2c;--err:#d8281a}
+body[data-vt=retro]{--dgf:"Mochiy Pop One",sans-serif;--dgw:400;--dgc:#7a1a14;--dgcu:#1f5a3a;--dgs:none;--ln:#5a3418;--lnb:#f2b134;--err:#d8281a}
+body[data-vt=neon]{--dgf:"DotGothic16",monospace;--dgw:400;--dgc:#ffa0f0;--dgcu:#8ff7ff;--dgs:0 0 6px #ff4fd8,0 0 12px #ff4fd8;--dgsu:0 0 6px #3ff0ff,0 0 12px #3ff0ff;--ln:#3a2a8a;--lnb:#ff4fd8;--err:#ff6a5a}
+html body #bd{display:grid;gap:0!important;aspect-ratio:1;container-type:inline-size;grid-template-rows:repeat(var(--n,9),1fr);overflow:hidden}
+html body #bd .sc{aspect-ratio:auto!important;min-width:0;min-height:0;margin:0!important;box-sizing:border-box;border-right:1px solid var(--ln);border-bottom:1px solid var(--ln)}
+html body #bd .sc.bR{border-right:3px solid var(--lnb)}html body #bd .sc.bB{border-bottom:3px solid var(--lnb)}
+html body #bd .sc.eR{border-right:0}html body #bd .sc.eB{border-bottom:0}
+.sc .dg{display:flex;align-items:center;justify-content:center;width:94%;height:94%;background-size:100% 100%;background-repeat:no-repeat;background-position:center;pointer-events:none;
+  font-family:var(--dgf);font-weight:var(--dgw);font-size:calc(100cqw / var(--n,9) * .52);line-height:1;color:var(--dgc);text-shadow:var(--dgs)}
+.sc .dg.u{color:var(--dgcu);text-shadow:var(--dgsu,var(--dgs))}
+body[data-vt=natural] .dg.g{background-image:url(../img/sd/natural_bg_g.webp)}body[data-vt=natural] .dg.u{background-image:url(../img/sd/natural_bg_u.webp)}
+body[data-vt=retro] .dg.g{background-image:url(../img/sd/retro_bg_g.webp)}body[data-vt=retro] .dg.u{background-image:url(../img/sd/retro_bg_u.webp)}
+body[data-vt=neon] .dg.g{background-image:url(../img/sd/neon_bg_g.webp)}body[data-vt=neon] .dg.u{background-image:url(../img/sd/neon_bg_u.webp)}
+html body .sc.err .dg{color:var(--err)!important;text-shadow:none}
 html body .sc.sel{box-shadow:inset 0 0 0 3px #ffd400,inset 0 0 8px #ffd400}
 html body .sc.err{background:#ffd0c8!important;box-shadow:inset 0 0 0 2px #e0442f}
 html body:is([data-vt=retro],[data-vt=neon]) .sc.err{background:#7a1d16!important}
-html body .num button.ib{background-color:transparent!important;border:none!important;box-shadow:none!important;padding:0;aspect-ratio:1;background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+html body .num button.ib{background-color:transparent!important;border:none!important;box-shadow:none!important;padding:0;aspect-ratio:1;background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3));display:flex;align-items:center;justify-content:center;font-family:var(--dgf);font-weight:var(--dgw);font-size:clamp(22px,7vw,30px);line-height:1;color:var(--dgc);text-shadow:var(--dgs)}
 html body .num button.ib.dim{opacity:.3}
 html body .num button.ib:active{transform:scale(.9)}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
@@ -424,15 +437,15 @@ let armed=null;
 function modeSync(){ const b=$('bMode'); if(b) b.textContent=S.numfirst?'🔢 数字を先に選ぶ（ON）':'👆 マスを先に選ぶ（ふつう）'; }
 function numTap(v){ actx(); if(S.numfirst){ SFX.tap(); armed=(armed===v)?null:v; if(armed!=null){ sayText(1,v?'数字をタップで入れるよ':'マスをタップで消すよ'); } draw(); } else put(v); }
 const VT=()=>document.body.dataset.vt||'natural';
-function numSkin(){ $('num').querySelectorAll('button').forEach(b=>{const v=+b.dataset.v; if(v){b.classList.add('ib');b.textContent='';b.style.backgroundImage=`url(../img/sd/${VT()}_b${v}.webp)`;b.setAttribute('aria-label',v)}}); }
-function draw(){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${N},1fr)`; bd.innerHTML='';
+function numSkin(){ $('num').querySelectorAll('button').forEach(b=>{const v=+b.dataset.v; if(v){b.classList.add('ib');b.textContent=v;b.style.backgroundImage=`url(../img/sd/${VT()}_bg_b.webp)`;b.setAttribute('aria-label',v)}}); }
+function draw(){ const bd=$('bd'); bd.style.setProperty('--n',N); bd.style.gridTemplateColumns=`repeat(${N},1fr)`; bd.innerHTML='';
   const fs=N===9?'min(5.4vw,24px)':N===6?'min(7vw,30px)':'min(10vw,40px)';
   const sv=(S.numfirst&&armed>0)?armed:(sel>=0?cur[sel]:0), sr=(sel/N)|0, sc=sel%N;
   for(let i=0;i<N*N;i++){ const e=document.createElement('div'); const r=(i/N)|0,c=i%N;
     let cl='sc'; if(giv[i]) cl+=' giv'; if(i===sel) cl+=' sel'; else if(sel>=0&&(r===sr||c===sc||(Math.floor(r/L.bh)===Math.floor(sr/L.bh)&&Math.floor(c/L.bw)===Math.floor(sc/L.bw)))) cl+=' peer';
     if(sv&&cur[i]===sv&&i!==sel) cl+=' same'; if(cur[i]&&!giv[i]&&cur[i]!==sol[i]) cl+=' err';
-    if((c+1)%L.bw===0&&c<N-1) cl+=' bR'; if((r+1)%L.bh===0&&r<N-1) cl+=' bB';
-    e.className=cl; e.style.fontSize=fs; if(cur[i]){const d=document.createElement('b');d.className='dg';d.style.backgroundImage=`url(../img/sd/${VT()}_${giv[i]?'g':'u'}${cur[i]}.webp)`;e.appendChild(d)}  e.onclick=()=>{actx(); if(S.numfirst&&armed!=null){ if(giv[i]){SFX.ng();return} sel=i; put(armed&&cur[i]===armed?0:armed); return } SFX.tap();sel=i;draw()}; bd.appendChild(e); }
+    if((c+1)%L.bw===0&&c<N-1) cl+=' bR'; if((r+1)%L.bh===0&&r<N-1) cl+=' bB'; if(c===N-1) cl+=' eR'; if(r===N-1) cl+=' eB';
+    e.className=cl; e.style.fontSize=fs; if(cur[i]){const d=document.createElement('b');d.className='dg '+(giv[i]?'g':'u');d.textContent=cur[i];e.appendChild(d)}  e.onclick=()=>{actx(); if(S.numfirst&&armed!=null){ if(giv[i]){SFX.ng();return} sel=i; put(armed&&cur[i]===armed?0:armed); return } SFX.tap();sel=i;draw()}; bd.appendChild(e); }
   for(let v=1;v<=N;v++){ const b=$('num').querySelector(`[data-v="${v}"]`); if(b) b.classList.toggle('dim',cur.filter((x,i)=>x===v&&x===sol[i]).length>=N); }
   $('num').querySelectorAll('button').forEach(b=>b.classList.toggle('arm',S.numfirst&&armed!=null&&+b.dataset.v===armed));
   $('bUndo').disabled=!hist.length; }
