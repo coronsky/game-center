@@ -114,7 +114,7 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 .bc.prev{outline:3px solid rgba(80,150,80,.8);outline-offset:-3px}.bc.bad{outline-color:rgba(220,60,50,.85)}
 .tray{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 8px 0}
 .pc{display:grid;gap:1px;padding:5px;border-radius:10px;border:2px solid transparent;background:rgba(255,255,255,.5);cursor:pointer}
-.pc.sel{border-color:#f0b429;background:#fff6d6}.pc.used{opacity:.2;pointer-events:none}
+.pc.sel{border-color:#f0b429;background:#fff6d6}.pc.used{opacity:.2;pointer-events:none}.pc.lifted{opacity:.3}
 .pc i{width:16px;height:16px;border-radius:3px}
 body:is([data-vt=retro],[data-vt=neon]) .bc{background:rgba(255,255,255,.08)}
 body:is([data-vt=retro],[data-vt=neon]) .pc{background:rgba(255,255,255,.08)}body:is([data-vt=retro],[data-vt=neon]) .pc.sel{background:rgba(255,210,80,.25)}
@@ -268,7 +268,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 ピタッとパズル</h2><p>下のブロックを全部使って、<b>わくをすきまなくうめよう</b>！</p>
-<p>👆 下のブロックを<b>ドラッグして、わくに持っていって離す</b>と置けます（近くの合う場所にピタッと吸いつきます）。向きを変えたいときは、ブロックをタップ → ↻回転・⇋裏返し。</p>
+<p>👆 下のブロックを<b>ドラッグして、わくに持っていって離す</b>と置けます（近くの合う場所にピタッと吸いつきます）。向きを変えたいときは、ブロックをタップ → ↻回転・⇋裏返し。<b>もう一度タップ</b>、またはブロックを持ったまま<b>もう1本の指でタップ</b>（PCは右クリックかRキー）でも回転します。</p>
 <p>置いたブロックは、ドラッグで置きなおし・下にもどす、またはタップで下にもどせます。全30ステージ（5段階）＋♾️エンドレス（毎回ちがう問題）。必ずとけるよ。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -410,30 +410,41 @@ function draw(){ const bd=$('bd'); const cs=Math.max(24,Math.min(Math.floor((Mat
   const tr=$('tray'); tr.innerHTML=''; pieces.forEach((p,k)=>{ const mw=Math.max(...p.c.map(q=>q[0]))+1; const mh=Math.max(...p.c.map(q=>q[1]))+1; const e=document.createElement('div');
     e.className='pc'+(k===sel?' sel':'')+(p.at>=0?' used':''); const tcs=pieces.length>9?13:16; e.style.gridTemplateColumns=`repeat(${mw},${tcs}px)`; e.style.touchAction='none';
     for(let y=0;y<mh;y++)for(let x=0;x<mw;x++){ const i=document.createElement('i'); i.style.width=i.style.height=tcs+'px'; if(p.c.some(q=>q[0]===x&&q[1]===y)){ i.style.background=p.col;  } e.appendChild(i); }
-    e.onpointerdown=ev=>{ if(p.at>=0) return; ev.preventDefault(); actx(); SFX.tap(); sel=k; tr.querySelectorAll('.pc').forEach((el,j)=>el.classList.toggle('sel',j===k)); startDrag(k,ev); }; tr.appendChild(e); });
+    e.onpointerdown=ev=>{ if(p.at>=0) return; ev.preventDefault(); actx(); const was=(sel===k); SFX.tap(); sel=k; tr.querySelectorAll('.pc').forEach((el,j)=>el.classList.toggle('sel',j===k)); startDrag(k,ev); drag.wasSel=was; }; tr.appendChild(e); });
   $('left').textContent=pieces.filter(p=>p.at<0).length; $('bUndo').disabled=!hist.length; }
 
 // ---- ドラッグ＆ドロップ ----
 let drag=null, pend=null;
 function geom(){ const c=$('bd').children; const r0=c[0].getBoundingClientRect(); const r1=c[1]?c[1].getBoundingClientRect():r0; return {ox:r0.left,oy:r0.top,cs:r0.width,pitch:(c[1]&&r1.top===r0.top)?r1.left-r0.left:r0.width+2}; }
-function startDrag(k,ev,grab){ const p=pieces[k], g=geom(); const mw=Math.max(...p.c.map(q=>q[0]))+1, mh=Math.max(...p.c.map(q=>q[1]))+1;
-  const el=document.createElement('div'); el.style.cssText=`position:fixed;z-index:60;pointer-events:none;display:grid;gap:${g.pitch-g.cs}px;grid-template-columns:repeat(${mw},${g.cs}px);opacity:.93;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35));left:-999px;top:0`;
-  for(let y=0;y<mh;y++)for(let x=0;x<mw;x++){ const i=document.createElement('i'); i.style.cssText=`width:${g.cs}px;height:${g.cs}px;border-radius:5px;`+(p.c.some(q=>q[0]===x&&q[1]===y)?`background:${p.col};box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)`:''); el.appendChild(i); }
-  document.body.appendChild(el); drag={k,el,g,mw,mh,sx:ev.clientX,sy:ev.clientY,moved:false,at:null,pv:[],grab:grab||null,lift:(grab||ev.pointerType==='mouse')?0:Math.round(g.cs*1.3)}; moveDrag(ev); }
+function buildGhost(d){ const p=pieces[d.k], g=d.g; d.mw=Math.max(...p.c.map(q=>q[0]))+1; d.mh=Math.max(...p.c.map(q=>q[1]))+1; if(d.el) d.el.remove();
+  const el=document.createElement('div'); el.style.cssText=`position:fixed;z-index:60;pointer-events:none;display:grid;gap:${g.pitch-g.cs}px;grid-template-columns:repeat(${d.mw},${g.cs}px);opacity:.96;filter:drop-shadow(0 10px 10px rgba(0,0,0,.38));left:-999px;top:0;transition:transform .12s`;
+  for(let y=0;y<d.mh;y++)for(let x=0;x<d.mw;x++){ const i=document.createElement('i'); i.style.cssText=`width:${g.cs}px;height:${g.cs}px;border-radius:5px;`+(p.c.some(q=>q[0]===x&&q[1]===y)?`background:${p.col};box-shadow:inset 0 0 0 2px rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.18)`:''); el.appendChild(i); }
+  document.body.appendChild(el); d.el=el; }
+function holdRot(flipIt){ const d=drag; if(!d) return; const p=pieces[d.k]; p.c=flipIt?flip(p.c):rot(p.c); SFX.tap(); try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}
+  buildGhost(d); d.grab={x:(d.mw*d.g.pitch-(d.g.pitch-d.g.cs))/2,y:(d.mh*d.g.pitch-(d.g.pitch-d.g.cs))/2}; moveDrag(d.last); }
+function startDrag(k,ev,grab){ const p=pieces[k], g=geom(); const fromB=!!grab; const d={k,g,sx:ev.clientX,sy:ev.clientY,moved:false,at:null,pv:[],id:ev.pointerId,last:ev,wasSel:false}; drag=d; buildGhost(d);
+  if(!grab&&ev.currentTarget&&ev.currentTarget.getBoundingClientRect){ const r=ev.currentTarget.getBoundingClientRect(), tcs=pieces.length>9?13:16, ox=r.left+7, oy=r.top+7; const rx=Math.max(0,Math.min(d.mw,(ev.clientX-ox)/(tcs+1))), ry=Math.max(0,Math.min(d.mh,(ev.clientY-oy)/(tcs+1))); grab={x:rx*g.pitch,y:ry*g.pitch}; }
+  d.grab=grab||null; d.lift=(!fromB&&ev.pointerType!=='mouse')?Math.round(g.cs*.9):0;
+  d.el.style.transform='scale(1.07)'; d.el.style.transformOrigin=(d.grab?d.grab.x+'px '+d.grab.y+'px':'50% 50%');
+  try{navigator.vibrate&&navigator.vibrate(10)}catch(_){}
+  document.querySelectorAll('#tray .pc')[k]&&document.querySelectorAll('#tray .pc')[k].classList.add('lifted'); moveDrag(ev); }
 function dragTarget(d,gx,gy){ const p=pieces[d.k], fx=(gx-d.g.ox)/d.g.pitch, fy=(gy-d.g.oy)/d.g.pitch, bx0=Math.round(fx), by0=Math.round(fy), a0=p.c[0]; let best=null,bd=9;
   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){ const bx=bx0+dx,by=by0+dy; const dist=Math.hypot(bx-fx,by-fy); if(dist>=bd) continue; const X=bx+a0[0],Y=by+a0[1]; if(X<0||X>=W||Y<0||Y>=H) continue; const at=Y*W+X; if(fits(d.k,at)){ bd=dist; best=at; } }
   return best; }
-function moveDrag(ev){ const d=drag; if(!d) return; if(Math.hypot(ev.clientX-d.sx,ev.clientY-d.sy)>6) d.moved=true;
+function moveDrag(ev){ const d=drag; if(!d) return; d.last=ev; if(Math.hypot(ev.clientX-d.sx,ev.clientY-d.sy)>6) d.moved=true;
   const w=d.mw*d.g.pitch-(d.g.pitch-d.g.cs), h=d.mh*d.g.pitch-(d.g.pitch-d.g.cs), gx=ev.clientX-(d.grab?d.grab.x:w/2), gy=ev.clientY-d.lift-(d.grab?d.grab.y:h/2);
   d.el.style.left=gx+'px'; d.el.style.top=gy+'px';
-  const at=dragTarget(d,gx,gy); const bdc=$('bd').children; d.pv.forEach(i=>bdc[i]&&bdc[i].classList.remove('prev')); d.pv=[]; d.at=at;
+  const at=d.moved?dragTarget(d,gx,gy):null; const bdc=$('bd').children; d.pv.forEach(i=>bdc[i]&&bdc[i].classList.remove('prev')); d.pv=[]; d.at=at;
   if(at!=null){ d.pv=cellsAt(pieces[d.k],at); d.pv.forEach(i=>bdc[i].classList.add('prev')); } }
 function endDrag(ev,cancel){ const d=drag; if(!d) return; drag=null; d.el.remove(); const bdc=$('bd').children; d.pv.forEach(i=>bdc[i]&&bdc[i].classList.remove('prev'));
   if(!cancel&&d.at!=null){ const k=d.k, at=d.at; cellsAt(pieces[k],at).forEach(c=>place[c]=k); pieces[k].at=at; hist.push(['add',k]); SFX.put(); const nx=pieces.findIndex(q=>q.at<0); sel=nx; hover=-1; draw(); if(nx<0) win(); }
-  else { if(d.moved&&!cancel) SFX.ng(); draw(); } }
-addEventListener('pointermove',e=>{ if(pend&&!drag&&Math.hypot(e.clientX-pend.sx,e.clientY-pend.sy)>6){ const k=pend.k; pend=null; const gm=geom(), a0=pieces[k].c[0], at0=pieces[k].at, grab={x:e.clientX-(gm.ox+((at0%W)-a0[0])*gm.pitch), y:e.clientY-(gm.oy+(((at0/W)|0)-a0[1])*gm.pitch)}; hist.push(['rm',k,pieces[k].at]); for(let j=0;j<W*H;j++) if(place[j]===k) place[j]=-1; pieces[k].at=-1; sel=k; SFX.tap(); draw(); startDrag(k,e,grab); return; }
+  else { if(!d.moved&&!cancel&&d.wasSel&&!d.fromBoard){ pieces[d.k].c=rot(pieces[d.k].c); SFX.tap(); } else if(d.moved&&!cancel) SFX.ng(); draw(); } }
+addEventListener('pointermove',e=>{ if(pend&&!drag&&Math.hypot(e.clientX-pend.sx,e.clientY-pend.sy)>6){ const k=pend.k; pend=null; const gm=geom(), a0=pieces[k].c[0], at0=pieces[k].at, grab={x:e.clientX-(gm.ox+((at0%W)-a0[0])*gm.pitch), y:e.clientY-(gm.oy+(((at0/W)|0)-a0[1])*gm.pitch)}; hist.push(['rm',k,pieces[k].at]); for(let j=0;j<W*H;j++) if(place[j]===k) place[j]=-1; pieces[k].at=-1; sel=k; SFX.tap(); draw(); startDrag(k,e,grab); if(drag) drag.fromBoard=1; return; }
   if(drag){ e.preventDefault(); moveDrag(e); } },{passive:false});
-addEventListener('pointerup',e=>{ if(pend){ const i=pend.i; pend=null; tapCell(i); return; } endDrag(e,false); }); addEventListener('pointercancel',e=>{ pend=null; endDrag(e,true); });
+addEventListener('pointerdown',e=>{ if(drag&&e.pointerId!==drag.id){ e.preventDefault(); holdRot(false); } },{passive:false});
+addEventListener('contextmenu',e=>{ if(drag){ e.preventDefault(); holdRot(false); } });
+addEventListener('keydown',e=>{ if(!drag) return; if(e.key==='r'||e.key==='R'||e.key===' '){ e.preventDefault(); holdRot(false); } else if(e.key==='f'||e.key==='F'){ holdRot(true); } });
+addEventListener('pointerup',e=>{ if(e.pointerId!==undefined&&drag&&e.pointerId!==drag.id) return; if(pend){ const i=pend.i; pend=null; tapCell(i); return; } endDrag(e,false); }); addEventListener('pointercancel',e=>{ pend=null; endDrag(e,true); });
 function tapCell(i){ actx(); if(place[i]>=0){ const k=place[i]; hist.push(['rm',k,pieces[k].at]); for(let j=0;j<W*H;j++) if(place[j]===k) place[j]=-1; pieces[k].at=-1; sel=k; SFX.tap(); draw(); return; }
   if(sel<0||pieces[sel].at>=0){ toast('下のブロックをえらんでね'); return; }
   const at=resolve(sel,i); if(!fits(sel,at)){ SFX.ng(); hover=i; draw(); return; } cellsAt(pieces[sel],at).forEach(c=>place[c]=sel); pieces[sel].at=at; hist.push(['add',sel]); SFX.put();
