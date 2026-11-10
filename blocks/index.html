@@ -268,7 +268,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 ピタッとパズル</h2><p>下のブロックを全部使って、<b>わくをすきまなくうめよう</b>！</p>
-<p>👆 ブロックをタップでえらぶ → ↻回転・⇋裏返しで向きを変える → わくのマスをタップで置きます（ブロックの白い●のマスが、タップしたマスにきます。●でなくても、はまる位置なら自動であわせます）。</p>
+<p>👆 下のブロックを<b>ドラッグして、わくに持っていって離す</b>と置けます（近くの合う場所にピタッと吸いつきます）。向きを変えたいときは、ブロックをタップ → ↻回転・⇋裏返し。</p>
 <p>置いたブロックをタップすると下にもどります。全30ステージ（5段階）＋♾️エンドレス（毎回ちがう問題）。必ずとけるよ。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -403,15 +403,36 @@ function resolve(k,i){ if(fits(k,i)) return i; const p=pieces[k],a0=p.c[0],tx=i%
   for(const q of p.c){ const X=tx+a0[0]-q[0],Y=ty+a0[1]-q[1]; if(X<0||X>=W||Y<0||Y>=H) continue; const at=Y*W+X; if(!fits(k,at)) continue; const d=Math.hypot(q[0]-mx,q[1]-my); if(d<bd){bd=d;best=at} }
   return best>=0?best:i; }
 function fits(k,at){ const cs=cellsAt(pieces[k],at); return cs.every(c=>c>=0&&place[c]<0); }
-function draw(){ const bd=$('bd'); const cs=Math.min(Math.floor((Math.min(innerWidth,480)-50)/W),48); bd.style.gridTemplateColumns=`repeat(${W},${cs}px)`; bd.innerHTML='';
+function draw(){ const bd=$('bd'); const cs=Math.max(24,Math.min(Math.floor((Math.min(innerWidth,480)-50)/W),48,Math.floor(innerHeight*.4/H))); bd.style.gridTemplateColumns=`repeat(${W},${cs}px)`; bd.innerHTML='';
   const pv=sel>=0&&hover>=0&&pieces[sel].at<0?cellsAt(pieces[sel],resolve(sel,hover)):[]; const pvOk=pv.length&&pv.every(c=>c>=0&&place[c]<0);
   for(let i=0;i<W*H;i++){ const e=document.createElement('div'); e.className='bc'+(pv.includes(i)?' prev'+(pvOk?'':' bad'):''); if(place[i]>=0) e.style.background=pieces[place[i]].col;
-    e.onclick=()=>tapCell(i); e.onmouseenter=()=>{hover=i;draw()}; bd.appendChild(e); }
+    e.onclick=()=>tapCell(i); e.onmouseenter=()=>{ if(drag) return; hover=i;draw()}; bd.appendChild(e); }
   const tr=$('tray'); tr.innerHTML=''; pieces.forEach((p,k)=>{ const mw=Math.max(...p.c.map(q=>q[0]))+1; const mh=Math.max(...p.c.map(q=>q[1]))+1; const e=document.createElement('div');
-    e.className='pc'+(k===sel?' sel':'')+(p.at>=0?' used':''); e.style.gridTemplateColumns=`repeat(${mw},16px)`;
-    for(let y=0;y<mh;y++)for(let x=0;x<mw;x++){ const i=document.createElement('i'); if(p.c.some(q=>q[0]===x&&q[1]===y)){ i.style.background=p.col; if(x===p.c[0][0]&&y===p.c[0][1]) i.innerHTML='<b style="display:block;width:6px;height:6px;border-radius:50%;background:#fff;margin:5px auto;box-shadow:0 0 0 1px rgba(0,0,0,.35)"></b>'; } e.appendChild(i); }
-    e.onclick=()=>{actx();SFX.tap();sel=k;draw()}; tr.appendChild(e); });
+    e.className='pc'+(k===sel?' sel':'')+(p.at>=0?' used':''); const tcs=pieces.length>9?13:16; e.style.gridTemplateColumns=`repeat(${mw},${tcs}px)`; e.style.touchAction='none';
+    for(let y=0;y<mh;y++)for(let x=0;x<mw;x++){ const i=document.createElement('i'); i.style.width=i.style.height=tcs+'px'; if(p.c.some(q=>q[0]===x&&q[1]===y)){ i.style.background=p.col;  } e.appendChild(i); }
+    e.onpointerdown=ev=>{ if(p.at>=0) return; ev.preventDefault(); actx(); SFX.tap(); sel=k; tr.querySelectorAll('.pc').forEach((el,j)=>el.classList.toggle('sel',j===k)); startDrag(k,ev); }; tr.appendChild(e); });
   $('left').textContent=pieces.filter(p=>p.at<0).length; $('bUndo').disabled=!hist.length; }
+
+// ---- ドラッグ＆ドロップ ----
+let drag=null;
+function geom(){ const c=$('bd').children; const r0=c[0].getBoundingClientRect(); const r1=c[1]?c[1].getBoundingClientRect():r0; return {ox:r0.left,oy:r0.top,cs:r0.width,pitch:(c[1]&&r1.top===r0.top)?r1.left-r0.left:r0.width+2}; }
+function startDrag(k,ev){ const p=pieces[k], g=geom(); const mw=Math.max(...p.c.map(q=>q[0]))+1, mh=Math.max(...p.c.map(q=>q[1]))+1;
+  const el=document.createElement('div'); el.style.cssText=`position:fixed;z-index:60;pointer-events:none;display:grid;gap:${g.pitch-g.cs}px;grid-template-columns:repeat(${mw},${g.cs}px);opacity:.93;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35));left:-999px;top:0`;
+  for(let y=0;y<mh;y++)for(let x=0;x<mw;x++){ const i=document.createElement('i'); i.style.cssText=`width:${g.cs}px;height:${g.cs}px;border-radius:5px;`+(p.c.some(q=>q[0]===x&&q[1]===y)?`background:${p.col};box-shadow:inset 0 0 0 1px rgba(255,255,255,.5)`:''); el.appendChild(i); }
+  document.body.appendChild(el); drag={k,el,g,mw,mh,sx:ev.clientX,sy:ev.clientY,moved:false,at:null,pv:[],lift:ev.pointerType==='mouse'?0:Math.round(g.cs*1.3)}; moveDrag(ev); }
+function dragTarget(d,gx,gy){ const p=pieces[d.k], fx=(gx-d.g.ox)/d.g.pitch, fy=(gy-d.g.oy)/d.g.pitch, bx0=Math.round(fx), by0=Math.round(fy), a0=p.c[0]; let best=null,bd=9;
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){ const bx=bx0+dx,by=by0+dy; const dist=Math.hypot(bx-fx,by-fy); if(dist>=bd) continue; const X=bx+a0[0],Y=by+a0[1]; if(X<0||X>=W||Y<0||Y>=H) continue; const at=Y*W+X; if(fits(d.k,at)){ bd=dist; best=at; } }
+  return best; }
+function moveDrag(ev){ const d=drag; if(!d) return; if(Math.hypot(ev.clientX-d.sx,ev.clientY-d.sy)>6) d.moved=true;
+  const w=d.mw*d.g.pitch-(d.g.pitch-d.g.cs), h=d.mh*d.g.pitch-(d.g.pitch-d.g.cs), gx=ev.clientX-w/2, gy=ev.clientY-d.lift-h/2;
+  d.el.style.left=gx+'px'; d.el.style.top=gy+'px';
+  const at=dragTarget(d,gx,gy); const bdc=$('bd').children; d.pv.forEach(i=>bdc[i]&&bdc[i].classList.remove('prev')); d.pv=[]; d.at=at;
+  if(at!=null){ d.pv=cellsAt(pieces[d.k],at); d.pv.forEach(i=>bdc[i].classList.add('prev')); } }
+function endDrag(ev,cancel){ const d=drag; if(!d) return; drag=null; d.el.remove(); const bdc=$('bd').children; d.pv.forEach(i=>bdc[i]&&bdc[i].classList.remove('prev'));
+  if(!cancel&&d.at!=null){ const k=d.k, at=d.at; cellsAt(pieces[k],at).forEach(c=>place[c]=k); pieces[k].at=at; hist.push(['add',k]); SFX.put(); const nx=pieces.findIndex(q=>q.at<0); sel=nx; hover=-1; draw(); if(nx<0) win(); }
+  else { if(d.moved&&!cancel) SFX.ng(); draw(); } }
+addEventListener('pointermove',e=>{ if(drag){ e.preventDefault(); moveDrag(e); } },{passive:false});
+addEventListener('pointerup',e=>endDrag(e,false)); addEventListener('pointercancel',e=>endDrag(e,true));
 function tapCell(i){ actx(); if(place[i]>=0){ const k=place[i]; hist.push(['rm',k,pieces[k].at]); for(let j=0;j<W*H;j++) if(place[j]===k) place[j]=-1; pieces[k].at=-1; sel=k; SFX.tap(); draw(); return; }
   if(sel<0||pieces[sel].at>=0){ toast('下のブロックをえらんでね'); return; }
   const at=resolve(sel,i); if(!fits(sel,at)){ SFX.ng(); hover=i; draw(); return; } cellsAt(pieces[sel],at).forEach(c=>place[c]=sel); pieces[sel].at=at; hist.push(['add',sel]); SFX.put();
