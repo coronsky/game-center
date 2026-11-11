@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】ババ抜き</title><link rel="stylesheet" href="../lab.css"><style></style></head><body><div class="wrap"><div class="top"><a href="../">ラボ</a><h1>ババ抜き <span class="tag">叩き台</span></h1></div><div class="card2"><b>🐶 コロン</b> <span id="n1"></span><div class="hand ov" id="h1"></div></div>
+<div class="card2"><b>🐩 ムーン</b> <span id="n2"></span><div class="hand ov" id="h2"></div></div>
+<div class="msg" id="m"></div>
+<div class="card2"><b>あなた</b> <div class="hand" id="h0"></div></div><div class="row"><button class="btn" id="re">はじめから</button></div></div><script>
+const $=id=>document.getElementById(id);const S='♠♥♦♣',RK=['','A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const NAME=['あなた','コロン','ムーン'];let H,turn,over,out,busy;
+function sh(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function pairs(h){const r={};h.forEach(c=>(r[c.r]=r[c.r]||[]).push(c));const o=[];Object.values(r).forEach(a=>{if(a.length%2)o.push(a[0]);if(a.length>=3&&a.length%2===1)o.push(...[])});
+ // keep one if odd count, none if even
+ const keep=[];Object.values(r).forEach(a=>{if(a.length%2)keep.push(a[0])});return keep}
+function dealAll(){const d=[];for(let s=0;s<4;s++)for(let r=1;r<=13;r++)d.push({r,s});d.push({r:0,s:-1});sh(d);H=[[],[],[]];d.forEach((c,i)=>H[i%3].push(c));H=H.map(pairs);out=[false,false,false];over=false;busy=false;turn=0;$('m').textContent='はじめにペアを捨てました。あなたの番：コロンの札を1枚ひこう';chk();render()}
+const nextOf=i=>{let j=(i+1)%3;while(out[j]&&j!==i)j=(j+1)%3;return j};
+function chk(){for(let i=0;i<3;i++)if(!H[i].length)out[i]=true}
+function cardEl(c,back){const d=document.createElement('div');if(back){d.className='pcard back';d.textContent='?';return d}
+ d.className='pcard'+(c.s===1||c.s===2?' red':'');d.innerHTML=c.r===0?'🃏':`${S[c.s]}<br>${RK[c.r]}`;return d}
+function render(){for(let i=0;i<3;i++){const h=$('h'+i);h.innerHTML='';
+  H[i].forEach((c,k)=>{const d=cardEl(c,i!==0);if(i!==0&&turn===0&&!over&&!busy&&nextOf(0)===i)d.onclick=()=>draw(0,i,k),d.classList.add('ok');h.appendChild(d)});
+  if(i&&out[i]){$('n'+i).textContent='（あがり！）'}else if(i)$('n'+i).textContent='（'+H[i].length+'枚）'}}
+function draw(me,from,k){busy=true;const c=H[from].splice(k,1)[0];const pr=H[me].find(x=>x.r===c.r&&c.r!==0);
+ if(pr){H[me].splice(H[me].indexOf(pr),1)}else H[me].push(c);
+ if(me!==0)sh(H[me]);chk();$('m').textContent=NAME[me]+'が'+NAME[from]+'から1枚ひいた'+(pr?'→ペアを捨てた':'');render();
+ setTimeout(()=>{const alive=[0,1,2].filter(i=>!out[i]);if(alive.length<=1){fin(alive[0]);return}
+  turn=nextOf(me);if(out[turn])turn=nextOf(turn);
+  if(out[0]&&turn===0)turn=nextOf(0);
+  step()},900)}
+function step(){if(turn===0){busy=false;const f=nextOf(0);$('m').textContent='あなたの番：'+NAME[f]+'の札を1枚ひこう';render();return}
+ busy=true;const f=nextOf(turn);if(f===turn){fin(turn);return}
+ $('m').textContent=NAME[turn]+'の番…';render();setTimeout(()=>draw(turn,f,Math.random()*H[f].length|0),700)}
+function fin(l){over=true;busy=true;$('m').textContent=(l===0?'あなたがババをもっていた…負け！😭':NAME[l]+'の負け！あなたの勝ち🎉')+'（ババを持っていた人が負け）';render()}
+$('re').onclick=dealAll;dealAll();
+</script></body></html>

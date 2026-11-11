@@ -1,0 +1,22 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】ポーカー</title><link rel="stylesheet" href="../lab.css"><style>.pcard{width:54px;height:78px;font-size:20px}.pcard.hold::after{content:"HOLD";position:absolute;bottom:-16px;font-size:10px;color:#c0392b}.pcard{position:relative}.hand{margin-bottom:16px}</style></head><body><div class="wrap"><div class="top"><a href="../">ラボ</a><h1>ポーカー <span class="tag">叩き台</span></h1></div><div class="info"><div>あなた<b id="ch">100</b></div><div>ベット<b>10</b></div><div>ムーン<b id="cc">100</b></div></div>
+<div class="card2"><b>🐩 ムーン</b> <span id="ct"></span><div class="hand" id="h1"></div></div><div class="msg" id="m"></div>
+<div class="card2"><b>あなた</b> <span id="pt"></span><div class="hand" id="h0"></div></div><div class="row"><button class="btn" id="go">ひきなおす</button></div>
+<p style="font-size:11px;opacity:.7">5枚ドロー：残したい札をタッチ（HOLD）→「ひきなおす」。役が強い方がチップをゲット。</p></div><script>
+const $=id=>document.getElementById(id);const S='♠♥♦♣',RK=['','A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+let deck,P,C,hold,ph,chips=[100,100];
+function sh(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function ev(h){const r=h.map(c=>c.r===1?14:c.r).sort((a,b)=>a-b),f=h.every(c=>c.s===h[0].s);let st=r.every((v,i)=>!i||v===r[i-1]+1)||r.join()==='2,3,4,5,14';
+ const cnt={};r.forEach(v=>cnt[v]=(cnt[v]||0)+1);const g=Object.values(cnt).sort((a,b)=>b-a),key=Object.entries(cnt).sort((a,b)=>b[1]-a[1]||b[0]-a[0]).map(e=>+e[0]);
+ let s=0,n='ブタ';if(st&&f&&r[0]===10){s=9;n='ロイヤルフラッシュ'}else if(st&&f){s=8;n='ストレートフラッシュ'}else if(g[0]===4){s=7;n='フォーカード'}else if(g[0]===3&&g[1]===2){s=6;n='フルハウス'}else if(f){s=5;n='フラッシュ'}else if(st){s=4;n='ストレート'}else if(g[0]===3){s=3;n='スリーカード'}else if(g[0]===2&&g[1]===2){s=2;n='ツーペア'}else if(g[0]===2){s=1;n='ワンペア'}
+ return {s,n,key}}
+const cmp=(a,b)=>{if(a.s!==b.s)return a.s-b.s;for(let i=0;i<a.key.length;i++)if(a.key[i]!==b.key[i])return a.key[i]-b.key[i];return 0};
+function cardEl(c,back,i){const d=document.createElement('div');if(back){d.className='pcard back';return d}d.className='pcard'+(c.s===1||c.s===2?' red':'')+(hold[i]?' hold sel':'');d.innerHTML=`${S[c.s]}<br>${RK[c.r]}`;return d}
+function render(show){$('h0').innerHTML='';P.forEach((c,i)=>{const d=cardEl(c,0,i);if(ph==='draw')d.onclick=()=>{hold[i]=!hold[i];render()};$('h0').appendChild(d)});$('h1').innerHTML='';C.forEach(c=>$('h1').appendChild(show?cardEl(c,0,-1):cardEl(c,1)));$('ch').textContent=chips[0];$('cc').textContent=chips[1];$('pt').textContent=ph==='draw'?'':'（'+ev(P).n+'）';$('ct').textContent=show?'（'+ev(C).n+'）':''}
+function deal(){if(chips[0]<=0||chips[1]<=0){chips=[100,100]}deck=sh([...Array(52).keys()].map(i=>({r:i%13+1,s:i/13|0})));P=deck.splice(0,5);C=deck.splice(0,5);hold=Array(5).fill(false);ph='draw';$('go').textContent='ひきなおす';$('m').textContent='残す札をタッチして「ひきなおす」';render(false)}
+$('go').onclick=()=>{if(ph==='draw'){P=P.map((c,i)=>hold[i]?c:deck.shift());
+  // CPU: keep pairs+ / high cards simply
+  const cnt={};C.forEach(c=>cnt[c.r]=(cnt[c.r]||0)+1);const e=ev(C);C=C.map(c=>(e.s>=4||cnt[c.r]>1||c.r===1||c.r>=11)?c:deck.shift());ph='res';
+  const a=ev(P),b=ev(C),r=cmp(a,b);if(r>0){chips[0]+=10;chips[1]-=10}else if(r<0){chips[0]-=10;chips[1]+=10}
+  $('m').textContent=`あなた：${a.n} vs ムーン：${b.n} → `+(r>0?'あなたの勝ち🎉 +10':r<0?'ムーンの勝ち… -10':'ひきわけ');$('go').textContent='つぎのゲーム';render(true)}else deal()};
+deal();
+</script></body></html>

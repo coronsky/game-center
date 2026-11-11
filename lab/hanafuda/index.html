@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】花札（合わせ）</title><link rel="stylesheet" href="../lab.css"><style>.hc{display:inline-flex;flex-direction:column;align-items:center;justify-content:space-between;width:52px;height:78px;border-radius:7px;border:2px solid #7a5a3a;padding:3px 0;font-weight:900;font-size:10px;cursor:pointer;flex:none;box-shadow:0 2px 3px rgba(0,0,0,.25)}
+.hc .f{font-size:26px;line-height:1}.hc .m{font-size:10px}.hc .t{font-size:10px;border-radius:4px;padding:0 5px;color:#fff}
+.hc.hik{background:#fff3b0}.hc.hik .t{background:#d49a00}.hc.tan{background:#ffe0e6}.hc.tan .t{background:#d6457a}.hc.sho{background:#f6dcc0}.hc.sho .t{background:#a85a2a}.hc.kas{background:#ececec}.hc.kas .t{background:#777}
+.hc.sel{transform:translateY(-8px);box-shadow:0 0 0 3px #f0b429}.hc.ok{box-shadow:0 0 0 3px #3fa34d}.hc.back{background:repeating-linear-gradient(45deg,#8a2a2a,#8a2a2a 4px,#a84a4a 4px,#a84a4a 8px)}
+.fld{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;min-height:90px}.cap{font-size:12px;font-weight:700;margin:2px 0;word-break:break-all}.cap span{display:inline-block;margin-right:6px}</style></head><body><div class="wrap"><div class="top"><a href="../">ラボ</a><h1>花札（合わせ） <span class="tag">叩き台</span></h1></div><div class="info"><div>山札<b id="dk">24</b></div><div>ムーン<b id="cs">0</b></div><div>あなた<b id="ps">0</b></div></div>
+<div class="card2"><div class="cap" id="cc">ムーンの取り札：</div><div class="hand" id="ch"></div></div>
+<div class="card2"><div class="fld" id="fl"></div></div><div class="msg" id="m"></div>
+<div class="card2"><div class="cap" id="pc">あなたの取り札：</div><div class="hand" id="ph"></div></div><div class="row"><button class="btn" id="re">はじめから</button></div>
+<p style="font-size:11px;opacity:.7">ルール（簡易）：手札を出して場の同じ月の札をとる。光20・タネ10・短冊5・カス1点。手札がなくなったら点数が多い方の勝ち。</p></div><script>
+const $=id=>document.getElementById(id);
+const FL=['🌲','🌺','🌸','🪻','🌷','🌹','🍀','🌾','🏵️','🍁','🌧️','🍃'],MN=['松','梅','桜','藤','菖蒲','牡丹','萩','芒','菊','紅葉','柳','桐'];
+const TY=[['光','短','カ','カ'],['タ','短','カ','カ'],['光','短','カ','カ'],['タ','短','カ','カ'],['タ','短','カ','カ'],['タ','短','カ','カ'],['タ','短','カ','カ'],['光','タ','カ','カ'],['タ','短','カ','カ'],['タ','短','カ','カ'],['光','タ','短','カ'],['光','カ','カ','カ']];
+const PT={光:20,タ:10,短:5,カ:1},CL={光:'hik',タ:'tan',短:'sho',カ:'kas'},NM={光:'光',タ:'タネ',短:'短冊',カ:'カス'};
+let deck,hand,chand,field,pcap,ccap,turn,busy;
+function mk(){const a=[];for(let m=0;m<12;m++)for(let i=0;i<4;i++)a.push({m,t:TY[m][i]});return a}
+function sh(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function start(){deck=sh(mk());hand=deck.splice(0,8);chand=deck.splice(0,8);field=deck.splice(0,8);pcap=[];ccap=[];turn=0;busy=false;$('m').textContent='あなたの番：出す札をえらんでね';render()}
+function el(c,cls=''){const d=document.createElement('div');d.className='hc '+CL[c.t]+' '+cls;d.innerHTML=`<span class="m">${MN[c.m]}</span><span class="f">${FL[c.m]}</span><span class="t">${NM[c.t]}</span>`;return d}
+const pts=a=>a.reduce((s,c)=>s+PT[c.t],0);
+function capHtml(a){return ['光','タ','短','カ'].map(t=>`<span>${NM[t]}×${a.filter(c=>c.t===t).length}</span>`).join('')}
+let sel=-1,pick=null;
+function render(){$('dk').textContent=deck.length;$('cs').textContent=pts(ccap);$('ps').textContent=pts(pcap);
+ $('cc').innerHTML='ムーンの取り札：'+capHtml(ccap);$('pc').innerHTML='あなたの取り札：'+capHtml(pcap);
+ $('ch').innerHTML='';chand.forEach(()=>{const d=document.createElement('div');d.className='hc back';$('ch').appendChild(d)});
+ $('fl').innerHTML='';field.forEach((c,i)=>{const d=el(c,pick&&pick.opts.includes(i)?'ok':'');d.onclick=()=>{if(pick&&pick.opts.includes(i))pick.cb(i)};$('fl').appendChild(d)});
+ $('ph').innerHTML='';hand.forEach((c,i)=>{const d=el(c,i===sel?'sel':'');d.onclick=()=>play(i);$('ph').appendChild(d)})}
+function take(c,who,fi){const cap=who?ccap:pcap;cap.push(c);cap.push(field.splice(fi,1)[0])}
+function resolve(c,who,done){ // c is played card; handle matching
+ const idx=field.map((f,i)=>f.m===c.m?i:-1).filter(i=>i>=0);
+ if(idx.length===0){field.push(c);done();return}
+ if(idx.length===2){ if(who){take(c,1,idx[(Math.random()*2)|0]);done();return}
+   $('m').textContent='どちらの札をとる？光る札をタッチ';pick={opts:idx,cb:i=>{pick=null;take(c,0,i);done()}};render();return}
+ if(idx.length===1){take(c,who,idx[0]);done();return}
+ (who?ccap:pcap).push(c);idx.reverse().forEach(i=>(who?ccap:pcap).push(field.splice(i,1)[0]));done()}
+function flip(who,cb){const c=deck.shift();if(!c){cb();return}$('m').textContent=(who?'ムーン':'あなた')+'が山札から めくった：'+MN[c.m]+NM[c.t];resolve(c,who,()=>{render();setTimeout(cb,700)})}
+function play(i){if(busy||turn||pick)return;busy=true;const c=hand.splice(i,1)[0];sel=-1;resolve(c,0,()=>{render();flip(0,()=>{render();cpu()})});render()}
+function cpu(){turn=1;if(!chand.length){end();return}
+ setTimeout(()=>{let best=-1,bs=-1;chand.forEach((c,i)=>{const s=field.filter(f=>f.m===c.m).reduce((a,f)=>a+PT[f.t]+PT[c.t],0);if(s>bs){bs=s;best=i}});
+  const c=chand.splice(best>=0&&bs>0?best:(Math.random()*chand.length|0),1)[0];$('m').textContent='ムーンが出した：'+MN[c.m]+NM[c.t];
+  resolve(c,1,()=>{render();flip(1,()=>{turn=0;busy=false;render();if(!hand.length)end();else $('m').textContent='あなたの番：出す札をえらんでね'})})},800)}
+function end(){const a=pts(pcap),b=pts(ccap);$('m').textContent=`おわり！ あなた${a}点 vs ムーン${b}点 → `+(a>b?'あなたの勝ち🎉':a<b?'ムーンの勝ち…':'ひきわけ');turn=2;busy=true}
+$('re').onclick=start;start();
+</script></body></html>

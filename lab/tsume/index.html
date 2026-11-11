@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】詰将棋</title><link rel="stylesheet" href="../lab.css"><style>.sb{display:grid;grid-template-columns:repeat(9,1fr);border:3px solid #6a4220;background:#f0c987;aspect-ratio:1;border-radius:4px}.sb div{border:.5px solid #8a6a3a;display:flex;align-items:center;justify-content:center;font-size:clamp(14px,5.2vw,24px);font-weight:900;position:relative}
+.sb .g{transform:rotate(180deg);color:#222}.sb .p{color:#b0301c}.sb .tg{background:rgba(80,180,80,.45)}.sb .sl{background:rgba(240,180,40,.6)}.sb div span{pointer-events:none}
+.hd{display:flex;gap:6px;min-height:44px;align-items:center;flex-wrap:wrap;margin:6px 0}.hd b{font-size:12px}.hp{width:40px;height:44px;background:#f0c987;border:2px solid #6a4220;border-radius:6px;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}.hp i{position:absolute;right:1px;bottom:0;font-size:10px;font-style:normal}.hp.sl{background:#f6b83a}</style></head><body><div class="wrap"><div class="top"><a href="../">ラボ</a><h1>詰将棋 <span class="tag">叩き台</span></h1></div><div class="info"><div>もんだい<b id="no">1</b></div><div>手数<b>1手詰</b></div></div>
+<div class="sb" id="bd"></div><div class="hd"><b>持ち駒</b><span id="hd"></span></div><div class="msg" id="m">先手（下から上へ進む）で、1手で玉を詰ませよう</div>
+<div class="row"><button class="btn sub" id="pv">◀ まえ</button><button class="btn sub" id="hint">ヒント</button><button class="btn sub" id="nx">つぎ ▶</button></div></div><script>const DIRS={P:[[0,-1]],N:[[-1,-2],[1,-2]],S:[[-1,-1],[0,-1],[1,-1],[-1,1],[1,1]],G:[[-1,-1],[0,-1],[1,-1],[-1,0],[1,0],[0,1]],K:[[-1,-1],[0,-1],[1,-1],[-1,0],[1,0],[-1,1],[0,1],[1,1]]};
+['A','M','T','O'].forEach(c=>DIRS[c]=DIRS.G);
+const ORT=[[0,-1],[0,1],[-1,0],[1,0]],DG=[[-1,-1],[1,-1],[-1,1],[1,1]];
+const RAYS={L:[[0,-1]],R:ORT,B:DG,D:ORT,H:DG},EXTRA={D:DG,H:ORT};
+const PRO={P:'O',L:'T',N:'M',S:'A',B:'H',R:'D'};
+const isS=c=>c>='A'&&c<='Z';
+function mvs(b,x,y,pc){const s=isS(pc),u=pc.toUpperCase(),f=s?1:-1,out=[];
+ const add=(nx,ny)=>{if(nx<0||nx>8||ny<0||ny>8)return false;const t=b[ny][nx];if(t!=='.'&&isS(t)===s)return false;out.push([nx,ny]);return t==='.'};
+ (DIRS[u]||[]).forEach(([dx,dy])=>add(x+dx,y+dy*f));(EXTRA[u]||[]).forEach(([dx,dy])=>add(x+dx,y+dy*f));
+ (RAYS[u]||[]).forEach(([dx,dy])=>{let nx=x+dx,ny=y+dy*f;while(add(nx,ny)){nx+=dx;ny+=dy*f}});return out}
+function attacked(b,x,y,bySente){for(let j=0;j<9;j++)for(let i=0;i<9;i++){const p=b[j][i];if(p==='.'||isS(p)!==bySente)continue;if(mvs(b,i,j,p).some(m=>m[0]===x&&m[1]===y))return true}return false}
+function kingPos(b,sente){const k=sente?'K':'k';for(let j=0;j<9;j++)for(let i=0;i<9;i++)if(b[j][i]===k)return [i,j];return null}
+function inCheck(b,sente){const k=kingPos(b,sente);return k?attacked(b,k[0],k[1],!sente):false}
+const clone=b=>b.map(r=>r.slice());
+function zone(y,s){return s?y<=2:y>=6}
+function legal(b,hand,sente){const L=[];
+ for(let y=0;y<9;y++)for(let x=0;x<9;x++){const p=b[y][x];if(p==='.'||isS(p)!==sente)continue;const u=p.toUpperCase();
+  mvs(b,x,y,p).forEach(([nx,ny])=>{const forceP=(u==='P'||u==='L')&&(sente?ny===0:ny===8)||(u==='N'&&(sente?ny<=1:ny>=7));
+   const canP=PRO[u]&&(zone(y,sente)||zone(ny,sente));
+   const opts=forceP?[1]:canP?[0,1]:[0];opts.forEach(pr=>{const nb=clone(b);nb[y][x]='.';let q=pr?PRO[u]:u;nb[ny][nx]=sente?q:q.toLowerCase();if(!inCheck(nb,sente))L.push({from:[x,y],to:[nx,ny],pro:pr,pc:p})})})}
+ const hs=hand[sente?'s':'g'];[...new Set(hs.split(''))].forEach(u=>{for(let y=0;y<9;y++)for(let x=0;x<9;x++){if(b[y][x]!=='.')continue;
+  if((u==='P'||u==='L')&&(sente?y===0:y===8))continue;if(u==='N'&&(sente?y<=1:y>=7))continue;
+  if(u==='P'){let ni=false;for(let j=0;j<9;j++)if(b[j][x]===(sente?'P':'p'))ni=true;if(ni)continue}
+  const nb=clone(b);nb[y][x]=sente?u:u.toLowerCase();if(inCheck(nb,sente))continue;L.push({drop:u,to:[x,y]})}});
+ return L}
+function apply(b,hand,m,sente){const nb=clone(b),nh={s:hand.s,g:hand.g};if(m.drop){nb[m.to[1]][m.to[0]]=sente?m.drop:m.drop.toLowerCase();const k=sente?'s':'g';nh[k]=nh[k].replace(m.drop,'')}
+ else{const cap=nb[m.to[1]][m.to[0]];if(cap!=='.'){let u=cap.toUpperCase();const base=Object.keys(PRO).find(k=>PRO[k]===u)||u;if(base!=='K'){const k=sente?'s':'g';nh[k]+=base}}
+  nb[m.from[1]][m.from[0]]='.';let q=m.pro?PRO[m.pc.toUpperCase()]:m.pc.toUpperCase();nb[m.to[1]][m.to[0]]=sente?q:q.toLowerCase()}return [nb,nh]}
+function isMate(b,hand,sente){/*is side 'sente' (to move) checkmated*/return inCheck(b,sente)&&legal(b,hand,sente).length===0}
+function matingMoves(b,hand){const r=[];legal(b,hand,true).forEach(m=>{const [nb,nh]=apply(b,hand,m,true);if(isMate(nb,nh,false)){if(m.drop==='P')return;r.push(m)}});return r}
+
+
+const PROBS=[{"b":["...sk.S..","...p.....",".........",".........",".........",".........",".........",".........","........."],"h":"G"},{"b":[".....k...","...S.....","....G....","...B.....",".........",".........",".........",".........","........."],"h":""},{"b":[".....kgS.",".......L.",".........","......B..",".........",".........",".........",".........","........."],"h":"GS"},{"b":[".......p.",".....Sk..","....N....",".........","......B..",".........",".........",".........","........."],"h":"G"},{"b":[".LkS.....",".p.......",".........",".........",".........",".........",".........",".........","........."],"h":"LG"},{"b":[".....k...",".......R.",".........","....R..R.",".........",".........",".........",".........","........."],"h":"S"},{"b":[".....G...",".....gk..","........R",".........",".......L.",".........",".........",".........","........."],"h":"GN"},{"b":["....kgG..",".....g...",".........","......B..",".........",".........",".........",".........","........."],"h":"RP"},{"b":[".pkp.....",".........","R........","B........",".........",".........",".........",".........","........."],"h":""},{"b":["...SpkB..",".........","...G.....",".........",".........",".........",".........",".........","........."],"h":"G"},{"b":[".....s.B.",".....k...","...R..R..",".........",".........",".........",".........",".........","........."],"h":""},{"b":["....P.k..",".........","......BS.",".........",".........",".........",".........",".........","........."],"h":"BR"},{"b":["......k..",".........",".....R..R",".......N.",".........",".........",".........",".........","........."],"h":""},{"b":["..sk.....",".G.......",".........","..B......",".........",".........",".........",".........","........."],"h":"NG"},{"b":[".....k...",".........","...LB....","...L.....",".........",".........",".........",".........","........."],"h":"SG"},{"b":[".....k...",".....p...","...G..L..",".........",".........",".........",".........",".........","........."],"h":"G"},{"b":["..kg.....","..s......","..S......",".........",".........",".........",".........",".........","........."],"h":"RG"},{"b":[".....Lk..",".......R.",".........",".....G...",".........",".........",".........",".........","........."],"h":"G"},{"b":["BSkL.....",".........",".........",".........",".........",".........",".........",".........","........."],"h":"NG"},{"b":[".....k...","....g.RR.",".........",".........",".........",".........",".........",".........","........."],"h":""},{"b":[".....gk.B",".....R...",".........",".........",".........",".........",".........",".........","........."],"h":"P"},{"b":["...kB....",".........",".........","....BN...",".........",".........",".........",".........","........."],"h":"SN"},{"b":[".......R.","......k..",".........",".....R.G.",".........",".........",".........",".........","........."],"h":""},{"b":["....kp...","...p.....","...B..S..",".........",".........",".........",".........",".........","........."],"h":"GL"}]
+;
+const $=id=>document.getElementById(id);const KJ={K:'玉',R:'飛',B:'角',G:'金',S:'銀',N:'桂',L:'香',P:'歩',D:'龍',H:'馬',A:'全',M:'圭',T:'杏',O:'と'};
+let pi=0,b,hand,sel=null,moves=[],solved=false,pend=null;
+function load(i){pi=(i+PROBS.length)%PROBS.length;b=PROBS[pi].b.map(r=>r.split(''));hand={s:PROBS[pi].h,g:''};sel=null;moves=[];solved=false;pend=null;$('no').textContent=(pi+1)+'/'+PROBS.length;$('m').textContent='先手（下から上へ進む）で、1手で玉を詰ませよう';render()}
+function render(){const bd=$('bd');bd.innerHTML='';for(let y=0;y<9;y++)for(let x=0;x<9;x++){const c=b[y][x],d=document.createElement('div');
+  if(c!=='.'){const g=!isS(c);d.className=g?'g':'';const u=c.toUpperCase();d.innerHTML=`<span class="${'DHAMTO'.includes(u)?'p':''}">${KJ[u]}</span>`}
+  if(sel&&sel.from&&sel.from[0]===x&&sel.from[1]===y)d.classList.add('sl');
+  if(moves.some(m=>m.to[0]===x&&m.to[1]===y))d.classList.add('tg');
+  d.onclick=()=>tap(x,y);bd.appendChild(d)}
+ const h=$('hd');h.innerHTML='';const cnt={};hand.s.split('').filter(Boolean).forEach(u=>cnt[u]=(cnt[u]||0)+1);Object.keys(cnt).forEach(u=>{const e=document.createElement('div');e.className='hp'+(sel&&sel.drop===u?' sl':'');e.innerHTML=KJ[u]+(cnt[u]>1?`<i>${cnt[u]}</i>`:'');e.onclick=()=>{if(solved)return;sel={drop:u};moves=legal(b,hand,true).filter(m=>m.drop===u);render()};h.appendChild(e)});if(!hand.s)h.textContent='なし'}
+function tap(x,y){if(solved||pend)return;const mv=moves.find(m=>m.to[0]===x&&m.to[1]===y);
+ if(mv){const both=moves.filter(m=>m.to[0]===x&&m.to[1]===y);if(both.length===2){pend=both;$('m').textContent='成りますか？';const m=$('m');m.innerHTML='成りますか？ <button class="btn" id="y1">成る</button> <button class="btn sub" id="y0">成らない</button>';$('y1').onclick=()=>go(both.find(q=>q.pro));$('y0').onclick=()=>go(both.find(q=>!q.pro));return}go(mv);return}
+ const c=b[y][x];if(c!=='.'&&isS(c)){sel={from:[x,y]};moves=legal(b,hand,true).filter(m=>m.from&&m.from[0]===x&&m.from[1]===y);render()}else{sel=null;moves=[];render()}}
+function go(m){pend=null;const [nb,nh]=apply(b,hand,m,true);const mate=isMate(nb,nh,false)&&!(m.drop==='P');sel=null;moves=[];
+ if(mate){b=nb;hand=nh;solved=true;$('m').textContent='正解！詰みです🎉 「つぎ」へ';render()}
+ else{$('m').textContent=inCheck(nb,false)?'王手だけど詰みじゃないよ。もう一度！':'詰みません。もう一度！';render()}}
+$('pv').onclick=()=>load(pi-1);$('nx').onclick=()=>load(pi+1);
+$('hint').onclick=()=>{if(solved)return;const s=matingMoves(b,hand)[0];if(!s)return;sel=s.drop?{drop:s.drop}:{from:s.from};moves=[];render();$('m').textContent='ヒント：光っている駒（持ち駒）を使うよ'};
+load(0);
+</script></body></html>

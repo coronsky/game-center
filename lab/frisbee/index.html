@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】フリスビーキャッチ</title><link rel="stylesheet" href="../lab.css"><style></style></head><body><div class="wrap"><div class="top"><a href="../">ラボ</a><h1>フリスビーキャッチ <span class="tag">叩き台</span></h1></div><div class="info"><div>なげた数<b id="n">0/10</b></div><div>キャッチ<b id="sc">0</b></div></div>
+<canvas id="c" width="360" height="520"></canvas><div class="msg" id="m">下からスワイプしてフリスビーを投げよう！ワンコの近くをねらうとキャッチしやすいよ</div><div class="row"><button class="btn" id="re">もういちど</button></div></div><script>
+const cv=document.getElementById('c'),x=cv.getContext('2d'),W=360,H=520,$=id=>document.getElementById(id);
+let n=0,sc=0,ph='aim',dog,fr,tr=[],T0=0,done=false,res=0;
+function newDog(){dog={x:60+Math.random()*240,y:150+Math.random()*180,fx:1}}
+function reset(){n=0;sc=0;ph='aim';done=false;newDog();fr=null;$('n').textContent='0/10';$('sc').textContent='0';$('m').textContent='下からスワイプしてフリスビーを投げよう！'}
+$('re').onclick=reset;reset();
+function pos(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height,t:performance.now()}}
+cv.onpointerdown=e=>{if(ph!=='aim'||done)return;cv.setPointerCapture(e.pointerId);tr=[pos(e)]};
+cv.onpointermove=e=>{if(tr.length)tr.push(pos(e))};
+cv.onpointerup=e=>{if(!tr.length)return;tr.push(pos(e));const a=tr.filter(p=>p.t>tr[tr.length-1].t-150)[0],b=tr[tr.length-1];tr=[];let dx=b.x-a.x,dy=b.y-a.y;if(dy>-20||Math.hypot(dx,dy)<30){$('m').textContent='上にむけてシュッとスワイプしてね';return}
+ const sp=Math.hypot(dx,dy),dist=Math.max(110,Math.min(380,sp*2.2)),ux=dx/sp,uy=dy/sp,s={x:W/2,y:H-30};
+ fr={s,l:{x:Math.max(24,Math.min(W-24,s.x+ux*dist)),y:Math.max(60,s.y+uy*dist)},T:.9+dist/420,t:0,cur:(Math.random()-.5)*60};ph='fly';n++;$('n').textContent=n+'/10';T0=performance.now();res=0};
+let last=performance.now();
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
+ if(ph==='fly'){fr.t+=dt;const k=Math.min(1,fr.t/fr.T);
+  if(fr.t>.25){const dx=fr.l.x-dog.x,dy=fr.l.y-dog.y,d=Math.hypot(dx,dy);if(d>3){const v=Math.min(d,190*dt);dog.x+=dx/d*v;dog.y+=dy/d*v;if(Math.abs(dx)>2)dog.fx=dx>0?1:-1}}
+  if(k>=1){const d=Math.hypot(fr.l.x-dog.x,fr.l.y-dog.y);ph='res';res=d<30?1:0;if(res){sc++;$('sc').textContent=sc;$('m').textContent='ナイスキャッチ！🐶✨'}else $('m').textContent='あーおしい…！ワンコの近くをねらってみよう';
+   setTimeout(()=>{if(n>=10){done=true;$('m').textContent='おわり！キャッチ '+sc+'/10 '+(sc>=8?'すごい！':sc>=5?'いいね！':'もういちど！')}else{newDog();ph='aim';fr=null}},1300)}}
+ else if(ph==='aim'&&dog&&Math.random()<.01)dog.fx*=-1;
+ draw();requestAnimationFrame(loop)}
+function draw(){const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#bfe3a1');g.addColorStop(1,'#8cc271');x.fillStyle=g;x.fillRect(0,0,W,H);
+ for(let i=0;i<14;i++){x.fillStyle='rgba(255,255,255,.08)';x.fillRect(0,i*40,W,20)}
+ x.font='36px serif';x.textAlign='center';x.textBaseline='middle';
+ x.save();x.translate(dog.x,dog.y);x.scale(dog.fx,1);x.fillText(ph==='res'&&res?'🐶':'🐕',0,0);x.restore();
+ if(ph==='res'&&res){x.font='28px serif';x.fillText('🥏',dog.x,dog.y-30)}
+ if(fr&&ph==='fly'){const k=Math.min(1,fr.t/fr.T),e=1-Math.pow(1-k,1.6),px=fr.s.x+(fr.l.x-fr.s.x)*e+Math.sin(Math.PI*k)*fr.cur,py=fr.s.y+(fr.l.y-fr.s.y)*e,h=Math.sin(Math.PI*k)*50;
+  x.fillStyle='rgba(0,0,0,.2)';x.beginPath();x.ellipse(px,py,16,6,0,0,7);x.fill();x.save();x.translate(px,py-h);x.rotate(fr.t*14);x.scale(1,.45);x.fillStyle='#ff6b6b';x.beginPath();x.arc(0,0,16,0,7);x.fill();x.fillStyle='#fff';x.beginPath();x.arc(0,0,8,0,7);x.fill();x.restore();
+  x.strokeStyle='rgba(255,255,255,.5)';x.setLineDash([4,6]);x.beginPath();x.arc(fr.l.x,fr.l.y,28,0,7);x.stroke();x.setLineDash([])}
+ else if(ph==='aim'){x.font='28px serif';x.fillText('🥏',W/2,H-30);if(tr.length>1){x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=3;x.beginPath();tr.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y));x.stroke()}}}
+requestAnimationFrame(loop);
+</script></body></html>

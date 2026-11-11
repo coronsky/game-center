@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】ビリヤード</title><link rel="stylesheet" href="../lab.css"><style></style></head><body><div class="wrap"><div class="top"><a href="../">ラボ</a><h1>ビリヤード <span class="tag">叩き台</span></h1></div><div class="info"><div>のこり<b id="l">9</b></div><div>うった数<b id="n">0</b></div><div>ベスト<b id="bs">-</b></div></div>
+<canvas id="c" width="360" height="600"></canvas><div class="msg" id="m">白い玉をひっぱって、はなすと打てるよ</div><div class="row"><button class="btn" id="re">ラックしなおす</button></div></div><script>
+const cv=document.getElementById('c'),x=cv.getContext('2d'),$=id=>document.getElementById(id);
+const TW=360,TH=600,M=26,L=M,R=TW-M,T=M,B=TH-M,BR=11,PR=21;
+const POC=[[L-2,T-2],[R+2,T-2],[L-6,(T+B)/2],[R+6,(T+B)/2],[L-2,B+2],[R+2,B+2]];
+const COLS=['#f7d117','#2155c9','#e03a2f','#7a3fb0','#f58a1f','#1f8f4e','#8a2a1c','#111'];
+let balls,cue,shots,best=+localStorage.getItem('lab_bil_best')||0,aim=null,moving=false;
+function rack(){balls=[];const sx=TW/2,sy=170;let k=0;for(let r=0;r<4;r++)for(let c=0;c<=r;c++){if(k>=9)break;balls.push({x:sx+(c-r/2)*(BR*2+.5),y:sy-r*(BR*1.75),vx:0,vy:0,n:k+1,col:COLS[k%8],in:false});k++}
+ cue={x:TW/2,y:460,vx:0,vy:0,n:0,col:'#fff',in:false};balls.push(cue);shots=0;aim=null;moving=false;upd();$('m').textContent='白い玉をひっぱって、はなすと打てるよ'}
+function upd(){$('l').textContent=balls.filter(b=>!b.in&&b!==cue).length;$('n').textContent=shots;$('bs').textContent=best||'-'}
+function pos(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*TW/r.width,y:(e.clientY-r.top)*TH/r.height}}
+cv.onpointerdown=e=>{if(moving||cue.in)return;const p=pos(e);if(Math.hypot(p.x-cue.x,p.y-cue.y)<60){cv.setPointerCapture(e.pointerId);aim=p}};
+cv.onpointermove=e=>{if(aim)aim=pos(e)};
+cv.onpointerup=e=>{if(!aim)return;const p=pos(e);aim=null;const dx=cue.x-p.x,dy=cue.y-p.y,d=Math.hypot(dx,dy);if(d<12)return;const pw=Math.min(d,140)/140*900;cue.vx=dx/d*pw;cue.vy=dy/d*pw;shots++;moving=true;upd()};
+function step(dt){for(const b of balls){if(b.in)continue;b.x+=b.vx*dt;b.y+=b.vy*dt;const f=Math.pow(.42,dt);b.vx*=f;b.vy*=f;if(Math.hypot(b.vx,b.vy)<6){b.vx=b.vy=0}
+  if(b.x<L+BR){b.x=L+BR;b.vx=Math.abs(b.vx)*.9}if(b.x>R-BR){b.x=R-BR;b.vx=-Math.abs(b.vx)*.9}if(b.y<T+BR){b.y=T+BR;b.vy=Math.abs(b.vy)*.9}if(b.y>B-BR){b.y=B-BR;b.vy=-Math.abs(b.vy)*.9}
+  for(const p of POC)if(Math.hypot(b.x-p[0],b.y-p[1])<PR){b.in=true;b.vx=b.vy=0;upd()}}
+ const a=balls.filter(b=>!b.in);for(let i=0;i<a.length;i++)for(let j=i+1;j<a.length;j++){const p=a[i],q=a[j],dx=q.x-p.x,dy=q.y-p.y,d=Math.hypot(dx,dy);if(d<BR*2&&d>0){const nx=dx/d,ny=dy/d,ov=BR*2-d;p.x-=nx*ov/2;p.y-=ny*ov/2;q.x+=nx*ov/2;q.y+=ny*ov/2;const rv=(p.vx-q.vx)*nx+(p.vy-q.vy)*ny;if(rv>0){p.vx-=rv*nx;p.vy-=rv*ny;q.vx+=rv*nx;q.vy+=rv*ny}}}}
+let last=performance.now();
+function loop(now){let dt=Math.min(.05,(now-last)/1000);last=now;if(moving){const n=6;for(let i=0;i<n;i++)step(dt/n);if(balls.every(b=>b.in||(b.vx===0&&b.vy===0))){moving=false;after()}}draw();requestAnimationFrame(loop)}
+function after(){if(cue.in){cue.in=false;cue.x=TW/2;cue.y=460;cue.vx=cue.vy=0;shots++;if(balls.some(b=>!b.in&&b!==cue&&Math.hypot(b.x-cue.x,b.y-cue.y)<BR*2))cue.y=520;$('m').textContent='白玉が落ちた！ペナルティ +1打';upd()}
+ const left=balls.filter(b=>!b.in&&b!==cue).length;if(!left){if(!best||shots<best){best=shots;localStorage.setItem('lab_bil_best',best)}$('m').textContent='全部落とした！ '+shots+'打 🎉';upd()}}
+function draw(){x.fillStyle='#5a3a1c';x.fillRect(0,0,TW,TH);x.fillStyle='#1f7a4a';x.fillRect(L,T,R-L,B-T);x.fillStyle='rgba(255,255,255,.07)';x.fillRect(L,T,R-L,B-T);
+ x.strokeStyle='rgba(255,255,255,.25)';x.beginPath();x.moveTo(L,440);x.lineTo(R,440);x.stroke();
+ x.fillStyle='#0b0b0b';POC.forEach(p=>{x.beginPath();x.arc(p[0],p[1],PR-2,0,7);x.fill()});
+ for(const b of balls){if(b.in)continue;x.fillStyle='rgba(0,0,0,.25)';x.beginPath();x.arc(b.x+2,b.y+3,BR,0,7);x.fill();x.fillStyle=b.col;x.beginPath();x.arc(b.x,b.y,BR,0,7);x.fill();
+  if(b.n){x.fillStyle='#fff';x.beginPath();x.arc(b.x,b.y,5.5,0,7);x.fill();x.fillStyle='#222';x.font='bold 8px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(b.n,b.x,b.y+.5)}
+  x.fillStyle='rgba(255,255,255,.55)';x.beginPath();x.arc(b.x-3.5,b.y-3.5,2.6,0,7);x.fill()}
+ if(aim&&!moving){const dx=cue.x-aim.x,dy=cue.y-aim.y,d=Math.hypot(dx,dy);if(d>8){const u=Math.min(d,140);x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=2;x.setLineDash([6,6]);x.beginPath();x.moveTo(cue.x,cue.y);x.lineTo(cue.x+dx/d*(60+u*2),cue.y+dy/d*(60+u*2));x.stroke();x.setLineDash([]);
+  x.strokeStyle='#f0b429';x.lineWidth=5;x.beginPath();x.moveTo(cue.x-dx/d*(BR+4),cue.y-dy/d*(BR+4));x.lineTo(cue.x-dx/d*(BR+4+u),cue.y-dy/d*(BR+4+u));x.stroke()}}}
+$('re').onclick=rack;rack();requestAnimationFrame(loop);
+</script></body></html>

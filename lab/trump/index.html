@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】トランプ遊び（七並べ）</title><link rel="stylesheet" href="../lab.css"><style>.bd{display:grid;grid-template-columns:18px repeat(13,1fr);gap:2px;font-size:11px;font-weight:900}.bd div{height:30px;border-radius:4px;background:#e6d6b8;display:flex;align-items:center;justify-content:center}.bd .on{background:#fff;border:1px solid #888}.bd .red{color:#c0392b}.bd .su{background:none;font-size:14px}
+.pcard{width:40px;height:58px;font-size:15px}</style></head><body><div class="wrap"><div class="top"><a href="../">ラボ</a><h1>トランプ遊び（七並べ） <span class="tag">叩き台</span></h1></div><div class="info"><div>コロン<b id="c1">17</b></div><div>ムーン<b id="c2">17</b></div><div>あなた<b id="c0">18</b></div><div>パス<b id="ps">0/3</b></div></div>
+<div class="card2"><div class="bd" id="bd"></div></div><div class="msg" id="m"></div>
+<div class="card2"><div class="hand" id="h"></div></div><div class="row"><button class="btn sub" id="pass">パスする</button><button class="btn" id="re">はじめから</button></div>
+<p style="font-size:11px;opacity:.7">ルール：7からとなりの数字を出していく。出せなければパス（3回まで、4回目で負け）。先に手札がなくなったら勝ち。</p></div><script>
+const $=id=>document.getElementById(id);const S='♠♥♦♣',NM=['あなた','コロン','ムーン'];let B,H,P,turn,over;
+function sh(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function start(){const d=[];for(let s=0;s<4;s++)for(let r=1;r<=13;r++)d.push({r,s});sh(d);H=[[],[],[]];d.forEach((c,i)=>H[i%3].push(c));B=[0,1,2,3].map(()=>Array(14).fill(false));P=[0,0,0];over=false;
+ H=H.map(h=>h.filter(c=>{if(c.r===7){B[c.s][7]=true;return false}return true}));H.forEach(h=>h.sort((a,b)=>a.s-b.s||a.r-b.r));turn=0;$('m').textContent='あなたの番：光っている札を出そう';render()}
+const can=c=>c.r!==7&&(B[c.s][c.r-1]||B[c.s][c.r+1]);
+function render(){const bd=$('bd');bd.innerHTML='';for(let s=0;s<4;s++){const l=document.createElement('div');l.className='su'+(s%3===1||s===2?' red':'');l.textContent=S[s];bd.appendChild(l);for(let r=1;r<=13;r++){const d=document.createElement('div');if(B[s][r]){d.className='on'+(s===1||s===2?' red':'');d.textContent=['','A','2','3','4','5','6','7','8','9','10','J','Q','K'][r]}bd.appendChild(d)}}
+ $('c0').textContent=H[0].length;$('c1').textContent=H[1].length;$('c2').textContent=H[2].length;$('ps').textContent=P[0]+'/3';
+ const h=$('h');h.innerHTML='';H[0].forEach((c,i)=>{const d=document.createElement('div');d.className='pcard'+(c.s===1||c.s===2?' red':'')+(turn===0&&!over?(can(c)?' ok':' dim'):'');d.innerHTML=`${S[c.s]}<br>${['','A','2','3','4','5','6','7','8','9','10','J','Q','K'][c.r]}`;d.onclick=()=>play(i);h.appendChild(d)});
+ $('pass').disabled=over||turn!==0}
+function lose(i){over=true;$('m').textContent=i===0?'パスが4回になって負け…😭':NM[i]+'はパス4回で負け！あなたの勝ち🎉';render()}
+function win(i){over=true;$('m').textContent=i===0?'手札がなくなった！あなたの勝ち🎉':NM[i]+'の勝ち…';render()}
+function next(){if(over)return;turn=(turn+1)%3;render();if(turn===0){$('m').textContent='あなたの番';return}setTimeout(cpu,750)}
+function play(i){if(turn!==0||over)return;const c=H[0][i];if(!can(c)){$('m').textContent='その札はまだ出せないよ';return}B[c.s][c.r]=true;H[0].splice(i,1);if(!H[0].length){win(0);return}next()}
+$('pass').onclick=()=>{if(turn!==0||over)return;if(++P[0]>3){lose(0);return}$('m').textContent='パスしました';next()};
+function cpu(){const h=H[turn],ok=h.map((c,i)=>can(c)?i:-1).filter(i=>i>=0);
+ if(!ok.length){if(++P[turn]>3){lose(turn);return}$('m').textContent=NM[turn]+'はパス（'+P[turn]+'回目）';next();return}
+ const i=ok[Math.random()*ok.length|0],c=h.splice(i,1)[0];B[c.s][c.r]=true;$('m').textContent=NM[turn]+'が '+S[c.s]+['','A','2','3','4','5','6','7','8','9','10','J','Q','K'][c.r]+' を出した';if(!h.length){win(turn);return}next()}
+$('re').onclick=start;start();
+</script></body></html>

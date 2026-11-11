@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】卓球</title><link rel="stylesheet" href="../lab.css"><style></style></head><body><div class="wrap"><div class="top"><a href="../">ラボ</a><h1>卓球 <span class="tag">叩き台</span></h1></div><div class="info"><div>ムーン<b id="cs">0</b></div><div>あなた<b id="ps">0</b></div></div>
+<canvas id="c" width="360" height="560"></canvas><div class="msg" id="m">下のラケットを指でうごかそう。タップでサーブ！</div><div class="row"><button class="btn" id="re">はじめから</button></div></div><script>
+const cv=document.getElementById('c'),x=cv.getContext('2d'),$=id=>document.getElementById(id),W=360,H=560;
+let pl,cp,ball,ps,cs,srv,state,sv;
+function reset(){ps=cs=0;srv=0;newPoint();upd()}
+function upd(){$('ps').textContent=ps;$('cs').textContent=cs}
+function newPoint(){pl={x:W/2};cp={x:W/2};ball={x:W/2,y:srv?120:H-110,vx:0,vy:0,z:0,vz:0,on:false};state='serve';$('m').textContent=srv?'ムーンのサーブ…':'タップでサーブ！'; if(srv)setTimeout(()=>{if(state==='serve')launch(1)},900)}
+function launch(dir){ball.on=true;ball.vx=(Math.random()-.5)*120;ball.vy=dir*(260);ball.z=30;ball.vz=0;state='play'}
+function pos(e){const r=cv.getBoundingClientRect();return (e.clientX-r.left)*W/r.width}
+cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);pl.x=pos(e);if(state==='serve'&&!srv)launch(-1)};
+cv.onpointermove=e=>{if(e.buttons||e.pointerType==='touch')pl.x=Math.max(30,Math.min(W-30,pos(e)))};
+let last=performance.now();
+function loop(now){const dt=Math.min(.04,(now-last)/1000);last=now;
+ if(state==='play'){ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;ball.vz-=520*dt;ball.z+=ball.vz*dt;
+  if(ball.z<0){ball.z=0;ball.vz=Math.abs(ball.vz)*.82+ (ball.vz===0?0:0)}
+  if(ball.x<40||ball.x>W-40){ball.vx*=-1;ball.x=Math.max(40,Math.min(W-40,ball.x))}
+  // cpu
+  const tx=ball.vy<0?ball.x:W/2;cp.x+=Math.max(-150*dt,Math.min(150*dt,tx-cp.x));
+  if(ball.vy>0&&ball.y>H-70&&ball.y<H-40&&Math.abs(ball.x-pl.x)<42){ball.vy=-Math.abs(ball.vy)*1.04;ball.vx+=(ball.x-pl.x)*5;ball.vz=Math.max(ball.vz,190);}
+  if(ball.vy<0&&ball.y<70&&ball.y>40&&Math.abs(ball.x-cp.x)<(Math.random()<.002?5:40)){ball.vy=Math.abs(ball.vy)*1.04;ball.vx+=(ball.x-cp.x)*5+(Math.random()-.5)*60;ball.vz=Math.max(ball.vz,190)}
+  if(ball.y>H-20){cs++;srv=1;endPt('ムーンの得点…')}else if(ball.y<20){ps++;srv=0;endPt('ナイス！得点！')}}
+ draw();requestAnimationFrame(loop)}
+function endPt(t){upd();state='wait';$('m').textContent=t;if(ps>=11||cs>=11){$('m').textContent=ps>cs?'あなたの勝ち🎉 '+ps+'-'+cs:'ムーンの勝ち… '+ps+'-'+cs;return}setTimeout(newPoint,1100)}
+function draw(){x.fillStyle='#17306b';x.fillRect(0,0,W,H);x.fillStyle='#1d5fb4';x.beginPath();x.moveTo(60,30);x.lineTo(W-60,30);x.lineTo(W-20,H-30);x.lineTo(20,H-30);x.closePath();x.fill();
+ x.strokeStyle='#fff';x.lineWidth=3;x.stroke();x.beginPath();x.moveTo(W/2,30);x.lineTo(W/2,H-30);x.lineWidth=1.5;x.stroke();
+ x.fillStyle='#fff';x.fillRect(32,H/2-3,W-64,6);x.fillStyle='rgba(255,255,255,.3)';for(let i=0;i<10;i++)x.fillRect(32+i*33,H/2-14,2,14);
+ x.font='34px serif';x.textAlign='center';x.textBaseline='middle';x.fillText('🏓',cp.x,48);x.fillText('🏓',pl.x,H-52);
+ x.fillStyle='rgba(0,0,0,.3)';x.beginPath();x.ellipse(ball.x,ball.y+2,9,4,0,0,7);x.fill();x.fillStyle='#ffb347';x.beginPath();x.arc(ball.x,ball.y-ball.z*.35,9,0,7);x.fill();x.fillStyle='rgba(255,255,255,.6)';x.beginPath();x.arc(ball.x-3,ball.y-ball.z*.35-3,3,0,7);x.fill()}
+$('re').onclick=reset;reset();requestAnimationFrame(loop);
+</script></body></html>
