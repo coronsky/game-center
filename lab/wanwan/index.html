@@ -274,6 +274,7 @@ body[data-vt=neon] .panel .in{background:none;box-shadow:none;border-radius:0}
 body[data-vt=neon] .tray{padding:0;border:solid transparent;border-width:10px 10px;border-image:url(../../img/pz/neon_tray.webp) 34 32 fill/10px 10px stretch;margin:8px 4px 0}
 .tray{align-items:flex-start;align-content:flex-start}.pc{align-content:start;align-self:flex-start}.bc{border-radius:0}.pc i{border-radius:0}.pc{background:transparent!important;border-radius:10px}.pc.sel{background:rgba(255,230,120,.35)!important}
 #tiers{gap:3px;overflow:visible}#tiers button{flex:1 1 0;min-width:0;padding:7px 1px;font-size:clamp(8px,2.55vw,12px);border-radius:12px}
+#gims{gap:4px}#gims button{flex:1 1 0;min-width:0;padding:8px 2px;font-size:12px;white-space:nowrap}
 </style><link rel="manifest" href="../../manifest.webmanifest"><link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style><style>
 body .panel{background:none!important;box-shadow:none!important;border:0!important;padding:0!important;margin:6px 4px 0}body .panel .in{background:none!important;box-shadow:none!important;padding:0!important;overflow:visible}
 #cv{width:100%;height:auto;display:block;border-radius:12px;touch-action:none}
@@ -291,6 +292,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">わんわんトレイン</div></div>
   <div class="hud"><div class="box"><small>ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box"><small>★スター</small><b id="stars">0/0</b></div><div class="box"><small>ライフ</small><b id="lives">♥♥♥</b></div></div>
   <div class="lvRow" id="sizes"><button data-v="">おまかせ</button><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
+  <div class="lvRow" id="gims"><button data-v="auto">おまかせ</button><button data-v="none">なし</button><button data-v="cross">十字</button><button data-v="warp">ワープ</button><button data-v="jump">ジャンプ</button><button data-v="all">ぜんぶ</button></div>
   <div class="lvRow" id="diffs"><button data-v="easy">かんたん</button><button data-v="normal">ふつう</button><button data-v="hard">むずかしい</button></div>
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv"></canvas></div></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt">線路をつないで！</span></div>
@@ -301,6 +303,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 わんわんトレイン</h2>
 <p>空きマスに<b>パネルをスライド</b>（タップ or スワイプ）して、スタートからゴールまで<b>線路をつなごう</b>！列車は少ししたら自動で出発します。</p>
 <p>枠の上の<b>スタートの鳥居</b>から列車が出発し、<b>ゴールの鳥居</b>をくぐればクリア！鳥居の場所はステージごとに変わるよ。</p>
+<p><b>十字</b>は縦横どちらからも通れる交差、<b>ワープ</b>は同じ色のトンネルへ瞬間移動、<b>ジャンプ台</b>は1マス飛び越えて着地します。</p>
 <p>⭐を取るとスコアUP。全部取るとボーナス＋評価アップ。5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
 <p>ゴールが見えたら<b>▶▶はやく</b>で列車を3倍速に！線路がつながっていないと脱線してハートが減ります。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
@@ -329,7 +332,7 @@ const THEMES={
 };
 const IMG={};
 function img(n){let i=IMG[n];if(!i){i=new Image();i.src='assets/'+n+'.webp';IMG[n]=i}return i.complete&&i.naturalWidth?i:null}
-['natural','retro','neon'].forEach(t=>{img(t+'_board');img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k))});
+['natural','retro','neon'].forEach(t=>{img(t+'_board');img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k));['cross','wr','wb','jump'].forEach(k=>img(t+'_x_'+k))});
 ['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f)});
 [['natural',[0,1,3,5]],['retro',[0,1,3,5]],['neon',[0,1,2,5]]].forEach(([t,rs])=>rs.forEach(r=>{for(let f=0;f<6;f++)img('fx_'+t+'_'+r+f)}));
 const BOARD={natural:[66/718,55/724,664/718,668/724],retro:[54/719,48/724,660/719,672/724],neon:[52/727,46/724,658/727,672/724]};
@@ -337,10 +340,19 @@ function tileImg(conns){const k={'02':'v','13':'h','01':'tr','12':'rb','23':'bl'
 let skin='natural',diff=store.get('wanwan_diff','normal');
 if(!DIFF[diff])diff='normal';
 let sizeMode=store.get('wanwan_size','');if(!['','4','5','6'].includes(sizeMode))sizeMode='';
+let gimMode=store.get('wanwan_gim','auto');if(!['auto','none','cross','warp','jump','all'].includes(gimMode))gimMode='auto';
 let hi=+store.get('wanwan_hi','0')||0;
 
-const has=(p,s)=>p.conns[0]===s||p.conns[1]===s;
-const other=(p,s)=>p.conns[0]===s?p.conns[1]:p.conns[0];
+const has=(p,s)=>p.kind==='cross'?true:(p.kind==='warp'||p.kind==='jump')?p.d===s:(p.conns[0]===s||p.conns[1]===s);
+const other=(p,s)=>(p.kind==='cross'||p.kind==='jump')?(s+2)%4:(p.conns[0]===s?p.conns[1]:p.conns[0]);
+function warpPartner(board,p){for(let r=0;r<N;r++)for(let c=0;c<N;c++){const q=board[r][c];if(q&&q!==p&&q.kind==='warp'&&q.pair===p.pair)return[r,c,q]}return null}
+function resolve(board,r,c,e){
+  const p=board[r][c];if(!p||!has(p,e))return null;
+  if(p.kind==='warp'){const w=warpPartner(board,p);if(!w)return null;const x=w[2].d;return{kind:'warp',x,fr:w[0],fc:w[1],nr:w[0]+DR[x],nc:w[1]+DC[x],ne:(x+2)%4}}
+  const x=other(p,e);
+  if(p.kind==='jump'){const nr=r+2*DR[x],nc=c+2*DC[x];if(!inB(nr,nc))return null;return{kind:'jump',x,fr:r,fc:c,nr,nc,ne:(x+2)%4}}
+  return{kind:'norm',x,fr:r,fc:c,nr:r+DR[x],nc:c+DC[x],ne:(x+2)%4};
+}
 const rnd=n=>Math.random()*n|0;
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
 const inB=(r,c)=>r>=0&&c>=0&&r<N&&c<N;
@@ -363,11 +375,10 @@ function trackPose(a,b,t){
 /* ---------- ステージ生成（必ずクリア可能） ---------- */
 function simulate(board,S0,Gl){
   let r=S0.r,c=S0.c,e=S0.e;
-  for(let i=0;i<120;i++){
-    const p=board[r][c];if(!p||!has(p,e))return false;
-    const x=other(p,e),nr=r+DR[x],nc=c+DC[x];
-    if(!inB(nr,nc))return r===Gl.r&&c===Gl.c&&x===Gl.x;
-    r=nr;c=nc;e=(x+2)%4;
+  for(let i=0;i<150;i++){
+    const res=resolve(board,r,c,e);if(!res)return false;
+    if(!inB(res.nr,res.nc))return res.fr===Gl.r&&res.fc===Gl.c&&res.x===Gl.x;
+    r=res.nr;c=res.nc;e=res.ne;
   }
   return false;
 }
@@ -376,46 +387,61 @@ function genLevel(stage){
   const minLen=Math.min({4:7,5:9,6:12}[N]+Math.floor((stage-1)/2),{4:10,5:15,6:20}[N]),maxLen=Math.min(N*N-5,24);
   const edges=[];for(let i=0;i<N;i++){edges.push([0,i,0],[N-1,i,2],[i,0,3],[i,N-1,1])}
   const pick=(ed,cell)=>{const o=edges.filter(q=>q[0]===cell[0]&&q[1]===cell[1]);return o[rnd(o.length)][2]};
-  let path=null,dirs=null,S0=null,Gl=null;
-  for(let att=0;att<400&&!path;att++){
-    let a0,g0;
-    if(stage<=2){a0=[rnd(N),0];g0=[rnd(N),N-1]}
-    else{const E=edges.map(q=>[q[0],q[1]]);a0=E[rnd(E.length)];
-      const far=E.filter(q=>Math.abs(q[0]-a0[0])+Math.abs(q[1]-a0[1])>=(stage<6?N-1:N));g0=far.length?far[rnd(far.length)]:E[rnd(E.length)];
-      if(a0[0]===g0[0]&&a0[1]===g0[1])continue}
-    const used=Array.from({length:N},()=>Array(N).fill(false));
-    const pa=[a0],di=[];used[a0[0]][a0[1]]=true;let steps=0;
-    const dfs=(r,c)=>{
-      if(pa.length>maxLen)return false;
-      if(r===g0[0]&&c===g0[1])return pa.length>=minLen;
-      if(++steps>5000)return false;
-      for(const d of shuffle([0,1,2,3])){
-        const nr=r+DR[d],nc=c+DC[d];
-        if(!inB(nr,nc)||used[nr][nc])continue;
-        used[nr][nc]=true;pa.push([nr,nc]);di.push(d);
-        if(dfs(nr,nc))return true;
-        used[nr][nc]=false;pa.pop();di.pop();
-      }
-      return false;
-    };
-    if(dfs(a0[0],a0[1])){path=pa;dirs=di;S0={r:a0[0],c:a0[1],e:pick(edges,a0)};Gl={r:g0[0],c:g0[1],x:pick(edges,g0)}}
+  // ギミックの希望
+  const want={cross:false,warp:false,jump:false};
+  if(gimMode==='all'){want.cross=want.warp=want.jump=true}
+  else if(gimMode==='auto'){want.cross=stage>=2;want.warp=stage>=4;want.jump=stage>=6}
+  else if(want[gimMode]!==undefined)want[gimMode]=true;
+  let path=null,dirs=null,S0=null,Gl=null,plan=null;
+  for(const wn of [want,{cross:false,warp:false,jump:false}]){
+    for(let att=0;att<500&&!path;att++){
+      let a0,g0;
+      if(stage<=2){a0=[rnd(N),0];g0=[rnd(N),N-1]}
+      else{const E=edges.map(q=>[q[0],q[1]]);a0=E[rnd(E.length)];
+        const far=E.filter(q=>Math.abs(q[0]-a0[0])+Math.abs(q[1]-a0[1])>=(stage<6?N-1:N));g0=far.length?far[rnd(far.length)]:E[rnd(E.length)];
+        if(a0[0]===g0[0]&&a0[1]===g0[1])continue}
+      const used=Array.from({length:N},()=>Array(N).fill(false));
+      const pa=[a0],di=[];used[a0[0]][a0[1]]=true;let steps=0;
+      const dfs=(r,c)=>{
+        if(pa.length>maxLen)return false;
+        if(r===g0[0]&&c===g0[1])return pa.length>=minLen;
+        if(++steps>5000)return false;
+        for(const d of shuffle([0,1,2,3])){
+          const nr=r+DR[d],nc=c+DC[d];
+          if(!inB(nr,nc)||used[nr][nc])continue;
+          used[nr][nc]=true;pa.push([nr,nc]);di.push(d);
+          if(dfs(nr,nc))return true;
+          used[nr][nc]=false;pa.pop();di.pop();
+        }
+        return false;
+      };
+      if(!dfs(a0[0],a0[1]))continue;
+      const s0={r:a0[0],c:a0[1],e:pick(edges,a0)},gl={r:g0[0],c:g0[1],x:pick(edges,g0)};
+      const pl=planGim(pa,di,s0,gl,wn,stage);
+      if(pl){path=pa;dirs=di;S0=s0;Gl=gl;plan=pl}
+    }
+    if(path)break;
   }
-  if(!path){path=Array.from({length:N},(_,c)=>[1,c]);dirs=Array(N-1).fill(1);S0={r:1,c:0,e:3};Gl={r:1,c:N-1,x:1}}
+  if(!path){path=Array.from({length:N},(_,c)=>[1,c]);dirs=Array(N-1).fill(1);S0={r:1,c:0,e:3};Gl={r:1,c:N-1,x:1};plan={sp:{},rm:new Set()}}
+  const L=path.length;
   const board=Array.from({length:N},()=>Array(N).fill(null));
   path.forEach(([r,c],i)=>{
-    const e=i===0?S0.e:(dirs[i-1]+2)%4,x=i===path.length-1?Gl.x:dirs[i];
+    if(plan.rm.has(i))return;
+    const sp=plan.sp[i];
+    if(sp){board[r][c]=sp.kind==='cross'?{kind:'cross',conns:[0,2],bonus:null}:{kind:sp.kind,d:sp.d,pair:sp.pair,conns:[sp.d,-1],bonus:null};return}
+    const e=i===0?S0.e:(dirs[i-1]+2)%4,x=i===L-1?Gl.x:dirs[i];
     board[r][c]={conns:[e,x],bonus:null};
   });
-  const inPath=new Set(path.map(([r,c])=>r*N+c)),free=[];
+  const inPath=new Set(path.filter((_,i)=>!plan.rm.has(i)).map(([r,c])=>r*N+c)),free=[];
   for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(!inPath.has(r*N+c))free.push([r,c]);
   shuffle(free);
   const nRock=N===4?0:stage<3?0:stage<6?1:stage<10?2:3;
   free.forEach(([r,c],i)=>{board[r][c]=i<nRock?{conns:[-1,-1],rock:true}:{conns:TYPES[rnd(6)].slice(),bonus:null}});
-  let empty=free[nRock+rnd(free.length-nRock)];board[empty[0]][empty[1]]=null;
-  const mids=[];for(let i=2;i<path.length-1;i++)mids.push(i);shuffle(mids);
+  let empty=free[nRock+rnd(Math.max(1,free.length-nRock))];board[empty[0]][empty[1]]=null;
+  const mids=[];for(let i=2;i<L-1;i++)if(!plan.rm.has(i)&&!plan.sp[i])mids.push(i);shuffle(mids);
   const nStar=stage<=2?2:3;
-  board[path[mids[0]][0]][path[mids[0]][1]].bonus='station';
-  for(let k=1;k<=nStar&&k<mids.length;k++)board[path[mids[k]][0]][path[mids[k]][1]].bonus='star';
+  if(mids.length){board[path[mids[0]][0]][path[mids[0]][1]].bonus='station';
+    for(let k=1;k<=nStar&&k<mids.length;k++)board[path[mids[k]][0]][path[mids[k]][1]].bonus='star'}
   // 逆向きにスライドして崩す（必ず元に戻せる）
   let last=null;
   const scr=k=>{for(let i=0;i<k;i++){
@@ -428,7 +454,33 @@ function genLevel(stage){
   for(let k=0;k<20&&simulate(board,S0,Gl);k++)scr(6);
   return{board,S0,Gl};
 }
-
+/* ギミック配置の計画：path上のどのマスを十字/ワープ/ジャンプ台にするか（作れなければnull） */
+function planGim(pa,di,S0,Gl,want,stage){
+  const L=pa.length,sp={},rm=new Set(),occ=new Set();
+  const free=(...ix)=>ix.every(i=>!occ.has(i));
+  const entry=i=>i===0?S0.e:(di[i-1]+2)%4;
+  const exitD=i=>i===L-1?Gl.x:di[i];
+  if(want.warp){
+    const c=[];for(let i=1;i<L-3;i++)for(let j=i+3;j<L;j++)c.push([i,j]);shuffle(c);
+    const ch=c[0];if(!ch)return null;
+    const [i,j]=ch,pair=rnd(2);
+    sp[i]={kind:'warp',d:entry(i),pair};sp[j]={kind:'warp',d:exitD(j),pair};
+    for(let k=i;k<=j;k++){occ.add(k);if(k>i&&k<j)rm.add(k)}
+  }
+  const W=want.warp?Object.keys(sp).map(Number):[];
+  if(want.jump){
+    const c=[];for(let m=1;m+2<L;m++)if(di[m-1]===di[m]&&di[m]===di[m+1]&&free(m,m+1)&&!rm.has(m+2)&&!(W.length&&m+2===W[1]))c.push(m);
+    const cc=c;shuffle(cc);
+    const m=cc[0];if(m===undefined)return null;
+    sp[m]={kind:'jump',d:(di[m]+2)%4};rm.add(m+1);occ.add(m);occ.add(m+1);
+  }
+  if(want.cross){
+    const c=[];for(let i=1;i<L-1;i++)if(di[i-1]===di[i]&&free(i))c.push(i);shuffle(c);
+    const n=Math.min(c.length,stage<6?1:2);if(!n)return null;
+    for(let k=0;k<n;k++){sp[c[k]]={kind:'cross'};occ.add(c[k])}
+  }
+  return{sp,rm};
+}
 /* ---------- ゲーム状態 ---------- */
 const G={stage:1,score:0,lives:3,board:null,snap:'',S0:null,Gl:null,state:'title',timer:0,train:null,miss:0,moves:0,fast:false,starsGot:0,starsTot:0,stageScore:0,prev:'',parts:[],puffT:0,shakeT:0,fx:[]};
 function fx(k,x,y,size,dur=.6){G.fx.push({k,x,y,size,t:0,dur})}
@@ -469,11 +521,21 @@ function collect(p){
   else if(p.bonus==='star'){G.starsGot++;try{SFX.star()}catch(_){}addScore(300);say('moon','スター！ +300')}
   p.bonus=null;
 }
+function nextRes(){
+  const T=G.train,p=G.board[T.r][T.c];if(!p)return null;
+  if(T.mode==='wo'){const x=p.d;return{kind:'norm',x,fr:T.r,fc:T.c,nr:T.r+DR[x],nc:T.c+DC[x],ne:(x+2)%4}}
+  return resolve(G.board,T.r,T.c,T.e);
+}
 function nextOk(){
-  const T=G.train,p=G.board[T.r][T.c];if(!p)return false;
-  const x=other(p,T.e),nr=T.r+DR[x],nc=T.c+DC[x];
-  if(!inB(nr,nc))return T.r===G.Gl.r&&T.c===G.Gl.c&&x===G.Gl.x;
-  const q=G.board[nr][nc];return !!(q&&has(q,(x+2)%4));
+  const res=nextRes();if(!res)return false;
+  if(!inB(res.nr,res.nc))return res.fr===G.Gl.r&&res.fc===G.Gl.c&&res.x===G.Gl.x;
+  const q=G.board[res.nr][res.nc];return !!(q&&has(q,res.ne));
+}
+function enterCell(r,c,e){
+  const T=G.train,p=G.board[r][c];
+  T.r=r;T.c=c;T.e=e;T.t=0;T.warned=false;T.phase='cell';
+  T.mode=p.kind==='warp'?'wi':p.kind==='jump'?'ramp':'norm';
+  collect(p);
 }
 function derail(){
   const pose=trainWorld();
@@ -504,8 +566,23 @@ function trainWorld(){
   const T=G.train;
   if(T.phase==='approach'){const g=G.S0,m=sideMid(g.e);return{x:M+g.c*S+m[0]+DC[g.e]*S*.7*(1-T.t),y:BY+g.r*S+m[1]+DR[g.e]*S*.7*(1-T.t),a:Math.atan2(-DR[g.e],-DC[g.e])}}
   if(T.phase==='goal'){const g=G.Gl,m=sideMid(g.x);return{x:M+g.c*S+m[0]+DC[g.x]*S*.7*T.t,y:BY+g.r*S+m[1]+DR[g.x]*S*.7*T.t,a:Math.atan2(DR[g.x],DC[g.x])}}
-  const p=G.board[T.r][T.c],tp=trackPose(T.e,other(p,T.e),Math.min(1,Math.max(0,T.t)));
-  const o=off(p);return{x:M+T.c*S+tp.x+o[0],y:BY+T.r*S+tp.y+o[1],a:tp.a};
+  const p=G.board[T.r][T.c],o=off(p),bx=M+T.c*S+o[0],by=BY+T.r*S+o[1];
+  if(T.phase==='warp'){const m=sideMid(T.e);return{x:bx+S/2-DC[T.e]*S*.12,y:by+S/2-DR[T.e]*S*.12,a:0,al:0}}
+  if(T.phase==='jump'){
+    const x=T.jx,m=sideMid(x),h=Math.sin(Math.PI*T.t),k=Math.max(0,Math.min(1,T.t));
+    const gx=bx+m[0]+DC[x]*S*k,gy=by+m[1]+DR[x]*S*k;
+    return{x:gx,y:gy-h*S*.42,a:Math.atan2(DR[x],DC[x]),sc:1+.35*h,gx,gy,h};
+  }
+  const t=Math.min(1,Math.max(0,T.t));
+  if(T.mode==='wi'||T.mode==='wo'){
+    const dd=T.mode==='wi'?T.e:p.d,A=sideMid(dd),mx=S/2-DC[dd]*S*.12,my=S/2-DR[dd]*S*.12;
+    const f=T.mode==='wi'?t:1-t;
+    const ang=Math.atan2(T.mode==='wi'?-DR[dd]:DR[dd],T.mode==='wi'?-DC[dd]:DC[dd]);
+    const al=T.mode==='wi'?(t<.65?1:Math.max(0,1-(t-.65)/.3)):(t<.3?t/.3:1);
+    return{x:bx+A[0]+(mx-A[0])*f,y:by+A[1]+(my-A[1])*f,a:ang,al,sc:.6+.4*(T.mode==='wi'?1-Math.max(0,t-.5)*.8:Math.min(1,t/.4))};
+  }
+  const tp=trackPose(T.e,other(p,T.e),t);
+  return{x:bx+tp.x,y:by+tp.y,a:tp.a,sc:(p.kind==='jump'&&t>.4)?1+.18*Math.min(1,(t-.4)/.4):1};
 }
 function off(p){
   if(!p.anim)return[0,0];
@@ -535,23 +612,45 @@ function moveTrain(dt){
     if(T.t>=1){
       const p=G.board[T.r][T.c];
       if(!p||!has(p,T.e)){T.t=1;derail();return}
-      T.phase='cell';T.t=0;collect(p);
+      enterCell(T.r,T.c,T.e);
     }
   }else if(T.phase==='cell'){
     T.t+=dt/ct;
     if(T.t>.45&&!T.warned){T.warned=true;if(!nextOk())say('moon','あぶなーい！',1200)}
     if(T.t>=1){
-      const p=G.board[T.r][T.c],x=other(p,T.e),nr=T.r+DR[x],nc=T.c+DC[x];
-      if(!inB(nr,nc)){
-        if(T.r===G.Gl.r&&T.c===G.Gl.c&&x===G.Gl.x){addScore(100);T.phase='goal';T.t=0;fx(3,M+G.Gl.c*S+S/2,BY+G.Gl.r*S+S/2,S*1.8,1.2)}
+      const p=G.board[T.r][T.c];
+      if(T.mode==='wi'){
+        T.phase='warp';T.t=0;fx(2,M+T.c*S+S/2,BY+T.r*S+S*.4,S*1.4,.5);try{SFX.star()}catch(_){}return;
+      }
+      const res=nextRes();
+      if(!res){T.t=1;derail();return}
+      if(res.kind==='jump'){T.phase='jump';T.t=0;T.jx=res.x;say('colon','ジャンプ！',900);return}
+      if(!inB(res.nr,res.nc)){
+        if(res.fr===G.Gl.r&&res.fc===G.Gl.c&&res.x===G.Gl.x){addScore(100);T.phase='goal';T.t=0;fx(3,M+G.Gl.c*S+S/2,BY+G.Gl.r*S+S/2,S*1.8,1.2)}
         else{T.t=1;derail()}
         return;
       }
-      const q=G.board[nr][nc];
-      if(q&&has(q,(x+2)%4)){
-        addScore(100);T.r=nr;T.c=nc;T.e=(x+2)%4;T.t-=1;T.warned=false;T.steps++;collect(q);
+      const q=G.board[res.nr][res.nc];
+      if(q&&has(q,res.ne)){
+        const carry=T.t-1;addScore(100);T.steps++;enterCell(res.nr,res.nc,res.ne);T.t=carry;
         if(T.steps%4===0)say('colon','いい感じ！',1000);
       }else{T.t=1;derail()}
+    }
+  }else if(T.phase==='warp'){
+    T.t+=dt/(ct*.45);
+    if(T.t>=1){
+      const w=warpPartner(G.board,G.board[T.r][T.c]);
+      if(!w){T.t=1;derail();return}
+      T.r=w[0];T.c=w[1];T.e=w[2].d;T.mode='wo';T.t=0;T.warned=false;T.phase='cell';
+      fx(2,M+T.c*S+S/2,BY+T.r*S+S*.4,S*1.4,.5);addScore(200);
+    }
+  }else if(T.phase==='jump'){
+    T.t+=dt/(ct*.85);
+    if(T.t>=1){
+      const res=resolve(G.board,T.r,T.c,T.e);
+      const q=res&&G.board[res.nr][res.nc];
+      if(res&&q&&has(q,res.ne)){addScore(300);enterCell(res.nr,res.nc,res.ne);fx(0,M+res.nc*S+S/2,BY+res.nr*S+S/2,S*1.1,.5)}
+      else{T.t=1;derail()}
     }
   }else if(T.phase==='goal'){
     T.t+=dt/(ct*.8);if(T.t>=1){T.t=1;if(G.state==='run')clearStage()}
@@ -618,12 +717,16 @@ function drawArch(name,cx,y,th){
   else{ctx.save();ctx.fillStyle=th.sign;rr(cx-20,y-27,40,16,5);ctx.fill();ctx.fillStyle=th.signTx;ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.fillText(name.startsWith('goal')?'GOAL':'START',cx,y-16);ctx.restore()}
 }
 function drawTrain(p,th){
+  if(p.al===0)return;
+  if(p.gx!==undefined){ctx.save();ctx.fillStyle='rgba(0,0,0,.28)';ctx.beginPath();ctx.ellipse(p.gx,p.gy+S*.1,S*.3*(1-.25*p.h),S*.1,0,0,7);ctx.fill();ctx.restore()}
   const c=Math.cos(p.a),s=Math.sin(p.a);
   const d=Math.abs(c)>=Math.abs(s)?(c>0?'r':'l'):(s>0?'d':'u');
   const f=G.state==='run'?((performance.now()/110|0)%4):0;
   const im=img('train_'+d+f);
   ctx.save();if(th.glow){ctx.shadowColor=th.glow;ctx.shadowBlur=12}
-  if(im){drawImg(im,p.x,p.y-S*.08,S*.95,S*.95);ctx.restore();return}
+  if(p.al!==undefined)ctx.globalAlpha=p.al;
+  const sc=p.sc||1;
+  if(im){drawImg(im,p.x,p.y-S*.08,S*.95*sc,S*.95*sc);ctx.restore();return}
   ctx.translate(p.x,p.y);ctx.rotate(p.a);
   ctx.fillStyle=th.body;rr(-17,-9,34,18,5);ctx.fill();
   ctx.fillStyle=th.front;rr(2,-7,15,14,4);ctx.fill();
@@ -663,9 +766,9 @@ function draw(){
     if(p.shake&&now-p.shake<300)sx=Math.sin((now-p.shake)/20)*3;
     const x=M+c*S+o[0]+sx,y=BY+r*S+o[1];
     if(p.rock){drawRock(x,y,th);continue}
-    const ti=tileImg(p.conns),im=ti&&img(skin+'_t_'+ti[0]);
+    const ti=p.kind?null:tileImg(p.conns),im=p.kind?img(skin+'_x_'+(p.kind==='cross'?'cross':p.kind==='jump'?'jump':(p.pair?'wb':'wr'))):ti&&img(skin+'_t_'+ti[0]);
     ctx.save();ctx.shadowColor='rgba(0,0,0,.28)';ctx.shadowBlur=4;ctx.shadowOffsetY=2;
-    if(im){ctx.shadowColor='transparent';ctx.drawImage(im,x,y,S,S);ctx.restore()}
+    if(im){ctx.shadowColor='transparent';if(p.kind==='warp'||p.kind==='jump'){ctx.translate(x+S/2,y+S/2);ctx.rotate((p.d-(p.kind==='warp'?2:3))*Math.PI/2);ctx.drawImage(im,-S/2,-S/2,S,S)}else ctx.drawImage(im,x,y,S,S);ctx.restore()}
     else{
       if(blank&&skin==='natural')ctx.drawImage(blank,x+2,y+2,S-4,S-4);
       else{ctx.fillStyle=th.tile;rr(x+2,y+2,S-4,S-4,7);ctx.fill()}
@@ -704,11 +807,13 @@ function loop(t){
 /* ---------- UI ---------- */
 function refresh(){
   document.querySelectorAll('#sizes button').forEach(b=>b.classList.toggle('on',b.dataset.v===sizeMode));
+  document.querySelectorAll('#gims button').forEach(b=>b.classList.toggle('on',b.dataset.v===gimMode));
   document.querySelectorAll('#diffs button').forEach(b=>b.classList.toggle('on',b.dataset.v===diff));
   $('#bFast').classList.toggle('on',!!G.fast);
   $('#bestN').textContent=hi.toLocaleString();
 }
 $('#diffs').onclick=e=>{const v=e.target.dataset.v;if(v){diff=v;store.set('wanwan_diff',v);refresh();if(G.state==='ready'||G.state==='run'){begin()}}};
+$('#gims').onclick=e=>{const v=e.target.dataset.v;if(v){gimMode=v;store.set('wanwan_gim',v);refresh();if(['ready','run','derail','clear'].includes(G.state)){$('#mMsg').classList.remove('show');G.state='ready';newStage()}}};
 $('#sizes').onclick=e=>{const v=e.target.dataset.v;if(v!==undefined){sizeMode=v;store.set('wanwan_size',v);refresh();if(['ready','run','derail','clear'].includes(G.state)){$('#mMsg').classList.remove('show');G.state='ready';newStage()}}};
 $('#bGo').onclick=()=>{actx();go()};
 $('#bFast').onclick=()=>{actx();if(G.state==='ready')go();if(G.state==='run'||G.state==='ready'){G.fast=!G.fast;$('#bFast').classList.toggle('on',G.fast)}};
