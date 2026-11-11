@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】フリスビーキャッチ</title><link rel="stylesheet" href="../lab.css"><style>.sk{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.sk button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:12px;padding:6px 8px;font:inherit;font-weight:900;font-size:12px;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}.sk button i{width:28px;height:12px;border-radius:50%;display:block;border:2px solid rgba(0,0,0,.15)}.sk button.on{border-color:#5c8858;background:#eef5e6}.sk button small{font-size:10px;opacity:.8}</style></head><body><div class="wrap"><div class="top"><a href="../">ラボ</a><h1>フリスビーキャッチ <span class="tag">叩き台</span></h1></div><div class="info"><div>なげた数<b id="n">0/10</b></div><div>スコア<b id="sc">0</b></div><div>コンボ<b id="cb">0</b></div><div>🪙コイン<b id="co">0</b></div></div>
 <canvas id="c" width="360" height="520"></canvas><div class="msg" id="m"></div><div class="row"><button class="btn" id="re">もういちど</button></div>
 <div class="card2"><b style="font-size:13px">フリスビーのがら（コインでこうかん）</b><div class="sk" id="sk"></div></div>
-<p style="font-size:11px;opacity:.75">左のスライダーで高さをきめて（はなした瞬間の高さ）、スワイプで投げます。スワイプを右にふくらませると右カーブ、左にふくらませると左カーブ。まっすぐキレイに振ると平らに飛び、ぶれるとフリスビーがゆれます。高く投げると空中時間が長く、ワンコが遠くまで間に合います。春夏秋冬を5投ずつ（全20投）。カラスはフリスビーを弾き、ネコの近くではワンコの足が遅くなる。冬は足がすべる。風を読んで、ワンコの先をねらおう。奥のエリアや端、光る「×3」ゾーンで取ると高得点。ワンコがギリギリ間に合うと「ジャンプキャッチ」！連続キャッチでコンボ倍率アップ。</p></div><script>
+<p style="font-size:11px;opacity:.75">スワイプを始めると左のスライダーが自動で上下に動き、指をはなした瞬間の高さで止まってその高さで飛びます。スワイプを右にふくらませると右カーブ、左にふくらませると左カーブ。まっすぐキレイに振ると平らに飛び、ぶれるとフリスビーがゆれます。高く投げると空中時間が長く、ワンコが遠くまで間に合います。春夏秋冬を5投ずつ（全20投）。カラスはフリスビーを弾き、ネコの近くではワンコの足が遅くなる。冬は足がすべる。風を読んで、ワンコの先をねらおう。奥のエリアや端、光る「×3」ゾーンで取ると高得点。ワンコがギリギリ間に合うと「ジャンプキャッチ」！連続キャッチでコンボ倍率アップ。</p></div><script>
 const cv=document.getElementById('c'),x=cv.getContext('2d'),W=360,H=520,$=id=>document.getElementById(id);
 const SK=[['レッド','#ff6b6b',0],['ブルー','#4aa3ff',20],['ゴールド','#ffcf33',40],['ピンク','#ff8ac8',60],['レインボー','rb',100]];
 const LS=k=>{try{return JSON.parse(localStorage.getItem('lab_fr_'+k))}catch(e){return null}},SS=(k,v)=>localStorage.setItem('lab_fr_'+k,JSON.stringify(v));
@@ -17,16 +17,15 @@ function shop(){const s=$('sk');s.innerHTML='';SK.forEach((k,i)=>{const b=docume
  b.onclick=()=>{if(owned.includes(i)){cur=i}else if(coins>=k[2]){coins-=k[2];owned.push(i);cur=i}else{$('m').textContent='コインがたりないよ';return}save();shop();hud()};s.appendChild(b)})}
 function hud(){$('n').textContent=n+'/20';$('sc').textContent=sc;$('cb').textContent=cb;$('co').textContent=coins}
 function newDog(){cat=Math.random()<.4?{x:50+Math.random()*260,y:130+Math.random()*220,t:0}:null;crow=null;bonus={x:50+Math.random()*260,y:90+Math.random()*180,r:34};dog={x:W/2+44,y:H-62,fx:1,vx:0,vy:0};wind=Math.round((Math.random()*2-1)*SE().w)}
-function reset(){n=0;sc=0;cb=0;ph='aim';done=false;fr=null;newDog();hud();SPT=[];banner();setTimeout(()=>{$('m').textContent='左のスライダーで高さをきめて、上にスワイプ！曲げて投げるとカーブ'},1500)}
+function reset(){n=0;sc=0;cb=0;ph='aim';done=false;fr=null;newDog();hud();SPT=[];banner();setTimeout(()=>{$('m').textContent='画面をおすと左のスライダーが自動で上下！はなした瞬間の高さで投げるよ。曲げて投げるとカーブ'},1500)}
 $('re').onclick=reset;shop();reset();
 function pos(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height,t:performance.now()}}
-const SLX=24,SY0=130,SY1=420;
-function setSl(y){hv=1-Math.max(0,Math.min(1,(y-SY0)/(SY1-SY0)))}
-cv.onpointerdown=e=>{const p=pos(e);if(p.x<56&&p.y>SY0-24&&p.y<SY1+24&&slId==null){slId=e.pointerId;cv.setPointerCapture(e.pointerId);setSl(p.y);return}
- if(ph!=='aim'||done||swId!=null)return;swId=e.pointerId;cv.setPointerCapture(e.pointerId);tr=[p]};
-cv.onpointermove=e=>{if(e.pointerId===slId)setSl(pos(e).y);else if(e.pointerId===swId)tr.push(pos(e))};
-cv.onpointerup=e=>{if(e.pointerId===slId){slId=null;return}if(e.pointerId!==swId)return;swId=null;tr.push(pos(e));throwIt()};
-cv.onpointercancel=e=>{if(e.pointerId===slId)slId=null;if(e.pointerId===swId){swId=null;tr=[]}};
+const SLX=24,SY0=130,SY1=420;let swT0=0;
+cv.onpointerdown=e=>{if(ph!=='aim'||done||swId!=null)return;swId=e.pointerId;cv.setPointerCapture(e.pointerId);tr=[pos(e)];swT0=performance.now()};
+cv.onpointermove=e=>{if(e.pointerId===swId)tr.push(pos(e))};
+cv.onpointerup=e=>{if(e.pointerId!==swId)return;swId=null;tr.push(pos(e));throwIt()};
+cv.onpointercancel=e=>{if(e.pointerId===swId){swId=null;tr=[]}};
+function sliderTick(){if(swId!=null){const u=((performance.now()-swT0)/1100)%2;hv=u<1?u:2-u}}
 function throwIt(){const T1=tr[tr.length-1].t,P=tr.filter(p=>p.t>T1-450);tr=[];const a=P.filter(p=>p.t>T1-150)[0],b=P[P.length-1];let dx=b.x-a.x,dy=b.y-a.y;
  if(dy>-20||Math.hypot(dx,dy)<30){$('m').textContent='上にむけてシュッとスワイプしてね';return}
  const sp=Math.hypot(dx,dy),ux=dx/sp,uy=dy/sp;
@@ -82,8 +81,8 @@ function draw(){const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,SE().a)
   x.strokeStyle='rgba(255,255,255,.5)';x.setLineDash([4,6]);x.beginPath();x.arc(fr.l.x,fr.l.y,28,0,7);x.stroke();x.setLineDash([])}
  else if(ph==='aim'){frisbee(W/2,H-30,0,1.1);if(tr.length>1){x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=3;x.beginPath();tr.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y));x.stroke()}}
  pop=pop.filter(p=>p.a>0);pop.forEach(p=>{x.globalAlpha=p.a;x.fillStyle='#7a3b00';x.font='bold 15px sans-serif';x.fillText(p.t,p.x,p.y-(1-p.a)*30);p.a-=.012});x.globalAlpha=1;sliderDraw();fxDraw()}
-function sliderDraw(){x.save();x.fillStyle='rgba(255,255,255,.55)';x.beginPath();x.roundRect(SLX-18,SY0-34,36,SY1-SY0+60,18);x.fill();x.strokeStyle='#7a5a3a';x.lineWidth=4;x.lineCap='round';x.beginPath();x.moveTo(SLX,SY0);x.lineTo(SLX,SY1);x.stroke();
- const hy=SY1-hv*(SY1-SY0);x.fillStyle='#ffb02e';x.strokeStyle='#fff';x.lineWidth=3;x.beginPath();x.arc(SLX,hy,15,0,7);x.fill();x.stroke();x.fillStyle='#5a3d2b';x.font='bold 10px sans-serif';x.textAlign='center';x.fillText('たかい',SLX,SY0-20);x.fillText('ひくい',SLX,SY1+22);x.restore()}
+function sliderDraw(){sliderTick();x.save();x.fillStyle='rgba(255,255,255,.55)';x.beginPath();x.roundRect(SLX-18,SY0-34,36,SY1-SY0+60,18);x.fill();x.strokeStyle='#7a5a3a';x.lineWidth=4;x.lineCap='round';x.beginPath();x.moveTo(SLX,SY0);x.lineTo(SLX,SY1);x.stroke();
+ const hy=SY1-hv*(SY1-SY0);x.fillStyle='#ffb02e';x.strokeStyle='#fff';x.lineWidth=3;x.beginPath();x.arc(SLX,hy,15,0,7);x.fill();x.stroke();x.fillStyle='#5a3d2b';x.font='bold 10px sans-serif';x.textAlign='center';x.fillText('たかい',SLX,SY0-20);x.fillText('ひくい',SLX,SY1+22);if(swId!=null){x.strokeStyle='rgba(255,176,46,.8)';x.lineWidth=3;x.beginPath();x.arc(SLX,hy,22,0,7);x.stroke()}x.restore()}
 function fxDraw(){if(eff){eff.t+=.016;const t=eff.t;
   if(t<.7){x.strokeStyle='rgba(255,230,120,'+(1-t/.7)+')';x.lineWidth=6;x.beginPath();x.arc(eff.x,eff.y-30,t*420,0,7);x.stroke()}
   if(t<2){const sc2=t<.25?t/.25*1.25:t<.4?1.25-(t-.25)/.15*.25:1,al=t>1.6?(2-t)/.4:1,g=x.createLinearGradient(40,0,320,0);['#ff4d4d','#ffd23f','#4dd64d','#3aa0ff','#b55cff'].forEach((c,i)=>g.addColorStop(i/4,c));
