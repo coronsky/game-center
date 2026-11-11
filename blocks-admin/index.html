@@ -274,6 +274,7 @@ body[data-vt=neon] .panel .in{background:none;box-shadow:none;border-radius:0}
 body[data-vt=neon] .tray{padding:0;border:solid transparent;border-width:10px 10px;border-image:url(../img/pz/neon_tray.webp) 34 32 fill/10px 10px stretch;margin:8px 4px 0}
 .tray{align-items:flex-start;align-content:flex-start}.pc{align-content:start;align-self:flex-start}.bc{border-radius:0}.pc i{border-radius:0}.pc{background:transparent!important;border-radius:10px}.pc.sel{background:rgba(255,230,120,.35)!important}
 body{--o0:url(../img/pz/o0.webp);--o1:url(../img/pz/o1.webp);--o2:url(../img/pz/o2.webp);--o3:url(../img/pz/o3.webp);--o4:url(../img/pz/o4.webp);--o5:url(../img/pz/o5.webp);--o6:url(../img/pz/o6.webp);--o7:url(../img/pz/o7.webp);}
+#tiers{gap:3px;overflow:visible}#tiers button{flex:1 1 0;min-width:0;padding:7px 1px;font-size:clamp(9px,2.9vw,12px);border-radius:12px}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -415,7 +416,7 @@ function begin(c){ W=c.w;H=c.h;
   pieces=gen(c.w,c.h,c.mn,c.mx,c.pc,c.seed).map((q,k)=>({c:randOrient(q),col:COL[k%COL.length],at:-1})); { const ids=pieces.map((_,i)=>i).sort(()=>Math.random()-.5).slice(0,Math.min(pieces.length,2+((Math.random()*2)|0))); ids.forEach(i=>{ const p=pieces[i], j=(Math.random()*p.c.length)|0; p.c[j]=[p.c[j][0],p.c[j][1],(Math.random()*OVN)|0]; }); } place=new Array(W*H).fill(-1); sel=0; hist=[];
   drawNav(); draw(); setStatus('ブロックでわくをうめよう'); setTimeout(()=>sayText(1,'くみたてるワン！'),300); }
 function drawNav(){ const t=endT>=0?endT:(P.cur/6|0);
-  lvRow($('tiers'),TI.map(x=>x.n).concat(['♾️ エンドレス']),endT>=0?TI.length:t,k=>k<TI.length&&[0,1,2,3,4,5].every(j=>P.done[k*6+j])?1:0,k=>{ if(k===TI.length){ loadEnd(P.endT||0); } else if(endT>=0&&k===t) loadEnd(k); else { const f=[0,1,2,3,4,5].map(j=>k*6+j).find(i=>!P.done[i]); load(f==null?k*6:f); } });
+  lvRow($('tiers'),TI.map(x=>x.n).concat(['♾️ 無限']),endT>=0?TI.length:t,k=>k<TI.length&&[0,1,2,3,4,5].every(j=>P.done[k*6+j])?1:0,k=>{ if(k===TI.length){ loadEnd(P.endT||0); } else if(endT>=0&&k===t) loadEnd(k); else { const f=[0,1,2,3,4,5].map(j=>k*6+j).find(i=>!P.done[i]); load(f==null?k*6:f); } });
   if(endT>=0){ lvRow($('lvs'),TI.map(x=>x.n),endT,null,k=>{P.endT=k;svP();loadEnd(k)}); $('stN').textContent='♾️ '+(P.endN+1)+'問目'; }
   else { lvRow($('lvs'),[0,1,2,3,4,5].map(j=>(t*6+j+1)+''),P.cur%6,j=>P.done[t*6+j]?1:0,j=>load(t*6+j)); $('stN').textContent=(P.cur+1)+'/'+NST; } }
 function load(i){ endT=-1; P.cur=i; svP(); begin(stageCfg(i)); }
