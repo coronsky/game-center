@@ -1,32 +1,49 @@
-<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】フリスビーキャッチ</title><link rel="stylesheet" href="../lab.css"><style></style></head><body><div class="wrap"><div class="top"><a href="../">ラボ</a><h1>フリスビーキャッチ <span class="tag">叩き台</span></h1></div><div class="info"><div>なげた数<b id="n">0/10</b></div><div>キャッチ<b id="sc">0</b></div></div>
-<canvas id="c" width="360" height="520"></canvas><div class="msg" id="m">下からスワイプしてフリスビーを投げよう！ワンコの近くをねらうとキャッチしやすいよ</div><div class="row"><button class="btn" id="re">もういちど</button></div></div><script>
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】フリスビーキャッチ</title><link rel="stylesheet" href="../lab.css"><style>.sk{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.sk button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:12px;padding:6px 8px;font:inherit;font-weight:900;font-size:12px;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}.sk button i{width:28px;height:12px;border-radius:50%;display:block;border:2px solid rgba(0,0,0,.15)}.sk button.on{border-color:#5c8858;background:#eef5e6}.sk button small{font-size:10px;opacity:.8}</style></head><body><div class="wrap"><div class="top"><a href="../">ラボ</a><h1>フリスビーキャッチ <span class="tag">叩き台</span></h1></div><div class="info"><div>なげた数<b id="n">0/10</b></div><div>スコア<b id="sc">0</b></div><div>コンボ<b id="cb">0</b></div><div>🪙コイン<b id="co">0</b></div></div>
+<canvas id="c" width="360" height="520"></canvas><div class="msg" id="m"></div><div class="row"><button class="btn" id="re">もういちど</button></div>
+<div class="card2"><b style="font-size:13px">フリスビーのがら（コインでこうかん）</b><div class="sk" id="sk"></div></div>
+<p style="font-size:11px;opacity:.75">風を読んで、ワンコの先をねらおう。遠くへ投げるほど高得点。ワンコがギリギリ間に合うと「ジャンプキャッチ」！連続キャッチでコンボ倍率アップ。</p></div><script>
 const cv=document.getElementById('c'),x=cv.getContext('2d'),W=360,H=520,$=id=>document.getElementById(id);
-let n=0,sc=0,ph='aim',dog,fr,tr=[],T0=0,done=false,res=0;
-function newDog(){dog={x:60+Math.random()*240,y:150+Math.random()*180,fx:1}}
-function reset(){n=0;sc=0;ph='aim';done=false;newDog();fr=null;$('n').textContent='0/10';$('sc').textContent='0';$('m').textContent='下からスワイプしてフリスビーを投げよう！'}
-$('re').onclick=reset;reset();
+const SK=[['レッド','#ff6b6b',0],['ブルー','#4aa3ff',20],['ゴールド','#ffcf33',40],['ピンク','#ff8ac8',60],['レインボー','rb',100]];
+const LS=k=>{try{return JSON.parse(localStorage.getItem('lab_fr_'+k))}catch(e){return null}},SS=(k,v)=>localStorage.setItem('lab_fr_'+k,JSON.stringify(v));
+let coins=LS('coins')||0,owned=LS('own')||[0],cur=LS('cur')||0,best=LS('best')||0;
+let n=0,sc=0,cb=0,ph='aim',dog,fr,tr=[],done=false,res=null,wind=0,pop=[];
+function save(){SS('coins',coins);SS('own',owned);SS('cur',cur);SS('best',best)}
+function shop(){const s=$('sk');s.innerHTML='';SK.forEach((k,i)=>{const b=document.createElement('button');b.className=i===cur?'on':'';b.innerHTML=`<i style="background:${k[1]==='rb'?'linear-gradient(90deg,#f55,#fd3,#5d5,#4af,#a5f)':k[1]}"></i>${k[0]}<small>${owned.includes(i)?(i===cur?'つかってる':'もってる'):'🪙'+k[2]}</small>`;
+ b.onclick=()=>{if(owned.includes(i)){cur=i}else if(coins>=k[2]){coins-=k[2];owned.push(i);cur=i}else{$('m').textContent='コインがたりないよ';return}save();shop();hud()};s.appendChild(b)})}
+function hud(){$('n').textContent=n+'/10';$('sc').textContent=sc;$('cb').textContent=cb;$('co').textContent=coins}
+function newDog(){dog={x:60+Math.random()*240,y:150+Math.random()*180,fx:1,vx:(Math.random()-.5)*90,vy:(Math.random()-.5)*60};wind=Math.round((Math.random()*2-1)*3)}
+function reset(){n=0;sc=0;cb=0;ph='aim';done=false;fr=null;newDog();hud();$('m').textContent='下からスワイプで投げよう！風をよんで、動くワンコの先をねらってね'}
+$('re').onclick=reset;shop();reset();
 function pos(e){const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height,t:performance.now()}}
 cv.onpointerdown=e=>{if(ph!=='aim'||done)return;cv.setPointerCapture(e.pointerId);tr=[pos(e)]};
 cv.onpointermove=e=>{if(tr.length)tr.push(pos(e))};
-cv.onpointerup=e=>{if(!tr.length)return;tr.push(pos(e));const a=tr.filter(p=>p.t>tr[tr.length-1].t-150)[0],b=tr[tr.length-1];tr=[];let dx=b.x-a.x,dy=b.y-a.y;if(dy>-20||Math.hypot(dx,dy)<30){$('m').textContent='上にむけてシュッとスワイプしてね';return}
+cv.onpointerup=e=>{if(!tr.length)return;tr.push(pos(e));const a=tr.filter(p=>p.t>tr[tr.length-1].t-150)[0],b=tr[tr.length-1];tr=[];const dx=b.x-a.x,dy=b.y-a.y;if(dy>-20||Math.hypot(dx,dy)<30){$('m').textContent='上にむけてシュッとスワイプしてね';return}
  const sp=Math.hypot(dx,dy),dist=Math.max(110,Math.min(380,sp*2.2)),ux=dx/sp,uy=dy/sp,s={x:W/2,y:H-30};
- fr={s,l:{x:Math.max(24,Math.min(W-24,s.x+ux*dist)),y:Math.max(60,s.y+uy*dist)},T:.9+dist/420,t:0,cur:(Math.random()-.5)*60};ph='fly';n++;$('n').textContent=n+'/10';T0=performance.now();res=0};
+ const aimx=s.x+ux*dist,aimy=s.y+uy*dist,drift=wind*22*(dist/300+.4);
+ const l={x:Math.max(24,Math.min(W-24,aimx+drift)),y:Math.max(60,aimy)};
+ fr={s,l,T:.9+dist/420,t:0,cur:(Math.random()-.5)*30,dist:Math.hypot(l.x-s.x,l.y-s.y),d0:Math.hypot(l.x-dog.x,l.y-dog.y)};ph='fly';n++;hud();res=null};
 let last=performance.now();
 function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
- if(ph==='fly'){fr.t+=dt;const k=Math.min(1,fr.t/fr.T);
+ if(ph==='aim'){dog.x+=dog.vx*dt;dog.y+=dog.vy*dt;if(dog.x<30||dog.x>W-30)dog.vx*=-1;if(dog.y<110||dog.y>380)dog.vy*=-1;dog.x=Math.max(30,Math.min(W-30,dog.x));dog.y=Math.max(110,Math.min(380,dog.y));dog.fx=dog.vx>=0?1:-1;if(Math.random()<.01){dog.vx=(Math.random()-.5)*110;dog.vy=(Math.random()-.5)*70}}
+ else if(ph==='fly'){fr.t+=dt;const k=Math.min(1,fr.t/fr.T);
   if(fr.t>.25){const dx=fr.l.x-dog.x,dy=fr.l.y-dog.y,d=Math.hypot(dx,dy);if(d>3){const v=Math.min(d,190*dt);dog.x+=dx/d*v;dog.y+=dy/d*v;if(Math.abs(dx)>2)dog.fx=dx>0?1:-1}}
-  if(k>=1){const d=Math.hypot(fr.l.x-dog.x,fr.l.y-dog.y);ph='res';res=d<30?1:0;if(res){sc++;$('sc').textContent=sc;$('m').textContent='ナイスキャッチ！🐶✨'}else $('m').textContent='あーおしい…！ワンコの近くをねらってみよう';
-   setTimeout(()=>{if(n>=10){done=true;$('m').textContent='おわり！キャッチ '+sc+'/10 '+(sc>=8?'すごい！':sc>=5?'いいね！':'もういちど！')}else{newDog();ph='aim';fr=null}},1300)}}
- else if(ph==='aim'&&dog&&Math.random()<.01)dog.fx*=-1;
+  if(k>=1){const d=Math.hypot(fr.l.x-dog.x,fr.l.y-dog.y),margin=fr.T-(.25+fr.d0/190);ph='res';
+   if(d<30){const jump=margin<.4;cb++;const mult=1+.25*Math.min(cb-1,8),pt=Math.round((20+fr.dist/8)*mult*(jump?2:1)),cn=(jump?3:1)+(cb>=5?1:0);sc+=pt;coins+=cn;res={jump};popAdd(fr.l.x,fr.l.y-40,(jump?'ジャンプキャッチ！ ':'キャッチ！ ')+'+'+pt+' 🪙'+cn);$('m').textContent=(jump?'ギリギリ！ジャンプキャッチ！🐶✨':'ナイスキャッチ！')+(cb>1?` ${cb}コンボ！`:'')}
+   else{cb=0;res=null;popAdd(fr.l.x,fr.l.y-30,'おしい…');$('m').textContent='あーおしい…！風をよんで、ワンコの先をねらってみよう'}
+   hud();save();setTimeout(()=>{if(n>=10){done=true;if(sc>best){best=sc;save()}$('m').textContent=`おわり！スコア ${sc}（ベスト ${best}）`}else{newDog();ph='aim';fr=null}},1300)}}
  draw();requestAnimationFrame(loop)}
+function popAdd(px,py,t){pop.push({x:px,y:py,t,a:1})}
+function frisbee(px,py,rot,sc2){const k=SK[cur][1];x.save();x.translate(px,py);x.rotate(rot);x.scale(sc2,.45*sc2);let f=k;if(k==='rb'){const g=x.createLinearGradient(-16,0,16,0);['#f55','#fd3','#5d5','#4af','#a5f'].forEach((c,i)=>g.addColorStop(i/4,c));f=g}x.fillStyle=f;x.beginPath();x.arc(0,0,16,0,7);x.fill();x.fillStyle='rgba(255,255,255,.85)';x.beginPath();x.arc(0,0,8,0,7);x.fill();x.restore()}
 function draw(){const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#bfe3a1');g.addColorStop(1,'#8cc271');x.fillStyle=g;x.fillRect(0,0,W,H);
  for(let i=0;i<14;i++){x.fillStyle='rgba(255,255,255,.08)';x.fillRect(0,i*40,W,20)}
- x.font='36px serif';x.textAlign='center';x.textBaseline='middle';
- x.save();x.translate(dog.x,dog.y);x.scale(dog.fx,1);x.fillText(ph==='res'&&res?'🐶':'🐕',0,0);x.restore();
- if(ph==='res'&&res){x.font='28px serif';x.fillText('🥏',dog.x,dog.y-30)}
+ x.textAlign='center';x.textBaseline='middle';x.font='15px sans-serif';x.fillStyle='rgba(60,90,50,.9)';
+ const wt=wind===0?'風：なし':(wind<0?'← ':'')+'風 '+Math.abs(wind)+(wind>0?' →':'');x.fillText('🌬️ '+wt,W/2,22);
+ x.font='36px serif';x.save();x.translate(dog.x,dog.y);x.scale(dog.fx,1);x.fillText(ph==='res'&&res?'🐶':'🐕',0,0);x.restore();
+ if(ph==='res'&&res){frisbee(dog.x,dog.y-30,0,1.1);if(res.jump){x.font='22px serif';x.fillText('✨',dog.x+24,dog.y-44)}}
  if(fr&&ph==='fly'){const k=Math.min(1,fr.t/fr.T),e=1-Math.pow(1-k,1.6),px=fr.s.x+(fr.l.x-fr.s.x)*e+Math.sin(Math.PI*k)*fr.cur,py=fr.s.y+(fr.l.y-fr.s.y)*e,h=Math.sin(Math.PI*k)*50;
-  x.fillStyle='rgba(0,0,0,.2)';x.beginPath();x.ellipse(px,py,16,6,0,0,7);x.fill();x.save();x.translate(px,py-h);x.rotate(fr.t*14);x.scale(1,.45);x.fillStyle='#ff6b6b';x.beginPath();x.arc(0,0,16,0,7);x.fill();x.fillStyle='#fff';x.beginPath();x.arc(0,0,8,0,7);x.fill();x.restore();
+  x.fillStyle='rgba(0,0,0,.2)';x.beginPath();x.ellipse(px,py,16,6,0,0,7);x.fill();frisbee(px,py-h,fr.t*14,1);
   x.strokeStyle='rgba(255,255,255,.5)';x.setLineDash([4,6]);x.beginPath();x.arc(fr.l.x,fr.l.y,28,0,7);x.stroke();x.setLineDash([])}
- else if(ph==='aim'){x.font='28px serif';x.fillText('🥏',W/2,H-30);if(tr.length>1){x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=3;x.beginPath();tr.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y));x.stroke()}}}
+ else if(ph==='aim'){frisbee(W/2,H-30,0,1.1);if(tr.length>1){x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=3;x.beginPath();tr.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y));x.stroke()}}
+ pop=pop.filter(p=>p.a>0);pop.forEach(p=>{x.globalAlpha=p.a;x.fillStyle='#7a3b00';x.font='bold 15px sans-serif';x.fillText(p.t,p.x,p.y-(1-p.a)*30);p.a-=.012});x.globalAlpha=1}
 requestAnimationFrame(loop);
 </script></body></html>
