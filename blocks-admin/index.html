@@ -273,7 +273,7 @@ body[data-vt=neon] .panel{padding:0;border:solid transparent;border-width:17px 1
 body[data-vt=neon] .panel .in{background:none;box-shadow:none;border-radius:0}
 body[data-vt=neon] .tray{padding:0;border:solid transparent;border-width:10px 10px;border-image:url(../img/pz/neon_tray.webp) 34 32 fill/10px 10px stretch;margin:8px 4px 0}
 .tray{align-items:flex-start;align-content:flex-start}.pc{align-content:start;align-self:flex-start}.bc{border-radius:0}.pc i{border-radius:0}.pc{background:transparent!important;border-radius:10px}.pc.sel{background:rgba(255,230,120,.35)!important}
-body{--o0:url(../img/pz/o_colon.webp);--o1:url(../img/pz/o_moon.webp);--o2:url(../img/pz/o_paw.webp)}
+body{--o0:url(../img/pz/o_colon.webp);--o1:url(../img/pz/o_moon.webp);--o2:url(../img/pz/o_paw.webp);--o3:url(../img/pz/o_bone.webp);--o4:url(../img/pz/o_star.webp)}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -399,10 +399,10 @@ const TI=[{n:'かんたん',g:[[4,4],[4,4],[5,4],[5,4],[5,4],[5,4]],mn:3,mx:4,pc
 const NST=30, stageCfg=i=>{const t=(i/6)|0,j=i%6,T=TI[t]; return {w:T.g[j][0],h:T.g[j][1],mn:T.mn,mx:T.mx,pc:T.pc,seed:1000+i*7919}};
 const mul=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 let endT=-1;
-const COL=[0,1,2,3,4,5,6,7,8,9].map(k=>`var(--o${k%3}) center/72% no-repeat, var(--t${k}) center/100% 100% no-repeat`);
+const COL=[0,1,2,3,4,5,6,7,8,9].map(k=>`var(--t${k}) center/100% 100% no-repeat`), OVR=.15;
 const P=Object.assign({cur:0,done:{},endT:0,endN:0},store.get('prog2',{})); const svP=()=>store.set('prog2',P);
 let W,H,pieces,place,sel=-1,hover=-1,hist=[];
-const norm=c=>{const mx=Math.min(...c.map(p=>p[0])),my=Math.min(...c.map(p=>p[1]));return c.map(([x,y])=>[x-mx,y-my]).sort((a,b)=>a[1]-b[1]||a[0]-b[0])};
+const norm=c=>{const mx=Math.min(...c.map(p=>p[0])),my=Math.min(...c.map(p=>p[1]));return c.map(([x,y,o])=>[x-mx,y-my,o]).sort((a,b)=>a[1]-b[1]||a[0]-b[0])};
 function gen(w,h,mn,mx,pcMax,seed){ const R=seed?mul(seed):Math.random;
   for(let t=0;t<3000;t++){ const own=new Array(w*h).fill(-1); const ps=[]; let ok=true;
     for(let i=0;i<w*h;i++){ if(own[i]>=0) continue; const size=mn+((R()*(mx-mn+1))|0); const cells=[i]; own[i]=ps.length;
@@ -412,7 +412,7 @@ function gen(w,h,mn,mx,pcMax,seed){ const R=seed?mul(seed):Math.random;
     if(ok&&ps.length<=pcMax) return ps.map(c=>norm(c.map(i=>[i%w,(i/w)|0]))); }
   return gen(w,h,Math.max(3,mn-1),mx+1,pcMax+2,seed?seed+1:0); }
 function begin(c){ W=c.w;H=c.h;
-  pieces=gen(c.w,c.h,c.mn,c.mx,c.pc,c.seed).map((q,k)=>({c:randOrient(q),col:COL[k%COL.length],at:-1})); place=new Array(W*H).fill(-1); sel=0; hist=[];
+  pieces=gen(c.w,c.h,c.mn,c.mx,c.pc,c.seed).map((q,k)=>({c:randOrient(q),col:COL[k%COL.length],at:-1})); pieces.forEach(p=>{ if(Math.random()<OVR){ const j=(Math.random()*p.c.length)|0; p.c[j]=[p.c[j][0],p.c[j][1],(Math.random()*5)|0]; } }); place=new Array(W*H).fill(-1); sel=0; hist=[];
   drawNav(); draw(); setStatus('ブロックでわくをうめよう'); setTimeout(()=>sayText(1,'くみたてるワン！'),300); }
 function drawNav(){ const t=endT>=0?endT:(P.cur/6|0);
   lvRow($('tiers'),TI.map(x=>x.n).concat(['♾️ エンドレス']),endT>=0?TI.length:t,k=>k<TI.length&&[0,1,2,3,4,5].every(j=>P.done[k*6+j])?1:0,k=>{ if(k===TI.length){ loadEnd(P.endT||0); } else if(endT>=0&&k===t) loadEnd(k); else { const f=[0,1,2,3,4,5].map(j=>k*6+j).find(i=>!P.done[i]); load(f==null?k*6:f); } });
@@ -420,7 +420,8 @@ function drawNav(){ const t=endT>=0?endT:(P.cur/6|0);
   else { lvRow($('lvs'),[0,1,2,3,4,5].map(j=>(t*6+j+1)+''),P.cur%6,j=>P.done[t*6+j]?1:0,j=>load(t*6+j)); $('stN').textContent=(P.cur+1)+'/'+NST; } }
 function load(i){ endT=-1; P.cur=i; svP(); begin(stageCfg(i)); }
 function loadEnd(t){ endT=t; P.endT=t; svP(); const T=TI[t],g=T.g[(Math.random()*6)|0]; begin({w:g[0],h:g[1],mn:T.mn,mx:T.mx,pc:T.pc,seed:0}); }
-function rot(c){return norm(c.map(([x,y])=>[-y,x]))} function flip(c){return norm(c.map(([x,y])=>[-x,y]))}
+function rot(c){return norm(c.map(([x,y,o])=>[-y,x,o]))} function flip(c){return norm(c.map(([x,y,o])=>[-x,y,o]))}
+const bgF=(p,o)=>(o==null?p.col:`var(--o${o}) center/72% no-repeat, ${p.col}`);
 function randOrient(c){ let r=c; for(let k=(Math.random()*4)|0;k>0;k--) r=rot(r); if(Math.random()<.5) r=flip(r); return r; }
 function cellsAt(p,at){ const ax=at%W,ay=(at/W)|0, a0=p.c[0]; return p.c.map(([x,y])=>{const X=ax+x-a0[0],Y=ay+y-a0[1]; return (X<0||X>=W||Y<0||Y>=H)?-1:Y*W+X}); }
 function resolve(k,i){ if(fits(k,i)) return i; const p=pieces[k],a0=p.c[0],tx=i%W,ty=(i/W)|0; const mx=p.c.reduce((a,q)=>a+q[0],0)/p.c.length,my=p.c.reduce((a,q)=>a+q[1],0)/p.c.length; let best=-1,bd=1e9;
@@ -428,12 +429,13 @@ function resolve(k,i){ if(fits(k,i)) return i; const p=pieces[k],a0=p.c[0],tx=i%
   return best>=0?best:i; }
 function fits(k,at){ const cs=cellsAt(pieces[k],at); return cs.every(c=>c>=0&&place[c]<0); }
 function draw(){ const bd=$('bd'); const cs=Math.max(24,Math.min(Math.floor((Math.min(innerWidth,480)-50)/W),48,Math.floor(innerHeight*(document.body.classList.contains('fs')?.5:.4)/H))); bd.style.gridTemplateColumns=`repeat(${W},${cs}px)`; bd.innerHTML='';
+  const ovAt={}; pieces.forEach(p=>{ if(p.at>=0) cellsAt(p,p.at).forEach((c,n)=>{ if(p.c[n][2]!=null) ovAt[c]=p.c[n][2]; }); });
   const pv=sel>=0&&hover>=0&&pieces[sel].at<0?cellsAt(pieces[sel],resolve(sel,hover)):[]; const pvOk=pv.length&&pv.every(c=>c>=0&&place[c]<0);
-  for(let i=0;i<W*H;i++){ const e=document.createElement('div'); e.className='bc'+(pv.includes(i)?' prev'+(pvOk?'':' bad'):''); if(place[i]>=0) e.style.background=pieces[place[i]].col;
+  for(let i=0;i<W*H;i++){ const e=document.createElement('div'); e.className='bc'+(pv.includes(i)?' prev'+(pvOk?'':' bad'):''); if(place[i]>=0) e.style.background=bgF(pieces[place[i]],ovAt[i]);
     if(place[i]>=0) e.onpointerdown=ev=>{ ev.preventDefault(); actx(); try{$('bd').setPointerCapture(ev.pointerId)}catch(_){} pend={i,k:place[i],sx:ev.clientX,sy:ev.clientY}; }; else e.onclick=()=>tapCell(i); e.onmouseenter=()=>{ if(drag||pend) return; hover=i;draw()}; bd.appendChild(e); }
   const tr=$('tray'); tr.innerHTML=''; pieces.forEach((p,k)=>{ const mw=Math.max(...p.c.map(q=>q[0]))+1; const mh=Math.max(...p.c.map(q=>q[1]))+1; const e=document.createElement('div');
     e.className='pc'+(k===sel?' sel':'')+(p.at>=0?' used':''); const tcs=pieces.length>9?13:16; e.style.gridTemplateColumns=`repeat(${mw},${tcs}px)`; e.style.touchAction='none';
-    for(let y=0;y<mh;y++)for(let x=0;x<mw;x++){ const i=document.createElement('i'); i.style.width=i.style.height=tcs+'px'; if(p.c.some(q=>q[0]===x&&q[1]===y)){ i.style.background=p.col;  } e.appendChild(i); }
+    for(let y=0;y<mh;y++)for(let x=0;x<mw;x++){ const i=document.createElement('i'); i.style.width=i.style.height=tcs+'px'; { const q=p.c.find(q=>q[0]===x&&q[1]===y); if(q) i.style.background=bgF(p,q[2]); } e.appendChild(i); }
     e.onpointerdown=ev=>{ if(p.at>=0) return; ev.preventDefault(); actx(); const was=(sel===k); SFX.tap(); sel=k; tr.querySelectorAll('.pc').forEach((el,j)=>el.classList.toggle('sel',j===k)); startDrag(k,ev); drag.wasSel=was; }; tr.appendChild(e); });
   $('left').textContent=pieces.filter(p=>p.at<0).length; $('bUndo').disabled=!hist.length; }
 
@@ -442,7 +444,7 @@ let drag=null, pend=null;
 function geom(){ const c=$('bd').children; const r0=c[0].getBoundingClientRect(); const r1=c[1]?c[1].getBoundingClientRect():r0; return {ox:r0.left,oy:r0.top,cs:r0.width,pitch:(c[1]&&r1.top===r0.top)?r1.left-r0.left:r0.width+2}; }
 function buildGhost(d){ const p=pieces[d.k], g=d.g; d.mw=Math.max(...p.c.map(q=>q[0]))+1; d.mh=Math.max(...p.c.map(q=>q[1]))+1; if(d.el) d.el.remove();
   const el=document.createElement('div'); el.style.cssText=`position:fixed;z-index:60;pointer-events:none;display:grid;gap:${g.pitch-g.cs}px;grid-template-columns:repeat(${d.mw},${g.cs}px);opacity:.96;filter:drop-shadow(0 10px 10px rgba(0,0,0,.38));left:-999px;top:0;transition:transform .12s,left .06s,top .06s`;
-  for(let y=0;y<d.mh;y++)for(let x=0;x<d.mw;x++){ const i=document.createElement('i'); i.style.cssText=`width:${g.cs}px;height:${g.cs}px;`+(p.c.some(q=>q[0]===x&&q[1]===y)?`background:${p.col}`:''); el.appendChild(i); }
+  for(let y=0;y<d.mh;y++)for(let x=0;x<d.mw;x++){ const i=document.createElement('i'); i.style.cssText=`width:${g.cs}px;height:${g.cs}px;`+(()=>{const q=p.c.find(q=>q[0]===x&&q[1]===y); return q?`background:${bgF(p,q[2])}`:''})(); el.appendChild(i); }
   document.body.appendChild(el); d.el=el; }
 function holdRot(flipIt){ const d=drag; if(!d) return; const p=pieces[d.k]; p.c=flipIt?flip(p.c):rot(p.c); SFX.tap(); try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}
   buildGhost(d); d.grab={x:(d.mw*d.g.pitch-(d.g.pitch-d.g.cs))/2,y:(d.mh*d.g.pitch-(d.g.pitch-d.g.cs))/2}; moveDrag(d.last); }
