@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head><meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>わんわんトレイン｜Coron & Moon のゲームセンター</title>
+<style>
+:root{--bg:#f1efe2;--fg:#4b4a38;--card:#fbf9ee;--acc:#7da05a;--accfg:#fff;--line:#d7d3bb}
+body.retro{--bg:#24160f;--fg:#f0dfb8;--card:#3a2418;--acc:#c9a24a;--accfg:#2a1a12;--line:#6b4a2c}
+body.neon{--bg:#0a0612;--fg:#e8e6ff;--card:#150a26;--acc:#22e8ff;--accfg:#08040f;--line:#5a2a9a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;display:flex;justify-content:center;min-height:100vh;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#app{width:min(100%,440px);padding:10px 12px 24px}
+.brand{font-size:11px;letter-spacing:.2em;opacity:.7;text-align:center}
+h1{margin:2px 0 8px;font-size:22px;text-align:center}
+.hud{display:flex;gap:8px;margin-bottom:8px}
+.hud div{flex:1;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px 6px;text-align:center;font-size:10px;letter-spacing:.1em}
+.hud b{display:block;font-size:18px;letter-spacing:0}
+.stage{position:relative}
+canvas{width:100%;height:auto;display:block;border-radius:12px;touch-action:none;border:1px solid var(--line)}
+.overlay{position:absolute;inset:0;background:rgba(0,0,0,.55);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:16px;color:#fff}
+.overlay.hide{display:none}
+.overlay h2{margin:0;font-size:24px}
+.overlay p{margin:0;font-size:14px;line-height:1.6;white-space:pre-line}
+button{font:inherit;cursor:pointer;border:0;border-radius:999px;padding:9px 16px;background:var(--acc);color:var(--accfg);font-weight:700}
+button.sub{background:var(--card);color:var(--fg);border:1px solid var(--line);font-weight:600;padding:8px 12px;font-size:13px}
+button.on{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
+.chat{display:flex;justify-content:space-between;align-items:flex-start;margin:8px 0;min-height:64px}
+.who{width:46%;display:flex;gap:6px;align-items:flex-start}
+.who.r{flex-direction:row-reverse}
+.face{font-size:34px;line-height:1}
+.bubble{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 9px;font-size:13px;min-height:30px;opacity:0;transition:opacity .2s}
+.bubble.show{opacity:1}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.lbl{font-size:11px;opacity:.7;text-align:center;margin-top:10px}
+</style>
+</head>
+<body class="natural">
+<div id="app">
+  <div class="brand">CORON &amp; MOON</div>
+  <h1>🚂 わんわんトレイン</h1>
+  <div class="hud">
+    <div>LEVEL<b id="hLv">01</b></div>
+    <div>SCORE<b id="hSc">0</b></div>
+    <div>LIVES<b id="hLife">♥♥♥</b></div>
+  </div>
+  <div class="stage">
+    <canvas id="cv"></canvas>
+    <div class="overlay" id="ov"><h2 id="ovT"></h2><p id="ovP"></p><button id="ovB"></button></div>
+  </div>
+  <div class="chat">
+    <div class="who"><div class="face">🐶</div><div class="bubble" id="bColon"></div></div>
+    <div class="who r"><div class="face">🐩</div><div class="bubble" id="bMoon"></div></div>
+  </div>
+  <div class="row">
+    <button class="sub" id="bGo">しゅっぱつ！</button>
+    <button class="sub" id="bPause">一時停止</button>
+    <button class="sub" id="bRestart">リスタート</button>
+  </div>
+  <div class="lbl">スキン</div>
+  <div class="row" id="skins">
+    <button class="sub" data-v="natural">ナチュラル</button>
+    <button class="sub" data-v="retro">レトロ</button>
+    <button class="sub" data-v="neon">ネオン</button>
+  </div>
+  <div class="lbl">列車の速さ</div>
+  <div class="row" id="diffs">
+    <button class="sub" data-v="easy">かんたん</button>
+    <button class="sub" data-v="normal">ふつう</button>
+    <button class="sub" data-v="hard">むずかしい</button>
+  </div>
+</div>
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const store={get(k,d){try{return localStorage.getItem(k)||d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const cv=$('#cv'),ctx=cv.getContext('2d');
+const N=5,S=60,M=90,BY=44,W=N*S+M*2,H=N*S+BY*2;
+const dpr=Math.min(window.devicePixelRatio||1,3);
+cv.width=W*dpr;cv.height=H*dpr;
+const DR=[-1,0,1,0],DC=[0,1,0,-1];           // 0上 1右 2下 3左
+const TYPES=[[0,2],[1,3],[1,2],[2,3],[0,1],[3,0]];
+const DIFF={easy:3.6,normal:2.8,hard:2.0};
+const THEMES={
+ natural:{fx:[0,1,3,5],bg:'#e6edd6',frame:'#8c6a42',slot:'#cfd9b4',tile:'#f6f1de',edge:'#cdbf99',rail:'#8b8d93',sleeper:'#b98d57',body:'#c0553a',front:'#8e3a28',roof:'#f2e4c0',puff:'255,255,255',glow:null,sign:'#b98d57',signTx:'#fff'},
+ retro:{tiles:1,fx:[0,1,3,5],bg:'#2a1a12',frame:'#b58a2e',slot:'#1d110b',tile:'#4d3223',edge:'#7a5836',rail:'#d3b15f',sleeper:'#7d4f2a',body:'#12868a',front:'#0b5559',roof:'#e2b44d',puff:'255,230,180',glow:null,sign:'#b58a2e',signTx:'#2a1a12'},
+ neon:{tiles:1,fx:[0,1,2,5],bg:'#0a0612',frame:'#b13cff',slot:'#07030e',tile:'#150a26',edge:'#3a1a6a',rail:'#22e8ff',sleeper:'#ff3ce0',body:'#ff3ce0',front:'#9a1f8a',roof:'#22e8ff',puff:'34,232,255',glow:'#22e8ff',sign:'#ff3ce0',signTx:'#0a0612'}
+};
+const IMG={};
+function img(n){let i=IMG[n];if(!i){i=new Image();i.src='assets/'+n+'.webp';IMG[n]=i}return i.complete&&i.naturalWidth?i:null}
+['natural','retro','neon'].forEach(t=>{img(t+'_board');img('station_'+t);img('goal_'+t);['h','v','lt','tr'].forEach(k=>t!=='natural'&&img(t+'_tile_'+k))});
+['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f)});
+[['natural',[0,1,3,5]],['retro',[0,1,3,5]],['neon',[0,1,2,5]]].forEach(([t,rs])=>rs.forEach(r=>{for(let f=0;f<6;f++)img('fx_'+t+'_'+r+f)}));
+const BOARD={natural:[66/718,55/724,664/718,668/724],retro:[54/719,48/724,660/719,672/724],neon:[52/727,46/724,658/727,672/724]};
+function tileImg(conns){return{'02':['v',0],'13':['h',0],'01':['tr',0],'03':['lt',0],'12':['tr',1],'23':['lt',1]}[[...conns].sort().join('')]}
+let skin=store.get('wanwan_skin','natural'),diff=store.get('wanwan_diff','normal');
+if(!THEMES[skin])skin='natural';if(!DIFF[diff])diff='normal';
+let hi=+store.get('wanwan_hi','0')||0;
+
+const has=(p,s)=>p.conns[0]===s||p.conns[1]===s;
+const other=(p,s)=>p.conns[0]===s?p.conns[1]:p.conns[0];
+const rnd=n=>Math.random()*n|0;
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const inB=(r,c)=>r>=0&&c>=0&&r<N&&c<N;
+
+/* ---------- 線路の形 ---------- */
+function sideMid(s){return [[S/2,0],[S,S/2],[S/2,S],[0,S/2]][s]}
+function trackPos(a,b,t){
+  const A=sideMid(a),B=sideMid(b);
+  if((a+2)%4===b)return{x:A[0]+(B[0]-A[0])*t,y:A[1]+(B[1]-A[1])*t};
+  const cx=(a===1||b===1)?S:0,cy=(a===2||b===2)?S:0;
+  const a1=Math.atan2(A[1]-cy,A[0]-cx),a2=Math.atan2(B[1]-cy,B[0]-cx);
+  let d=a2-a1;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
+  const g=a1+d*t;return{x:cx+S/2*Math.cos(g),y:cy+S/2*Math.sin(g)};
+}
+function trackPose(a,b,t){
+  const e=.01,p=trackPos(a,b,t),p1=trackPos(a,b,Math.max(0,t-e)),p2=trackPos(a,b,Math.min(1,t+e));
+  return{x:p.x,y:p.y,a:Math.atan2(p2.y-p1.y,p2.x-p1.x)};
+}
+
+/* ---------- ステージ生成（必ずクリア可能） ---------- */
+function simulate(board,r0,goalRow){
+  let r=r0,c=0,e=3;
+  for(let i=0;i<80;i++){
+    const p=board[r][c];if(!p||!has(p,e))return false;
+    const x=other(p,e);r+=DR[x];c+=DC[x];
+    if(!inB(r,c))return x===1&&c===N&&r===goalRow;
+    e=(x+2)%4;
+  }
+  return false;
+}
+function genLevel(stage){
+  const minLen=Math.min(8+Math.floor((stage-1)/2),15);
+  let path=null,dirs=null;
+  for(let att=0;att<300&&!path;att++){
+    const r0=rnd(N),used=Array.from({length:N},()=>Array(N).fill(false));
+    const pa=[[r0,0]],di=[];used[r0][0]=true;let steps=0;
+    const dfs=(r,c)=>{
+      if(c===N-1&&pa.length>=minLen)return true;
+      if(++steps>5000)return false;
+      for(const d of shuffle([0,1,2,3])){
+        const nr=r+DR[d],nc=c+DC[d];
+        if(!inB(nr,nc)||used[nr][nc])continue;
+        used[nr][nc]=true;pa.push([nr,nc]);di.push(d);
+        if(dfs(nr,nc))return true;
+        used[nr][nc]=false;pa.pop();di.pop();
+      }
+      return false;
+    };
+    if(dfs(r0,0)&&pa.length<=20){path=pa;dirs=di}
+  }
+  if(!path){path=[0,1,2,3,4].map(c=>[2,c]);dirs=[1,1,1,1]}
+  const r0=path[0][0],goalRow=path[path.length-1][0];
+  const board=Array.from({length:N},()=>Array(N).fill(null));
+  path.forEach(([r,c],i)=>{
+    const e=i===0?3:(dirs[i-1]+2)%4,x=i===path.length-1?1:dirs[i];
+    board[r][c]={conns:[e,x],bonus:null};
+  });
+  const inPath=new Set(path.map(([r,c])=>r*N+c)),free=[];
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(!inPath.has(r*N+c)){board[r][c]={conns:TYPES[rnd(6)].slice(),bonus:null};free.push([r,c])}
+  let empty=free[rnd(free.length)];board[empty[0]][empty[1]]=null;
+  const mids=[];for(let i=2;i<path.length-1;i++)mids.push(i);shuffle(mids);
+  const [si,s1,s2]=mids;
+  if(si!=null)board[path[si][0]][path[si][1]].bonus='station';
+  if(s1!=null)board[path[s1][0]][path[s1][1]].bonus='star';
+  if(s2!=null&&stage>2)board[path[s2][0]][path[s2][1]].bonus='star';
+  // 逆向きにスライドして崩す（必ず元に戻せる）
+  let last=null;
+  const scr=k=>{for(let i=0;i<k;i++){
+    const opts=[0,1,2,3].map(d=>[empty[0]+DR[d],empty[1]+DC[d]]).filter(([r,c])=>inB(r,c)&&!(last&&last[0]===r&&last[1]===c));
+    const [r,c]=opts[rnd(opts.length)];
+    board[empty[0]][empty[1]]=board[r][c];board[r][c]=null;last=empty;empty=[r,c];
+  }};
+  scr(Math.min(10+stage*2,40));
+  for(let k=0;k<20&&simulate(board,r0,goalRow);k++)scr(6);
+  return{board,r0,goalRow};
+}
+
+/* ---------- ゲーム状態 ---------- */
+const G={stage:1,score:0,lives:3,board:null,snap:'',r0:0,goalRow:0,state:'title',timer:0,train:null,miss:0,moves:0,stageScore:0,prev:'',parts:[],puffT:0,shakeT:0,fx:[]};
+function fx(k,x,y,size,dur=.6){G.fx.push({k,x,y,size,t:0,dur})}
+const CT=()=>DIFF[diff];
+function say(who,text,ms=1600){
+  const el=who==='colon'?$('#bColon'):$('#bMoon');
+  el.textContent=text;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),ms);
+}
+function hud(){
+  $('#hLv').textContent=String(G.stage).padStart(2,'0');
+  $('#hSc').textContent=G.score.toLocaleString();
+  $('#hLife').textContent='♥'.repeat(Math.max(0,G.lives))+'♡'.repeat(Math.max(0,3-G.lives));
+}
+function overlay(title,body,btn,cb){
+  $('#ovT').textContent=title;$('#ovP').textContent=body;$('#ovB').textContent=btn;
+  $('#ov').classList.remove('hide');$('#ovB').onclick=()=>{$('#ov').classList.add('hide');cb()};
+}
+function resetTrain(){G.train={phase:'approach',t:0,r:G.r0,c:0,e:3,warned:false,steps:0};G.parts=[];G.fx=[]}
+function newStage(){
+  const L=genLevel(G.stage);
+  G.board=L.board;G.r0=L.r0;G.goalRow=L.goalRow;G.snap=JSON.stringify(G.board);
+  G.miss=0;G.moves=0;G.stageScore=G.score;begin();
+}
+function begin(){
+  G.board=JSON.parse(G.snap);G.score=G.stageScore;
+  resetTrain();G.state='ready';G.timer=6;hud();
+  say('colon','線路をつないで！');
+}
+function go(){if(G.state==='ready'){G.state='run';say('colon','しゅっぱーつ！')}}
+function addScore(n){G.score+=n;hud()}
+function collect(p){
+  const cx=M+G.train.c*S+S/2,cy=BY+G.train.r*S+S/2;
+  if(p.bonus)fx(p.bonus==='station'?1:0,cx,cy,S*1.3);
+  if(p.bonus==='station'){addScore(500);say('colon','えきだよ！ +500')}
+  else if(p.bonus==='star'){addScore(300);say('moon','スター！ +300')}
+  p.bonus=null;
+}
+function nextOk(){
+  const T=G.train,p=G.board[T.r][T.c];if(!p)return false;
+  const x=other(p,T.e),nr=T.r+DR[x],nc=T.c+DC[x];
+  if(!inB(nr,nc))return x===1&&T.r===G.goalRow&&T.c===N-1;
+  const q=G.board[nr][nc];return !!(q&&has(q,(x+2)%4));
+}
+function derail(){
+  const pose=trainWorld();
+  for(let i=0;i<14;i++)G.parts.push({x:pose.x,y:pose.y,vx:(Math.random()-.5)*90,vy:(Math.random()-.5)*90,l:.8,m:.8,r:3+Math.random()*3});
+  G.state='derail';G.timer=1.5;G.lives--;G.miss++;hud();say('moon','あぶなーい！');
+}
+function afterDerail(){
+  if(G.lives<=0){
+    if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
+    G.state='over';say('moon','もういっかい！');
+    overlay('ゲームオーバー','SCORE '+G.score.toLocaleString()+'\nBEST '+hi.toLocaleString(),'もういっかい！',newGame);
+  }else begin();
+}
+function clearStage(){
+  addScore(1000);let bonus='';
+  if(G.miss===0){addScore(2000);bonus='\nノーミスボーナス +2,000'}
+  const st=G.miss===0?3:G.miss===1?2:1;
+  if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
+  G.state='clearing';G.timer=1.6;say('colon','やったー！');say('moon','やったー！');
+  for(let i=0;i<4;i++)setTimeout(()=>fx(2,M+S*(1+Math.random()*3),BY+S*(1+Math.random()*3),S*2.4,.9),i*280);
+  G.showClear=()=>overlay('ステージ '+G.stage+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+'\nSCORE '+G.score.toLocaleString()+bonus,'つぎのステージへ',()=>{G.stage++;newStage()});
+}
+function newGame(){G.stage=1;G.score=0;G.lives=3;newStage()}
+
+function trainWorld(){
+  const T=G.train;
+  if(T.phase==='approach')return{x:20+(M-20)*T.t,y:BY+G.r0*S+S/2,a:0};
+  if(T.phase==='goal')return{x:M+N*S+(M-24)*T.t,y:BY+G.goalRow*S+S/2,a:0};
+  const p=G.board[T.r][T.c],tp=trackPose(T.e,other(p,T.e),Math.min(1,Math.max(0,T.t)));
+  const o=off(p);return{x:M+T.c*S+tp.x+o[0],y:BY+T.r*S+tp.y+o[1],a:tp.a};
+}
+function off(p){
+  if(!p.anim)return[0,0];
+  const k=(performance.now()-p.t0)/150;
+  if(k>=1){p.anim=false;return[0,0]}
+  const e=1-Math.pow(1-k,3);return[p.dx*(1-e),p.dy*(1-e)];
+}
+
+function update(dt){
+  if(G.state==='ready'){G.timer-=dt;if(G.timer<=0)go()}
+  if(G.state==='run')moveTrain(dt);
+  if(G.state==='derail'){G.timer-=dt;if(G.timer<=0)afterDerail()}
+  if(G.state==='clearing'){G.timer-=dt;if(G.timer<=0){G.state='clear';G.showClear()}}
+  G.fx=G.fx.filter(f=>(f.t+=dt)<f.dur);
+  const T=G.train;
+  if(T&&G.state==='run'&&skin==='neon'){
+    G.puffT-=dt;
+    if(G.state==='run'&&G.puffT<=0){G.puffT=.14;const p=trainWorld();G.parts.push({x:p.x-Math.cos(p.a)*10,y:p.y-Math.sin(p.a)*10-6,vx:(Math.random()-.5)*10,vy:-14-Math.random()*8,l:.9,m:.9,r:3,puff:1})}
+  }
+  G.parts=G.parts.filter(q=>(q.l-=dt)>0);
+  G.parts.forEach(q=>{q.x+=q.vx*dt;q.y+=q.vy*dt});
+}
+function moveTrain(dt){
+  const T=G.train,ct=CT();
+  if(T.phase==='approach'){
+    T.t+=dt/(ct*.8);
+    if(T.t>=1){
+      const p=G.board[T.r][0];
+      if(!p||!has(p,3)){T.t=1;derail();return}
+      T.phase='cell';T.t=0;T.e=3;collect(p);
+    }
+  }else if(T.phase==='cell'){
+    T.t+=dt/ct;
+    if(T.t>.45&&!T.warned){T.warned=true;if(!nextOk())say('moon','あぶなーい！',1200)}
+    if(T.t>=1){
+      const p=G.board[T.r][T.c],x=other(p,T.e),nr=T.r+DR[x],nc=T.c+DC[x];
+      if(!inB(nr,nc)){
+        if(x===1&&T.r===G.goalRow&&T.c===N-1){addScore(100);T.phase='goal';T.t=0;fx(3,W-M/2,BY+G.goalRow*S+S/2,S*1.6,1.2)}
+        else{T.t=1;derail()}
+        return;
+      }
+      const q=G.board[nr][nc];
+      if(q&&has(q,(x+2)%4)){
+        addScore(100);T.r=nr;T.c=nc;T.e=(x+2)%4;T.t-=1;T.warned=false;T.steps++;collect(q);
+        if(T.steps%4===0)say('colon','いい感じ！',1000);
+      }else{T.t=1;derail()}
+    }
+  }else if(T.phase==='goal'){
+    T.t+=dt/(ct*.8);if(T.t>=1){T.t=1;if(G.state==='run')clearStage()}
+  }
+}
+
+/* ---------- 操作 ---------- */
+function tryMove(r,c,dir){
+  if(G.state!=='ready'&&G.state!=='run')return;
+  const b=G.board,p=b[r][c];if(!p)return;
+  for(let d=0;d<4;d++){
+    if(dir!=null&&d!==dir)continue;
+    const nr=r+DR[d],nc=c+DC[d];
+    if(inB(nr,nc)&&b[nr][nc]===null){
+      const T=G.train;
+      if(T.phase==='cell'&&T.r===r&&T.c===c){p.shake=performance.now();return}
+      b[nr][nc]=p;b[r][c]=null;p.anim=true;p.t0=performance.now();p.dx=(c-nc)*S;p.dy=(r-nr)*S;G.moves++;return;
+    }
+  }
+}
+let down=null;
+const local=e=>{const R=cv.getBoundingClientRect();return[(e.clientX-R.left)/R.width*W,(e.clientY-R.top)/R.height*H]};
+cv.addEventListener('pointerdown',e=>{const[x,y]=local(e);down={x,y};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+cv.addEventListener('pointerup',e=>{
+  if(!down)return;const[x,y]=local(e),dx=x-down.x,dy=y-down.y;
+  const c=Math.floor((down.x-M)/S),r=Math.floor((down.y-BY)/S);down=null;
+  if(!inB(r,c))return;
+  if(Math.hypot(dx,dy)<10)tryMove(r,c);
+  else tryMove(r,c,Math.abs(dx)>Math.abs(dy)?(dx>0?1:3):(dy>0?2:0));
+});
+cv.addEventListener('pointercancel',()=>down=null);
+
+/* ---------- 描画 ---------- */
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function drawTrack(conns,th,ox,oy){
+  const a=conns[0],b=conns[1];ctx.save();ctx.translate(ox,oy);
+  ctx.strokeStyle=th.sleeper;ctx.lineWidth=5;ctx.lineCap='round';
+  [.1,.3,.5,.7,.9].forEach(t=>{const p=trackPose(a,b,t),nx=-Math.sin(p.a),ny=Math.cos(p.a),w=S*.2;
+    ctx.beginPath();ctx.moveTo(p.x+nx*w,p.y+ny*w);ctx.lineTo(p.x-nx*w,p.y-ny*w);ctx.stroke()});
+  if(th.glow){ctx.shadowColor=th.glow;ctx.shadowBlur=8}
+  ctx.strokeStyle=th.rail;ctx.lineWidth=3;ctx.lineCap='butt';
+  [-1,1].forEach(sg=>{ctx.beginPath();
+    for(let i=0;i<=14;i++){const p=trackPose(a,b,i/14),nx=-Math.sin(p.a),ny=Math.cos(p.a),o=sg*S*.11;
+      const x=p.x+nx*o,y=p.y+ny*o;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}
+    ctx.stroke()});
+  ctx.restore();
+}
+function drawStub(x0,x1,y,th){ // 盤面の外の線路
+  ctx.save();ctx.strokeStyle=th.sleeper;ctx.lineWidth=5;
+  for(let x=x0+6;x<x1;x+=S/5){ctx.beginPath();ctx.moveTo(x,y-S*.2);ctx.lineTo(x,y+S*.2);ctx.stroke()}
+  if(th.glow){ctx.shadowColor=th.glow;ctx.shadowBlur=8}
+  ctx.strokeStyle=th.rail;ctx.lineWidth=3;
+  [-1,1].forEach(sg=>{ctx.beginPath();ctx.moveTo(x0,y+sg*S*.11);ctx.lineTo(x1,y+sg*S*.11);ctx.stroke()});
+  ctx.restore();
+}
+function drawImg(im,cx,cy,maxW,maxH,by){ // by: 下端基準
+  const k=Math.min(maxW/im.naturalWidth,maxH/im.naturalHeight),w=im.naturalWidth*k,h=im.naturalHeight*k;
+  ctx.drawImage(im,cx-w/2,by!=null?by-h:cy-h/2,w,h);
+}
+function drawArch(name,cx,y,th){
+  const im=img(name);
+  if(im)drawImg(im,cx,0,M-30,S*1.15,y+S*.42);
+  else{ctx.save();ctx.fillStyle=th.sign;rr(cx-20,y-S*.45,40,16,5);ctx.fill();ctx.fillStyle=th.signTx;ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.fillText(name.startsWith('goal')?'GOAL':'START',cx,y-S*.45+11);ctx.restore()}
+}
+function drawTrain(p,th){
+  const c=Math.cos(p.a),s=Math.sin(p.a);
+  const d=Math.abs(c)>=Math.abs(s)?(c>0?'r':'l'):(s>0?'d':'u');
+  const f=G.state==='run'?((performance.now()/110|0)%4):0;
+  const im=img('train_'+d+f);
+  ctx.save();if(th.glow){ctx.shadowColor=th.glow;ctx.shadowBlur=12}
+  if(im){drawImg(im,p.x,p.y-S*.08,S*.95,S*.95);ctx.restore();return}
+  ctx.translate(p.x,p.y);ctx.rotate(p.a);
+  ctx.fillStyle=th.body;rr(-17,-9,34,18,5);ctx.fill();
+  ctx.fillStyle=th.front;rr(2,-7,15,14,4);ctx.fill();
+  ctx.restore();
+}
+function draw(){
+  const th=THEMES[skin];ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle=th.bg;ctx.fillRect(0,0,W,H);
+  if(!G.board)return;
+  drawStub(0,M,BY+G.r0*S+S/2,th);drawStub(M+N*S,W,BY+G.goalRow*S+S/2,th);
+  const bd=img(skin+'_board'),fr=BOARD[skin];
+  if(bd){const dw=N*S/(fr[2]-fr[0]),dh=N*S/(fr[3]-fr[1]);
+    ctx.save();if(th.glow){ctx.shadowColor=th.frame;ctx.shadowBlur=10}
+    ctx.drawImage(bd,M-fr[0]*dw,BY-fr[1]*dh,dw,dh);ctx.restore()}
+  else{ctx.fillStyle=th.frame;rr(M-7,BY-7,N*S+14,N*S+14,10);ctx.fill();ctx.fillStyle=th.slot;rr(M-2,BY-2,N*S+4,N*S+4,6);ctx.fill()}
+  const now=performance.now(),blank=img('natural_tile_blank');
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const p=G.board[r][c];
+    if(!p){ // 空きマス
+      ctx.fillStyle=skin==='neon'?'rgba(0,0,0,.45)':'rgba(40,25,10,.32)';rr(M+c*S+4,BY+r*S+4,S-8,S-8,8);ctx.fill();continue;
+    }
+    const o=off(p);let sx=0;
+    if(p.shake&&now-p.shake<300)sx=Math.sin((now-p.shake)/20)*3;
+    const x=M+c*S+o[0]+sx,y=BY+r*S+o[1];
+    const ti=th.tiles&&tileImg(p.conns),im=ti&&img(skin+'_tile_'+ti[0]);
+    ctx.save();ctx.shadowColor='rgba(0,0,0,.28)';ctx.shadowBlur=4;ctx.shadowOffsetY=2;
+    if(im){ctx.translate(x+S/2,y+S/2);if(ti[1])ctx.scale(1,-1);ctx.drawImage(im,-S/2+1,-S/2+1,S-2,S-2);ctx.restore()}
+    else{
+      if(blank&&skin==='natural')ctx.drawImage(blank,x+2,y+2,S-4,S-4);
+      else{ctx.fillStyle=th.tile;rr(x+2,y+2,S-4,S-4,7);ctx.fill()}
+      ctx.restore();drawTrack(p.conns,th,x,y);
+    }
+    if(p.bonus){
+      const bi=p.bonus==='station'?img('station_'+skin):img('star');
+      if(bi)drawImg(bi,x+S/2,y+S/2,p.bonus==='station'?S*.62:S*.44,p.bonus==='station'?S*.62:S*.44);
+      else{ctx.font='15px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.bonus==='station'?'🚉':'⭐',x+S/2,y+S/2)}
+    }
+  }
+  G.parts.forEach(q=>{ctx.globalAlpha=Math.max(0,q.l/q.m)*(q.puff?.7:1);
+    ctx.fillStyle=q.puff?`rgb(${th.puff})`:th.rail;ctx.beginPath();ctx.arc(q.x,q.y,q.r*(q.puff?(1.6-q.l/q.m):1),0,7);ctx.fill()});
+  ctx.globalAlpha=1;
+  if(G.train)drawTrain(trainWorld(),th);
+  drawArch('start',M/2-6,BY+G.r0*S+S/2,th);
+  drawArch('goal_'+skin,W-M/2+6,BY+G.goalRow*S+S/2,th);
+  G.fx.forEach(f=>{const fi=img('fx_'+skin+'_'+th.fx[f.k]+Math.min(5,(f.t/f.dur*6)|0));if(fi)drawImg(fi,f.x,f.y,f.size,f.size)});
+  if(G.state==='ready'){
+    ctx.save();ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillStyle=skin==='natural'?'#5b4a2e':th.rail;
+    if(th.glow){ctx.shadowColor=th.glow;ctx.shadowBlur=6}
+    ctx.fillText('あと '+Math.ceil(G.timer)+' びょうで しゅっぱつ',W/2,16);ctx.restore();
+  }
+}
+let last=performance.now();
+function loop(t){
+  const dt=Math.min(.05,(t-last)/1000);last=t;
+  if(G.state!=='pause'&&G.state!=='title')update(dt);
+  draw();requestAnimationFrame(loop);
+}
+
+/* ---------- UI ---------- */
+function applySkin(){
+  document.body.className=skin;
+  document.querySelectorAll('#skins button').forEach(b=>b.classList.toggle('on',b.dataset.v===skin));
+  document.querySelectorAll('#diffs button').forEach(b=>b.classList.toggle('on',b.dataset.v===diff));
+}
+$('#skins').onclick=e=>{const v=e.target.dataset.v;if(v){skin=v;store.set('wanwan_skin',v);applySkin()}};
+$('#diffs').onclick=e=>{const v=e.target.dataset.v;if(v){diff=v;store.set('wanwan_diff',v);applySkin();if(G.state==='ready'||G.state==='run'){begin()}}};
+$('#bGo').onclick=go;
+$('#bRestart').onclick=()=>{if(['ready','run','derail'].includes(G.state))begin()};
+$('#bPause').onclick=()=>{
+  if(G.state==='ready'||G.state==='run'){G.prev=G.state;G.state='pause';overlay('いちじていし','列車も時間もとまっているよ','さいかい',()=>{G.state=G.prev})}
+};
+applySkin();
+const L0=genLevel(1);G.board=L0.board;G.r0=L0.r0;G.goalRow=L0.goalRow;resetTrain();hud();
+overlay('わんわんトレイン','空きマスにパネルをスライドして\n列車の線路をつなごう！\n（タップ または スワイプ）\nBEST '+hi.toLocaleString(),'スタート',newGame);
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
