@@ -683,7 +683,7 @@ function draw(){
   if(G.train)drawTrain(trainWorld(),th);
   [[G.S0,G.S0.e,'start'],[G.Gl,G.Gl.x,'goal_'+skin]].forEach(([q,d,nm])=>{
     const gx=M+q.c*S+S/2+DC[d]*S*.5,gy=BY+q.r*S+S/2+DR[d]*S*.5,im=img(nm);
-    if(im)drawImg(im,gx,gy,S*.82,S*.82);
+    if(im){ctx.save();ctx.translate(gx,gy);ctx.rotate(d===3?-Math.PI/2:d===1?Math.PI/2:0);drawImg(im,0,0,S*.82,S*.82);ctx.restore()}
     else{ctx.save();ctx.fillStyle=th.sign;rr(gx-18,gy-8,36,16,5);ctx.fill();ctx.fillStyle=th.signTx;ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.fillText(nm[0]==='g'?'GOAL':'START',gx,gy+3);ctx.restore()}
   });
   G.fx.forEach(f=>{const fi=img('fx_'+skin+'_'+th.fx[f.k]+Math.min(5,(f.t/f.dur*6)|0));if(fi)drawImg(fi,f.x,f.y,f.size,f.size)});
