@@ -399,7 +399,7 @@ const TI=[{n:'かんたん',g:[[4,4],[4,4],[5,4],[5,4],[5,4],[5,4]],mn:3,mx:4,pc
 const NST=30, stageCfg=i=>{const t=(i/6)|0,j=i%6,T=TI[t]; return {w:T.g[j][0],h:T.g[j][1],mn:T.mn,mx:T.mx,pc:T.pc,seed:1000+i*7919}};
 const mul=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 let endT=-1;
-const COL=[0,1,2,3,4,5,6,7,8,9].map(k=>`var(--t${k}) center/100% 100% no-repeat`), OVR=.15;
+const COL=[0,1,2,3,4,5,6,7,8,9].map(k=>`var(--t${k}) center/100% 100% no-repeat`), OVN=5;
 const P=Object.assign({cur:0,done:{},endT:0,endN:0},store.get('prog2',{})); const svP=()=>store.set('prog2',P);
 let W,H,pieces,place,sel=-1,hover=-1,hist=[];
 const norm=c=>{const mx=Math.min(...c.map(p=>p[0])),my=Math.min(...c.map(p=>p[1]));return c.map(([x,y,o])=>[x-mx,y-my,o]).sort((a,b)=>a[1]-b[1]||a[0]-b[0])};
@@ -412,7 +412,7 @@ function gen(w,h,mn,mx,pcMax,seed){ const R=seed?mul(seed):Math.random;
     if(ok&&ps.length<=pcMax) return ps.map(c=>norm(c.map(i=>[i%w,(i/w)|0]))); }
   return gen(w,h,Math.max(3,mn-1),mx+1,pcMax+2,seed?seed+1:0); }
 function begin(c){ W=c.w;H=c.h;
-  pieces=gen(c.w,c.h,c.mn,c.mx,c.pc,c.seed).map((q,k)=>({c:randOrient(q),col:COL[k%COL.length],at:-1})); pieces.forEach(p=>{ if(Math.random()<OVR){ const j=(Math.random()*p.c.length)|0; p.c[j]=[p.c[j][0],p.c[j][1],(Math.random()*5)|0]; } }); place=new Array(W*H).fill(-1); sel=0; hist=[];
+  pieces=gen(c.w,c.h,c.mn,c.mx,c.pc,c.seed).map((q,k)=>({c:randOrient(q),col:COL[k%COL.length],at:-1})); { const ids=pieces.map((_,i)=>i).sort(()=>Math.random()-.5).slice(0,Math.min(pieces.length,2+((Math.random()*2)|0))); ids.forEach(i=>{ const p=pieces[i], j=(Math.random()*p.c.length)|0; p.c[j]=[p.c[j][0],p.c[j][1],(Math.random()*OVN)|0]; }); } place=new Array(W*H).fill(-1); sel=0; hist=[];
   drawNav(); draw(); setStatus('ブロックでわくをうめよう'); setTimeout(()=>sayText(1,'くみたてるワン！'),300); }
 function drawNav(){ const t=endT>=0?endT:(P.cur/6|0);
   lvRow($('tiers'),TI.map(x=>x.n).concat(['♾️ エンドレス']),endT>=0?TI.length:t,k=>k<TI.length&&[0,1,2,3,4,5].every(j=>P.done[k*6+j])?1:0,k=>{ if(k===TI.length){ loadEnd(P.endT||0); } else if(endT>=0&&k===t) loadEnd(k); else { const f=[0,1,2,3,4,5].map(j=>k*6+j).find(i=>!P.done[i]); load(f==null?k*6:f); } });
