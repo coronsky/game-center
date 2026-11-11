@@ -56,6 +56,7 @@ button.on{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
   </div>
   <div class="row">
     <button class="sub" id="bGo">しゅっぱつ！</button>
+    <button class="sub" id="bFast">▶▶ はやく</button>
     <button class="sub" id="bPause">一時停止</button>
     <button class="sub" id="bRestart">リスタート</button>
   </div>
@@ -64,6 +65,13 @@ button.on{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
     <button class="sub" data-v="natural">ナチュラル</button>
     <button class="sub" data-v="retro">レトロ</button>
     <button class="sub" data-v="neon">ネオン</button>
+  </div>
+  <div class="lbl">マスの数</div>
+  <div class="row" id="sizes">
+    <button class="sub" data-v="">おまかせ</button>
+    <button class="sub" data-v="4">4×4</button>
+    <button class="sub" data-v="5">5×5</button>
+    <button class="sub" data-v="6">6×6</button>
   </div>
   <div class="lbl">列車の速さ</div>
   <div class="row" id="diffs">
@@ -98,6 +106,7 @@ const BOARD={natural:[66/718,55/724,664/718,668/724],retro:[54/719,48/724,660/71
 function tileImg(conns){return{'02':['v',0],'13':['h',0],'01':['tr',0],'03':['lt',0],'12':['tr',1],'23':['lt',1]}[[...conns].sort().join('')]}
 let skin=store.get('wanwan_skin','natural'),diff=store.get('wanwan_diff','normal');
 if(!THEMES[skin])skin='natural';if(!DIFF[diff])diff='normal';
+let sizeMode=store.get('wanwan_size','');if(!['','4','5','6'].includes(sizeMode))sizeMode='';
 let hi=+store.get('wanwan_hi','0')||0;
 
 const has=(p,s)=>p.conns[0]===s||p.conns[1]===s;
@@ -133,7 +142,7 @@ function simulate(board,r0,goalRow){
   return false;
 }
 function genLevel(stage){
-  setN(stage<=3?4:stage<=8?5:6);
+  setN(sizeMode?+sizeMode:stage<=3?4:stage<=8?5:6);
   const minLen=Math.min({4:7,5:9,6:12}[N]+Math.floor((stage-1)/2),{4:10,5:15,6:20}[N]),maxLen=Math.min(N*N-5,24);
   let path=null,dirs=null;
   for(let att=0;att<300&&!path;att++){
@@ -164,7 +173,7 @@ function genLevel(stage){
   const inPath=new Set(path.map(([r,c])=>r*N+c)),free=[];
   for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(!inPath.has(r*N+c))free.push([r,c]);
   shuffle(free);
-  const nRock=N===4?(stage>=3?1:0):stage<3?0:stage<6?1:stage<10?2:3;
+  const nRock=N===4?0:stage<3?0:stage<6?1:stage<10?2:3;
   free.forEach(([r,c],i)=>{board[r][c]=i<nRock?{conns:[-1,-1],rock:true}:{conns:TYPES[rnd(6)].slice(),bonus:null}});
   let empty=free[nRock+rnd(free.length-nRock)];board[empty[0]][empty[1]]=null;
   const mids=[];for(let i=2;i<path.length-1;i++)mids.push(i);shuffle(mids);
@@ -185,7 +194,7 @@ function genLevel(stage){
 }
 
 /* ---------- ゲーム状態 ---------- */
-const G={stage:1,score:0,lives:3,board:null,snap:'',r0:0,goalRow:0,state:'title',timer:0,train:null,miss:0,moves:0,starsGot:0,starsTot:0,stageScore:0,prev:'',parts:[],puffT:0,shakeT:0,fx:[]};
+const G={stage:1,score:0,lives:3,board:null,snap:'',r0:0,goalRow:0,state:'title',timer:0,train:null,miss:0,moves:0,fast:false,starsGot:0,starsTot:0,stageScore:0,prev:'',parts:[],puffT:0,shakeT:0,fx:[]};
 function fx(k,x,y,size,dur=.6){G.fx.push({k,x,y,size,t:0,dur})}
 const CT=()=>DIFF[diff];
 function say(who,text,ms=1600){
@@ -211,7 +220,7 @@ function newStage(){
 }
 function begin(){
   G.board=JSON.parse(G.snap);G.score=G.stageScore;
-  resetTrain();G.starsGot=0;G.state='ready';G.timer=6;hud();
+  resetTrain();G.fast=false;$('#bFast').classList.remove('on');G.starsGot=0;G.state='ready';G.timer=6;hud();
   say('colon','線路をつないで！');
 }
 function go(){if(G.state==='ready'){G.state='run';say('colon','しゅっぱーつ！')}}
@@ -283,7 +292,7 @@ function update(dt){
   G.parts.forEach(q=>{q.x+=q.vx*dt;q.y+=q.vy*dt});
 }
 function moveTrain(dt){
-  const T=G.train,ct=CT();
+  const T=G.train,ct=CT()/(G.fast?3:1);
   if(T.phase==='approach'){
     T.t+=dt/(ct*.8);
     if(T.t>=1){
@@ -457,11 +466,15 @@ function loop(t){
 function applySkin(){
   document.body.className=skin;
   document.querySelectorAll('#skins button').forEach(b=>b.classList.toggle('on',b.dataset.v===skin));
+  document.querySelectorAll('#sizes button').forEach(b=>b.classList.toggle('on',b.dataset.v===sizeMode));
+  $('#bFast').classList.toggle('on',!!G.fast);
   document.querySelectorAll('#diffs button').forEach(b=>b.classList.toggle('on',b.dataset.v===diff));
 }
 $('#skins').onclick=e=>{const v=e.target.dataset.v;if(v){skin=v;store.set('wanwan_skin',v);applySkin()}};
 $('#diffs').onclick=e=>{const v=e.target.dataset.v;if(v){diff=v;store.set('wanwan_diff',v);applySkin();if(G.state==='ready'||G.state==='run'){begin()}}};
 $('#bGo').onclick=go;
+$('#bFast').onclick=()=>{if(G.state==='ready')go();if(G.state==='run'||G.state==='ready'){G.fast=!G.fast;$('#bFast').classList.toggle('on',G.fast)}};
+$('#sizes').onclick=e=>{const v=e.target.dataset.v;if(v!==undefined){sizeMode=v;store.set('wanwan_size',v);applySkin();if(['ready','run','derail'].includes(G.state)||G.state==='clear'){$('#ov').classList.add('hide');G.state='ready';newStage()}}};
 $('#bRestart').onclick=()=>{if(['ready','run','derail'].includes(G.state))begin()};
 $('#bPause').onclick=()=>{
   if(G.state==='ready'||G.state==='run'){G.prev=G.state;G.state='pause';overlay('いちじていし','列車も時間もとまっているよ','さいかい',()=>{G.state=G.prev})}
