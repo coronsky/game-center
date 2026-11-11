@@ -329,11 +329,11 @@ const THEMES={
 };
 const IMG={};
 function img(n){let i=IMG[n];if(!i){i=new Image();i.src='assets/'+n+'.webp';IMG[n]=i}return i.complete&&i.naturalWidth?i:null}
-['natural','retro','neon'].forEach(t=>{img(t+'_board');img('station_'+t);img('goal_'+t);['h','v','lt','tr'].forEach(k=>t!=='natural'&&img(t+'_tile_'+k))});
+['natural','retro','neon'].forEach(t=>{img(t+'_board');img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k))});
 ['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f)});
 [['natural',[0,1,3,5]],['retro',[0,1,3,5]],['neon',[0,1,2,5]]].forEach(([t,rs])=>rs.forEach(r=>{for(let f=0;f<6;f++)img('fx_'+t+'_'+r+f)}));
 const BOARD={natural:[66/718,55/724,664/718,668/724],retro:[54/719,48/724,660/719,672/724],neon:[52/727,46/724,658/727,672/724]};
-function tileImg(conns){return{'02':['v',0],'13':['h',0],'01':['tr',0],'03':['lt',0],'12':['tr',1],'23':['lt',1]}[[...conns].sort().join('')]}
+function tileImg(conns){const k={'02':'v','13':'h','01':'tr','12':'rb','23':'bl','03':'lt'}[[...conns].sort().join('')];return k&&[k]}
 let skin='natural',diff=store.get('wanwan_diff','normal');
 if(!DIFF[diff])diff='normal';
 let sizeMode=store.get('wanwan_size','');if(!['','4','5','6'].includes(sizeMode))sizeMode='';
@@ -663,9 +663,9 @@ function draw(){
     if(p.shake&&now-p.shake<300)sx=Math.sin((now-p.shake)/20)*3;
     const x=M+c*S+o[0]+sx,y=BY+r*S+o[1];
     if(p.rock){drawRock(x,y,th);continue}
-    const ti=th.tiles&&tileImg(p.conns),im=ti&&img(skin+'_tile_'+ti[0]);
+    const ti=tileImg(p.conns),im=ti&&img(skin+'_t_'+ti[0]);
     ctx.save();ctx.shadowColor='rgba(0,0,0,.28)';ctx.shadowBlur=4;ctx.shadowOffsetY=2;
-    if(im){ctx.translate(x+S/2,y+S/2);if(ti[1])ctx.scale(1,-1);ctx.drawImage(im,-S/2+1,-S/2+1,S-2,S-2);ctx.restore()}
+    if(im){ctx.shadowColor='transparent';ctx.drawImage(im,x,y,S,S);ctx.restore()}
     else{
       if(blank&&skin==='natural')ctx.drawImage(blank,x+2,y+2,S-4,S-4);
       else{ctx.fillStyle=th.tile;rr(x+2,y+2,S-4,S-4,7);ctx.fill()}
