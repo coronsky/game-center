@@ -273,7 +273,7 @@ body[data-vt=neon] .panel{padding:0;border:solid transparent;border-width:17px 1
 body[data-vt=neon] .panel .in{background:none;box-shadow:none;border-radius:0}
 body[data-vt=neon] .tray{padding:0;border:solid transparent;border-width:10px 10px;border-image:url(../img/pz/neon_tray.webp) 34 32 fill/10px 10px stretch;margin:8px 4px 0}
 .tray{align-items:flex-start;align-content:flex-start}.pc{align-content:start;align-self:flex-start}.bc{border-radius:0}.pc i{border-radius:0}.pc{background:transparent!important;border-radius:10px}.pc.sel{background:rgba(255,230,120,.35)!important}
-body{--o0:url(../img/pz/o_colon.webp);--o1:url(../img/pz/o_moon.webp);--o2:url(../img/pz/o_paw.webp);--o3:url(../img/pz/o_bone.webp);--o4:url(../img/pz/o_star.webp)}
+body{--o0:url(../img/pz/o0.webp);--o1:url(../img/pz/o1.webp);--o2:url(../img/pz/o2.webp);--o3:url(../img/pz/o3.webp);--o4:url(../img/pz/o4.webp);--o5:url(../img/pz/o5.webp);--o6:url(../img/pz/o6.webp);--o7:url(../img/pz/o7.webp);}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -399,7 +399,7 @@ const TI=[{n:'かんたん',g:[[4,4],[4,4],[5,4],[5,4],[5,4],[5,4]],mn:3,mx:4,pc
 const NST=30, stageCfg=i=>{const t=(i/6)|0,j=i%6,T=TI[t]; return {w:T.g[j][0],h:T.g[j][1],mn:T.mn,mx:T.mx,pc:T.pc,seed:1000+i*7919}};
 const mul=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 let endT=-1;
-const COL=[0,1,2,3,4,5,6,7,8,9].map(k=>`var(--t${k}) center/100% 100% no-repeat`), OVN=5;
+const COL=[0,1,2,3,4,5,6,7,8,9].map(k=>`var(--t${k}) center/100% 100% no-repeat`), OVN=8;
 const P=Object.assign({cur:0,done:{},endT:0,endN:0},store.get('prog2',{})); const svP=()=>store.set('prog2',P);
 let W,H,pieces,place,sel=-1,hover=-1,hist=[];
 const norm=c=>{const mx=Math.min(...c.map(p=>p[0])),my=Math.min(...c.map(p=>p[1]));return c.map(([x,y,o])=>[x-mx,y-my,o]).sort((a,b)=>a[1]-b[1]||a[0]-b[0])};
@@ -421,7 +421,7 @@ function drawNav(){ const t=endT>=0?endT:(P.cur/6|0);
 function load(i){ endT=-1; P.cur=i; svP(); begin(stageCfg(i)); }
 function loadEnd(t){ endT=t; P.endT=t; svP(); const T=TI[t],g=T.g[(Math.random()*6)|0]; begin({w:g[0],h:g[1],mn:T.mn,mx:T.mx,pc:T.pc,seed:0}); }
 function rot(c){return norm(c.map(([x,y,o])=>[-y,x,o]))} function flip(c){return norm(c.map(([x,y,o])=>[-x,y,o]))}
-const bgF=(p,o)=>(o==null?p.col:`var(--o${o}) center/72% no-repeat, ${p.col}`);
+const bgF=(p,o)=>(o==null?p.col:`var(--o${o}) center/86% no-repeat, ${p.col}`);
 function randOrient(c){ let r=c; for(let k=(Math.random()*4)|0;k>0;k--) r=rot(r); if(Math.random()<.5) r=flip(r); return r; }
 function cellsAt(p,at){ const ax=at%W,ay=(at/W)|0, a0=p.c[0]; return p.c.map(([x,y])=>{const X=ax+x-a0[0],Y=ay+y-a0[1]; return (X<0||X>=W||Y<0||Y>=H)?-1:Y*W+X}); }
 function resolve(k,i){ if(fits(k,i)) return i; const p=pieces[k],a0=p.c[0],tx=i%W,ty=(i/W)|0; const mx=p.c.reduce((a,q)=>a+q[0],0)/p.c.length,my=p.c.reduce((a,q)=>a+q[1],0)/p.c.length; let best=-1,bd=1e9;
