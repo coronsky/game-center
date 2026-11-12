@@ -290,7 +290,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">わんわんトレイン</div></div>
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">わんわんトレイン</div></div>
-  <div class="hud"><div class="box"><small>ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box"><small>★スター</small><b id="stars">0/0</b></div><div class="box"><small>ライフ</small><b id="lives">♥♥♥</b></div></div>
+  <div class="hud"><div class="box"><small>ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
   <div class="lvRow" id="sizes"><button data-v="">おまかせ</button><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
   <div class="lvRow" id="gims"><button data-v="auto">おまかせ</button><button data-v="none">なし</button><button data-v="cross">十字</button><button data-v="warp">ワープ</button><button data-v="jump">ジャンプ</button><button data-v="all">ぜんぶ</button></div>
   <div class="lvRow" id="diffs"><button data-v="easy">かんたん</button><button data-v="normal">ふつう</button><button data-v="hard">むずかしい</button></div>
@@ -304,8 +304,8 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
 <p>空きマスに<b>パネルをスライド</b>（タップ or スワイプ）して、スタートからゴールまで<b>線路をつなごう</b>！列車は少ししたら自動で出発します。</p>
 <p>枠の切れ目の<b>青いスタート</b>から列車が出発し、<b>赤いゴール</b>の切れ目に入ればクリア！切れ目の場所はステージごとに変わるよ。</p>
 <p><b>十字</b>は縦横どちらからも通れる交差、<b>ワープ</b>は同じ色のトンネルへ瞬間移動、<b>ジャンプ台</b>は1マス飛び越えて着地します。</p>
-<p>⭐を取るとスコアUP。全部取るとボーナス＋評価アップ。5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
-<p>ゴールが見えたら<b>▶▶はやく</b>で列車を3倍速に！線路がつながっていないと脱線してハートが減ります。</p>
+<p>5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
+<p>ゴールが見えたら<b>▶▶はやく</b>で列車を3倍速に！線路がつながっていないと脱線するとやり直しです。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
 <div class="modal" id="mMsg"><div class="card result">
@@ -439,7 +439,7 @@ function genLevel(stage){
   free.forEach(([r,c],i)=>{board[r][c]=i<nRock?{conns:[-1,-1],rock:true}:{conns:TYPES[rnd(6)].slice(),bonus:null}});
   let empty=free[nRock+rnd(Math.max(1,free.length-nRock))];board[empty[0]][empty[1]]=null;
   const mids=[];for(let i=2;i<L-1;i++)if(!plan.rm.has(i)&&!plan.sp[i])mids.push(i);shuffle(mids);
-  const nStar=stage<=2?2:3;
+  const nStar=0;
   if(mids.length){board[path[mids[0]][0]][path[mids[0]][1]].bonus='station';
     for(let k=1;k<=nStar&&k<mids.length;k++)board[path[mids[k]][0]][path[mids[k]][1]].bonus='star'}
   // 逆向きにスライドして崩す（必ず元に戻せる）
@@ -540,25 +540,16 @@ function enterCell(r,c,e){
 function derail(){
   const pose=trainWorld();
   for(let i=0;i<14;i++)G.parts.push({x:pose.x,y:pose.y,vx:(Math.random()-.5)*90,vy:(Math.random()-.5)*90,l:.8,m:.8,r:3+Math.random()*3});
-  try{SFX.bad()}catch(_){}G.state='derail';G.timer=1.5;G.lives--;G.miss++;hud();say('moon','あぶなーい！');
+  try{SFX.bad()}catch(_){}G.state='derail';G.timer=1.5;G.miss++;hud();say('moon','あぶなーい！');
 }
-function afterDerail(){
-  if(G.lives<=0){
-    if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
-    G.state='over';say('moon','もういっかい！');
-    overlay('ゲームオーバー','SCORE '+G.score.toLocaleString()+'\nBEST '+hi.toLocaleString(),'もういっかい！',newGame);
-  }else begin();
-}
+function afterDerail(){begin()}
 function clearStage(){
   addScore(1000);let bonus='';
-  const all=G.starsGot>=G.starsTot;
   if(G.miss===0){addScore(2000);bonus='\nノーミスボーナス +2,000'}
-  if(all){addScore(1500);bonus+='\nスター全部ボーナス +1,500'}
-  let st=G.miss===0?3:G.miss===1?2:1;if(!all)st=Math.max(1,st-1);
+  let st=G.miss===0?3:G.miss===1?2:1;
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
   try{SFX.win()}catch(_){}G.state='clearing';G.timer=1.6;say('colon','やったー！');say('moon','やったー！');
-  for(let i=0;i<4;i++)setTimeout(()=>fx(2,M+S*(1+Math.random()*3),BY+S*(1+Math.random()*3),S*2.4,.9),i*280);
-  G.showClear=()=>overlay('ステージ '+G.stage+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+'\nスター '+G.starsGot+'/'+G.starsTot+'\nSCORE '+G.score.toLocaleString()+bonus,'つぎのステージへ',()=>{G.stage++;newStage()});
+  G.showClear=()=>overlay('ステージ '+G.stage+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+'\nSCORE '+G.score.toLocaleString()+bonus,'つぎのステージへ',()=>{G.stage++;newStage()});
 }
 function newGame(){G.stage=1;G.score=0;G.lives=3;newStage()}
 
@@ -626,7 +617,7 @@ function moveTrain(dt){
       if(!res){T.t=1;derail();return}
       if(res.kind==='jump'){T.phase='jump';T.t=0;T.jx=res.x;say('colon','ジャンプ！',900);return}
       if(!inB(res.nr,res.nc)){
-        if(res.fr===G.Gl.r&&res.fc===G.Gl.c&&res.x===G.Gl.x){addScore(100);T.phase='goal';T.t=0;fx(3,M+G.Gl.c*S+S/2,BY+G.Gl.r*S+S/2,S*1.8,1.2)}
+        if(res.fr===G.Gl.r&&res.fc===G.Gl.c&&res.x===G.Gl.x){addScore(100);T.phase='goal';T.t=0}
         else{T.t=1;derail()}
         return;
       }
@@ -847,7 +838,7 @@ sw.onclick=()=>{snd=!snd;store.set('wanwan_snd',snd?'1':'0');sw.classList.toggle
 window.actx=actx;
 refresh();
 const L0=genLevel(1);G.board=L0.board;G.S0=L0.S0;G.Gl=L0.Gl;G.starsTot=countStars(G.board);resetTrain();hud();
-overlay('わんわんトレイン','空きマスにパネルをスライドして\n線路をつなごう！\n★をあつめるとスコアUP\n赤い切れ目を目指してゴールへ！','スタート',newGame);
+overlay('わんわんトレイン','空きマスにパネルをスライドして\n線路をつなごう！\n赤い切れ目を目指してゴールへ！','スタート',newGame);
 requestAnimationFrame(loop);
 })();
 
