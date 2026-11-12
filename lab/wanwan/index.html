@@ -789,6 +789,10 @@ function draw(){
   G.parts.forEach(q=>{ctx.globalAlpha=Math.max(0,q.l/q.m)*(q.puff?.7:1);
     ctx.fillStyle=q.puff?`rgb(${th.puff})`:th.rail;ctx.beginPath();ctx.arc(q.x,q.y,q.r*(q.puff?(1.6-q.l/q.m):1),0,7);ctx.fill()});
   ctx.globalAlpha=1;
+  [[G.S0,G.S0.e],[G.Gl,G.Gl.x]].forEach(([q,d])=>{ // 出入口の外にレール
+    const im=img(skin+'_t_'+(d%2?'h':'v'));if(!im)return;
+    const x=d===1?M+N*S:d===3?M-S:M+q.c*S,y=d===0?BY-S:d===2?BY+N*S:BY+q.r*S;
+    ctx.drawImage(im,x,y,S,S)});
   {const on=((performance.now()/420)|0)%2,TT=G.tt||[10,10,10,10];
    [[G.S0,G.S0.e,'s'],[G.Gl,G.Gl.x,'g']].forEach(([q,d,k])=>{
     const gi=img(skin+'_gate_'+k+on);if(!gi)return;
