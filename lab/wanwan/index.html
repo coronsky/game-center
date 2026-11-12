@@ -427,7 +427,7 @@ const THEMES={
 const IMG={};
 function img(n){let i=IMG[n];if(!i){i=new Image();i.src='assets/'+n+'.webp';IMG[n]=i}return i.complete&&i.naturalWidth?i:null}
 ['natural','retro','neon'].forEach(t=>{img(t+'_board');img(t+'_cd_0');img(t+'_cd_1');img(t+'_i_star');img(t+'_i_star0');['slow','stop','fast'].forEach(k=>img(t+'_i_'+k));['s0','s1','g0','g1'].forEach(k=>img(t+'_gate_'+k));img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k));['cross','wr','wb','jump'].forEach(k=>img(t+'_x_'+k))});
-['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f);['natural','retro','neon'].forEach(t=>img(t+'_tr_'+d))});
+['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f);['natural','retro','neon'].forEach(t=>img(t+'_tr_'+d))});['natural','retro','neon'].forEach(t=>img(t+'_rock'));
 [['natural',[0,1,3,5]],['retro',[0,1,3,5]],['neon',[0,1,2,5]]].forEach(([t,rs])=>rs.forEach(r=>{for(let f=0;f<6;f++)img('fx_'+t+'_'+r+f)}));
 const BOARD={natural:[.0277,.0319,.9723,.9723],retro:[.0437,.0513,.9563,.9529],neon:[.0592,.0668,.9408,.9341]};
 function tileImg(conns){const k={'02':'v','13':'h','01':'tr','12':'rb','23':'bl','03':'lt'}[[...conns].sort().join('')];return k&&[k]}
@@ -910,7 +910,7 @@ function draw(){
     const o=off(p);let sx=0;
     if(p.shake&&now-p.shake<300)sx=Math.sin((now-p.shake)/20)*3;
     const x=M+c*S+o[0]+sx,y=BY+r*S+o[1];
-    if(p.rock){drawRock(x,y,th);continue}
+    if(p.rock){const ri=img(skin+'_rock');if(ri){ctx.save();ctx.shadowColor='rgba(0,0,0,.28)';ctx.shadowBlur=4;ctx.shadowOffsetY=2;ctx.drawImage(ri,x,y,S,S);ctx.restore()}else drawRock(x,y,th);continue}
     const ti=p.kind?null:tileImg(p.conns),im=p.kind?img(skin+'_x_'+(p.kind==='cross'?'cross':p.kind==='jump'?'jump':(p.pair?'wb':'wr'))):ti&&img(skin+'_t_'+ti[0]);
     ctx.save();ctx.shadowColor='rgba(0,0,0,.28)';ctx.shadowBlur=4;ctx.shadowOffsetY=2;
     if(im){ctx.shadowColor='transparent';if(p.kind==='warp'||p.kind==='jump'){ctx.translate(x+S/2,y+S/2);ctx.rotate((p.d-(p.kind==='warp'?2:3))*Math.PI/2);ctx.drawImage(im,-S/2,-S/2,S,S)}else ctx.drawImage(im,x,y,S,S);ctx.restore()}
