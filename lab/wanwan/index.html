@@ -439,12 +439,12 @@ function genLevel(stage){
   free.forEach(([r,c],i)=>{board[r][c]=i<nRock?{conns:[-1,-1],rock:true}:{conns:TYPES[rnd(6)].slice(),bonus:null}});
   let empty=free[nRock+rnd(Math.max(1,free.length-nRock))];board[empty[0]][empty[1]]=null;
   const mids=[];for(let i=2;i<L-1;i++)if(!plan.rm.has(i)&&!plan.sp[i])mids.push(i);shuffle(mids);
-  if(mids.length){board[path[mids[0]][0]][path[mids[0]][1]].bonus='station';
+  if(mids.length){
     const kinds=stage<3?['slow','stop']:['slow','stop','fast'];shuffle(kinds);
     const nIt=stage<2?1:2;
-    for(let k=1;k<=nIt&&k<mids.length;k++)board[path[mids[k]][0]][path[mids[k]][1]].bonus=kinds[(k-1)%kinds.length];
+    for(let k=0;k<nIt&&k<mids.length;k++)board[path[mids[k]][0]][path[mids[k]][1]].bonus=kinds[k%kinds.length];
     const nStar=stage<=2?2:3;
-    for(let k=nIt+1;k<=nIt+nStar&&k<mids.length;k++)board[path[mids[k]][0]][path[mids[k]][1]].bonus='star'}
+    for(let k=nIt;k<nIt+nStar&&k<mids.length;k++)board[path[mids[k]][0]][path[mids[k]][1]].bonus='star'}
   // 逆向きにスライドして崩す（必ず元に戻せる）
   let last=null;
   const scr=k=>{for(let i=0;i<k;i++){
