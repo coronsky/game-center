@@ -318,7 +318,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
 const $=s=>document.querySelector(s);
 const store={get(k,d){try{return localStorage.getItem(k)||d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const cv=$('#cv'),ctx=cv.getContext('2d');
-let N=5,S=60;const M=44,BY=64,BW=348,W=BW+M*2,H=BY+BW+44;
+let N=5,S=60;const M=52,BY=72,BW=348,W=BW+M*2,H=BY+BW+52,AP=20;
 const setN=n=>{N=n;S=BW/n};
 const dpr=Math.min(window.devicePixelRatio||1,3);
 cv.width=W*dpr;cv.height=H*dpr;
@@ -563,8 +563,8 @@ function newGame(){G.stage=1;G.score=0;G.lives=3;newStage()}
 
 function trainWorld(){
   const T=G.train;
-  if(T.phase==='approach'){const g=G.S0,m=sideMid(g.e);return{x:M+g.c*S+m[0]+DC[g.e]*S*.7*(1-T.t),y:BY+g.r*S+m[1]+DR[g.e]*S*.7*(1-T.t),a:Math.atan2(-DR[g.e],-DC[g.e])}}
-  if(T.phase==='goal'){const g=G.Gl,m=sideMid(g.x);return{x:M+g.c*S+m[0]+DC[g.x]*S*.7*T.t,y:BY+g.r*S+m[1]+DR[g.x]*S*.7*T.t,a:Math.atan2(DR[g.x],DC[g.x])}}
+  if(T.phase==='approach'){const g=G.S0,m=sideMid(g.e);return{x:M+g.c*S+m[0]+DC[g.e]*AP*(1-T.t),y:BY+g.r*S+m[1]+DR[g.e]*AP*(1-T.t),a:Math.atan2(-DR[g.e],-DC[g.e])}}
+  if(T.phase==='goal'){const g=G.Gl,m=sideMid(g.x);return{x:M+g.c*S+m[0]+DC[g.x]*AP*T.t,y:BY+g.r*S+m[1]+DR[g.x]*AP*T.t,a:Math.atan2(DR[g.x],DC[g.x])}}
   const p=G.board[T.r][T.c],o=off(p),bx=M+T.c*S+o[0],by=BY+T.r*S+o[1];
   if(T.phase==='warp'){const m=sideMid(T.e);return{x:bx+S/2-DC[T.e]*S*.12,y:by+S/2-DR[T.e]*S*.12,a:0,al:0}}
   if(T.phase==='jump'){
@@ -730,7 +730,7 @@ function drawTrain(p,th){
   ctx.save();if(th.glow){ctx.shadowColor=th.glow;ctx.shadowBlur=12}
   if(p.al!==undefined)ctx.globalAlpha=p.al;
   const sc=p.sc||1;
-  if(im){drawImg(im,p.x,p.y-S*.08,S*.95*sc,S*.95*sc);ctx.restore();return}
+  if(im){drawImg(im,p.x,p.y-S*.08,Math.min(S,64)*.95*sc,Math.min(S,64)*.95*sc);ctx.restore();return}
   ctx.translate(p.x,p.y);ctx.rotate(p.a);
   ctx.fillStyle=th.body;rr(-17,-9,34,18,5);ctx.fill();
   ctx.fillStyle=th.front;rr(2,-7,15,14,4);ctx.fill();
@@ -800,8 +800,9 @@ function draw(){
   ctx.globalAlpha=1;
   [[G.S0,G.S0.e],[G.Gl,G.Gl.x]].forEach(([q,d])=>{ // 出入口の外にレール
     const im=img(skin+'_t_'+(d%2?'h':'v'));if(!im)return;
-    const x=d===1?M+N*S:d===3?M-S:M+q.c*S,y=d===0?BY-S:d===2?BY+N*S:BY+q.r*S;
-    ctx.drawImage(im,x,y,S,S)});
+    const L=40,n=im.naturalWidth,f=L/S,x=d===1?M+N*S:d===3?M-L:M+q.c*S,y=d===0?BY-L:d===2?BY+N*S:BY+q.r*S;
+    if(d===0)ctx.drawImage(im,0,n*(1-f),n,n*f,x,y,S,L);else if(d===2)ctx.drawImage(im,0,0,n,n*f,x,y,S,L);
+    else if(d===3)ctx.drawImage(im,n*(1-f),0,n*f,n,x,y,L,S);else ctx.drawImage(im,0,0,n*f,n,x,y,L,S)});
   {const on=((performance.now()/420)|0)%2,TT=G.tt||[10,10,10,10];
    [[G.S0,G.S0.e,'s'],[G.Gl,G.Gl.x,'g']].forEach(([q,d,k])=>{
     const gi=img(skin+'_gate_'+k+on);if(!gi)return;
@@ -809,7 +810,8 @@ function draw(){
     const ox=d===1?M+N*S:d===3?M:cx,oy=d===0?BY:d===2?BY+N*S:cy;
     ctx.save();ctx.translate(ox,oy);ctx.rotate(d*Math.PI/2);
     const ky=Math.max(1,t/(.075*w)),hk=gi.naturalHeight;
-    if(!(G.state==='ready'&&k==='s'))ctx.drawImage(gi,0,0,gi.naturalWidth,.45*hk,-w/2,-t/2-.535*w,w,.45*w);
+    const wa=1.7*Math.min(S,64);
+    if(!(G.state==='ready'&&k==='s'))ctx.drawImage(gi,0,0,gi.naturalWidth,.45*hk,-wa/2,-t/2-.535*wa,wa,.45*wa);
     ctx.drawImage(gi,0,.45*hk,gi.naturalWidth,.17*hk,-w/2,-t/2-(.533-.45)*w*ky,w,.17*w*ky);ctx.restore()})}
   if(G.train)drawTrain(trainWorld(),th);
   G.fx.forEach(f=>{const fi=img('fx_'+skin+'_'+th.fx[f.k]+Math.min(5,(f.t/f.dur*6)|0));if(fi)drawImg(fi,f.x,f.y,f.size,f.size)});
