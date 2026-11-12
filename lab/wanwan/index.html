@@ -352,21 +352,21 @@ body[data-vt=natural] .btn.g{border-image:url(assets/ui/natural_main0.webp) 50 f
 body[data-vt=natural] .btn.g:active{border-image-source:url(assets/ui/natural_main1.webp)!important} body[data-vt=natural] .btn.c:active{border-image-source:url(assets/ui/natural_std1.webp)!important}
 body[data-vt=natural] .btn.g:disabled{border-image-source:url(assets/ui/natural_main2.webp)!important} body[data-vt=natural] .btn.c:disabled{border-image-source:url(assets/ui/natural_std2.webp)!important}
 body[data-vt=natural] .lvRow button:not(#stPrev):not(#stNext){border-image:url(assets/ui/natural_pill0.webp) 50 fill/14px stretch!important;color:#5a3d2b}
-body[data-vt=natural] .lvRow button.on{border-image-source:url(assets/ui/natural_main0.webp)!important;color:#fff}
+body[data-vt=natural] .lvRow button.on:not(#stPrev):not(#stNext){border-image-source:url(assets/ui/natural_main0.webp)!important;color:#fff}
 body[data-vt=natural] #stTxt{flex:2}
 body[data-vt=retro] .btn,body[data-vt=retro] .lvRow button:not(#stPrev):not(#stNext){background:none!important;border:14px solid transparent!important;padding:0 6px!important;min-height:46px;box-sizing:border-box;line-height:18px}
 body[data-vt=retro] .btn.g{border-image:url(assets/ui/retro_std1.webp) 50 fill/14px stretch!important} body[data-vt=retro] .btn.c{border-image:url(assets/ui/retro_std0.webp) 50 fill/14px stretch!important}
 body[data-vt=retro] .btn.g:active{border-image-source:url(assets/ui/retro_std2.webp)!important} body[data-vt=retro] .btn.c:active{border-image-source:url(assets/ui/retro_std1.webp)!important}
 body[data-vt=retro] .btn.g:disabled{border-image-source:url(assets/ui/retro_std2.webp)!important} body[data-vt=retro] .btn.c:disabled{border-image-source:url(assets/ui/retro_std2.webp)!important}
 body[data-vt=retro] .lvRow button:not(#stPrev):not(#stNext){border-image:url(assets/ui/retro_pill0.webp) 50 fill/14px stretch!important;color:#5a2a12}
-body[data-vt=retro] .lvRow button.on{border-image-source:url(assets/ui/retro_std1.webp)!important;color:#5a2a12}
+body[data-vt=retro] .lvRow button.on:not(#stPrev):not(#stNext){border-image-source:url(assets/ui/retro_std1.webp)!important;color:#5a2a12}
 body[data-vt=retro] #stTxt{flex:2}
 body[data-vt=neon] .btn,body[data-vt=neon] .lvRow button:not(#stPrev):not(#stNext){background:none!important;border:14px solid transparent!important;padding:0 6px!important;min-height:46px;box-sizing:border-box;line-height:18px}
 body[data-vt=neon] .btn.g{border-image:url(assets/ui/neon_std1.webp) 50 fill/14px stretch!important} body[data-vt=neon] .btn.c{border-image:url(assets/ui/neon_std0.webp) 50 fill/14px stretch!important}
 body[data-vt=neon] .btn.g:active{border-image-source:url(assets/ui/neon_std2.webp)!important} body[data-vt=neon] .btn.c:active{border-image-source:url(assets/ui/neon_std1.webp)!important}
 body[data-vt=neon] .btn.g:disabled{border-image-source:url(assets/ui/neon_std2.webp)!important} body[data-vt=neon] .btn.c:disabled{border-image-source:url(assets/ui/neon_std2.webp)!important}
 body[data-vt=neon] .lvRow button:not(#stPrev):not(#stNext){border-image:url(assets/ui/neon_pill0.webp) 50 fill/14px stretch!important;color:#4a2d12}
-body[data-vt=neon] .lvRow button.on{border-image-source:url(assets/ui/neon_std1.webp)!important;color:#4a2d12}
+body[data-vt=neon] .lvRow button.on:not(#stPrev):not(#stNext){border-image-source:url(assets/ui/neon_std1.webp)!important;color:#4a2d12}
 body[data-vt=neon] #stTxt{flex:2}
 body .gbtns .btn{border-width:9px!important;border-image-width:9px!important;padding:0 1px!important;font-size:11.5px!important;min-width:0;letter-spacing:-.02em;gap:2px}
 body:is([data-vt=retro],[data-vt=neon]) .lvRow button.on{filter:drop-shadow(0 0 5px rgba(255,190,60,.95)) saturate(1.5) brightness(1.03)}
@@ -374,30 +374,33 @@ body:is([data-vt=retro],[data-vt=neon]) .lvRow button.on{filter:drop-shadow(0 0 
 body[data-vt=natural] .tile.pf{background-image:url(assets/ui/natural_t4.webp);padding-bottom:12%}
 body[data-vt=retro] .tile.pf{background-image:url(assets/ui/retro_t4.webp);padding-bottom:12%}
 body[data-vt=neon] .tile.pf{background-image:url(assets/ui/neon_t4.webp);padding-bottom:12%}
+#mMenu .lvRow{overflow:visible}#mMenu .lvRow button:not(#stPrev):not(#stNext){flex:1 1 0!important;min-width:0;font-size:15px!important;padding:0 2px!important;white-space:nowrap}
 </style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">わんわんトレイン</div></div>
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">わんわんトレイン</div></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt">線路をつないで！</span></div>
-  <div class="lvRow" id="modes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div>
-  <div class="lvRow" id="sizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
   <div class="lvRow" id="stRow"><button id="stPrev">◀</button><button id="stTxt" style="flex:2;font-weight:700">ステージ 1 / 20 ▾</button><button id="stNext">▶</button></div>
-  <div class="lvRow" id="diffs"><button data-v="easy">かんたん</button><button data-v="normal">ふつう</button><button data-v="hard">むずかしい</button></div>
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv"></canvas></div></div>
-  <div class="hud"><div class="box"><small id="stLbl">ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box"><small>ミス</small><b id="missN">0/3</b></div><div class="box"><small>のこり</small><b id="tmN">2:30</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
+  <div class="hud"><div class="box"><small id="stLbl">ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box"><small>ミス</small><b id="missN">0/3</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
   <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn g" id="bGo">🚂しゅっぱつ</button><button class="btn c" id="bFast">▶▶はやく</button><button class="btn c" id="bRestart">⟳やりなおし</button><button class="btn c" id="bHelp">❓あそびかた</button></div>
-  <div class="btns gbtns" style="grid-template-columns:1fr;margin-top:8px"><button class="btn c" id="bHome">🏠ホームへ戻る</button></div>
+  <div class="btns gbtns" style="grid-template-columns:1fr 1fr;margin-top:8px"><button class="btn c" id="bMenu">🎮メニュー</button><button class="btn c" id="bHome">🏠ホームへ戻る</button></div>
   <div class="foot"><span>ベスト <b id="bestN">0</b></span><span>右上の🎨でスキン変更</span></div>
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 わんわんトレイン</h2>
 <p>空きマスに<b>パネルをスライド</b>（タップ or スワイプ）して、スタートからゴールまで<b>線路をつなごう</b>！列車は少ししたら自動で出発します。</p>
 <p>枠の切れ目の<b>青いスタート</b>から列車が出発し、<b>赤いゴール</b>の切れ目に入ればクリア！切れ目の場所はステージごとに変わるよ。</p>
 <p><b>十字</b>は縦横どちらからも通れる交差、<b>ワープ</b>は同じ色のトンネルへ瞬間移動、<b>ジャンプ台</b>は1マス飛び越えて着地します。</p>
-<p>線路の上の<b>アイテム</b>を取ると効果が出るよ（⏱ゆっくり4秒／⌛時間ストップ3秒／🚀はやくなる4秒）。<b>★スター</b>は2個→3個…と取るほど1個ごとの点が上がり（300→500→800）、全部取るとボーナス＋評価アップ！<b>🐶お客さん</b>は乗せるほど点が上がり、<b>🔑かぎ</b>を取ると<b>🚧扉</b>を通れるよ。<b>白い矢印</b>のパネルは矢印の向きにしか入れないよ。5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
+<p>線路の上の<b>アイテム</b>を取ると効果が出るよ（⏱ゆっくり4秒／⌛時間ストップ3秒／🚀はやくなる4秒）。<b>★スター</b>は2個→3個…と取るほど1個ごとの点が上がり（300→500→800）、全部取るとボーナス＋評価アップ！<b>🔑かぎ</b>を取ると<b>🚧扉</b>を通れるよ。<b>白い矢印</b>のパネルは矢印の向きにしか入れないよ。5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
 <p>ゴールが見えたら<b>▶▶はやく</b>で列車を3倍速に！線路がつながっていないと脱線するとやり直しです。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
+<div class="modal" id="mMenu"><div class="card result"><h2>わんわんトレイン</h2><div class="msg" style="font-size:15px">あそびかたをえらぼう</div>
+  <div class="lvRow" id="modes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div>
+  <div class="lvRow" id="sizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
+  <div class="lvRow" id="diffs"><button data-v="easy">かんたん</button><button data-v="normal">ふつう</button><button data-v="hard">むずかしい</button></div>
+<div class="acts" style="flex-direction:column"><button class="btn g" id="mGoMenu">スタート！</button><button class="btn c" id="mBackMenu" style="margin-top:8px">もどる</button></div></div></div>
 <div class="modal" id="mSel"><div class="card result"><h2>ステージせんたく</h2><div id="selG" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0"></div><div class="acts"><button class="btn c" id="selX">とじる</button></div></div></div>
 <div class="modal" id="mMsg"><div class="card result">
   <h2 id="mT"></h2>
@@ -536,7 +539,7 @@ function genLevel(stage){
   {
     const kinds=stage<3?['slow','stop']:['slow','stop','fast'];shuffle(kinds);
     const at=i=>board[path[i][0]][path[i][1]],take=()=>mids.length?mids.pop():null;
-    const nIt=stage<2?1:2,nStar=stage<=2?2:3,nPax=stage<2?0:stage<5?1:2;
+    const nIt=stage<2?1:2,nStar=stage<=2?2:3,nPax=0;
     for(let k=0;k<nStar;k++){const i=take();if(i!=null)at(i).bonus='star'}
     for(let k=0;k<nIt;k++){const i=take();if(i!=null)at(i).bonus=kinds[k%kinds.length]}
     for(let k=0;k<nPax;k++){const i=take();if(i!=null)at(i).bonus='pax'}
@@ -596,7 +599,7 @@ const countStars=b=>b.flat().filter(p=>p&&p.bonus==='star').length;
 function hud(){
   $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
   $('#stRow').style.display=mode==='stage'?'':'none';$('#diffs').style.display=mode==='stage'?'none':'';
-  $('#scN').textContent=G.score.toLocaleString();{const l=Math.max(0,Math.ceil(G.left||0));$('#tmN').textContent=Math.floor(l/60)+':'+String(l%60).padStart(2,'0')}
+  $('#scN').textContent=G.score.toLocaleString();
   {const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stTxt').textContent='ステージ '+G.stage+' / '+NST+(isPerf(sizeMode,G.stage)?' ⭐':G.stage<=(prog[sizeMode]||0)?' ✓':'')+' ▾';$('#stNext').textContent=G.stage<mx?'▶':'🔒'}
   $('#stars').textContent=G.starsGot+'/'+G.starsTot;
   $('#lives').textContent='♥'.repeat(Math.max(0,G.lives))+'♡'.repeat(Math.max(0,3-G.lives));
@@ -614,7 +617,7 @@ function withSeed(seed,fn){const old=Math.random;let a=seed>>>0;
 function newStage(){
   const L=mode==='stage'?withSeed(+sizeMode*100003+G.stage*7919+12345,()=>genLevel(G.stage)):genLevel(Math.min(NST,3+G.rs));
   G.board=L.board;G.S0=L.S0;G.Gl=L.Gl;G.snap=JSON.stringify(G.board);G.starsTot=countStars(G.board);
-  G.miss=0;G.moves=0;G.left=LIMIT[sizeMode];G.stageScore=G.score;begin();
+  G.miss=0;G.moves=0;G.stageScore=G.score;begin();
 }
 function begin(){
   G.board=JSON.parse(G.snap);G.score=G.stageScore;
@@ -660,7 +663,7 @@ function derail(){
 function gameOver(why){
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
   G.state='over';say('moon','もういっかい！');hud();
-  overlay(why==='time'?'じかんぎれ':'ゲームオーバー',(why==='time'?'制限時間になりました':'ミスが'+MAXMISS+'回になりました')+'\nSCORE '+G.score.toLocaleString(),'この盤面をもう一度',()=>{G.miss=0;G.left=LIMIT[sizeMode];G.score=G.stageScore;begin()},mode==='stage'?'ステージ1から':'ランダムを新しく',()=>{G.score=0;newGame(true)});
+  overlay(why==='time'?'じかんぎれ':'ゲームオーバー',(why==='time'?'制限時間になりました':'ミスが'+MAXMISS+'回になりました')+'\nSCORE '+G.score.toLocaleString(),'この盤面をもう一度',()=>{G.miss=0;G.score=G.stageScore;begin()},mode==='stage'?'ステージ1から':'ランダムを新しく',()=>{G.score=0;newGame(true)});
 }
 function afterDerail(){if(G.miss>=MAXMISS)gameOver('miss');else begin()}
 function clearStage(){
@@ -708,7 +711,6 @@ function off(p){
 
 function update(dt){
   if(G.goT>0)G.goT-=dt;
-  if(G.state==='ready'||G.state==='run'){G.left-=dt;if(G.left<=0){G.left=0;gameOver('time');return}const c=Math.ceil(G.left);if(c!==G.lc){G.lc=c;hud()}}
   if(G.state==='ready'){G.timer-=dt;if(G.timer<=0)go()}
   if(G.state==='run')moveTrain(dt);
   if(G.state==='derail'){G.timer-=dt;if(G.timer<=0)afterDerail()}
@@ -979,10 +981,14 @@ function refresh(){
   $('#bFast').classList.toggle('on',!!G.fast);
   $('#bestN').textContent=hi.toLocaleString();
 }
-$('#diffs').onclick=e=>{const v=e.target.dataset.v;if(v){diff=v;store.set('wanwan_diff',v);refresh();if(G.state==='ready'||G.state==='run'){begin()}}};
+$('#diffs').onclick=e=>{const v=e.target.dataset.v;if(v){diff=v;store.set('wanwan_diff',v);refresh()}};
 function relaunch(){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.rs=0;G.stage=mode==='stage'?Math.min(NST,(prog[sizeMode]||0)+1):1;newStage();refresh()}
-$('#sizes').onclick=e=>{const v=e.target.dataset.v;if(v){sizeMode=v;store.set('wanwan_size',v);relaunch()}};
-$('#modes').onclick=e=>{const v=e.target.dataset.v;if(v){mode=v;store.set('wanwan_mode',v);relaunch()}};
+$('#sizes').onclick=e=>{const v=e.target.dataset.v;if(v){sizeMode=v;store.set('wanwan_size',v);refresh();hud()}};
+$('#modes').onclick=e=>{const v=e.target.dataset.v;if(v){mode=v;store.set('wanwan_mode',v);refresh();hud()}};
+function openMenu(first){$('#mBackMenu').style.display=first?'none':'';refresh();hud();$('#mMenu').classList.add('show')}
+$('#mGoMenu').onclick=()=>{$('#mMenu').classList.remove('show');relaunch()};
+$('#mBackMenu').onclick=()=>$('#mMenu').classList.remove('show');
+$('#bMenu').onclick=()=>openMenu(false);
 function openSel(){
   const mx=Math.min(NST,(prog[sizeMode]||0)+1),g=$('#selG');g.innerHTML='';
   for(let i=1;i<=NST;i++){const b=document.createElement('button');const lock=i>mx,done=i<=(prog[sizeMode]||0);
@@ -1010,7 +1016,7 @@ sw.onclick=()=>{snd=!snd;store.set('wanwan_snd',snd?'1':'0');sw.classList.toggle
 window.actx=actx;
 refresh();
 newGame();G.state='title';
-overlay('わんわんトレイン','空きマスにパネルをスライドして\n線路をつなごう！\n赤い切れ目を目指してゴールへ！','スタート',newGame);
+openMenu(true);
 requestAnimationFrame(loop);
 })();
 
