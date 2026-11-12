@@ -302,7 +302,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 わんわんトレイン</h2>
 <p>空きマスに<b>パネルをスライド</b>（タップ or スワイプ）して、スタートからゴールまで<b>線路をつなごう</b>！列車は少ししたら自動で出発します。</p>
-<p>枠の上の<b>スタートの鳥居</b>から列車が出発し、<b>ゴールの鳥居</b>をくぐればクリア！鳥居の場所はステージごとに変わるよ。</p>
+<p>枠の切れ目の<b>青いスタート</b>から列車が出発し、<b>赤いゴール</b>の切れ目に入ればクリア！切れ目の場所はステージごとに変わるよ。</p>
 <p><b>十字</b>は縦横どちらからも通れる交差、<b>ワープ</b>は同じ色のトンネルへ瞬間移動、<b>ジャンプ台</b>は1マス飛び越えて着地します。</p>
 <p>⭐を取るとスコアUP。全部取るとボーナス＋評価アップ。5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
 <p>ゴールが見えたら<b>▶▶はやく</b>で列車を3倍速に！線路がつながっていないと脱線してハートが減ります。</p>
@@ -332,7 +332,7 @@ const THEMES={
 };
 const IMG={};
 function img(n){let i=IMG[n];if(!i){i=new Image();i.src='assets/'+n+'.webp';IMG[n]=i}return i.complete&&i.naturalWidth?i:null}
-['natural','retro','neon'].forEach(t=>{img(t+'_board');img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k));['cross','wr','wb','jump'].forEach(k=>img(t+'_x_'+k))});
+['natural','retro','neon'].forEach(t=>{img(t+'_board');['s0','s1','g0','g1'].forEach(k=>img(t+'_gate_'+k));img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k));['cross','wr','wb','jump'].forEach(k=>img(t+'_x_'+k))});
 ['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f);img('natural_tr_'+d)});
 [['natural',[0,1,3,5]],['retro',[0,1,3,5]],['neon',[0,1,2,5]]].forEach(([t,rs])=>rs.forEach(r=>{for(let f=0;f<6;f++)img('fx_'+t+'_'+r+f)}));
 const BOARD={natural:[.0277,.0319,.9723,.9723],retro:[.0437,.0513,.9563,.9529],neon:[.0592,.0668,.9408,.9341]};
@@ -755,6 +755,11 @@ function draw(){
   const bd=img(skin+'_board'),fr=BOARD[skin];
   if(bd){const dw=N*S/(fr[2]-fr[0]),dh=N*S/(fr[3]-fr[1]);
     ctx.save();if(th.glow){ctx.shadowColor=th.frame;ctx.shadowBlur=10}
+    const TT=[fr[1]*dh,(1-fr[2])*dw,(1-fr[3])*dh,fr[0]*dw];G.tt=TT;
+    ctx.beginPath();ctx.rect(0,0,W,H);
+    [G.S0,G.Gl].forEach((q,i)=>{const d=i?q.x:q.e,t=TT[d]+10,x0=M+q.c*S+S*.02,y0=BY+q.r*S+S*.02,L=S*.96;
+      if(d===0)ctx.rect(x0,BY-t,L,t);else if(d===2)ctx.rect(x0,BY+N*S,L,t);else if(d===3)ctx.rect(M-t,y0,t,L);else ctx.rect(M+N*S,y0,t,L)});
+    ctx.clip('evenodd');
     ctx.drawImage(bd,M-fr[0]*dw,BY-fr[1]*dh,dw,dh);ctx.restore()}
   else{ctx.fillStyle=th.frame;rr(M-7,BY-7,N*S+14,N*S+14,10);ctx.fill();ctx.fillStyle=th.slot;rr(M-2,BY-2,N*S+4,N*S+4,6);ctx.fill()}
   const now=performance.now(),blank=img('natural_tile_blank');
@@ -784,12 +789,14 @@ function draw(){
   G.parts.forEach(q=>{ctx.globalAlpha=Math.max(0,q.l/q.m)*(q.puff?.7:1);
     ctx.fillStyle=q.puff?`rgb(${th.puff})`:th.rail;ctx.beginPath();ctx.arc(q.x,q.y,q.r*(q.puff?(1.6-q.l/q.m):1),0,7);ctx.fill()});
   ctx.globalAlpha=1;
+  {const on=((performance.now()/420)|0)%2,TT=G.tt||[10,10,10,10];
+   [[G.S0,G.S0.e,'s'],[G.Gl,G.Gl.x,'g']].forEach(([q,d,k])=>{
+    const gi=img(skin+'_gate_'+k+on);if(!gi)return;
+    const w=S*1.6,t=TT[d],cx=M+q.c*S+S/2,cy=BY+q.r*S+S/2;
+    const ox=d===1?M+N*S:d===3?M:cx,oy=d===0?BY:d===2?BY+N*S:cy;
+    ctx.save();ctx.translate(ox,oy);ctx.rotate(d*Math.PI/2);
+    ctx.drawImage(gi,-w/2,-t-.48*w,w,w);ctx.restore()})}
   if(G.train)drawTrain(trainWorld(),th);
-  [[G.S0,G.S0.e,'start'],[G.Gl,G.Gl.x,'goal_'+skin]].forEach(([q,d,nm])=>{
-    const gx=M+q.c*S+S/2+DC[d]*S*.5,gy=BY+q.r*S+S/2+DR[d]*S*.5,im=img(nm);
-    if(im){ctx.save();ctx.translate(gx,gy);ctx.rotate(d===3?-Math.PI/2:d===1?Math.PI/2:0);drawImg(im,0,0,S*.82,S*.82);ctx.restore()}
-    else{ctx.save();ctx.fillStyle=th.sign;rr(gx-18,gy-8,36,16,5);ctx.fill();ctx.fillStyle=th.signTx;ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.fillText(nm[0]==='g'?'GOAL':'START',gx,gy+3);ctx.restore()}
-  });
   G.fx.forEach(f=>{const fi=img('fx_'+skin+'_'+th.fx[f.k]+Math.min(5,(f.t/f.dur*6)|0));if(fi)drawImg(fi,f.x,f.y,f.size,f.size)});
   ctx.save();for(let i=0;i<G.starsTot;i++)starP(M+18+i*22,17,8,i<G.starsGot,th);ctx.restore();
   if(G.state==='ready'){
@@ -834,7 +841,7 @@ sw.onclick=()=>{snd=!snd;store.set('wanwan_snd',snd?'1':'0');sw.classList.toggle
 window.actx=actx;
 refresh();
 const L0=genLevel(1);G.board=L0.board;G.S0=L0.S0;G.Gl=L0.Gl;G.starsTot=countStars(G.board);resetTrain();hud();
-overlay('わんわんトレイン','空きマスにパネルをスライドして\n線路をつなごう！\n★をあつめるとスコアUP\n鳥居をくぐってゴールへ！','スタート',newGame);
+overlay('わんわんトレイン','空きマスにパネルをスライドして\n線路をつなごう！\n★をあつめるとスコアUP\n赤い切れ目を目指してゴールへ！','スタート',newGame);
 requestAnimationFrame(loop);
 })();
 
