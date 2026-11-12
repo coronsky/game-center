@@ -290,9 +290,10 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">わんわんトレイン</div></div>
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">わんわんトレイン</div></div>
-  <div class="hud"><div class="box"><small>ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
-  <div class="lvRow" id="sizes"><button data-v="">おまかせ</button><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
-  <div class="lvRow" id="gims"><button data-v="auto">おまかせ</button><button data-v="none">なし</button><button data-v="cross">十字</button></div>
+  <div class="hud"><div class="box"><small id="stLbl">ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box"><small>ミス</small><b id="missN">0/3</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
+  <div class="lvRow" id="modes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div>
+  <div class="lvRow" id="sizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
+  <div class="lvRow" id="stRow"><button id="stPrev">◀</button><span id="stTxt" style="flex:2;text-align:center;font-weight:700;align-self:center">ステージ 1 / 20</span><button id="stNext">▶</button></div>
   <div class="lvRow" id="diffs"><button data-v="easy">かんたん</button><button data-v="normal">ふつう</button><button data-v="hard">むずかしい</button></div>
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv"></canvas></div></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt">線路をつないで！</span></div>
@@ -312,7 +313,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
   <h2 id="mT"></h2>
   <div class="avs"><div><div class="ph" style="background-image:var(--colon)"></div>コロン</div><div><div class="ph" style="background-image:var(--moon)"></div>ムーン</div></div>
   <div class="msg" id="mM"></div>
-  <div class="acts"><button class="btn g" id="mBtn"></button></div>
+  <div class="acts"><button class="btn g" id="mBtn"></button><button class="btn c" id="mBtn2" style="display:none;margin-top:8px"></button></div>
 </div></div>
 <script>(()=>{
 const $=s=>document.querySelector(s);
@@ -339,8 +340,11 @@ const BOARD={natural:[.0277,.0319,.9723,.9723],retro:[.0437,.0513,.9563,.9529],n
 function tileImg(conns){const k={'02':'v','13':'h','01':'tr','12':'rb','23':'bl','03':'lt'}[[...conns].sort().join('')];return k&&[k]}
 let skin='natural',diff=store.get('wanwan_diff','normal');
 if(!DIFF[diff])diff='normal';
-let sizeMode=store.get('wanwan_size','');if(!['','4','5','6'].includes(sizeMode))sizeMode='';
-let gimMode=store.get('wanwan_gim','auto');if(!['auto','none','cross'].includes(gimMode))gimMode='auto';
+let sizeMode=store.get('wanwan_size','4');if(!['4','5','6'].includes(sizeMode))sizeMode='4';
+let mode=store.get('wanwan_mode','stage');if(mode!=='random')mode='stage';
+let prog={4:0,5:0,6:0};try{Object.assign(prog,JSON.parse(store.get('wanwan_prog','{}')))}catch(_){}
+const MAXMISS=3,NST=20;
+let gimMode='auto';
 let hi=+store.get('wanwan_hi','0')||0;
 
 const has=(p,s)=>p.kind==='cross'?true:(p.kind==='warp'||p.kind==='jump')?p.d===s:(p.conns[0]===s||p.conns[1]===s);
@@ -383,7 +387,7 @@ function simulate(board,S0,Gl){
   return false;
 }
 function genLevel(stage){
-  setN(sizeMode?+sizeMode:stage<=3?4:stage<=8?5:6);
+  setN(+sizeMode);
   const minLen=Math.min({4:7,5:9,6:12}[N]+Math.floor((stage-1)/2),{4:10,5:15,6:20}[N]),maxLen=Math.min(N*N-5,24);
   const edges=[];for(let i=0;i<N;i++){edges.push([0,i,0],[N-1,i,2],[i,0,3],[i,N-1,1])}
   const pick=(ed,cell)=>{const o=edges.filter(q=>q[0]===cell[0]&&q[1]===cell[1]);return o[rnd(o.length)][2]};
@@ -488,7 +492,7 @@ function planGim(pa,di,S0,Gl,want,stage){
   return{sp,rm};
 }
 /* ---------- ゲーム状態 ---------- */
-const G={stage:1,score:0,lives:3,board:null,snap:'',S0:null,Gl:null,state:'title',timer:0,train:null,miss:0,moves:0,fast:false,starsGot:0,starsTot:0,stageScore:0,prev:'',parts:[],puffT:0,shakeT:0,fx:[]};
+const G={rs:0,stage:1,score:0,lives:3,board:null,snap:'',S0:null,Gl:null,state:'title',timer:0,train:null,miss:0,moves:0,fast:false,starsGot:0,starsTot:0,stageScore:0,prev:'',parts:[],puffT:0,shakeT:0,fx:[]};
 function fx(k,x,y,size,dur=.6){G.fx.push({k,x,y,size,t:0,dur})}
 const CT=()=>DIFF[diff];
 function say(who,text,ms=1600){
@@ -498,18 +502,23 @@ function say(who,text,ms=1600){
 }
 const countStars=b=>b.flat().filter(p=>p&&p.bonus==='star').length;
 function hud(){
-  $('#stN').textContent=G.stage;
+  $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
+  $('#stRow').style.display=mode==='stage'?'':'none';$('#stTxt').textContent='ステージ '+G.stage+' / '+NST;
   $('#scN').textContent=G.score.toLocaleString();
   $('#stars').textContent=G.starsGot+'/'+G.starsTot;
   $('#lives').textContent='♥'.repeat(Math.max(0,G.lives))+'♡'.repeat(Math.max(0,3-G.lives));
 }
-function overlay(title,body,btn,cb){
+function overlay(title,body,btn,cb,btn2,cb2){
   $('#mT').textContent=title;$('#mM').textContent=body;$('#mBtn').textContent=btn;
+  const b2=$('#mBtn2');b2.style.display=btn2?'':'none';if(btn2){b2.textContent=btn2;b2.onclick=()=>{$('#mMsg').classList.remove('show');cb2()}}
   $('#mMsg').classList.add('show');$('#mBtn').onclick=()=>{$('#mMsg').classList.remove('show');cb()};
 }
 function resetTrain(){const s0=G.S0;G.train={phase:'approach',t:0,r:s0.r,c:s0.c,e:s0.e,warned:false,steps:0};G.parts=[];G.fx=[]}
+function withSeed(seed,fn){const old=Math.random;let a=seed>>>0;
+  Math.random=()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296};
+  try{return fn()}finally{Math.random=old}}
 function newStage(){
-  const L=genLevel(G.stage);
+  const L=mode==='stage'?withSeed(+sizeMode*100003+G.stage*7919+12345,()=>genLevel(G.stage)):genLevel(Math.min(NST,3+G.rs));
   G.board=L.board;G.S0=L.S0;G.Gl=L.Gl;G.snap=JSON.stringify(G.board);G.starsTot=countStars(G.board);
   G.miss=0;G.moves=0;G.stageScore=G.score;begin();
 }
@@ -554,7 +563,13 @@ function derail(){
   for(let i=0;i<14;i++)G.parts.push({x:pose.x,y:pose.y,vx:(Math.random()-.5)*90,vy:(Math.random()-.5)*90,l:.8,m:.8,r:3+Math.random()*3});
   try{SFX.bad()}catch(_){}G.state='derail';G.timer=1.5;G.miss++;hud();say('moon','あぶなーい！');
 }
-function afterDerail(){begin()}
+function afterDerail(){
+  if(G.miss>=MAXMISS){
+    if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
+    G.state='over';say('moon','もういっかい！');hud();
+    overlay('ゲームオーバー','ミスが'+MAXMISS+'回になりました\nSCORE '+G.score.toLocaleString(),'この盤面をもう一度',()=>{G.miss=0;G.score=G.stageScore;begin()},mode==='stage'?'ステージ1から':'ランダムを新しく',()=>{G.score=0;newGame(true)});
+  }else begin();
+}
 function clearStage(){
   addScore(1000);let bonus='';
   const all=G.starsTot>0&&G.starsGot>=G.starsTot;
@@ -563,9 +578,10 @@ function clearStage(){
   let st=G.miss===0?3:G.miss===1?2:1;if(G.starsTot>0&&!all)st=Math.max(1,st-1);
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
   try{SFX.win()}catch(_){}G.state='clearing';G.timer=1.6;say('colon','やったー！');say('moon','やったー！');
-  G.showClear=()=>overlay('ステージ '+G.stage+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+(G.starsTot?'\nスター '+G.starsGot+'/'+G.starsTot:'')+'\nSCORE '+G.score.toLocaleString()+bonus,'つぎのステージへ',()=>{G.stage++;newStage()});
+  if(mode==='stage'&&G.stage>(prog[sizeMode]||0)){prog[sizeMode]=G.stage;store.set('wanwan_prog',JSON.stringify(prog))}
+  G.showClear=()=>overlay((mode==='stage'?'ステージ '+G.stage:'ランダム '+(G.rs+1))+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+(G.starsTot?'\nスター '+G.starsGot+'/'+G.starsTot:'')+'\nSCORE '+G.score.toLocaleString()+bonus,mode==='stage'&&G.stage>=NST?'さいごまでクリア！':'つぎのステージへ',()=>{if(mode==='stage'){if(G.stage<NST)G.stage++;else{G.stage=1;G.score=0}}else G.rs++;newStage()});
 }
-function newGame(){G.stage=1;G.score=0;G.lives=3;newStage()}
+function newGame(fromStart){G.score=0;G.rs=0;G.stage=fromStart===true?1:Math.min(NST,(prog[sizeMode]||0)+1);newStage()}
 
 function trainWorld(){
   const T=G.train;
@@ -846,14 +862,18 @@ function loop(t){
 /* ---------- UI ---------- */
 function refresh(){
   document.querySelectorAll('#sizes button').forEach(b=>b.classList.toggle('on',b.dataset.v===sizeMode));
-  document.querySelectorAll('#gims button').forEach(b=>b.classList.toggle('on',b.dataset.v===gimMode));
+  document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.v===mode));
+  const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stPrev').style.opacity=G.stage>1?1:.35;$('#stNext').style.opacity=G.stage<mx?1:.35;
   document.querySelectorAll('#diffs button').forEach(b=>b.classList.toggle('on',b.dataset.v===diff));
   $('#bFast').classList.toggle('on',!!G.fast);
   $('#bestN').textContent=hi.toLocaleString();
 }
 $('#diffs').onclick=e=>{const v=e.target.dataset.v;if(v){diff=v;store.set('wanwan_diff',v);refresh();if(G.state==='ready'||G.state==='run'){begin()}}};
-$('#gims').onclick=e=>{const v=e.target.dataset.v;if(v){gimMode=v;store.set('wanwan_gim',v);refresh();if(['ready','run','derail','clear'].includes(G.state)){$('#mMsg').classList.remove('show');G.state='ready';newStage()}}};
-$('#sizes').onclick=e=>{const v=e.target.dataset.v;if(v!==undefined){sizeMode=v;store.set('wanwan_size',v);refresh();if(['ready','run','derail','clear'].includes(G.state)){$('#mMsg').classList.remove('show');G.state='ready';newStage()}}};
+function relaunch(){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.rs=0;G.stage=mode==='stage'?Math.min(NST,(prog[sizeMode]||0)+1):1;newStage();refresh()}
+$('#sizes').onclick=e=>{const v=e.target.dataset.v;if(v){sizeMode=v;store.set('wanwan_size',v);relaunch()}};
+$('#modes').onclick=e=>{const v=e.target.dataset.v;if(v){mode=v;store.set('wanwan_mode',v);relaunch()}};
+$('#stPrev').onclick=()=>{if(G.stage>1){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.stage--;newStage();refresh()}};
+$('#stNext').onclick=()=>{if(G.stage<Math.min(NST,(prog[sizeMode]||0)+1)){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.stage++;newStage();refresh()}};
 $('#bGo').onclick=()=>{actx();go()};
 $('#bFast').onclick=()=>{actx();if(G.state==='ready')go();if(G.state==='run'||G.state==='ready'){G.fast=!G.fast;$('#bFast').classList.toggle('on',G.fast)}};
 $('#bRestart').onclick=()=>{if(['ready','run','derail'].includes(G.state)){actx();begin()}};
@@ -871,7 +891,7 @@ const sw=document.querySelector('.sw[data-k=sound]');sw.classList.toggle('on',sn
 sw.onclick=()=>{snd=!snd;store.set('wanwan_snd',snd?'1':'0');sw.classList.toggle('on',snd);if(snd)SFX.tap()};
 window.actx=actx;
 refresh();
-const L0=genLevel(1);G.board=L0.board;G.S0=L0.S0;G.Gl=L0.Gl;G.starsTot=countStars(G.board);resetTrain();hud();
+newGame();G.state='title';
 overlay('わんわんトレイン','空きマスにパネルをスライドして\n線路をつなごう！\n赤い切れ目を目指してゴールへ！','スタート',newGame);
 requestAnimationFrame(loop);
 })();
