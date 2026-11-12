@@ -795,7 +795,9 @@ function draw(){
     const w=S*1.7,t=TT[d],cx=M+q.c*S+S/2,cy=BY+q.r*S+S/2;
     const ox=d===1?M+N*S:d===3?M:cx,oy=d===0?BY:d===2?BY+N*S:cy;
     ctx.save();ctx.translate(ox,oy);ctx.rotate(d*Math.PI/2);
-    ctx.drawImage(gi,-w/2,-t/2-.535*w,w,w);ctx.restore()})}
+    const ky=Math.max(1,t/(.075*w)),hk=gi.naturalHeight;
+    ctx.drawImage(gi,0,0,gi.naturalWidth,.45*hk,-w/2,-t/2-.535*w,w,.45*w);
+    ctx.drawImage(gi,0,.45*hk,gi.naturalWidth,.17*hk,-w/2,-t/2-(.533-.45)*w*ky,w,.17*w*ky);ctx.restore()})}
   if(G.train)drawTrain(trainWorld(),th);
   G.fx.forEach(f=>{const fi=img('fx_'+skin+'_'+th.fx[f.k]+Math.min(5,(f.t/f.dur*6)|0));if(fi)drawImg(fi,f.x,f.y,f.size,f.size)});
   ctx.save();for(let i=0;i<G.starsTot;i++)starP(M+18+i*22,17,8,i<G.starsGot,th);ctx.restore();
