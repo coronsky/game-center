@@ -401,7 +401,7 @@ body[data-vt=neon] .tile.pf{background-image:url(assets/ui/neon_t4.webp);padding
   <div class="lvRow" id="sizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
   <div class="lvRow" id="diffs"><button data-v="easy">かんたん</button><button data-v="normal">ふつう</button><button data-v="hard">むずかしい</button></div>
 <div class="acts" style="flex-direction:column"><button class="btn g" id="mGoMenu">スタート！</button><button class="btn c" id="mRankBtn" style="margin-top:8px">🏆ランキング</button><button class="btn c" id="mBackMenu" style="margin-top:8px">もどる</button></div></div></div>
-<div class="modal" id="mRank"><div class="card result"><h2>ランキング</h2><div class="lvRow" id="rkSizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div><div id="rkList" style="margin:8px 2px;font-size:13px;font-weight:700"></div><div class="acts"><button class="btn c" id="rkX">とじる</button></div></div></div>
+<div class="modal" id="mRank"><div class="card result"><h2>ランキング</h2><div class="lvRow" id="rkModes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div><div class="lvRow" id="rkSizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div><div id="rkList" style="margin:8px 2px;font-size:13px;font-weight:700"></div><div class="acts"><button class="btn c" id="rkX">とじる</button></div></div></div>
 <div class="modal" id="mSel"><div class="card result"><h2>ステージせんたく</h2><div id="selG" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0"></div><div class="acts"><button class="btn c" id="selX">とじる</button></div></div></div>
 <div class="modal" id="mMsg"><div class="card result">
   <h2 id="mT"></h2>
@@ -439,9 +439,10 @@ let mode=store.get('wanwan_mode','stage');if(mode!=='random')mode='stage';
 let prog={4:0,5:0,6:0};try{Object.assign(prog,JSON.parse(store.get('wanwan_prog','{}')))}catch(_){}
 let perf={};try{perf=JSON.parse(store.get('wanwan_perf','{}'))||{}}catch(_){perf={}}
 const isPerf=(sz,st)=>!!perf[sz+'_'+st];
-let rank={4:[],5:[],6:[]};try{const r=JSON.parse(store.get('wanwan_rank','{}'));for(const k of [4,5,6])if(Array.isArray(r[k]))rank[k]=r[k]}catch(_){}
+let rank={};try{const r=JSON.parse(store.get('wanwan_rank','{}'))||{};
+  for(const k in r){if(!Array.isArray(r[k]))continue;if(/^[456]$/.test(k)){r[k].forEach(e=>{const kk=k+'_'+(e.m==='random'?'random':'stage');(rank[kk]=rank[kk]||[]).push(e)})}else rank[k]=r[k]}}catch(_){}
 function addRank(full){if(G.score<=0)return;const t=new Date(),d=t.getFullYear()+'/'+(t.getMonth()+1)+'/'+t.getDate();
-  const a=rank[sizeMode]=rank[sizeMode]||[];a.push({d,s:G.score,m:mode,st:mode==='stage'?G.stage:G.rs+(full?1:0),f:full?1:0});
+  const kk=sizeMode+'_'+mode,a=rank[kk]=rank[kk]||[];a.push({d,s:G.score,m:mode,st:mode==='stage'?G.stage:G.rs+(full?1:0),f:full?1:0});
   a.sort((x,y)=>y.s-x.s);a.length=Math.min(a.length,10);store.set('wanwan_rank',JSON.stringify(rank))}
 const MAXMISS=3,NST=30,LIMIT={4:150,5:240,6:360};
 let gimMode='auto';
@@ -1000,15 +1001,17 @@ function openMenu(first){$('#mBackMenu').style.display=first?'none':'';refresh()
 $('#mGoMenu').onclick=()=>{$('#mMenu').classList.remove('show');relaunch()};
 $('#mBackMenu').onclick=()=>$('#mMenu').classList.remove('show');
 $('#bMenu').onclick=()=>openMenu(false);
-let rkSize='4';
+let rkSize='4',rkMode='stage';
 function showRank(){
   document.querySelectorAll('#rkSizes button').forEach(b=>b.classList.toggle('on',b.dataset.v===rkSize));
-  const a=rank[rkSize]||[];let h='';
+  document.querySelectorAll('#rkModes button').forEach(b=>b.classList.toggle('on',b.dataset.v===rkMode));
+  const a=rank[rkSize+'_'+rkMode]||[];let h='';
   for(let i=0;i<10;i++){const e=a[i];
     const t=e?(e.m==='stage'?(e.f?'全クリア':'ステージ'+e.st):'ランダム'+e.st+'面'):'';
     h+=`<div style="display:grid;grid-template-columns:1.6em 1fr 1.3fr 4.8em;gap:4px;padding:3px 0;border-bottom:1px dashed rgba(120,90,60,.35);${e?'':'opacity:.4'}"><span>${i+1}</span><span style="text-align:right">${e?e.s.toLocaleString():'-'}</span><span style="text-align:center">${t}</span><span style="text-align:right;font-size:11px">${e?e.d:''}</span></div>`}
   $('#rkList').innerHTML=h}
-$('#mRankBtn').onclick=()=>{rkSize=sizeMode;showRank();$('#mRank').classList.add('show')};
+$('#mRankBtn').onclick=()=>{rkSize=sizeMode;rkMode=mode;showRank();$('#mRank').classList.add('show')};
+$('#rkModes').onclick=e=>{const v=e.target.dataset.v;if(v){rkMode=v;showRank()}};
 $('#rkSizes').onclick=e=>{const v=e.target.dataset.v;if(v){rkSize=v;showRank()}};
 $('#rkX').onclick=()=>$('#mRank').classList.remove('show');
 function openSel(){
