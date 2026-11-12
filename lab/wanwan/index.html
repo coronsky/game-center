@@ -627,7 +627,7 @@ function newStage(){
   G.miss=0;G.moves=0;G.stageScore=G.score;begin();
 }
 function begin(){
-  G.board=JSON.parse(G.snap);G.score=G.stageScore;
+  G.board=JSON.parse(G.snap);
   resetTrain();G.eff=null;G.goT=0;G.pax=0;G.hasKey=false;G.paxTot=G.board.flat().filter(p=>p&&p.bonus==='pax').length;G.keyTot=G.board.flat().filter(p=>p&&p.bonus==='key').length;G.fast=false;$('#bFast').classList.remove('on');G.starsGot=0;G.state='ready';G.timer=6;hud();
   say('colon','線路をつないで！');
 }
@@ -672,7 +672,7 @@ function gameOver(why){
   addRank(false);
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
   G.state='over';say('moon','もういっかい！');hud();
-  overlay('ゲームオーバー','ミスが'+MAXMISS+'回になりました\nSCORE '+G.score.toLocaleString(),'コンティニュー',()=>{G.miss=0;G.score=G.stageScore;begin()},'メニューに戻る',()=>openMenu(false),'ホームに戻る',()=>{location.href=$('#homeBtn').href});
+  overlay('ゲームオーバー','ミスが'+MAXMISS+'回になりました\nSCORE '+G.score.toLocaleString(),'コンティニュー',()=>{G.miss=0;begin()},'メニューに戻る',()=>openMenu(false),'ホームに戻る',()=>{location.href=$('#homeBtn').href});
 }
 function afterDerail(){if(G.miss>=MAXMISS)gameOver('miss');else begin()}
 function clearStage(){
@@ -1029,7 +1029,7 @@ $('#stPrev').onclick=()=>{if(G.stage>1){$('#mMsg').classList.remove('show');G.st
 $('#stNext').onclick=()=>{if(G.stage<Math.min(NST,(prog[sizeMode]||0)+1)){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.stage++;newStage();refresh()}};
 $('#bGo').onclick=()=>{actx();go()};
 $('#bFast').onclick=()=>{actx();if(G.state==='ready')go();if(G.state==='run'||G.state==='ready'){G.fast=!G.fast;$('#bFast').classList.toggle('on',G.fast)}};
-$('#bRestart').onclick=()=>{if(['ready','run','derail'].includes(G.state)){actx();begin()}else if(G.state==='over'){G.miss=0;G.score=G.stageScore;begin()}};
+$('#bRestart').onclick=()=>{if(['ready','run','derail'].includes(G.state)){actx();begin()}else if(G.state==='over'){G.miss=0;begin()}};
 $('#bHome').onclick=()=>{location.href=$('#homeBtn').href};
 function openHelp(){if(G.state==='ready'||G.state==='run'){G.prev=G.state;G.state='pause'}$('#mHelp').classList.add('show')}
 $('#bHelp').onclick=openHelp;
