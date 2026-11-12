@@ -290,7 +290,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">わんわんトレイン</div></div>
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">わんわんトレイン</div></div>
-  <div class="hud"><div class="box"><small id="stLbl">ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box"><small>ミス</small><b id="missN">0/3</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
+  <div class="hud"><div class="box"><small id="stLbl">ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box"><small>ミス</small><b id="missN">0/3</b></div><div class="box"><small>のこり</small><b id="tmN">2:30</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
   <div class="lvRow" id="modes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div>
   <div class="lvRow" id="sizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
   <div class="lvRow" id="stRow"><button id="stPrev">◀</button><span id="stTxt" style="flex:2;text-align:center;font-weight:700;align-self:center">ステージ 1 / 20</span><button id="stNext">▶</button></div>
@@ -343,7 +343,7 @@ if(!DIFF[diff])diff='normal';
 let sizeMode=store.get('wanwan_size','4');if(!['4','5','6'].includes(sizeMode))sizeMode='4';
 let mode=store.get('wanwan_mode','stage');if(mode!=='random')mode='stage';
 let prog={4:0,5:0,6:0};try{Object.assign(prog,JSON.parse(store.get('wanwan_prog','{}')))}catch(_){}
-const MAXMISS=3,NST=20;
+const MAXMISS=3,NST=20,LIMIT={4:150,5:240,6:360};
 let gimMode='auto';
 let hi=+store.get('wanwan_hi','0')||0;
 
@@ -504,7 +504,8 @@ const countStars=b=>b.flat().filter(p=>p&&p.bonus==='star').length;
 function hud(){
   $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
   $('#stRow').style.display=mode==='stage'?'':'none';$('#stTxt').textContent='ステージ '+G.stage+' / '+NST;
-  $('#scN').textContent=G.score.toLocaleString();
+  $('#scN').textContent=G.score.toLocaleString();{const l=Math.max(0,Math.ceil(G.left||0));$('#tmN').textContent=Math.floor(l/60)+':'+String(l%60).padStart(2,'0')}
+  {const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stTxt').textContent='ステージ '+G.stage+' / '+NST+(G.stage<=(prog[sizeMode]||0)?' ✓':'');$('#stNext').textContent=G.stage<mx?'▶':'🔒'}
   $('#stars').textContent=G.starsGot+'/'+G.starsTot;
   $('#lives').textContent='♥'.repeat(Math.max(0,G.lives))+'♡'.repeat(Math.max(0,3-G.lives));
 }
@@ -520,7 +521,7 @@ function withSeed(seed,fn){const old=Math.random;let a=seed>>>0;
 function newStage(){
   const L=mode==='stage'?withSeed(+sizeMode*100003+G.stage*7919+12345,()=>genLevel(G.stage)):genLevel(Math.min(NST,3+G.rs));
   G.board=L.board;G.S0=L.S0;G.Gl=L.Gl;G.snap=JSON.stringify(G.board);G.starsTot=countStars(G.board);
-  G.miss=0;G.moves=0;G.stageScore=G.score;begin();
+  G.miss=0;G.moves=0;G.left=LIMIT[sizeMode];G.stageScore=G.score;begin();
 }
 function begin(){
   G.board=JSON.parse(G.snap);G.score=G.stageScore;
@@ -563,13 +564,12 @@ function derail(){
   for(let i=0;i<14;i++)G.parts.push({x:pose.x,y:pose.y,vx:(Math.random()-.5)*90,vy:(Math.random()-.5)*90,l:.8,m:.8,r:3+Math.random()*3});
   try{SFX.bad()}catch(_){}G.state='derail';G.timer=1.5;G.miss++;hud();say('moon','あぶなーい！');
 }
-function afterDerail(){
-  if(G.miss>=MAXMISS){
-    if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
-    G.state='over';say('moon','もういっかい！');hud();
-    overlay('ゲームオーバー','ミスが'+MAXMISS+'回になりました\nSCORE '+G.score.toLocaleString(),'この盤面をもう一度',()=>{G.miss=0;G.score=G.stageScore;begin()},mode==='stage'?'ステージ1から':'ランダムを新しく',()=>{G.score=0;newGame(true)});
-  }else begin();
+function gameOver(why){
+  if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
+  G.state='over';say('moon','もういっかい！');hud();
+  overlay(why==='time'?'じかんぎれ':'ゲームオーバー',(why==='time'?'制限時間になりました':'ミスが'+MAXMISS+'回になりました')+'\nSCORE '+G.score.toLocaleString(),'この盤面をもう一度',()=>{G.miss=0;G.left=LIMIT[sizeMode];G.score=G.stageScore;begin()},mode==='stage'?'ステージ1から':'ランダムを新しく',()=>{G.score=0;newGame(true)});
 }
+function afterDerail(){if(G.miss>=MAXMISS)gameOver('miss');else begin()}
 function clearStage(){
   addScore(1000);let bonus='';
   const all=G.starsTot>0&&G.starsGot>=G.starsTot;
@@ -579,7 +579,7 @@ function clearStage(){
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
   try{SFX.win()}catch(_){}G.state='clearing';G.timer=1.6;say('colon','やったー！');say('moon','やったー！');
   if(mode==='stage'&&G.stage>(prog[sizeMode]||0)){prog[sizeMode]=G.stage;store.set('wanwan_prog',JSON.stringify(prog))}
-  G.showClear=()=>overlay((mode==='stage'?'ステージ '+G.stage:'ランダム '+(G.rs+1))+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+(G.starsTot?'\nスター '+G.starsGot+'/'+G.starsTot:'')+'\nSCORE '+G.score.toLocaleString()+bonus,mode==='stage'&&G.stage>=NST?'さいごまでクリア！':'つぎのステージへ',()=>{if(mode==='stage'){if(G.stage<NST)G.stage++;else{G.stage=1;G.score=0}}else G.rs++;newStage()});
+  G.showClear=()=>overlay((mode==='stage'?'ステージ '+G.stage:'ランダム '+(G.rs+1))+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+(G.starsTot?'\nスター '+G.starsGot+'/'+G.starsTot:'')+'\nSCORE '+G.score.toLocaleString()+bonus,mode==='stage'&&G.stage>=NST?'さいごまでクリア！':'つぎのステージへ',()=>{if(mode==='stage'){if(G.stage<NST)G.stage++;else{G.stage=1;G.score=0}}else G.rs++;newStage()},mode==='stage'?'このステージをもう一度':null,()=>{G.score=G.stageScore;newStage()});
 }
 function newGame(fromStart){G.score=0;G.rs=0;G.stage=fromStart===true?1:Math.min(NST,(prog[sizeMode]||0)+1);newStage()}
 
@@ -614,6 +614,7 @@ function off(p){
 
 function update(dt){
   if(G.goT>0)G.goT-=dt;
+  if(G.state==='ready'||G.state==='run'){G.left-=dt;if(G.left<=0){G.left=0;gameOver('time');return}const c=Math.ceil(G.left);if(c!==G.lc){G.lc=c;hud()}}
   if(G.state==='ready'){G.timer-=dt;if(G.timer<=0)go()}
   if(G.state==='run')moveTrain(dt);
   if(G.state==='derail'){G.timer-=dt;if(G.timer<=0)afterDerail()}
