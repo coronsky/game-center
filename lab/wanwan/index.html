@@ -375,6 +375,9 @@ body[data-vt=natural] .tile.pf{background-image:url(assets/ui/natural_t4.webp);p
 body[data-vt=retro] .tile.pf{background-image:url(assets/ui/retro_t4.webp);padding-bottom:12%}
 body[data-vt=neon] .tile.pf{background-image:url(assets/ui/neon_t4.webp);padding-bottom:12%}
 #mMenu .lvRow{overflow:visible}#mMenu .lvRow button:not(#stPrev):not(#stNext){flex:1 1 0!important;min-width:0;font-size:15px!important;padding:0 2px!important;white-space:nowrap}
+.modal .card .xBtn{position:absolute;top:-136px;right:-14px;width:34px;height:34px;border-radius:50%;border:2px solid #f2d48a;background:rgba(70,40,20,.9);color:#fff;font:900 20px/1 sans-serif;padding:0;cursor:pointer;z-index:5;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+#mMsg .card:not(.canx) .xBtn{display:none}
+#mMsg .acts{flex-direction:column}#mMsg .acts .btn{width:100%}
 </style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../../">🏠 ホーム</a>
@@ -388,7 +391,7 @@ body[data-vt=neon] .tile.pf{background-image:url(assets/ui/neon_t4.webp);padding
   <div class="btns gbtns" style="grid-template-columns:1fr 1fr;margin-top:8px"><button class="btn c" id="bMenu">🎮メニュー</button><button class="btn c" id="bHome">🏠ホームへ戻る</button></div>
   <div class="foot"><span>ベスト <b id="bestN">0</b></span><span>右上の🎨でスキン変更</span></div>
 </div>
-<div class="modal" id="mHelp"><div class="card help"><h2>📖 わんわんトレイン</h2>
+<div class="modal" id="mHelp"><div class="card help"><button class="xBtn" aria-label="閉じる">×</button><h2>📖 わんわんトレイン</h2>
 <p>空きマスに<b>パネルをスライド</b>（タップ or スワイプ）して、スタートからゴールまで<b>線路をつなごう</b>！列車は少ししたら自動で出発します。</p>
 <p>枠の切れ目の<b>青いスタート</b>から列車が出発し、<b>赤いゴール</b>の切れ目に入ればクリア！切れ目の場所はステージごとに変わるよ。</p>
 <p><b>十字</b>は縦横どちらからも通れる交差、<b>ワープ</b>は同じ色のトンネルへ瞬間移動、<b>ジャンプ台</b>は1マス飛び越えて着地します。</p>
@@ -396,18 +399,18 @@ body[data-vt=neon] .tile.pf{background-image:url(assets/ui/neon_t4.webp);padding
 <p>ゴールが見えたら<b>▶▶はやく</b>で列車を3倍速に！線路がつながっていないと脱線するとやり直しです。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
-<div class="modal" id="mMenu"><div class="card result"><h2>わんわんトレイン</h2><div class="msg" style="font-size:15px">あそびかたをえらぼう</div>
+<div class="modal" id="mMenu"><div class="card result"><button class="xBtn" aria-label="閉じる">×</button><h2>わんわんトレイン</h2><div class="msg" style="font-size:15px">あそびかたをえらぼう</div>
   <div class="lvRow" id="modes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div>
   <div class="lvRow" id="sizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
   <div class="lvRow" id="diffs"><button data-v="easy">かんたん</button><button data-v="normal">ふつう</button><button data-v="hard">むずかしい</button></div>
 <div class="acts" style="flex-direction:column"><button class="btn g" id="mGoMenu">スタート！</button><button class="btn c" id="mRankBtn" style="margin-top:8px">🏆ランキング</button><button class="btn c" id="mBackMenu" style="margin-top:8px">もどる</button></div></div></div>
-<div class="modal" id="mRank"><div class="card result"><h2>ランキング</h2><div class="lvRow" id="rkModes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div><div class="lvRow" id="rkSizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div><div id="rkList" style="margin:8px 2px;font-size:13px;font-weight:700"></div><div class="acts"><button class="btn c" id="rkX">とじる</button></div></div></div>
-<div class="modal" id="mSel"><div class="card result"><h2>ステージせんたく</h2><div id="selG" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0"></div><div class="acts"><button class="btn c" id="selX">とじる</button></div></div></div>
-<div class="modal" id="mMsg"><div class="card result">
+<div class="modal" id="mRank"><div class="card result"><button class="xBtn" aria-label="閉じる">×</button><h2>ランキング</h2><div class="lvRow" id="rkModes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div><div class="lvRow" id="rkSizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div><div id="rkList" style="margin:8px 2px;font-size:13px;font-weight:700"></div><div class="acts"><button class="btn c" id="rkX">とじる</button></div></div></div>
+<div class="modal" id="mSel"><div class="card result"><button class="xBtn" aria-label="閉じる">×</button><h2>ステージせんたく</h2><div id="selG" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0"></div><div class="acts"><button class="btn c" id="selX">とじる</button></div></div></div>
+<div class="modal" id="mMsg"><div class="card result"><button class="xBtn" aria-label="閉じる">×</button>
   <h2 id="mT"></h2>
   <div class="avs"><div><div class="ph" style="background-image:var(--colon)"></div>コロン</div><div><div class="ph" style="background-image:var(--moon)"></div>ムーン</div></div>
   <div class="msg" id="mM"></div>
-  <div class="acts"><button class="btn g" id="mBtn"></button><button class="btn c" id="mBtn2" style="display:none;margin-top:8px"></button></div>
+  <div class="acts"><button class="btn g" id="mBtn"></button><button class="btn c" id="mBtn2" style="display:none;margin-top:8px"></button><button class="btn c" id="mBtn3" style="display:none;margin-top:8px"></button></div>
 </div></div>
 <script>(()=>{
 const $=s=>document.querySelector(s);
@@ -602,16 +605,17 @@ const countStars=b=>b.flat().filter(p=>p&&p.bonus==='star').length;
 function hud(){
   $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
   $('#stRow').style.display=mode==='stage'?'':'none';$('#diffs').style.display=mode==='stage'?'none':'';
-  $('#scN').textContent=G.score.toLocaleString();
+  {const t=G.score.toLocaleString();$('#scN').textContent=t;$('#scN').style.fontSize=t.length>=8?'12px':t.length>=7?'14px':t.length>=6?'16px':''}
   {const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stTxt').textContent='ステージ '+G.stage+' / '+NST+(isPerf(sizeMode,G.stage)?' ⭐':G.stage<=(prog[sizeMode]||0)?' ✓':'')+' ▾';$('#stNext').textContent=G.stage<mx?'▶':'🔒'}
   $('#stars').textContent=G.starsGot+'/'+G.starsTot;
   $('#lives').textContent='♥'.repeat(Math.max(0,G.lives))+'♡'.repeat(Math.max(0,3-G.lives));
 }
-function overlay(title,body,btn,cb,btn2,cb2){
-  {const cd=$('#mMsg .card');cd.classList.toggle('over',/ゲームオーバー|じかんぎれ/.test(title));cd.classList.toggle('long',title.length>9)}
+function overlay(title,body,btn,cb,btn2,cb2,btn3,cb3){
+  {const cd=$('#mMsg .card');cd.classList.toggle('over',/ゲームオーバー|じかんぎれ/.test(title));cd.classList.toggle('long',title.length>9);cd.classList.toggle('canx',/ゲームオーバー|じかんぎれ/.test(title))}
   $('#mT').textContent=title;$('#mM').textContent=body;$('#mBtn').textContent=btn;
-  const b2=$('#mBtn2');b2.style.display=btn2?'':'none';if(btn2){b2.textContent=btn2;b2.onclick=()=>{$('#mMsg').classList.remove('show');cb2()}}
-  $('#mMsg').classList.add('show');$('#mBtn').onclick=()=>{$('#mMsg').classList.remove('show');cb()};
+  const hide=()=>$('#mMsg').classList.remove('show');
+  [[ '#mBtn2',btn2,cb2],['#mBtn3',btn3,cb3]].forEach(([id,t,f])=>{const el=$(id);el.style.display=t?'':'none';if(t){el.textContent=t;el.onclick=()=>{hide();f()}}});
+  $('#mMsg').classList.add('show');$('#mBtn').onclick=()=>{hide();cb()};
 }
 function resetTrain(){const s0=G.S0;G.train={phase:'approach',t:0,r:s0.r,c:s0.c,e:s0.e,warned:false,steps:0};G.parts=[];G.fx=[]}
 function withSeed(seed,fn){const old=Math.random;let a=seed>>>0;
@@ -668,7 +672,7 @@ function gameOver(why){
   addRank(false);
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
   G.state='over';say('moon','もういっかい！');hud();
-  overlay(why==='time'?'じかんぎれ':'ゲームオーバー',(why==='time'?'制限時間になりました':'ミスが'+MAXMISS+'回になりました')+'\nSCORE '+G.score.toLocaleString(),'この盤面をもう一度',()=>{G.miss=0;G.score=G.stageScore;begin()},mode==='stage'?'ステージ1から':'ランダムを新しく',()=>{G.score=0;newGame(true)});
+  overlay('ゲームオーバー','ミスが'+MAXMISS+'回になりました\nSCORE '+G.score.toLocaleString(),'コンティニュー',()=>{G.miss=0;G.score=G.stageScore;begin()},'メニューに戻る',()=>openMenu(false),'ホームに戻る',()=>{location.href=$('#homeBtn').href});
 }
 function afterDerail(){if(G.miss>=MAXMISS)gameOver('miss');else begin()}
 function clearStage(){
@@ -682,7 +686,7 @@ function clearStage(){
   if(mode==='stage'&&G.starsTot&&G.starsGot>=G.starsTot&&!isPerf(sizeMode,G.stage)){perf[sizeMode+'_'+G.stage]=1;store.set('wanwan_perf',JSON.stringify(perf))}
   if(mode==='stage'&&G.stage>=NST)addRank(true);
   if(mode==='stage'&&G.stage>(prog[sizeMode]||0)){prog[sizeMode]=G.stage;store.set('wanwan_prog',JSON.stringify(prog))}
-  G.showClear=()=>overlay((mode==='stage'?'ステージ '+G.stage:'ランダム '+(G.rs+1))+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+(G.starsTot?'\nスター '+G.starsGot+'/'+G.starsTot:'')+'\nSCORE '+G.score.toLocaleString()+bonus,mode==='stage'&&G.stage>=NST?'さいごまでクリア！':'つぎのステージへ',()=>{if(mode==='stage'){if(G.stage<NST)G.stage++;else{G.stage=1;G.score=0}}else G.rs++;newStage()},mode==='stage'?'このステージをもう一度':null,()=>{G.score=G.stageScore;newStage()});
+  G.showClear=()=>overlay((mode==='stage'?'ステージ '+G.stage:'ランダム '+(G.rs+1))+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+(G.starsTot?'\nスター '+G.starsGot+'/'+G.starsTot:'')+'\nSCORE '+G.score.toLocaleString()+bonus,mode==='stage'&&G.stage>=NST?'さいごまでクリア！':'つぎのステージへ',()=>{if(mode==='stage'){if(G.stage<NST)G.stage++;else{G.stage=1;G.score=0}}else G.rs++;newStage()});
 }
 function newGame(fromStart){G.score=0;G.rs=0;G.stage=fromStart===true?1:Math.min(NST,(prog[sizeMode]||0)+1);newStage()}
 
@@ -997,7 +1001,7 @@ $('#diffs').onclick=e=>{const v=e.target.dataset.v;if(v){diff=v;store.set('wanwa
 function relaunch(){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.rs=0;G.stage=mode==='stage'?Math.min(NST,(prog[sizeMode]||0)+1):1;newStage();refresh()}
 $('#sizes').onclick=e=>{const v=e.target.dataset.v;if(v){sizeMode=v;store.set('wanwan_size',v);refresh();hud()}};
 $('#modes').onclick=e=>{const v=e.target.dataset.v;if(v){mode=v;store.set('wanwan_mode',v);refresh();hud()}};
-function openMenu(first){$('#mBackMenu').style.display=first?'none':'';refresh();hud();$('#mMenu').classList.add('show')}
+function openMenu(first){$('#mMenu .xBtn').style.display=first?'none':'';$('#mBackMenu').style.display=first?'none':'';refresh();hud();$('#mMenu').classList.add('show')}
 $('#mGoMenu').onclick=()=>{$('#mMenu').classList.remove('show');relaunch()};
 $('#mBackMenu').onclick=()=>$('#mMenu').classList.remove('show');
 $('#bMenu').onclick=()=>openMenu(false);
@@ -1025,10 +1029,11 @@ $('#stPrev').onclick=()=>{if(G.stage>1){$('#mMsg').classList.remove('show');G.st
 $('#stNext').onclick=()=>{if(G.stage<Math.min(NST,(prog[sizeMode]||0)+1)){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.stage++;newStage();refresh()}};
 $('#bGo').onclick=()=>{actx();go()};
 $('#bFast').onclick=()=>{actx();if(G.state==='ready')go();if(G.state==='run'||G.state==='ready'){G.fast=!G.fast;$('#bFast').classList.toggle('on',G.fast)}};
-$('#bRestart').onclick=()=>{if(['ready','run','derail'].includes(G.state)){actx();begin()}};
+$('#bRestart').onclick=()=>{if(['ready','run','derail'].includes(G.state)){actx();begin()}else if(G.state==='over'){G.miss=0;G.score=G.stageScore;begin()}};
 $('#bHome').onclick=()=>{location.href=$('#homeBtn').href};
 function openHelp(){if(G.state==='ready'||G.state==='run'){G.prev=G.state;G.state='pause'}$('#mHelp').classList.add('show')}
 $('#bHelp').onclick=openHelp;
+document.querySelectorAll('.xBtn').forEach(b=>b.onclick=()=>{const m=b.closest('.modal');if(m.id==='mHelp')$('#mHelp').querySelector('[data-close]').click();else m.classList.remove('show')});
 $('#mHelp').querySelector('[data-close]').onclick=()=>{$('#mHelp').classList.remove('show');if(G.state==='pause')G.state=G.prev||'ready'};
 /* ---------- 効果音 ---------- */
 let AC=null,snd=store.get('wanwan_snd','1')==='1';
