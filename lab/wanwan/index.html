@@ -304,7 +304,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
 <p>空きマスに<b>パネルをスライド</b>（タップ or スワイプ）して、スタートからゴールまで<b>線路をつなごう</b>！列車は少ししたら自動で出発します。</p>
 <p>枠の切れ目の<b>青いスタート</b>から列車が出発し、<b>赤いゴール</b>の切れ目に入ればクリア！切れ目の場所はステージごとに変わるよ。</p>
 <p><b>十字</b>は縦横どちらからも通れる交差、<b>ワープ</b>は同じ色のトンネルへ瞬間移動、<b>ジャンプ台</b>は1マス飛び越えて着地します。</p>
-<p>5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
+<p>線路の上の<b>アイテム</b>を取ると効果が出るよ（⏱ゆっくり4秒／⌛時間ストップ3秒／🚀はやくなる4秒）。5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
 <p>ゴールが見えたら<b>▶▶はやく</b>で列車を3倍速に！線路がつながっていないと脱線するとやり直しです。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
@@ -332,7 +332,7 @@ const THEMES={
 };
 const IMG={};
 function img(n){let i=IMG[n];if(!i){i=new Image();i.src='assets/'+n+'.webp';IMG[n]=i}return i.complete&&i.naturalWidth?i:null}
-['natural','retro','neon'].forEach(t=>{img(t+'_board');['s0','s1','g0','g1'].forEach(k=>img(t+'_gate_'+k));img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k));['cross','wr','wb','jump'].forEach(k=>img(t+'_x_'+k))});
+['natural','retro','neon'].forEach(t=>{img(t+'_board');['slow','stop','fast'].forEach(k=>img(t+'_i_'+k));['s0','s1','g0','g1'].forEach(k=>img(t+'_gate_'+k));img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k));['cross','wr','wb','jump'].forEach(k=>img(t+'_x_'+k))});
 ['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f);img('natural_tr_'+d)});
 [['natural',[0,1,3,5]],['retro',[0,1,3,5]],['neon',[0,1,2,5]]].forEach(([t,rs])=>rs.forEach(r=>{for(let f=0;f<6;f++)img('fx_'+t+'_'+r+f)}));
 const BOARD={natural:[.0277,.0319,.9723,.9723],retro:[.0437,.0513,.9563,.9529],neon:[.0592,.0668,.9408,.9341]};
@@ -439,9 +439,10 @@ function genLevel(stage){
   free.forEach(([r,c],i)=>{board[r][c]=i<nRock?{conns:[-1,-1],rock:true}:{conns:TYPES[rnd(6)].slice(),bonus:null}});
   let empty=free[nRock+rnd(Math.max(1,free.length-nRock))];board[empty[0]][empty[1]]=null;
   const mids=[];for(let i=2;i<L-1;i++)if(!plan.rm.has(i)&&!plan.sp[i])mids.push(i);shuffle(mids);
-  const nStar=0;
   if(mids.length){board[path[mids[0]][0]][path[mids[0]][1]].bonus='station';
-    for(let k=1;k<=nStar&&k<mids.length;k++)board[path[mids[k]][0]][path[mids[k]][1]].bonus='star'}
+    const kinds=stage<3?['slow','stop']:['slow','stop','fast'];shuffle(kinds);
+    const nIt=stage<2?1:2;
+    for(let k=1;k<=nIt&&k<mids.length;k++)board[path[mids[k]][0]][path[mids[k]][1]].bonus=kinds[(k-1)%kinds.length]}
   // 逆向きにスライドして崩す（必ず元に戻せる）
   let last=null;
   const scr=k=>{for(let i=0;i<k;i++){
@@ -509,7 +510,7 @@ function newStage(){
 }
 function begin(){
   G.board=JSON.parse(G.snap);G.score=G.stageScore;
-  resetTrain();G.fast=false;$('#bFast').classList.remove('on');G.starsGot=0;G.state='ready';G.timer=6;hud();
+  resetTrain();G.eff=null;G.fast=false;$('#bFast').classList.remove('on');G.starsGot=0;G.state='ready';G.timer=6;hud();
   say('colon','線路をつないで！');
 }
 function go(){if(G.state==='ready'){G.state='run';say('colon','しゅっぱーつ！')}}
@@ -518,7 +519,9 @@ function collect(p){
   const cx=M+G.train.c*S+S/2,cy=BY+G.train.r*S+S/2;
   if(p.bonus)fx(p.bonus==='station'?1:0,cx,cy,S*1.3);
   if(p.bonus==='station'){addScore(500);say('colon','えきだよ！ +500')}
-  else if(p.bonus==='star'){G.starsGot++;try{SFX.star()}catch(_){}addScore(300);say('moon','スター！ +300')}
+  else if(p.bonus==='slow'||p.bonus==='stop'||p.bonus==='fast'){
+    const k=p.bonus,d={slow:4,stop:3,fast:4}[k];G.eff={k,t:d,m:d};try{SFX.star()}catch(_){}
+    addScore(k==='fast'?200:100);say(k==='fast'?'moon':'colon',k==='slow'?'ゆっくり〜！':k==='stop'?'ときが止まった！':'はやーい！')}
   p.bonus=null;
 }
 function nextRes(){
@@ -597,7 +600,10 @@ function update(dt){
   G.parts.forEach(q=>{q.x+=q.vx*dt;q.y+=q.vy*dt});
 }
 function moveTrain(dt){
-  const T=G.train,ct=CT()/(G.fast?3:1);
+  const T=G.train;
+  if(G.eff){G.eff.t-=dt;if(G.eff.t<=0)G.eff=null}
+  if(G.eff&&G.eff.k==='stop')return;
+  const ct=CT()/(G.fast?3:1)/(G.eff?(G.eff.k==='slow'?.5:G.eff.k==='fast'?1.7:1):1);
   if(T.phase==='approach'){
     T.t+=dt/(ct*.8);
     if(T.t>=1){
@@ -772,8 +778,8 @@ function draw(){
       ctx.restore();drawTrack(p.conns,th,x,y);
     }
     if(p.bonus){
-      const bi=p.bonus==='station'?img('station_'+skin):img('star');
-      if(bi)drawImg(bi,x+S/2,y+S/2,p.bonus==='station'?S*.62:S*.44,p.bonus==='station'?S*.62:S*.44);
+      const bi=p.bonus==='station'?img('station_'+skin):p.bonus==='star'?img('star'):img(skin+'_i_'+p.bonus);
+      if(bi)drawImg(bi,x+S/2,y+S/2,p.bonus==='station'?S*.62:S*.5,p.bonus==='station'?S*.62:S*.5);
       else{ctx.font='15px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.bonus==='station'?'🚉':'⭐',x+S/2,y+S/2)}
     }
   }
@@ -795,6 +801,9 @@ function draw(){
     ctx.drawImage(gi,0,.45*hk,gi.naturalWidth,.17*hk,-w/2,-t/2-(.533-.45)*w*ky,w,.17*w*ky);ctx.restore()})}
   if(G.train)drawTrain(trainWorld(),th);
   G.fx.forEach(f=>{const fi=img('fx_'+skin+'_'+th.fx[f.k]+Math.min(5,(f.t/f.dur*6)|0));if(fi)drawImg(fi,f.x,f.y,f.size,f.size)});
+  if(G.eff){const ei=img(skin+'_i_'+G.eff.k),r=G.eff.t/G.eff.m;
+    if(ei)drawImg(ei,M+16,18,26,26);ctx.save();ctx.fillStyle='rgba(0,0,0,.25)';rr(M+34,14,70,8,4);ctx.fill();
+    ctx.fillStyle=G.eff.k==='slow'?'#3b9be0':G.eff.k==='stop'?'#58c24a':'#e0443b';rr(M+34,14,70*Math.max(0,r),8,4);ctx.fill();ctx.restore()}
   ctx.save();for(let i=0;i<G.starsTot;i++)starP(M+18+i*22,17,8,i<G.starsGot,th);ctx.restore();
   if(G.state==='ready'){
     ctx.save();ctx.font='bold 11px "Zen Maru Gothic",sans-serif';ctx.textAlign='right';ctx.fillStyle=skin==='natural'?'#5b4a2e':th.rail;
