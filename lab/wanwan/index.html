@@ -607,7 +607,7 @@ function trainWorld(){
 }
 function off(p){
   if(!p.anim)return[0,0];
-  const k=(performance.now()-p.t0)/150;
+  const k=(performance.now()-p.t0)/110;
   if(k>=1){p.anim=false;return[0,0]}
   const e=1-Math.pow(1-k,3);return[p.dx*(1-e),p.dy*(1-e)];
 }
@@ -687,16 +687,27 @@ function moveTrain(dt){
 function tryMove(r,c,dir){
   if(G.state!=='ready'&&G.state!=='run')return;
   const b=G.board,p=b[r][c];if(!p)return;
-  if(p.rock||p.fixed){p.shake=performance.now();return}
+  const T=G.train;let best=null,blocked=false;
   for(let d=0;d<4;d++){
     if(dir!=null&&d!==dir)continue;
-    const nr=r+DR[d],nc=c+DC[d];
-    if(inB(nr,nc)&&b[nr][nc]===null){
-      const T=G.train;
-      if(T.phase==='cell'&&T.r===r&&T.c===c){p.shake=performance.now();return}
-      try{SFX.tap()}catch(_){}b[nr][nc]=p;b[r][c]=null;p.anim=true;p.t0=performance.now();p.dx=(c-nc)*S;p.dy=(r-nr)*S;G.moves++;return;
+    const chain=[];let nr=r,nc=c,ok=true;
+    while(inB(nr,nc)&&b[nr][nc]!==null){
+      const q=b[nr][nc];
+      if(q.rock||q.fixed||(T.phase==='cell'&&T.r===nr&&T.c===nc)){ok=false;break}
+      chain.push([nr,nc]);nr+=DR[d];nc+=DC[d];
     }
+    if(!inB(nr,nc)){continue}
+    if(!ok){blocked=true;continue}
+    if(!best||chain.length<best.chain.length)best={chain,d};
   }
+  if(!best){p.shake=performance.now();return}
+  try{SFX.tap()}catch(_){}
+  const{chain,d}=best,t0=performance.now();
+  for(let i=chain.length-1;i>=0;i--){
+    const[cr,cc]=chain[i],q=b[cr][cc],nr=cr+DR[d],nc=cc+DC[d];
+    b[nr][nc]=q;b[cr][cc]=null;q.anim=true;q.t0=t0;q.dx=(cc-nc)*S;q.dy=(cr-nr)*S;
+  }
+  G.moves++;
 }
 let down=null;
 const local=e=>{const R=cv.getBoundingClientRect();return[(e.clientX-R.left)/R.width*W,(e.clientY-R.top)/R.height*H]};
@@ -798,7 +809,7 @@ function draw(){
   for(let r=0;r<N;r++)for(let c=0;c<N;c++){
     const p=G.board[r][c];
     if(!p){ // 空きマス
-      ctx.fillStyle=skin==='neon'?'rgba(0,0,0,.45)':'rgba(40,25,10,.32)';rr(M+c*S+4,BY+r*S+4,S-8,S-8,8);ctx.fill();continue;
+      continue;
     }
     const o=off(p);let sx=0;
     if(p.shake&&now-p.shake<300)sx=Math.sin((now-p.shake)/20)*3;
