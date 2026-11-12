@@ -371,6 +371,9 @@ body[data-vt=neon] #stTxt{flex:2}
 body .gbtns .btn{border-width:9px!important;border-image-width:9px!important;padding:0 1px!important;font-size:11.5px!important;min-width:0;letter-spacing:-.02em;gap:2px}
 body:is([data-vt=retro],[data-vt=neon]) .lvRow button.on{filter:drop-shadow(0 0 5px rgba(255,190,60,.95)) saturate(1.5) brightness(1.03)}
 .btns{grid-template-columns:repeat(4,minmax(0,1fr))}
+body[data-vt=natural] .tile.pf{background-image:url(assets/ui/natural_t4.webp);padding-bottom:12%}
+body[data-vt=retro] .tile.pf{background-image:url(assets/ui/retro_t4.webp);padding-bottom:12%}
+body[data-vt=neon] .tile.pf{background-image:url(assets/ui/neon_t4.webp);padding-bottom:12%}
 </style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../../">🏠 ホーム</a>
@@ -430,6 +433,8 @@ if(!DIFF[diff])diff='normal';
 let sizeMode=store.get('wanwan_size','4');if(!['4','5','6'].includes(sizeMode))sizeMode='4';
 let mode=store.get('wanwan_mode','stage');if(mode!=='random')mode='stage';
 let prog={4:0,5:0,6:0};try{Object.assign(prog,JSON.parse(store.get('wanwan_prog','{}')))}catch(_){}
+let perf={};try{perf=JSON.parse(store.get('wanwan_perf','{}'))||{}}catch(_){perf={}}
+const isPerf=(sz,st)=>!!perf[sz+'_'+st];
 const MAXMISS=3,NST=30,LIMIT={4:150,5:240,6:360};
 let gimMode='auto';
 let hi=+store.get('wanwan_hi','0')||0;
@@ -592,7 +597,7 @@ function hud(){
   $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
   $('#stRow').style.display=mode==='stage'?'':'none';$('#diffs').style.display=mode==='stage'?'none':'';
   $('#scN').textContent=G.score.toLocaleString();{const l=Math.max(0,Math.ceil(G.left||0));$('#tmN').textContent=Math.floor(l/60)+':'+String(l%60).padStart(2,'0')}
-  {const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stTxt').textContent='ステージ '+G.stage+' / '+NST+(G.stage<=(prog[sizeMode]||0)?' ✓':'')+' ▾';$('#stNext').textContent=G.stage<mx?'▶':'🔒'}
+  {const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stTxt').textContent='ステージ '+G.stage+' / '+NST+(isPerf(sizeMode,G.stage)?' ⭐':G.stage<=(prog[sizeMode]||0)?' ✓':'')+' ▾';$('#stNext').textContent=G.stage<mx?'▶':'🔒'}
   $('#stars').textContent=G.starsGot+'/'+G.starsTot;
   $('#lives').textContent='♥'.repeat(Math.max(0,G.lives))+'♡'.repeat(Math.max(0,3-G.lives));
 }
@@ -666,6 +671,7 @@ function clearStage(){
   let st=G.miss===0?3:G.miss===1?2:1;if(G.starsTot>0&&!all)st=Math.max(1,st-1);
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
   try{SFX.win()}catch(_){}G.state='clearing';G.timer=1.6;say('colon','やったー！');say('moon','やったー！');
+  if(mode==='stage'&&G.starsTot&&G.starsGot>=G.starsTot&&!isPerf(sizeMode,G.stage)){perf[sizeMode+'_'+G.stage]=1;store.set('wanwan_perf',JSON.stringify(perf))}
   if(mode==='stage'&&G.stage>(prog[sizeMode]||0)){prog[sizeMode]=G.stage;store.set('wanwan_prog',JSON.stringify(prog))}
   G.showClear=()=>overlay((mode==='stage'?'ステージ '+G.stage:'ランダム '+(G.rs+1))+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+(G.starsTot?'\nスター '+G.starsGot+'/'+G.starsTot:'')+'\nSCORE '+G.score.toLocaleString()+bonus,mode==='stage'&&G.stage>=NST?'さいごまでクリア！':'つぎのステージへ',()=>{if(mode==='stage'){if(G.stage<NST)G.stage++;else{G.stage=1;G.score=0}}else G.rs++;newStage()},mode==='stage'?'このステージをもう一度':null,()=>{G.score=G.stageScore;newStage()});
 }
@@ -980,7 +986,7 @@ $('#modes').onclick=e=>{const v=e.target.dataset.v;if(v){mode=v;store.set('wanwa
 function openSel(){
   const mx=Math.min(NST,(prog[sizeMode]||0)+1),g=$('#selG');g.innerHTML='';
   for(let i=1;i<=NST;i++){const b=document.createElement('button');const lock=i>mx,done=i<=(prog[sizeMode]||0);
-    b.className='tile '+(lock?'lk':i===G.stage?'cur':done?'ck':'');b.textContent=lock?'':String(i);
+    b.className='tile '+(lock?'lk':isPerf(sizeMode,i)?'pf':i===G.stage?'cur':done?'ck':'');b.textContent=lock?'':String(i);
     if(!lock)b.onclick=()=>{$('#mSel').classList.remove('show');G.state='ready';G.score=0;G.stage=i;newStage();refresh()};g.appendChild(b)}
   $('#mSel').classList.add('show')}
 $('#stTxt').onclick=()=>{if(G.state!=='clearing')openSel()};$('#selX').onclick=()=>$('#mSel').classList.remove('show');
