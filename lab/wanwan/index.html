@@ -293,7 +293,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
   <div class="hud"><div class="box"><small id="stLbl">ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box"><small>ミス</small><b id="missN">0/3</b></div><div class="box"><small>のこり</small><b id="tmN">2:30</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
   <div class="lvRow" id="modes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div>
   <div class="lvRow" id="sizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
-  <div class="lvRow" id="stRow"><button id="stPrev">◀</button><span id="stTxt" style="flex:2;text-align:center;font-weight:700;align-self:center">ステージ 1 / 20</span><button id="stNext">▶</button></div>
+  <div class="lvRow" id="stRow"><button id="stPrev">◀</button><button id="stTxt" style="flex:2;font-weight:700">ステージ 1 / 20 ▾</button><button id="stNext">▶</button></div>
   <div class="lvRow" id="diffs"><button data-v="easy">かんたん</button><button data-v="normal">ふつう</button><button data-v="hard">むずかしい</button></div>
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv"></canvas></div></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt">線路をつないで！</span></div>
@@ -309,6 +309,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
 <p>ゴールが見えたら<b>▶▶はやく</b>で列車を3倍速に！線路がつながっていないと脱線するとやり直しです。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
+<div class="modal" id="mSel"><div class="card result"><h2>ステージせんたく</h2><div id="selG" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0"></div><div class="acts"><button class="btn c" id="selX">とじる</button></div></div></div>
 <div class="modal" id="mMsg"><div class="card result">
   <h2 id="mT"></h2>
   <div class="avs"><div><div class="ph" style="background-image:var(--colon)"></div>コロン</div><div><div class="ph" style="background-image:var(--moon)"></div>ムーン</div></div>
@@ -503,9 +504,9 @@ function say(who,text,ms=1600){
 const countStars=b=>b.flat().filter(p=>p&&p.bonus==='star').length;
 function hud(){
   $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
-  $('#stRow').style.display=mode==='stage'?'':'none';$('#stTxt').textContent='ステージ '+G.stage+' / '+NST;
+  $('#stRow').style.display=mode==='stage'?'':'none';$('#diffs').style.display=mode==='stage'?'none':'';
   $('#scN').textContent=G.score.toLocaleString();{const l=Math.max(0,Math.ceil(G.left||0));$('#tmN').textContent=Math.floor(l/60)+':'+String(l%60).padStart(2,'0')}
-  {const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stTxt').textContent='ステージ '+G.stage+' / '+NST+(G.stage<=(prog[sizeMode]||0)?' ✓':'');$('#stNext').textContent=G.stage<mx?'▶':'🔒'}
+  {const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stTxt').textContent='ステージ '+G.stage+' / '+NST+(G.stage<=(prog[sizeMode]||0)?' ✓':'')+' ▾';$('#stNext').textContent=G.stage<mx?'▶':'🔒'}
   $('#stars').textContent=G.starsGot+'/'+G.starsTot;
   $('#lives').textContent='♥'.repeat(Math.max(0,G.lives))+'♡'.repeat(Math.max(0,3-G.lives));
 }
@@ -860,9 +861,12 @@ function draw(){
     ctx.fillText((G.paxTot?'🐶'+G.pax+'/'+G.paxTot+' ':'')+(G.keyTot?(G.hasKey?'🔑OK':'🔑なし'):''),M+BW-2,17);ctx.restore()}
   ctx.save();for(let i=0;i<G.starsTot;i++){const sx=M+14+i*24,on=i<G.starsGot,si=img(skin+'_i_star'),s0=img(skin+'_i_star0');
     if(si){const im=on?si:(s0||si);if(!on&&!s0)ctx.globalAlpha=.3;drawImg(im,sx,17,22,22);ctx.globalAlpha=1}else starP(sx,17,8,on,th)}ctx.restore();
-  {const q=G.S0,d=q.e,cx0=M+q.c*S+S/2,cy0=BY+q.r*S+S/2,bx=d===1?M+N*S+18:d===3?M-18:cx0,by=d===0?BY-18:d===2?BY+N*S+18:cy0;
-   if(G.state==='ready')drawCD(bx,by,Math.max(1,Math.ceil(G.timer))+'',G.timer<=3,G.timer/6,1+((G.timer%1)>.85?.12:0));
-   else if(G.state==='run'&&G.goT>0)drawCD(bx,by,'GO!',false,null,1+.25*Math.sin(Math.PI*Math.min(1,G.goT/.9)))}
+  {const cx=M+N*S/2,cy=BY+N*S/2;let txt=null,al=.6,sc=1;
+   if(G.state==='ready'){txt=Math.max(1,Math.ceil(G.timer))+'';const f=G.timer%1;sc=1+(f>.8?(f-.8)*.6:0);al=.55}
+   else if(G.state==='run'&&G.goT>0){txt='GO!';al=Math.min(.8,G.goT/.9);sc=1+.2*(1-G.goT/.9)}
+   if(txt){ctx.save();ctx.globalAlpha=al;ctx.font='900 '+Math.round((txt==='GO!'?64:96)*sc)+'px "Zen Maru Gothic",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+     ctx.lineJoin='round';ctx.lineWidth=8;ctx.strokeStyle=skin==='neon'?'rgba(20,8,55,.9)':'rgba(90,58,20,.9)';ctx.strokeText(txt,cx,cy);
+     ctx.fillStyle=txt==='GO!'?(skin==='neon'?'#9bff9b':'#bff0a0'):(skin==='neon'?'#bff7ff':'#fff6e0');ctx.fillText(txt,cx,cy);ctx.restore()}}
 }
 let last=performance.now();
 function loop(t){
@@ -884,6 +888,13 @@ $('#diffs').onclick=e=>{const v=e.target.dataset.v;if(v){diff=v;store.set('wanwa
 function relaunch(){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.rs=0;G.stage=mode==='stage'?Math.min(NST,(prog[sizeMode]||0)+1):1;newStage();refresh()}
 $('#sizes').onclick=e=>{const v=e.target.dataset.v;if(v){sizeMode=v;store.set('wanwan_size',v);relaunch()}};
 $('#modes').onclick=e=>{const v=e.target.dataset.v;if(v){mode=v;store.set('wanwan_mode',v);relaunch()}};
+function openSel(){
+  const mx=Math.min(NST,(prog[sizeMode]||0)+1),g=$('#selG');g.innerHTML='';
+  for(let i=1;i<=NST;i++){const b=document.createElement('button');const lock=i>mx,done=i<=(prog[sizeMode]||0);
+    b.className='btn '+(i===G.stage?'g':'c');b.style.cssText='padding:10px 0;font-size:15px;'+(lock?'opacity:.4':'');b.textContent=lock?'🔒':i+(done?'✓':'');
+    if(!lock)b.onclick=()=>{$('#mSel').classList.remove('show');G.state='ready';G.score=0;G.stage=i;newStage();refresh()};g.appendChild(b)}
+  $('#mSel').classList.add('show')}
+$('#stTxt').onclick=()=>{if(G.state!=='clearing')openSel()};$('#selX').onclick=()=>$('#mSel').classList.remove('show');
 $('#stPrev').onclick=()=>{if(G.stage>1){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.stage--;newStage();refresh()}};
 $('#stNext').onclick=()=>{if(G.stage<Math.min(NST,(prog[sizeMode]||0)+1)){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.stage++;newStage();refresh()}};
 $('#bGo').onclick=()=>{actx();go()};
