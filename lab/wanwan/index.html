@@ -392,7 +392,7 @@ body[data-vt=neon] .tile.pf{background-image:url(assets/ui/neon_t4.webp);padding
 <p>空きマスに<b>パネルをスライド</b>（タップ or スワイプ）して、スタートからゴールまで<b>線路をつなごう</b>！列車は少ししたら自動で出発します。</p>
 <p>枠の切れ目の<b>青いスタート</b>から列車が出発し、<b>赤いゴール</b>の切れ目に入ればクリア！切れ目の場所はステージごとに変わるよ。</p>
 <p><b>十字</b>は縦横どちらからも通れる交差、<b>ワープ</b>は同じ色のトンネルへ瞬間移動、<b>ジャンプ台</b>は1マス飛び越えて着地します。</p>
-<p>線路の上の<b>アイテム</b>を取ると効果が出るよ（⏱ゆっくり4秒／⌛時間ストップ3秒／🚀はやくなる4秒）。<b>★スター</b>は2個→3個…と取るほど1個ごとの点が上がり（300→500→800）、全部取るとボーナス＋評価アップ！<b>🔑かぎ</b>を取ると<b>🚧扉</b>を通れるよ。<b>白い矢印</b>のパネルは矢印の向きにしか入れないよ。5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
+<p>線路の上の<b>アイテム</b>を取ると効果が出るよ（⏱ゆっくり4秒／⌛時間ストップ3秒／🚀はやくなる4秒）。<b>★スター</b>は2個→3個…と取るほど1個ごとの点が上がり（300→500→800）、全部取るとボーナス＋評価アップ！<b>🔑かぎ</b>を取ると<b>🚧扉</b>を通れるよ。5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
 <p>ゴールが見えたら<b>▶▶はやく</b>で列車を3倍速に！線路がつながっていないと脱線するとやり直しです。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
@@ -543,7 +543,6 @@ function genLevel(stage){
     for(let k=0;k<nStar;k++){const i=take();if(i!=null)at(i).bonus='star'}
     for(let k=0;k<nIt;k++){const i=take();if(i!=null)at(i).bonus=kinds[k%kinds.length]}
     for(let k=0;k<nPax;k++){const i=take();if(i!=null)at(i).bonus='pax'}
-    if(stage>=3){const i=take();if(i!=null)at(i).ow=i===0?S0.e:(dirs[i-1]+2)%4}
     if(stage>=4&&mids.length>=2){const x=take(),y=take(),ki=Math.min(x,y),di2=Math.max(x,y);
       if(!at(ki).bonus&&!at(di2).bonus&&di2-ki>=1){at(ki).bonus='key';at(di2).door=true}}
   }
