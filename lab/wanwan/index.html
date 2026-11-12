@@ -335,7 +335,7 @@ function img(n){let i=IMG[n];if(!i){i=new Image();i.src='assets/'+n+'.webp';IMG[
 ['natural','retro','neon'].forEach(t=>{img(t+'_board');img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k));['cross','wr','wb','jump'].forEach(k=>img(t+'_x_'+k))});
 ['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f);img('natural_tr_'+d)});
 [['natural',[0,1,3,5]],['retro',[0,1,3,5]],['neon',[0,1,2,5]]].forEach(([t,rs])=>rs.forEach(r=>{for(let f=0;f<6;f++)img('fx_'+t+'_'+r+f)}));
-const BOARD={natural:[66/718,55/724,664/718,668/724],retro:[54/719,48/724,660/719,672/724],neon:[52/727,46/724,658/727,672/724]};
+const BOARD={natural:[.0277,.0319,.9723,.9723],retro:[.0437,.0513,.9563,.9529],neon:[.0592,.0668,.9408,.9341]};
 function tileImg(conns){const k={'02':'v','13':'h','01':'tr','12':'rb','23':'bl','03':'lt'}[[...conns].sort().join('')];return k&&[k]}
 let skin='natural',diff=store.get('wanwan_diff','normal');
 if(!DIFF[diff])diff='normal';
