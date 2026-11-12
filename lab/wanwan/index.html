@@ -318,7 +318,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
 const $=s=>document.querySelector(s);
 const store={get(k,d){try{return localStorage.getItem(k)||d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const cv=$('#cv'),ctx=cv.getContext('2d');
-let N=5,S=60;const M=44,BY=64,BW=348,W=BW+M*2,H=BY+BW+34;
+let N=5,S=60;const M=44,BY=64,BW=348,W=BW+M*2,H=BY+BW+44;
 const setN=n=>{N=n;S=BW/n};
 const dpr=Math.min(window.devicePixelRatio||1,3);
 cv.width=W*dpr;cv.height=H*dpr;
@@ -332,7 +332,7 @@ const THEMES={
 };
 const IMG={};
 function img(n){let i=IMG[n];if(!i){i=new Image();i.src='assets/'+n+'.webp';IMG[n]=i}return i.complete&&i.naturalWidth?i:null}
-['natural','retro','neon'].forEach(t=>{img(t+'_board');img(t+'_i_star');img(t+'_i_star0');['slow','stop','fast'].forEach(k=>img(t+'_i_'+k));['s0','s1','g0','g1'].forEach(k=>img(t+'_gate_'+k));img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k));['cross','wr','wb','jump'].forEach(k=>img(t+'_x_'+k))});
+['natural','retro','neon'].forEach(t=>{img(t+'_board');img(t+'_cd_0');img(t+'_cd_1');img(t+'_i_star');img(t+'_i_star0');['slow','stop','fast'].forEach(k=>img(t+'_i_'+k));['s0','s1','g0','g1'].forEach(k=>img(t+'_gate_'+k));img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k));['cross','wr','wb','jump'].forEach(k=>img(t+'_x_'+k))});
 ['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f);img('natural_tr_'+d)});
 [['natural',[0,1,3,5]],['retro',[0,1,3,5]],['neon',[0,1,2,5]]].forEach(([t,rs])=>rs.forEach(r=>{for(let f=0;f<6;f++)img('fx_'+t+'_'+r+f)}));
 const BOARD={natural:[.0277,.0319,.9723,.9723],retro:[.0437,.0513,.9563,.9529],neon:[.0592,.0668,.9408,.9341]};
@@ -512,10 +512,10 @@ function newStage(){
 }
 function begin(){
   G.board=JSON.parse(G.snap);G.score=G.stageScore;
-  resetTrain();G.eff=null;G.fast=false;$('#bFast').classList.remove('on');G.starsGot=0;G.state='ready';G.timer=6;hud();
+  resetTrain();G.eff=null;G.goT=0;G.fast=false;$('#bFast').classList.remove('on');G.starsGot=0;G.state='ready';G.timer=6;hud();
   say('colon','線路をつないで！');
 }
-function go(){if(G.state==='ready'){G.state='run';say('colon','しゅっぱーつ！')}}
+function go(){if(G.state==='ready'){G.state='run';G.goT=.9;say('colon','しゅっぱーつ！')}}
 function addScore(n){G.score+=n;hud()}
 function collect(p){
   const cx=M+G.train.c*S+S/2,cy=BY+G.train.r*S+S/2;
@@ -591,6 +591,7 @@ function off(p){
 }
 
 function update(dt){
+  if(G.goT>0)G.goT-=dt;
   if(G.state==='ready'){G.timer-=dt;if(G.timer<=0)go()}
   if(G.state==='run')moveTrain(dt);
   if(G.state==='derail'){G.timer-=dt;if(G.timer<=0)afterDerail()}
@@ -735,6 +736,12 @@ function drawTrain(p,th){
   ctx.fillStyle=th.front;rr(2,-7,15,14,4);ctx.fill();
   ctx.restore();
 }
+function drawCD(cx,cy,txt,warn,frac,sc){
+  const im=img(skin+'_cd_'+(warn?1:0));if(!im)return;
+  const D=46*sc;ctx.save();ctx.drawImage(im,cx-D/2,cy-.555*D,D,D);
+  if(frac!=null){ctx.strokeStyle='rgba(15,15,30,.55)';ctx.lineWidth=.06*D;ctx.beginPath();ctx.arc(cx,cy,.31*D,-Math.PI/2,-Math.PI/2+Math.PI*2*(1-frac));ctx.stroke()}
+  const go=txt==='GO!';ctx.font='bold '+Math.round((go?12:17)*sc)+'px "Zen Maru Gothic",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle=go?(skin==='neon'?'#9bff9b':'#2c8a2c'):skin==='neon'?'#bff7ff':warn?'#b3261e':'#5b3a14';ctx.fillText(txt,cx,cy+1);ctx.restore()}
 function starP(cx,cy,R,fill,th){
   ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?R*.45:R;ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r)}ctx.closePath();
   if(fill){ctx.fillStyle='#f7c93c';ctx.strokeStyle='#c98f12';ctx.lineWidth=1;ctx.fill();ctx.stroke()}
@@ -802,7 +809,7 @@ function draw(){
     const ox=d===1?M+N*S:d===3?M:cx,oy=d===0?BY:d===2?BY+N*S:cy;
     ctx.save();ctx.translate(ox,oy);ctx.rotate(d*Math.PI/2);
     const ky=Math.max(1,t/(.075*w)),hk=gi.naturalHeight;
-    ctx.drawImage(gi,0,0,gi.naturalWidth,.45*hk,-w/2,-t/2-.535*w,w,.45*w);
+    if(!(G.state==='ready'&&k==='s'))ctx.drawImage(gi,0,0,gi.naturalWidth,.45*hk,-w/2,-t/2-.535*w,w,.45*w);
     ctx.drawImage(gi,0,.45*hk,gi.naturalWidth,.17*hk,-w/2,-t/2-(.533-.45)*w*ky,w,.17*w*ky);ctx.restore()})}
   if(G.train)drawTrain(trainWorld(),th);
   G.fx.forEach(f=>{const fi=img('fx_'+skin+'_'+th.fx[f.k]+Math.min(5,(f.t/f.dur*6)|0));if(fi)drawImg(fi,f.x,f.y,f.size,f.size)});
@@ -811,11 +818,9 @@ function draw(){
     ctx.fillStyle=G.eff.k==='slow'?'#3b9be0':G.eff.k==='stop'?'#58c24a':'#e0443b';rr(ex+28,14,60*Math.max(0,r),8,4);ctx.fill();ctx.restore()}
   ctx.save();for(let i=0;i<G.starsTot;i++){const sx=M+14+i*24,on=i<G.starsGot,si=img(skin+'_i_star'),s0=img(skin+'_i_star0');
     if(si){const im=on?si:(s0||si);if(!on&&!s0)ctx.globalAlpha=.3;drawImg(im,sx,17,22,22);ctx.globalAlpha=1}else starP(sx,17,8,on,th)}ctx.restore();
-  if(G.state==='ready'){
-    ctx.save();ctx.font='bold 11px "Zen Maru Gothic",sans-serif';ctx.textAlign='right';ctx.fillStyle=skin==='natural'?'#5b4a2e':th.rail;
-    ctx.fillText('あと '+Math.ceil(G.timer)+' びょう',M+BW-18,21);
-    ctx.globalAlpha=.8;ctx.fillRect(M+18,28,(BW-36)*Math.max(0,G.timer)/6,3);ctx.restore();
-  }
+  {const q=G.S0,d=q.e,cx0=M+q.c*S+S/2,cy0=BY+q.r*S+S/2,bx=d===1?M+N*S+20:d===3?M-20:cx0,by=d===0?BY-20:d===2?BY+N*S+20:cy0;
+   if(G.state==='ready')drawCD(bx,by,Math.max(1,Math.ceil(G.timer))+'',G.timer<=3,G.timer/6,1+((G.timer%1)>.85?.12:0));
+   else if(G.state==='run'&&G.goT>0)drawCD(bx,by,'GO!',false,null,1+.25*Math.sin(Math.PI*Math.min(1,G.goT/.9)))}
 }
 let last=performance.now();
 function loop(t){
