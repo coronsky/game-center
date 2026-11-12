@@ -345,18 +345,44 @@ body[data-vt=natural] .lvRow button.on{background-image:url(assets/ui/natural_ma
 body[data-vt=natural] #stPrev,body[data-vt=natural] #stNext{flex:0 0 46px;min-height:46px;padding:0;font-size:0;background-image:url(assets/ui/natural_arrl0.webp);background-size:contain;background-position:center} body[data-vt=natural] #stNext{background-image:url(assets/ui/natural_arrr0.webp)}
 body[data-vt=natural] #stPrev:active{background-image:url(assets/ui/natural_arrl1.webp)} body[data-vt=natural] #stNext:active{background-image:url(assets/ui/natural_arrr1.webp)}
 body[data-vt=natural] #stTxt{background-image:url(assets/ui/natural_pill0.webp);color:#5a3d2b}
+.hud{margin:8px 10px 0!important}.status{margin-top:8px}
+.lvRow button:not(#stPrev):not(#stNext){font-size:18px!important;font-weight:900!important}#sizes button,#modes button{min-height:52px!important}
+body[data-vt=natural] .btn,body[data-vt=natural] .lvRow button:not(#stPrev):not(#stNext){background:none!important;border:14px solid transparent!important;padding:0 6px!important;min-height:46px;box-sizing:border-box;line-height:18px}
+body[data-vt=natural] .btn.g{border-image:url(assets/ui/natural_main0.webp) 50 fill/14px stretch!important} body[data-vt=natural] .btn.c{border-image:url(assets/ui/natural_std0.webp) 50 fill/14px stretch!important}
+body[data-vt=natural] .btn.g:active{border-image-source:url(assets/ui/natural_main1.webp)!important} body[data-vt=natural] .btn.c:active{border-image-source:url(assets/ui/natural_std1.webp)!important}
+body[data-vt=natural] .btn.g:disabled{border-image-source:url(assets/ui/natural_main2.webp)!important} body[data-vt=natural] .btn.c:disabled{border-image-source:url(assets/ui/natural_std2.webp)!important}
+body[data-vt=natural] .lvRow button:not(#stPrev):not(#stNext){border-image:url(assets/ui/natural_pill0.webp) 50 fill/14px stretch!important;color:#5a3d2b}
+body[data-vt=natural] .lvRow button.on{border-image-source:url(assets/ui/natural_main0.webp)!important;color:#fff}
+body[data-vt=natural] #stTxt{flex:2}
+body[data-vt=retro] .btn,body[data-vt=retro] .lvRow button:not(#stPrev):not(#stNext){background:none!important;border:14px solid transparent!important;padding:0 6px!important;min-height:46px;box-sizing:border-box;line-height:18px}
+body[data-vt=retro] .btn.g{border-image:url(assets/ui/retro_std1.webp) 50 fill/14px stretch!important} body[data-vt=retro] .btn.c{border-image:url(assets/ui/retro_std0.webp) 50 fill/14px stretch!important}
+body[data-vt=retro] .btn.g:active{border-image-source:url(assets/ui/retro_std2.webp)!important} body[data-vt=retro] .btn.c:active{border-image-source:url(assets/ui/retro_std1.webp)!important}
+body[data-vt=retro] .btn.g:disabled{border-image-source:url(assets/ui/retro_std2.webp)!important} body[data-vt=retro] .btn.c:disabled{border-image-source:url(assets/ui/retro_std2.webp)!important}
+body[data-vt=retro] .lvRow button:not(#stPrev):not(#stNext){border-image:url(assets/ui/retro_pill0.webp) 50 fill/14px stretch!important;color:#5a2a12}
+body[data-vt=retro] .lvRow button.on{border-image-source:url(assets/ui/retro_std1.webp)!important;color:#5a2a12}
+body[data-vt=retro] #stTxt{flex:2}
+body[data-vt=neon] .btn,body[data-vt=neon] .lvRow button:not(#stPrev):not(#stNext){background:none!important;border:14px solid transparent!important;padding:0 6px!important;min-height:46px;box-sizing:border-box;line-height:18px}
+body[data-vt=neon] .btn.g{border-image:url(assets/ui/neon_std1.webp) 50 fill/14px stretch!important} body[data-vt=neon] .btn.c{border-image:url(assets/ui/neon_std0.webp) 50 fill/14px stretch!important}
+body[data-vt=neon] .btn.g:active{border-image-source:url(assets/ui/neon_std2.webp)!important} body[data-vt=neon] .btn.c:active{border-image-source:url(assets/ui/neon_std1.webp)!important}
+body[data-vt=neon] .btn.g:disabled{border-image-source:url(assets/ui/neon_std2.webp)!important} body[data-vt=neon] .btn.c:disabled{border-image-source:url(assets/ui/neon_std2.webp)!important}
+body[data-vt=neon] .lvRow button:not(#stPrev):not(#stNext){border-image:url(assets/ui/neon_pill0.webp) 50 fill/14px stretch!important;color:#4a2d12}
+body[data-vt=neon] .lvRow button.on{border-image-source:url(assets/ui/neon_std1.webp)!important;color:#4a2d12}
+body[data-vt=neon] #stTxt{flex:2}
+body .gbtns .btn{border-width:9px!important;border-image-width:9px!important;padding:0 1px!important;font-size:11.5px!important;min-width:0;letter-spacing:-.02em;gap:2px}
+body:is([data-vt=retro],[data-vt=neon]) .lvRow button.on{filter:drop-shadow(0 0 5px rgba(255,190,60,.95)) saturate(1.5) brightness(1.03)}
+.btns{grid-template-columns:repeat(4,minmax(0,1fr))}
 </style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">わんわんトレイン</div></div>
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">わんわんトレイン</div></div>
-  <div class="hud"><div class="box"><small id="stLbl">ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box"><small>ミス</small><b id="missN">0/3</b></div><div class="box"><small>のこり</small><b id="tmN">2:30</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
+  <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt">線路をつないで！</span></div>
   <div class="lvRow" id="modes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div>
   <div class="lvRow" id="sizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
   <div class="lvRow" id="stRow"><button id="stPrev">◀</button><button id="stTxt" style="flex:2;font-weight:700">ステージ 1 / 20 ▾</button><button id="stNext">▶</button></div>
   <div class="lvRow" id="diffs"><button data-v="easy">かんたん</button><button data-v="normal">ふつう</button><button data-v="hard">むずかしい</button></div>
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv"></canvas></div></div>
-  <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt">線路をつないで！</span></div>
+  <div class="hud"><div class="box"><small id="stLbl">ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box"><small>ミス</small><b id="missN">0/3</b></div><div class="box"><small>のこり</small><b id="tmN">2:30</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
   <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn g" id="bGo">🚂しゅっぱつ</button><button class="btn c" id="bFast">▶▶はやく</button><button class="btn c" id="bRestart">⟳やりなおし</button><button class="btn c" id="bHelp">❓あそびかた</button></div>
   <div class="btns gbtns" style="grid-template-columns:1fr;margin-top:8px"><button class="btn c" id="bHome">🏠ホームへ戻る</button></div>
   <div class="foot"><span>ベスト <b id="bestN">0</b></span><span>右上の🎨でスキン変更</span></div>
