@@ -657,7 +657,8 @@ function enterCell(r,c,e){
 function derail(){
   const pose=trainWorld();
   for(let i=0;i<14;i++)G.parts.push({x:pose.x,y:pose.y,vx:(Math.random()-.5)*90,vy:(Math.random()-.5)*90,l:.8,m:.8,r:3+Math.random()*3});
-  try{SFX.bad()}catch(_){}G.state='derail';G.timer=1.5;G.miss++;hud();say('moon','あぶなーい！');
+  G.dPose={...pose};G.dT=0;G.dSign=Math.random()<.5?-1:1;G.dPuff=0;
+  try{SFX.bad()}catch(_){}G.state='derail';G.timer=1.8;G.miss++;hud();say('moon','あぶなーい！');
 }
 function gameOver(why){
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
@@ -712,7 +713,9 @@ function update(dt){
   if(G.goT>0)G.goT-=dt;
   if(G.state==='ready'){G.timer-=dt;if(G.timer<=0)go()}
   if(G.state==='run')moveTrain(dt);
-  if(G.state==='derail'){G.timer-=dt;if(G.timer<=0)afterDerail()}
+  if(G.state==='derail'){G.timer-=dt;G.dT+=dt;G.dPuff-=dt;
+    if(G.dPuff<=0&&G.dPose&&G.dT<1.5){G.dPuff=.07;const q=G.dPose;G.parts.push({x:q.x+(Math.random()-.5)*14,y:q.y-8,vx:(Math.random()-.5)*14,vy:-22-Math.random()*16,l:1.1,m:1.1,r:6+Math.random()*4,puff:true,dark:true})}
+    if(G.timer<=0)afterDerail()}
   if(G.state==='clearing'){G.timer-=dt;if(G.timer<=0){G.state='clear';G.showClear()}}
   G.fx=G.fx.filter(f=>(f.t+=dt)<f.dur);
   const T=G.train;
@@ -930,7 +933,7 @@ function draw(){
     }
   }
   G.parts.forEach(q=>{ctx.globalAlpha=Math.max(0,q.l/q.m)*(q.puff?.7:1);
-    ctx.fillStyle=q.puff?`rgb(${th.puff})`:th.rail;ctx.beginPath();ctx.arc(q.x,q.y,q.r*(q.puff?(1.6-q.l/q.m):1),0,7);ctx.fill()});
+    ctx.fillStyle=q.dark?(skin==='neon'?'#b9aee0':'#8a817a'):q.puff?`rgb(${th.puff})`:th.rail;ctx.beginPath();ctx.arc(q.x,q.y,q.r*(q.puff?(1.6-q.l/q.m):1),0,7);ctx.fill()});
   ctx.globalAlpha=1;
   [[G.S0,G.S0.e],[G.Gl,G.Gl.x]].forEach(([q,d])=>{ // 出入口の外にレール
     const im=img(skin+'_t_'+(d%2?'h':'v'));if(!im)return;
@@ -946,7 +949,11 @@ function draw(){
     const nw=gi.naturalWidth,nh=gi.naturalHeight,Lw=Math.min(S,64)*.6,Lh=Lw*(.2*nh)/(.34*nw);
     ctx.save();ctx.translate(ox,oy);ctx.rotate(d*Math.PI/2);
     ctx.drawImage(gi,.33*nw,.30*nh,.34*nw,.2*nh,-Lw/2,-t/2-Lh/2,Lw,Lh);ctx.restore()})}
-  if(G.train)drawTrain(trainWorld(),th);
+  if(G.train){
+    if(G.state==='derail'&&G.dPose){const q=G.dPose,t=G.dT,e=Math.min(1,t/.45),k=1-Math.pow(1-e,3),bounce=e>=1?Math.sin(Math.min(1,(t-.45)/.3)*Math.PI)*.12:0;
+      const ang=G.dSign*(Math.PI/2*k*.95+bounce);ctx.save();ctx.translate(q.x,q.y+S*.12*k);ctx.rotate(ang);ctx.translate(-q.x,-q.y);
+      drawTrain({...q,y:q.y,al:1-.35*k},th);ctx.restore()}
+    else drawTrain(trainWorld(),th)}
   G.fx.forEach(f=>{const fi=img('fx_'+skin+'_'+th.fx[f.k]+Math.min(5,(f.t/f.dur*6)|0));if(fi)drawImg(fi,f.x,f.y,f.size,f.size)});
   if(G.eff){const ei=img(skin+'_i_'+G.eff.k),r=G.eff.t/G.eff.m;
     const ex=M+G.starsTot*36+14;if(ei)drawImg(ei,ex+10,18,26,26);ctx.save();ctx.fillStyle='rgba(0,0,0,.25)';rr(ex+28,14,60,8,4);ctx.fill();
