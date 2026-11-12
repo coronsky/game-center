@@ -335,7 +335,7 @@ const THEMES={
 const IMG={};
 function img(n){let i=IMG[n];if(!i){i=new Image();i.src='assets/'+n+'.webp';IMG[n]=i}return i.complete&&i.naturalWidth?i:null}
 ['natural','retro','neon'].forEach(t=>{img(t+'_board');img(t+'_cd_0');img(t+'_cd_1');img(t+'_i_star');img(t+'_i_star0');['slow','stop','fast'].forEach(k=>img(t+'_i_'+k));['s0','s1','g0','g1'].forEach(k=>img(t+'_gate_'+k));img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k));['cross','wr','wb','jump'].forEach(k=>img(t+'_x_'+k))});
-['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f);img('natural_tr_'+d)});
+['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f);['natural','retro','neon'].forEach(t=>img(t+'_tr_'+d))});
 [['natural',[0,1,3,5]],['retro',[0,1,3,5]],['neon',[0,1,2,5]]].forEach(([t,rs])=>rs.forEach(r=>{for(let f=0;f<6;f++)img('fx_'+t+'_'+r+f)}));
 const BOARD={natural:[.0277,.0319,.9723,.9723],retro:[.0437,.0513,.9563,.9529],neon:[.0592,.0668,.9408,.9341]};
 function tileImg(conns){const k={'02':'v','13':'h','01':'tr','12':'rb','23':'bl','03':'lt'}[[...conns].sort().join('')];return k&&[k]}
@@ -760,8 +760,8 @@ function drawTrain(p,th){
   const c=Math.cos(p.a),s=Math.sin(p.a);
   const d=Math.abs(c)>=Math.abs(s)?(c>0?'r':'l'):(s>0?'d':'u');
   const f=G.state==='run'?((performance.now()/110|0)%4):0;
-  const nat=skin==='natural',im=nat?img('natural_tr_'+d):img('train_'+d+f);
-  if(nat&&G.state==='run')p={...p,y:p.y+Math.sin(performance.now()/70)*S*.012};
+  const nat=true,im=img(skin+'_tr_'+d)||img('train_'+d+f);
+  if(G.state==='run')p={...p,y:p.y+Math.sin(performance.now()/70)*S*.012};
   ctx.save();if(th.glow){ctx.shadowColor=th.glow;ctx.shadowBlur=12}
   if(p.al!==undefined)ctx.globalAlpha=p.al;
   const sc=p.sc||1;
