@@ -688,7 +688,7 @@ function clearStage(){
   if(mode==='stage'&&G.stage>(prog[sizeMode]||0)){prog[sizeMode]=G.stage;store.set('wanwan_prog',JSON.stringify(prog))}
   G.showClear=()=>overlay((mode==='stage'?'ステージ '+G.stage:'ランダム '+(G.rs+1))+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+(G.starsTot?'\nスター '+G.starsGot+'/'+G.starsTot:'')+'\nSCORE '+G.score.toLocaleString()+bonus,mode==='stage'&&G.stage>=NST?'さいごまでクリア！':'つぎのステージへ',()=>{if(mode==='stage'){if(G.stage<NST)G.stage++;else{G.stage=1;G.score=0}}else G.rs++;newStage()});
 }
-function newGame(fromStart){G.score=0;G.rs=0;G.stage=fromStart===true?1:Math.min(NST,(prog[sizeMode]||0)+1);newStage()}
+function newGame(fromStart){G.score=0;G.rs=0;G.stage=1;newStage()}
 
 function trainWorld(){
   const T=G.train;
@@ -998,7 +998,7 @@ function refresh(){
   $('#bestN').textContent=hi.toLocaleString();
 }
 $('#diffs').onclick=e=>{const v=e.target.dataset.v;if(v){diff=v;store.set('wanwan_diff',v);refresh()}};
-function relaunch(){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.rs=0;G.stage=mode==='stage'?Math.min(NST,(prog[sizeMode]||0)+1):1;newStage();refresh()}
+function relaunch(){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.rs=0;G.stage=1;newStage();refresh()}
 $('#sizes').onclick=e=>{const v=e.target.dataset.v;if(v){sizeMode=v;store.set('wanwan_size',v);refresh();hud()}};
 $('#modes').onclick=e=>{const v=e.target.dataset.v;if(v){mode=v;store.set('wanwan_mode',v);refresh();hud()}};
 function openMenu(first){$('#mMenu .xBtn').style.display=first?'none':'';$('#mBackMenu').style.display=first?'none':'';refresh();hud();$('#mMenu').classList.add('show')}
