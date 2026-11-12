@@ -285,6 +285,57 @@ body .panel{background:none!important;box-shadow:none!important;border:0!importa
 #bFast.on{filter:brightness(1.08);box-shadow:0 0 0 3px rgba(125,160,105,.5)}
 .foot b{color:var(--green-d)}
 body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
+/* ===== UI skin (9-slice) ===== */
+body:is([data-vt=retro],[data-vt=natural]) .modal .card.over h2{color:#ffe7b0!important}
+.hud .box{position:relative;background:none!important;box-shadow:none!important;border-style:solid!important;border-color:transparent!important;border-width:31px 9px 9px!important;border-radius:0!important;padding:0!important}
+.hud .box small{position:absolute;left:0;right:0;top:-27px;font-size:10px;line-height:14px;opacity:1!important}
+.hud .box b{display:block;line-height:22px;font-size:clamp(14px,4.6vw,18px)}
+.modal{overflow-y:auto}.modal .card{margin:auto;overflow:visible!important;max-height:none!important;position:relative;max-width:358px;background:none!important;box-shadow:none!important;border-style:solid!important;border-color:transparent!important;border-width:150px 28px 56px!important;border-radius:0!important;padding:0!important;color:#5a3d2b}
+.modal .card h2{margin:-78px 36px 50px!important;height:36px;line-height:36px;font-size:18px!important;white-space:nowrap;letter-spacing:0}
+.modal .card.long h2{font-size:14px!important}
+.modal .card .msg{color:#5a3d2b!important;white-space:pre-line}
+.tile{background-color:transparent;aspect-ratio:1;border:0;background-size:100% 100%;background-repeat:no-repeat;font:inherit;font-weight:900;font-size:17px;padding:0 0 20% 0;cursor:pointer;color:#5a3d2b}
+.tile.lk{font-size:0;opacity:.85}
+.btn{background-color:transparent}
+body[data-vt=natural] .hud .box{border-image:url(assets/ui/natural_panel.webp) 115 35 35 fill/31px 9px 9px stretch!important;color:#5a3d2b}
+body[data-vt=natural] .hud .box small{color:#fff3d6!important} body[data-vt=natural] .hud .box b{color:#5a3d2b!important;}
+body[data-vt=natural] .modal .card{border-image:url(assets/ui/natural_dlg.webp) 240 45 90 fill/150px 28px 56px stretch!important;color:#5a3d2b}
+body[data-vt=natural] .modal .card.over{border-image:url(assets/ui/natural_dlgo.webp) 240 45 90 fill/150px 28px 56px stretch!important}
+body[data-vt=natural] .modal .card h2{color:#7a3a12!important;font-family:inherit!important}
+body[data-vt=natural] .modal .card .msg{color:#5a3d2b!important}
+body[data-vt=natural] .tile{background-image:url(assets/ui/natural_t0.webp);color:#5a3d2b} body[data-vt=natural] .tile.ck{background-image:url(assets/ui/natural_t1.webp)} body[data-vt=natural] .tile.cur{background-image:url(assets/ui/natural_t2.webp)} body[data-vt=natural] .tile.lk{background-image:url(assets/ui/natural_t3.webp)}
+body[data-vt=retro] .hud .box{border-image:url(assets/ui/retro_panel.webp) 115 35 35 fill/31px 9px 9px stretch!important;color:#5a2a12}
+body[data-vt=retro] .hud .box small{color:#7a2a10!important} body[data-vt=retro] .hud .box b{color:#5a2a12!important;}
+body[data-vt=retro] .modal .card{border-image:url(assets/ui/retro_dlg.webp) 240 45 90 fill/150px 28px 56px stretch!important;color:#5a2a12}
+body[data-vt=retro] .modal .card.over{border-image:url(assets/ui/retro_dlgo.webp) 240 45 90 fill/150px 28px 56px stretch!important}
+body[data-vt=retro] .modal .card h2{color:#7a2a10!important;font-family:inherit!important}
+body[data-vt=retro] .modal .card .msg{color:#5a2a12!important}
+body[data-vt=retro] .tile{background-image:url(assets/ui/retro_t0.webp);color:#5a2a12} body[data-vt=retro] .tile.ck{background-image:url(assets/ui/retro_t1.webp)} body[data-vt=retro] .tile.cur{background-image:url(assets/ui/retro_t2.webp)} body[data-vt=retro] .tile.lk{background-image:url(assets/ui/retro_t3.webp)}
+body[data-vt=neon] .hud .box{border-image:url(assets/ui/neon_panel.webp) 115 35 35 fill/31px 9px 9px stretch!important;color:#ffffff}
+body[data-vt=neon] .hud .box small{color:#7ff4ff!important} body[data-vt=neon] .hud .box b{color:#ffffff!important;text-shadow:0 0 8px #3ff0ff;}
+body[data-vt=neon] .modal .card{border-image:url(assets/ui/neon_dlg.webp) 240 45 90 fill/150px 28px 56px stretch!important;color:#e8f2ff}
+body[data-vt=neon] .modal .card.over{border-image:url(assets/ui/neon_dlgo.webp) 240 45 90 fill/150px 28px 56px stretch!important}
+body[data-vt=neon] .modal .card h2{color:#ffffff!important;text-shadow:0 0 8px #ff4fd8;font-family:inherit!important}
+body[data-vt=neon] .modal .card .msg{color:#e8f2ff!important}
+body[data-vt=neon] .tile{background-image:url(assets/ui/neon_t0.webp);color:#ffffff} body[data-vt=neon] .tile.ck{background-image:url(assets/ui/neon_t1.webp)} body[data-vt=neon] .tile.cur{background-image:url(assets/ui/neon_t2.webp)} body[data-vt=neon] .tile.lk{background-image:url(assets/ui/neon_t3.webp)}
+body[data-vt=retro] .btn.g{background:url(assets/ui/retro_std1.webp) center/100% 100% no-repeat;border:0;box-shadow:none;color:#5a2a12;min-height:48px;font-family:inherit;font-weight:900;text-shadow:none}
+body[data-vt=retro] .btn.c{background:url(assets/ui/retro_std0.webp) center/100% 100% no-repeat;border:0;box-shadow:none;color:#5a2a12;min-height:46px;font-family:inherit;font-weight:900}
+body[data-vt=retro] .btn:active{filter:brightness(.92);transform:scale(.96)} body[data-vt=retro] .btn:disabled{background-image:url(assets/ui/retro_std2.webp)!important;filter:none}
+body[data-vt=retro] .lvRow button{background:url(assets/ui/retro_pill0.webp) center/100% 100% no-repeat;border:0;box-shadow:none;color:#5a2a12;min-height:44px;padding:8px 14px}
+body[data-vt=retro] .lvRow button.on{background-image:url(assets/ui/retro_std1.webp);color:#5a2a12;box-shadow:none;text-shadow:none}
+body[data-vt=retro] #stPrev,body[data-vt=retro] #stNext{flex:0 0 46px;min-height:46px;padding:0;font-size:0;background-image:url(assets/ui/retro_arrl0.webp)} body[data-vt=retro] #stNext{background-image:url(assets/ui/retro_arrr0.webp)}
+body[data-vt=retro] #stPrev:active{background-image:url(assets/ui/retro_arrl1.webp)} body[data-vt=retro] #stNext:active{background-image:url(assets/ui/retro_arrr1.webp)}
+body[data-vt=retro] #stPrev,body[data-vt=retro] #stNext{background-size:contain;background-position:center}
+body[data-vt=retro] #stTxt{background-image:url(assets/ui/retro_pill0.webp);color:#5a2a12}
+body[data-vt=neon] .btn.g{background:url(assets/ui/neon_std1.webp) center/100% 100% no-repeat;border:0;box-shadow:none;color:#4a2d12;min-height:48px;font-family:inherit;font-weight:900;text-shadow:none}
+body[data-vt=neon] .btn.c{background:url(assets/ui/neon_std0.webp) center/100% 100% no-repeat;border:0;box-shadow:none;color:#4a2d12;min-height:46px;font-family:inherit;font-weight:900}
+body[data-vt=neon] .btn:active{filter:brightness(.92);transform:scale(.96)} body[data-vt=neon] .btn:disabled{background-image:url(assets/ui/neon_std2.webp)!important;filter:none}
+body[data-vt=neon] .lvRow button{background:url(assets/ui/neon_pill0.webp) center/100% 100% no-repeat;border:0;box-shadow:none;color:#4a2d12;min-height:44px;padding:8px 14px}
+body[data-vt=neon] .lvRow button.on{background-image:url(assets/ui/neon_std1.webp);color:#4a2d12;box-shadow:none;text-shadow:none}
+body[data-vt=neon] #stPrev,body[data-vt=neon] #stNext{flex:0 0 46px;min-height:46px;padding:0;font-size:0;background-image:url(assets/ui/neon_arrl0.webp)} body[data-vt=neon] #stNext{background-image:url(assets/ui/neon_arrr0.webp)}
+body[data-vt=neon] #stPrev:active{background-image:url(assets/ui/neon_arrl1.webp)} body[data-vt=neon] #stNext:active{background-image:url(assets/ui/neon_arrr1.webp)}
+body[data-vt=neon] #stPrev,body[data-vt=neon] #stNext{background-size:contain;background-position:center}
+body[data-vt=neon] #stTxt{background-image:url(assets/ui/neon_pill0.webp);color:#4a2d12}
 </style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../../">🏠 ホーム</a>
@@ -511,6 +562,7 @@ function hud(){
   $('#lives').textContent='♥'.repeat(Math.max(0,G.lives))+'♡'.repeat(Math.max(0,3-G.lives));
 }
 function overlay(title,body,btn,cb,btn2,cb2){
+  {const cd=$('#mMsg .card');cd.classList.toggle('over',/ゲームオーバー|じかんぎれ/.test(title));cd.classList.toggle('long',title.length>9)}
   $('#mT').textContent=title;$('#mM').textContent=body;$('#mBtn').textContent=btn;
   const b2=$('#mBtn2');b2.style.display=btn2?'':'none';if(btn2){b2.textContent=btn2;b2.onclick=()=>{$('#mMsg').classList.remove('show');cb2()}}
   $('#mMsg').classList.add('show');$('#mBtn').onclick=()=>{$('#mMsg').classList.remove('show');cb()};
@@ -893,7 +945,7 @@ $('#modes').onclick=e=>{const v=e.target.dataset.v;if(v){mode=v;store.set('wanwa
 function openSel(){
   const mx=Math.min(NST,(prog[sizeMode]||0)+1),g=$('#selG');g.innerHTML='';
   for(let i=1;i<=NST;i++){const b=document.createElement('button');const lock=i>mx,done=i<=(prog[sizeMode]||0);
-    b.className='btn '+(i===G.stage?'g':'c');b.style.cssText='padding:10px 0;font-size:15px;'+(lock?'opacity:.4':'');b.textContent=lock?'🔒':i+(done?'✓':'');
+    b.className='tile '+(lock?'lk':i===G.stage?'cur':done?'ck':'');b.textContent=lock?'':String(i);
     if(!lock)b.onclick=()=>{$('#mSel').classList.remove('show');G.state='ready';G.score=0;G.stage=i;newStage();refresh()};g.appendChild(b)}
   $('#mSel').classList.add('show')}
 $('#stTxt').onclick=()=>{if(G.state!=='clearing')openSel()};$('#selX').onclick=()=>$('#mSel').classList.remove('show');
