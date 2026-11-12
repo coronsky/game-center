@@ -292,7 +292,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">わんわんトレイン</div></div>
   <div class="hud"><div class="box"><small>ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
   <div class="lvRow" id="sizes"><button data-v="">おまかせ</button><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
-  <div class="lvRow" id="gims"><button data-v="auto">おまかせ</button><button data-v="none">なし</button><button data-v="cross">十字</button><button data-v="warp">ワープ</button><button data-v="jump">ジャンプ</button><button data-v="all">ぜんぶ</button></div>
+  <div class="lvRow" id="gims"><button data-v="auto">おまかせ</button><button data-v="none">なし</button><button data-v="cross">十字</button></div>
   <div class="lvRow" id="diffs"><button data-v="easy">かんたん</button><button data-v="normal">ふつう</button><button data-v="hard">むずかしい</button></div>
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv"></canvas></div></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt">線路をつないで！</span></div>
@@ -304,7 +304,7 @@ body:is([data-vt=retro],[data-vt=neon]) .foot b{color:#ffd36b}
 <p>空きマスに<b>パネルをスライド</b>（タップ or スワイプ）して、スタートからゴールまで<b>線路をつなごう</b>！列車は少ししたら自動で出発します。</p>
 <p>枠の切れ目の<b>青いスタート</b>から列車が出発し、<b>赤いゴール</b>の切れ目に入ればクリア！切れ目の場所はステージごとに変わるよ。</p>
 <p><b>十字</b>は縦横どちらからも通れる交差、<b>ワープ</b>は同じ色のトンネルへ瞬間移動、<b>ジャンプ台</b>は1マス飛び越えて着地します。</p>
-<p>線路の上の<b>アイテム</b>を取ると効果が出るよ（⏱ゆっくり4秒／⌛時間ストップ3秒／🚀はやくなる4秒）。<b>★スター</b>は2個→3個…と取るほど1個ごとの点が上がり（300→500→800）、全部取るとボーナス＋評価アップ！5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
+<p>線路の上の<b>アイテム</b>を取ると効果が出るよ（⏱ゆっくり4秒／⌛時間ストップ3秒／🚀はやくなる4秒）。<b>★スター</b>は2個→3個…と取るほど1個ごとの点が上がり（300→500→800）、全部取るとボーナス＋評価アップ！<b>🐶お客さん</b>は乗せるほど点が上がり、<b>🔑かぎ</b>を取ると<b>🚧扉</b>を通れるよ。<b>白い矢印</b>のパネルは矢印の向きにしか入れないよ。5×5・6×6では<b>岩</b>（うごかせない）が出るよ。</p>
 <p>ゴールが見えたら<b>▶▶はやく</b>で列車を3倍速に！線路がつながっていないと脱線するとやり直しです。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
@@ -340,7 +340,7 @@ function tileImg(conns){const k={'02':'v','13':'h','01':'tr','12':'rb','23':'bl'
 let skin='natural',diff=store.get('wanwan_diff','normal');
 if(!DIFF[diff])diff='normal';
 let sizeMode=store.get('wanwan_size','');if(!['','4','5','6'].includes(sizeMode))sizeMode='';
-let gimMode=store.get('wanwan_gim','auto');if(!['auto','none','cross','warp','jump','all'].includes(gimMode))gimMode='auto';
+let gimMode=store.get('wanwan_gim','auto');if(!['auto','none','cross'].includes(gimMode))gimMode='auto';
 let hi=+store.get('wanwan_hi','0')||0;
 
 const has=(p,s)=>p.kind==='cross'?true:(p.kind==='warp'||p.kind==='jump')?p.d===s:(p.conns[0]===s||p.conns[1]===s);
@@ -389,9 +389,7 @@ function genLevel(stage){
   const pick=(ed,cell)=>{const o=edges.filter(q=>q[0]===cell[0]&&q[1]===cell[1]);return o[rnd(o.length)][2]};
   // ギミックの希望
   const want={cross:false,warp:false,jump:false};
-  if(gimMode==='all'){want.cross=want.warp=want.jump=true}
-  else if(gimMode==='auto'){want.cross=stage>=2;want.warp=stage>=4;want.jump=stage>=6}
-  else if(want[gimMode]!==undefined)want[gimMode]=true;
+  if(gimMode==='auto'){want.cross=stage>=2}else if(gimMode==='cross')want.cross=true;
   let path=null,dirs=null,S0=null,Gl=null,plan=null;
   for(const wn of [want,{cross:false,warp:false,jump:false}]){
     for(let att=0;att<500&&!path;att++){
@@ -439,12 +437,17 @@ function genLevel(stage){
   free.forEach(([r,c],i)=>{board[r][c]=i<nRock?{conns:[-1,-1],rock:true}:{conns:TYPES[rnd(6)].slice(),bonus:null}});
   let empty=free[nRock+rnd(Math.max(1,free.length-nRock))];board[empty[0]][empty[1]]=null;
   const mids=[];for(let i=2;i<L-1;i++)if(!plan.rm.has(i)&&!plan.sp[i])mids.push(i);shuffle(mids);
-  if(mids.length){
+  {
     const kinds=stage<3?['slow','stop']:['slow','stop','fast'];shuffle(kinds);
-    const nIt=stage<2?1:2;
-    for(let k=0;k<nIt&&k<mids.length;k++)board[path[mids[k]][0]][path[mids[k]][1]].bonus=kinds[k%kinds.length];
-    const nStar=stage<=2?2:3;
-    for(let k=nIt;k<nIt+nStar&&k<mids.length;k++)board[path[mids[k]][0]][path[mids[k]][1]].bonus='star'}
+    const at=i=>board[path[i][0]][path[i][1]],take=()=>mids.length?mids.pop():null;
+    const nIt=stage<2?1:2,nStar=stage<=2?2:3,nPax=stage<2?0:stage<5?1:2;
+    for(let k=0;k<nIt;k++){const i=take();if(i!=null)at(i).bonus=kinds[k%kinds.length]}
+    for(let k=0;k<nStar;k++){const i=take();if(i!=null)at(i).bonus='star'}
+    for(let k=0;k<nPax;k++){const i=take();if(i!=null)at(i).bonus='pax'}
+    if(stage>=3){const i=take();if(i!=null)at(i).ow=i===0?S0.e:(dirs[i-1]+2)%4}
+    if(stage>=4&&mids.length>=2){const x=take(),y=take(),ki=Math.min(x,y),di2=Math.max(x,y);
+      if(!at(ki).bonus&&!at(di2).bonus&&di2-ki>=1){at(ki).bonus='key';at(di2).door=true}}
+  }
   // 逆向きにスライドして崩す（必ず元に戻せる）
   let last=null;
   const scr=k=>{for(let i=0;i<k;i++){
@@ -512,12 +515,14 @@ function newStage(){
 }
 function begin(){
   G.board=JSON.parse(G.snap);G.score=G.stageScore;
-  resetTrain();G.eff=null;G.goT=0;G.fast=false;$('#bFast').classList.remove('on');G.starsGot=0;G.state='ready';G.timer=6;hud();
+  resetTrain();G.eff=null;G.goT=0;G.pax=0;G.hasKey=false;G.paxTot=G.board.flat().filter(p=>p&&p.bonus==='pax').length;G.keyTot=G.board.flat().filter(p=>p&&p.bonus==='key').length;G.fast=false;$('#bFast').classList.remove('on');G.starsGot=0;G.state='ready';G.timer=6;hud();
   say('colon','線路をつないで！');
 }
 function go(){if(G.state==='ready'){G.state='run';G.goT=.9;say('colon','しゅっぱーつ！')}}
 function addScore(n){G.score+=n;hud()}
 function collect(p){
+  if(p.bonus==='pax'){G.pax++;try{SFX.star()}catch(_){}addScore(200*G.pax);say('colon','おきゃくさん！ +'+200*G.pax);p.bonus=null;return}
+  if(p.bonus==='key'){G.hasKey=true;try{SFX.star()}catch(_){}addScore(100);say('moon','かぎをゲット！');p.bonus=null;return}
   const cx=M+G.train.c*S+S/2,cy=BY+G.train.r*S+S/2;
   if(p.bonus)fx(p.bonus==='station'?1:0,cx,cy,S*1.3);
   if(p.bonus==='station'){addScore(500);say('colon','えきだよ！ +500')}
@@ -535,12 +540,13 @@ function nextRes(){
 function nextOk(){
   const res=nextRes();if(!res)return false;
   if(!inB(res.nr,res.nc))return res.fr===G.Gl.r&&res.fc===G.Gl.c&&res.x===G.Gl.x;
-  const q=G.board[res.nr][res.nc];return !!(q&&has(q,res.ne));
+  const q=G.board[res.nr][res.nc];return !!(q&&has(q,res.ne)&&!(q.door&&!G.hasKey)&&!(q.ow!==undefined&&q.ow!==res.ne));
 }
 function enterCell(r,c,e){
   const T=G.train,p=G.board[r][c];
   T.r=r;T.c=c;T.e=e;T.t=0;T.warned=false;T.phase='cell';
   T.mode=p.kind==='warp'?'wi':p.kind==='jump'?'ramp':'norm';
+  if((p.door&&!G.hasKey)||(p.ow!==undefined&&p.ow!==e)){derail();return}
   collect(p);
 }
 function derail(){
@@ -789,7 +795,12 @@ function draw(){
       else{ctx.fillStyle=th.tile;rr(x+2,y+2,S-4,S-4,7);ctx.fill()}
       ctx.restore();drawTrack(p.conns,th,x,y);
     }
-    if(p.bonus){
+    if(p.ow!==undefined&&!p.rock){const o=other(p,p.ow),ang=Math.atan2(DR[o],DC[o]);
+      ctx.save();ctx.translate(x+S/2,y+S/2);ctx.rotate(ang);ctx.fillStyle='rgba(255,255,255,.92)';ctx.strokeStyle='#5b4a2e';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(S*.2,0);ctx.lineTo(-S*.1,-S*.15);ctx.lineTo(-S*.1,S*.15);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore()}
+    if(p.door&&!G.hasKey){ctx.font=Math.round(S*.4)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🚧',x+S/2,y+S/2)}
+    if(p.bonus==='pax'||p.bonus==='key'){ctx.font=Math.round(S*.42)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.bonus==='pax'?'🐶':'🔑',x+S/2,y+S/2)}
+    else if(p.bonus){
       const bi=p.bonus==='station'?img('station_'+skin):p.bonus==='star'?(img(skin+'_i_star')||img('star')):img(skin+'_i_'+p.bonus);
       if(bi)drawImg(bi,x+S/2,y+S/2,p.bonus==='station'?S*.62:S*.5,p.bonus==='station'?S*.62:S*.5);
       else{ctx.font='15px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.bonus==='station'?'🚉':'⭐',x+S/2,y+S/2)}
@@ -817,6 +828,8 @@ function draw(){
   if(G.eff){const ei=img(skin+'_i_'+G.eff.k),r=G.eff.t/G.eff.m;
     const ex=M+G.starsTot*24+10;if(ei)drawImg(ei,ex+10,18,26,26);ctx.save();ctx.fillStyle='rgba(0,0,0,.25)';rr(ex+28,14,60,8,4);ctx.fill();
     ctx.fillStyle=G.eff.k==='slow'?'#3b9be0':G.eff.k==='stop'?'#58c24a':'#e0443b';rr(ex+28,14,60*Math.max(0,r),8,4);ctx.fill();ctx.restore()}
+  if(G.paxTot||G.keyTot){ctx.save();ctx.font='bold 12px "Zen Maru Gothic",sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillStyle=skin==='neon'?'#bff7ff':'#5b4a2e';
+    ctx.fillText((G.paxTot?'🐶'+G.pax+'/'+G.paxTot+' ':'')+(G.keyTot?(G.hasKey?'🔑OK':'🔑なし'):''),M+BW-2,17);ctx.restore()}
   ctx.save();for(let i=0;i<G.starsTot;i++){const sx=M+14+i*24,on=i<G.starsGot,si=img(skin+'_i_star'),s0=img(skin+'_i_star0');
     if(si){const im=on?si:(s0||si);if(!on&&!s0)ctx.globalAlpha=.3;drawImg(im,sx,17,22,22);ctx.globalAlpha=1}else starP(sx,17,8,on,th)}ctx.restore();
   {const q=G.S0,d=q.e,cx0=M+q.c*S+S/2,cy0=BY+q.r*S+S/2,bx=d===1?M+N*S+18:d===3?M-18:cx0,by=d===0?BY-18:d===2?BY+N*S+18:cy0;
