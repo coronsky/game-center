@@ -498,7 +498,9 @@ function effStage(s){return s<=10?1+Math.floor((s-1)*.4):s<=20?5+Math.floor((s-1
 function tierName(s){return s<=10?'かんたん':s<=20?'ふつう':'むずかしい'}
 function genLevel(stage){
   setN(+sizeMode);
-  const minLen=Math.min({4:7,5:8,6:10}[N]+Math.floor((stage-1)/2),{4:10,5:15,6:20}[N]),maxLen=Math.min(N*N-5,24);
+  const minLen0=Math.min({4:7,5:8,6:10}[N]+Math.floor((stage-1)/2),{4:8,5:13,6:20}[N]);
+  const nRock=N===4?0:stage<5?0:stage<8?1:stage<12?2:3;
+  let Qp=null;
   const edges=[];for(let i=0;i<N;i++){edges.push([0,i,0],[N-1,i,2],[i,0,3],[i,N-1,1])}
   const pick=(ed,cell)=>{const o=edges.filter(q=>q[0]===cell[0]&&q[1]===cell[1]);return o[rnd(o.length)][2]};
   // ギミックの希望
@@ -512,7 +514,18 @@ function genLevel(stage){
       else{const E=edges.map(q=>[q[0],q[1]]);a0=E[rnd(E.length)];
         const far=E.filter(q=>Math.abs(q[0]-a0[0])+Math.abs(q[1]-a0[1])>=(stage<6?N-1:N));g0=far.length?far[rnd(far.length)]:E[rnd(E.length)];
         if(a0[0]===g0[0]&&a0[1]===g0[1])continue}
+      // 近道ルート（スターなし・短い）を先に作る
+      let qp=null;
+      {const qs=[[a0[0],a0[1]]],qd=[],qu=Array.from({length:N},()=>Array(N).fill(false));qu[a0[0]][a0[1]]=true;
+       const lim=Math.abs(a0[0]-g0[0])+Math.abs(a0[1]-g0[1])+3;let stp=0;
+       const f=(r,c)=>{if(r===g0[0]&&c===g0[1])return true;if(qs.length>=lim||++stp>400)return false;
+         for(const d of shuffle([0,1,2,3])){const nr=r+DR[d],nc=c+DC[d];if(!inB(nr,nc)||qu[nr][nc])continue;qu[nr][nc]=true;qs.push([nr,nc]);qd.push(d);if(f(nr,nc))return true;qu[nr][nc]=false;qs.pop();qd.pop()}return false};
+       if(f(a0[0],a0[1]))qp={pa:qs,di:qd}}
+      if(!qp)continue;
+      const LQ=qp.pa.length,maxLen=Math.min(N*N-1-nRock-LQ,24),minLen=Math.min(minLen0,maxLen);
+      if(minLen<LQ+2)continue;
       const used=Array.from({length:N},()=>Array(N).fill(false));
+      qp.pa.slice(1,-1).forEach(([r,c])=>{used[r][c]=true});
       const pa=[a0],di=[];used[a0[0]][a0[1]]=true;let steps=0;
       const dfs=(r,c)=>{
         if(pa.length>maxLen)return false;
@@ -530,7 +543,7 @@ function genLevel(stage){
       if(!dfs(a0[0],a0[1]))continue;
       const s0={r:a0[0],c:a0[1],e:pick(edges,a0)},gl={r:g0[0],c:g0[1],x:pick(edges,g0)};
       const pl=planGim(pa,di,s0,gl,wn,stage);
-      if(pl){path=pa;dirs=di;S0=s0;Gl=gl;plan=pl}
+      if(pl){path=pa;dirs=di;S0=s0;Gl=gl;plan=pl;Qp=qp}
     }
     if(path)break;
   }
@@ -547,9 +560,14 @@ function genLevel(stage){
   const inPath=new Set(path.filter((_,i)=>!plan.rm.has(i)).map(([r,c])=>r*N+c)),free=[];
   for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(!inPath.has(r*N+c))free.push([r,c]);
   shuffle(free);
-  const nRock=N===4?0:stage<5?0:stage<8?1:stage<12?2:3;
-  free.forEach(([r,c],i)=>{board[r][c]=i<nRock?{conns:[-1,-1],rock:true}:{conns:TYPES[rnd(6)].slice(),bonus:null}});
-  let empty=free[nRock+rnd(Math.max(1,free.length-nRock))];board[empty[0]][empty[1]]=null;
+  const qcells=new Set(Qp?Qp.pa.slice(1,-1).map(([r,c])=>r*N+c):[]);
+  const rockSet=new Set();
+  free.filter(([r,c])=>!qcells.has(r*N+c)).slice(0,nRock).forEach(([r,c])=>{board[r][c]={conns:[-1,-1],rock:true};rockSet.add(r*N+c)});
+  const rest=free.filter(([r,c])=>!rockSet.has(r*N+c));
+  const qt=[];
+  if(Qp){const L2=Qp.pa.length;Qp.pa.forEach((_,i)=>{const e=i===0?S0.e:(Qp.di[i-1]+2)%4,x=i===L2-1?Gl.x:Qp.di[i];qt.push({conns:[e,x],bonus:null,qi:i})})}
+  rest.forEach(([r,c],i)=>{board[r][c]=i<qt.length?qt[i]:{conns:TYPES[rnd(6)].slice(),bonus:null}});
+  let empty=rest[qt.length+rnd(Math.max(1,rest.length-qt.length))];board[empty[0]][empty[1]]=null;
   const mids=[];for(let i=2;i<L-1;i++)if(!plan.rm.has(i)&&!plan.sp[i])mids.push(i);shuffle(mids);
   {
     const kinds=stage<3?['slow','stop']:['slow','stop','fast'];shuffle(kinds);
@@ -560,7 +578,9 @@ function genLevel(stage){
     for(let k=0;k<nPax;k++){const i=take();if(i!=null)at(i).bonus='pax'}
   }
   const home={};path.forEach(([r,c],i)=>{const q=board[r][c];if(q&&!plan.rm.has(i)){q.id=i;home[i]=[r,c]}});
-  {let k=100;for(let r=0;r<N;r++)for(let c=0;c<N;c++){const q=board[r][c];if(q&&q.id===undefined)q.id=k++}}
+  const home2={};if(Qp)Qp.pa.forEach(([r,c],i)=>{home2[200+i]=[r,c]});
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){const q=board[r][c];if(q&&q.qi!==undefined)q.id=200+q.qi}
+  {let k=400;for(let r=0;r<N;r++)for(let c=0;c<N;c++){const q=board[r][c];if(q&&q.id===undefined)q.id=k++}}
   // 逆向きにスライドして崩す（必ず元に戻せる）
   let last=null;
   const scr=k=>{for(let i=0;i<k;i++){
@@ -572,7 +592,8 @@ function genLevel(stage){
   scr(Math.min((N===4?10:6)+stage*2,40));
   for(let k=0;k<20&&simulate(board,S0,Gl);k++)scr(6);
   const hint=path.map(([r,c],i)=>({r,c,e:i===0?S0.e:(dirs[i-1]+2)%4,x:i===path.length-1?Gl.x:dirs[i],skip:plan.rm.has(i)||(plan.sp[i]&&plan.sp[i].kind!=='cross')||false}));
-  return{board,S0,Gl,hint,home};
+  const hint2=Qp?Qp.pa.map(([r,c],i)=>({r,c,e:i===0?S0.e:(Qp.di[i-1]+2)%4,x:i===Qp.pa.length-1?Gl.x:Qp.di[i],skip:false})):null;
+  return{board,S0,Gl,hint,home,hint2,home2};
 }
 /* ギミック配置の計画：path上のどのマスを十字/ワープ/ジャンプ台にするか（作れなければnull） */
 function planGim(pa,di,S0,Gl,want,stage){
@@ -619,9 +640,10 @@ function solveNext(){
   if(!hole)return null;
   const frozen=new Set();if(T&&T.phase==='cell')frozen.add(T.r*N+T.c);
   const st0=[];for(let r=0;r<N;r++)for(let c=0;c<N;c++){const q=b[r][c];st0.push(id(q));if(q&&!q.rock&&!q.fixed&&frozen.has(r*N+c))st0[r*N+c]=-2}
-  const home=G.home,ids=Object.keys(home).map(Number);
-  const hh=st=>{let h=0;for(let i=0;i<st.length;i++){const v=st[i];if(v>=0&&home[v]!==undefined){h+=Math.abs((i/N|0)-home[v][0])+Math.abs(i%N-home[v][1])}}return h};
-  const ok=st=>{for(const h of G.hint){if(h.skip)continue;const v=st[h.r*N+h.c],q=v>=0?byId[v]:null;if(!(q&&has(q,h.e)&&has(q,h.x)))return false}return true};
+  const homes=[G.home].concat(G.home2&&G.hint2?[G.home2]:[]);
+  const hh=st=>{let best=1e9;for(const home of homes){let h=0;for(let i=0;i<st.length;i++){const v=st[i];if(v>=0&&home[v]!==undefined){h+=Math.abs((i/N|0)-home[v][0])+Math.abs(i%N-home[v][1])}}if(h<best)best=h}return best};
+  const routeOk=(H,st)=>{for(const h of H){if(h.skip)continue;const v=st[h.r*N+h.c],q=v>=0?byId[v]:null;if(!(q&&has(q,h.e)&&has(q,h.x)))return false}return true};
+  const ok=st=>routeOk(G.hint,st)||(G.hint2&&routeOk(G.hint2,st));
   const key=st=>String.fromCharCode(...st.map(v=>v+3));
   const heap=[];const push=n=>{heap.push(n);let i=heap.length-1;while(i>0){const p=(i-1)>>1;if(heap[p].f<=heap[i].f)break;[heap[p],heap[i]]=[heap[i],heap[p]];i=p}};
   const pop=()=>{const t=heap[0],l=heap.pop();if(heap.length){heap[0]=l;let i=0;for(;;){let m=i,a=2*i+1,c=2*i+2;if(a<heap.length&&heap[a].f<heap[m].f)m=a;if(c<heap.length&&heap[c].f<heap[m].f)m=c;if(m===i)break;[heap[m],heap[i]]=[heap[i],heap[m]];i=m}}return t};
@@ -675,7 +697,7 @@ function withSeed(seed,fn){const old=Math.random;let a=seed>>>0;
   try{return fn()}finally{Math.random=old}}
 function newStage(){
   const L=mode==='stage'?withSeed(+sizeMode*100003+G.stage*7919+12345,()=>genLevel(effStage(G.stage))):genLevel(Math.min(NST,3+G.rs));
-  G.board=L.board;G.S0=L.S0;G.Gl=L.Gl;G.hint=L.hint;G.home=L.home;G.hintsLeft=3;G.hintUsed=false;G.hintT=0;G.hintMove=null;hudHint();G.snap=JSON.stringify(G.board);G.starsTot=countStars(G.board);
+  G.board=L.board;G.S0=L.S0;G.Gl=L.Gl;G.hint=L.hint;G.home=L.home;G.hint2=L.hint2;G.home2=L.home2;G.hintsLeft=3;G.hintUsed=false;G.hintT=0;G.hintMove=null;hudHint();G.snap=JSON.stringify(G.board);G.starsTot=countStars(G.board);
   G.miss=0;G.moves=0;G.stageScore=G.score;begin();
 }
 function begin(){
