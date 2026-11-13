@@ -559,6 +559,8 @@ function genLevel(stage){
     for(let k=0;k<nIt;k++){const i=take();if(i!=null)at(i).bonus=kinds[k%kinds.length]}
     for(let k=0;k<nPax;k++){const i=take();if(i!=null)at(i).bonus='pax'}
   }
+  const home={};path.forEach(([r,c],i)=>{const q=board[r][c];if(q&&!plan.rm.has(i)){q.id=i;home[i]=[r,c]}});
+  {let k=100;for(let r=0;r<N;r++)for(let c=0;c<N;c++){const q=board[r][c];if(q&&q.id===undefined)q.id=k++}}
   // 逆向きにスライドして崩す（必ず元に戻せる）
   let last=null;
   const scr=k=>{for(let i=0;i<k;i++){
@@ -570,7 +572,7 @@ function genLevel(stage){
   scr(Math.min((N===4?10:6)+stage*2,40));
   for(let k=0;k<20&&simulate(board,S0,Gl);k++)scr(6);
   const hint=path.map(([r,c],i)=>({r,c,e:i===0?S0.e:(dirs[i-1]+2)%4,x:i===path.length-1?Gl.x:dirs[i],skip:plan.rm.has(i)||(plan.sp[i]&&plan.sp[i].kind!=='cross')||false}));
-  return{board,S0,Gl,hint};
+  return{board,S0,Gl,hint,home};
 }
 /* ギミック配置の計画：path上のどのマスを十字/ワープ/ジャンプ台にするか（作れなければnull） */
 function planGim(pa,di,S0,Gl,want,stage){
@@ -610,13 +612,47 @@ function say(who,text,ms=1600){
 }
 const countStars=b=>b.flat().filter(p=>p&&p.bonus==='star').length;
 function hudHint(){const b=$('#bHint');if(b){b.textContent='💡ヒント '+G.hintsLeft;b.style.opacity=G.hintsLeft>0?1:.45}}
+function solveNext(){
+  const T=G.train,b=G.board,id=q=>q?(q.rock||q.fixed?-2:q.id):-1;
+  const byId={};let hole=null;
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){const q=b[r][c];if(q)byId[q.id]=q;else hole=[r,c]}
+  if(!hole)return null;
+  const frozen=new Set();if(T&&T.phase==='cell')frozen.add(T.r*N+T.c);
+  const st0=[];for(let r=0;r<N;r++)for(let c=0;c<N;c++){const q=b[r][c];st0.push(id(q));if(q&&!q.rock&&!q.fixed&&frozen.has(r*N+c))st0[r*N+c]=-2}
+  const home=G.home,ids=Object.keys(home).map(Number);
+  const hh=st=>{let h=0;for(let i=0;i<st.length;i++){const v=st[i];if(v>=0&&home[v]!==undefined){h+=Math.abs((i/N|0)-home[v][0])+Math.abs(i%N-home[v][1])}}return h};
+  const ok=st=>{for(const h of G.hint){if(h.skip)continue;const v=st[h.r*N+h.c],q=v>=0?byId[v]:null;if(!(q&&has(q,h.e)&&has(q,h.x)))return false}return true};
+  const key=st=>String.fromCharCode(...st.map(v=>v+3));
+  const heap=[];const push=n=>{heap.push(n);let i=heap.length-1;while(i>0){const p=(i-1)>>1;if(heap[p].f<=heap[i].f)break;[heap[p],heap[i]]=[heap[i],heap[p]];i=p}};
+  const pop=()=>{const t=heap[0],l=heap.pop();if(heap.length){heap[0]=l;let i=0;for(;;){let m=i,a=2*i+1,c=2*i+2;if(a<heap.length&&heap[a].f<heap[m].f)m=a;if(c<heap.length&&heap[c].f<heap[m].f)m=c;if(m===i)break;[heap[m],heap[i]]=[heap[i],heap[m]];i=m}}return t};
+  const k0=key(st0),seen=new Map([[k0,null]]);
+  push({st:st0,hp:hole[0]*N+hole[1],g:0,f:2.5*hh(st0),k:k0});
+  let n=0;
+  while(heap.length&&n++<150000){
+    const cur=pop();
+    if(ok(cur.st)){const mv=[];let k=cur.k;while(seen.get(k)){const e=seen.get(k);mv.push(e.d);k=e.pk}mv.reverse();return{mv,hole}}
+    const hr=cur.hp/N|0,hc=cur.hp%N;
+    for(let d=0;d<4;d++){
+      const nr=hr+DR[d],nc=hc+DC[d];if(!inB(nr,nc))continue;
+      const ni=nr*N+nc;if(cur.st[ni]<0)continue;
+      const st=cur.st.slice();st[cur.hp]=st[ni];st[ni]=-1;
+      const k=key(st);if(seen.has(k))continue;seen.set(k,{d,pk:cur.k});
+      push({st,hp:ni,g:cur.g+1,f:cur.g+1+2.5*hh(st),k});
+    }
+  }
+  return null;
+}
 function useHint(){
-  if(!['ready','run'].includes(G.state)||!G.hint)return;
+  if(G.state==='run'){say('moon','ヒントは出発する前に使ってね！');return}
+  if(G.state!=='ready'||!G.hint)return;
   if(G.hintsLeft<=0){say('moon','ヒントはもうないよ…');return}
-  let br=null;
-  for(const h of G.hint){if(h.skip)continue;const q=G.board[h.r][h.c];if(!(q&&!q.rock&&has(q,h.e)&&has(q,h.x))){br=h;break}}
-  if(!br){say('colon','ぜんぶつながってるよ！しゅっぱつ！');return}
-  G.hintsLeft--;G.hintUsed=true;G.hintT=4;G.hintCell=br;hudHint();say('moon','ここにこの形のレールがほしいな！');
+  const sol=solveNext();
+  if(!sol){say('moon','ごめん、いい手が見つからなかった…');return}
+  if(!sol.mv.length){say('colon','ぜんぶつながってるよ！しゅっぱつ！');return}
+  const d=sol.mv[0];let k=1;while(k<sol.mv.length&&sol.mv[k]===d)k++;
+  const [hr,hc]=sol.hole,tr=hr+DR[d]*k,tc=hc+DC[d]*k,mdir=(d+2)%4;
+  G.hintsLeft--;G.hintUsed=true;G.hintT=6;G.hintMove={r:tr,c:tc,d:mdir,hr,hc};hudHint();
+  say('moon','この光ってるパネルを「'+['うえ','みぎ','した','ひだり'][mdir]+'」に動かしてみて！');
 }
 function hud(){
   $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
@@ -639,7 +675,7 @@ function withSeed(seed,fn){const old=Math.random;let a=seed>>>0;
   try{return fn()}finally{Math.random=old}}
 function newStage(){
   const L=mode==='stage'?withSeed(+sizeMode*100003+G.stage*7919+12345,()=>genLevel(effStage(G.stage))):genLevel(Math.min(NST,3+G.rs));
-  G.board=L.board;G.S0=L.S0;G.Gl=L.Gl;G.hint=L.hint;G.hintsLeft=3;G.hintUsed=false;G.hintT=0;G.hintCell=null;hudHint();G.snap=JSON.stringify(G.board);G.starsTot=countStars(G.board);
+  G.board=L.board;G.S0=L.S0;G.Gl=L.Gl;G.hint=L.hint;G.home=L.home;G.hintsLeft=3;G.hintUsed=false;G.hintT=0;G.hintMove=null;hudHint();G.snap=JSON.stringify(G.board);G.starsTot=countStars(G.board);
   G.miss=0;G.moves=0;G.stageScore=G.score;begin();
 }
 function begin(){
@@ -827,7 +863,7 @@ function tryMove(r,c,dir){
     if(!best||chain.length<best.chain.length)best={chain,d};
   }
   if(!best){p.shake=performance.now();return}
-  try{SFX.tap()}catch(_){}
+  G.hintT=0;try{SFX.tap()}catch(_){}
   const{chain,d}=best,t0=performance.now();
   for(let i=chain.length-1;i>=0;i--){
     const[cr,cc]=chain[i],q=b[cr][cc],nr=cr+DR[d],nc=cc+DC[d];
@@ -977,11 +1013,12 @@ function draw(){
     const nw=gi.naturalWidth,nh=gi.naturalHeight,Lw=Math.min(S,64)*.6,Lh=Lw*(.2*nh)/(.34*nw);
     ctx.save();ctx.translate(ox,oy);ctx.rotate(d*Math.PI/2);
     ctx.drawImage(gi,.33*nw,.30*nh,.34*nw,.2*nh,-Lw/2,-t/2-Lh/2,Lw,Lh);ctx.restore()})}
-  if(G.hintT>0&&G.hint){
-    const a=Math.min(1,G.hintT)*(.5+.5*Math.sin(performance.now()/180));
-    ctx.save();ctx.lineWidth=3;ctx.strokeStyle='rgba(255,210,60,'+(.35+.4*a)+')';ctx.fillStyle='rgba(255,230,120,'+(.10+.12*a)+')';
-    G.hint.forEach(h=>{if(h.skip)return;rr(M+h.c*S+3,BY+h.r*S+3,S-6,S-6,8);ctx.fill();ctx.stroke()});
-    const b=G.hintCell;if(b){ctx.globalAlpha=.55+.4*a;drawTrack([b.e,b.x],th,M+b.c*S,BY+b.r*S);ctx.globalAlpha=1;ctx.lineWidth=4;ctx.strokeStyle='#ff9a1f';rr(M+b.c*S+2,BY+b.r*S+2,S-4,S-4,9);ctx.stroke()}
+  if(G.hintT>0&&G.hintMove){
+    const m=G.hintMove,a=.5+.5*Math.sin(performance.now()/160),x=M+m.c*S,y=BY+m.r*S;
+    ctx.save();ctx.fillStyle='rgba(255,220,80,'+(.18+.18*a)+')';ctx.strokeStyle='#ff9a1f';ctx.lineWidth=4;rr(x+2,y+2,S-4,S-4,9);ctx.fill();ctx.stroke();
+    const cx=x+S/2,cy=y+S/2,ox=DC[m.d]*S*.18*a,oy=DR[m.d]*S*.18*a;
+    ctx.translate(cx+ox,cy+oy);ctx.rotate(m.d*Math.PI/2);ctx.fillStyle='#ff7a00';ctx.strokeStyle='#fff';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(0,-S*.28);ctx.lineTo(S*.2,0);ctx.lineTo(S*.07,0);ctx.lineTo(S*.07,S*.22);ctx.lineTo(-S*.07,S*.22);ctx.lineTo(-S*.07,0);ctx.lineTo(-S*.2,0);ctx.closePath();ctx.stroke();ctx.fill();
     ctx.restore()}
   if(G.train){
     if(G.state==='derail'&&G.dPose){const q=G.dPose,t=G.dT,e=Math.min(1,t/.45),k=1-Math.pow(1-e,3),bounce=e>=1?Math.sin(Math.min(1,(t-.45)/.3)*Math.PI)*.12:0;
