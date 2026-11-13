@@ -112,6 +112,8 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 .dog.c{background-image:var(--colon)}.dog.m{background-image:var(--moon)}
 .help p{font-size:14px;line-height:1.65;margin:0 0 8px}
 
+.lvRow button{white-space:nowrap}#mdRow button{flex:1}
+.lsg.selGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.selGrid button{padding:7px 0!important;line-height:1.25;font-size:15px!important}.selGrid button small{display:block;font-size:10px;font-weight:700;opacity:.85;min-height:12px}
 /* 新UI：盤面フレーム＋ライト（3スキン共通の仕組み） */
 body{--lb:url(assets/natural_board.webp);--ar:1.0346;--bx:8.153%;--by:7.622%;--bw:83.89%;--bon:url(assets/ball_natural_on.webp);--boff:url(assets/ball_natural_off.webp);--son:url(assets/sq_natural_on.webp);--soff:url(assets/sq_natural_off.webp)}
 body[data-vt=retro]{--lb:url(assets/retro_board.webp);--ar:1.006;--bx:9.719%;--by:9.778%;--bw:80.361%;--bon:url(assets/ball_retro_on.webp);--boff:url(assets/ball_retro_off.webp);--son:url(assets/sq_retro_on.webp);--soff:url(assets/sq_retro_off.webp)}
@@ -266,7 +268,8 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">ライツアウト</div></div>
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">ライツアウト</div></div>
 
-  <div class="hud"><div class="box"><small>ステージ</small><b id="stN"></b></div><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small>めやす</small><b id="par"></b></div></div>
+  <div class="hud"><div class="box"><small>ステージ</small><b id="stN"></b></div><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small>最短</small><b id="par"></b></div></div>
+  <div class="lvRow" id="mdRow"><button data-m="stage">ステージ</button><button data-m="random">ランダム</button></div>
   <div class="lvRow" id="lvs"></div>
   <div class="panel"><div class="in" style="padding:8px"><div id="bd"></div></div></div>
   <div class="lvRow"><button id="bHint">💡 ヒント</button></div>
@@ -276,12 +279,14 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 ライツアウト</h2><p>ワンコたちが寝られるように、<b>全部のライト💡を消そう</b>！</p>
 <p>👆 マスをタップすると、そのマスと<b>上下左右</b>のライトが切りかわります（ついている⇔消えている）。</p>
-<p>めやすの手数以内で消せたら★3つ。💡ヒントで次に押すマスを教えるよ。</p>
+<p>🎮 <b>ステージ</b>は20面、<b>ランダム</b>は3×3〜6×6を好きなだけ。</p>
+<p>★は手数で決まるよ。<b>最短の手数</b>で消せたら★3つ！💡ヒントを使うと★2つまで。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="row" style="margin-top:10px"><div class="lb">ライトのかたち</div><div class="lsg" id="lsSeg"><button data-v="ball">⚪ 丸</button><button data-v="sq">⬜ 四角</button></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
 
+<div class="modal" id="mSel"><div class="card"><h2>🗺 ステージをえらぶ</h2><div class="lsg selGrid" id="selGrid"></div><div class="acts"><button class="btn g" data-close="mSel">とじる</button></div></div></div>
 <div style="display:none">
 
 </div>
@@ -382,23 +387,52 @@ function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<but
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
 if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
 
-const LV=[[3,3],[4,4],[5,3],[5,5],[6,5]];
-const P=Object.assign({cur:0,stars:{}},store.get('prog',{}));
-let N,K,on,sol,mv=0,hist=[],hintI=-1,done=false;
-function press(a,i){ const x=i%N,y=(i/N)|0; [[0,0],[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{const X=x+dx,Y=y+dy; if(X>=0&&X<N&&Y>=0&&Y<N) a[Y*N+X]^=1}); }
-function load(i){ P.cur=i; store.set('prog',P); [N,K]=LV[i]; do{ on=new Array(N*N).fill(0); sol=new Set(); while(sol.size<K) sol.add((Math.random()*N*N)|0); sol.forEach(j=>press(on,j)); }while(on.every(v=>!v));
-  mv=0; hist=[]; hintI=-1; done=false; $('stN').textContent=(i+1)+'/'+LV.length; $('par').textContent=K; lvRow($('lvs'),LV.map(l=>l[0]+'×'+l[0]),i,k=>P.stars[k]||0,load); draw(); setStatus('ライトを全部消そう'); setTimeout(()=>sayText(2,'まぶしい〜♪'),300); }
+const SIZES=[3,4,5,6],SG=[3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,6],SMIN=[2,2,3,3,3,4,4,5,6,4,5,6,7,8,5,6,7,8,9,10],NST=SG.length;
+const P=Object.assign({stars:{},rsz:1},store.get('prog2',{}));
+let mode='stage',stage=0,N,M,on,mv=0,hist=[],hintI=-1,done=false,hintUsed=false;
+const rng=seed=>()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const NB=[[0,0],[1,0],[-1,0],[0,1],[0,-1]];
+function press(a,i){ const x=i%N,y=(i/N)|0; NB.forEach(([dx,dy])=>{const X=x+dx,Y=y+dy; if(X>=0&&X<N&&Y>=0&&Y<N) a[Y*N+X]^=1}); }
+/* 最短の解（GF(2)の連立方程式 → 零空間をぜんぶ試して手数最小を選ぶ） */
+function minSol(st){ const m=N*N,A=[]; for(let i=0;i<m;i++){ const r=new Uint8Array(m+1); const x=i%N,y=(i/N)|0; NB.forEach(([dx,dy])=>{const X=x+dx,Y=y+dy; if(X>=0&&X<N&&Y>=0&&Y<N) r[Y*N+X]=1}); r[m]=st[i]; A.push(r); }
+  const pc=[]; let row=0; for(let c=0;c<m&&row<m;c++){ let p=-1; for(let i=row;i<m;i++) if(A[i][c]){p=i;break} if(p<0) continue; [A[row],A[p]]=[A[p],A[row]];
+    for(let i=0;i<m;i++) if(i!==row&&A[i][c]) for(let j=0;j<=m;j++) A[i][j]^=A[row][j]; pc.push(c); row++; }
+  for(let i=row;i<m;i++) if(A[i][m]) return null;
+  const base=new Uint8Array(m); pc.forEach((c,r)=>base[c]=A[r][m]);
+  const free=[]; for(let c=0;c<m;c++) if(!pc.includes(c)) free.push(c);
+  const nulls=free.map(f=>{const v=new Uint8Array(m); v[f]=1; pc.forEach((c,r)=>{ if(A[r][f]) v[c]=1 }); return v});
+  let best=null,bw=1e9; for(let mask=0;mask<(1<<nulls.length);mask++){ const v=base.slice(); nulls.forEach((nv,k)=>{ if(mask>>k&1) for(let j=0;j<m;j++) v[j]^=nv[j] }); let w=0; for(let j=0;j<m;j++) w+=v[j]; if(w<bw){bw=w;best=v} }
+  return best?{v:best,w:bw}:null; }
+function newPuzzle(){ let lo,rand; if(mode==='stage'){ N=SG[stage]; lo=SMIN[stage]; rand=rng(stage*7919+13) } else { N=SIZES[P.rsz]; lo=[2,3,4,5][P.rsz]; rand=Math.random }
+  let r=null; for(let t=0;t<500;t++){ const k=lo+1+Math.floor(rand()*3); const cells=[...Array(N*N).keys()]; for(let i=cells.length-1;i>0;i--){const j=Math.floor(rand()*(i+1)); [cells[i],cells[j]]=[cells[j],cells[i]]}
+    const a=new Array(N*N).fill(0); cells.slice(0,k).forEach(c=>press(a,c)); const q=minSol(a); if(q&&q.w>=lo&&(t>300||q.w<=lo+1)){ on=a; M=q.w; r=1; break } }
+  if(!r){ on=new Array(N*N).fill(0); press(on,0); press(on,N*N-1); M=minSol(on).w } }
+const starsTxt=n=>'★'.repeat(n)+'☆'.repeat(3-n);
+function rows(){ document.querySelectorAll('#mdRow button').forEach(b=>b.classList.toggle('on',b.dataset.m===mode)); const el=$('lvs');
+  if(mode==='stage'){ const b=P.stars[stage]||0; el.innerHTML=`<button id="sPrev">◀</button><button id="sMid" class="on" style="flex:4">ステージ ${stage+1} ${starsTxt(b)} ▾</button><button id="sNext">▶</button>`;
+    $('sPrev').onclick=()=>{actx();SFX.tap();go(Math.max(0,stage-1))}; $('sNext').onclick=()=>{actx();SFX.tap();go(Math.min(NST-1,stage+1))}; $('sMid').onclick=()=>{actx();SFX.tap();openSel()}; }
+  else { el.innerHTML=SIZES.map((n,i)=>`<button data-i="${i}" class="${i===P.rsz?'on':''}">${n}×${n}</button>`).join(''); el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();P.rsz=+b.dataset.i;store.set('prog2',P);load()}); } }
+function openSel(){ $('selGrid').innerHTML=SG.map((n,i)=>`<button data-i="${i}" class="${i===stage?'on':''}">${i+1}<small>${P.stars[i]?starsTxt(P.stars[i]):n+'×'+n}</small></button>`).join('');
+  $('selGrid').querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();closeM('mSel');go(+b.dataset.i)}); openM('mSel'); }
+function go(i){ stage=i; load() }
+function load(keep){ if(!keep){ newPuzzle(); hintUsed=false; init0=on.slice() } else on=init0.slice();
+  mv=0; hist=[]; hintI=-1; done=false; $('stN').textContent=mode==='stage'?(stage+1)+'/'+NST:'ランダム'; $('par').textContent=M; rows();
+  $('bAgain').textContent=mode==='stage'?(stage>=NST-1?'もういちど':'つぎのステージ'):'つぎの問題'; draw(); setStatus('ライトを全部消そう'); setTimeout(()=>sayText(2,'まぶしい〜♪'),300); }
+let init0=[];
 function draw(){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${N},1fr)`; bd.innerHTML='';
   for(let i=0;i<N*N;i++){ const e=document.createElement('div'); e.className='lc'+(on[i]?' on':'')+(i===hintI?' hint':''); e.onclick=()=>tap(i); bd.appendChild(e); }
   $('mv').textContent=mv; $('bUndo').disabled=!hist.length; }
-function tap(i){ if(done) return; actx(); hist.push([on.slice(),new Set(sol)]); press(on,i); if(sol.has(i)) sol.delete(i); else sol.add(i); mv++; hintI=-1; SFX.tap(); draw();
-  if(on.every(v=>!v)){ done=true; const s=mv<=K?3:mv<=K*2?2:1; P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog',P); report('clear',{stars:s}); SFX.win(); confetti(['🌙','🐾','✨']);
-    sayText(1,'おやすみワン…',true); setStatus('ぜんぶ消えた！'); lvRow($('lvs'),LV.map(l=>l[0]+'×'+l[0]),P.cur,k=>P.stars[k]||0,load);
-    showResult({winner:0,title:'🌙 クリア！',score:mv+'手',msg:'★'.repeat(s)+'☆'.repeat(3-s),rec:'めやす：'+K+'手'}); } }
-$('bHint').onclick=()=>{ if(done) return; actx(); hintI=[...sol][0]; SFX.tap(); draw(); };
-$('bUndo').onclick=()=>{ const h=hist.pop(); if(!h) return; [on,sol]=h; mv--; done=false; SFX.tap(); draw(); };
-$('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)}; $('bAgain').textContent='つぎのステージ'; $('bAgain').onclick=()=>{closeM('mRes');load(Math.min(P.cur+1,LV.length-1))};
-load(P.cur);
+function tap(i){ if(done) return; actx(); hist.push(on.slice()); press(on,i); mv++; hintI=-1; SFX.tap(); draw();
+  if(on.every(v=>!v)){ done=true; let s=mv<=M?3:mv<=M+2?2:1; if(hintUsed) s=Math.min(s,2);
+    if(mode==='stage'){ P.stars[stage]=Math.max(P.stars[stage]||0,s); store.set('prog2',P); rows() }
+    report('clear',{stars:s}); SFX.win(); confetti(['🌙','🐾','✨']); sayText(1,'おやすみワン…',true); setStatus('ぜんぶ消えた！');
+    showResult({winner:0,title:'🌙 クリア！',score:mv+'手',msg:starsTxt(s),rec:'最短：'+M+'手'+(hintUsed?'（ヒントを使うと★2つまで）':'')}); } }
+$('bHint').onclick=()=>{ if(done) return; actx(); const q=minSol(on); if(!q) return; hintI=q.v.findIndex(v=>v); hintUsed=true; SFX.tap(); draw(); setStatus('ここを押してみて！（最短の道）'); };
+$('bUndo').onclick=()=>{ const h=hist.pop(); if(!h) return; on=h; mv--; done=false; SFX.tap(); draw(); };
+$('bReset').onclick=()=>{actx();SFX.tap();load(true)};
+$('bAgain').onclick=()=>{closeM('mRes'); if(mode==='stage') go(stage>=NST-1?stage:stage+1); else load()};
+document.querySelectorAll('#mdRow button').forEach(b=>b.onclick=()=>{actx();SFX.tap();if(mode!==b.dataset.m){mode=b.dataset.m;load()}});
+load();
 
 
 ;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();
