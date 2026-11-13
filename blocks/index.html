@@ -444,11 +444,11 @@ function geom(){ const c=$('bd').children; const r0=c[0].getBoundingClientRect()
 function buildGhost(d){ const p=pieces[d.k], g=d.g; d.mw=Math.max(...p.c.map(q=>q[0]))+1; d.mh=Math.max(...p.c.map(q=>q[1]))+1; if(d.el) d.el.remove();
   const el=document.createElement('div'); el.style.cssText=`position:fixed;z-index:60;pointer-events:none;display:grid;gap:${g.pitch-g.cs}px;grid-template-columns:repeat(${d.mw},${g.cs}px);opacity:.96;filter:drop-shadow(0 10px 10px rgba(0,0,0,.38));left:-999px;top:0;transition:transform .12s,left .06s,top .06s`;
   for(let y=0;y<d.mh;y++)for(let x=0;x<d.mw;x++){ const i=document.createElement('i'); i.style.cssText=`width:${g.cs}px;height:${g.cs}px;`+(p.c.some(q=>q[0]===x&&q[1]===y)?`background:${p.col}`:''); el.appendChild(i); }
-  document.body.appendChild(el); d.el=el; }
+  document.documentElement.appendChild(el); d.el=el; }
 function holdRot(flipIt){ const d=drag; if(!d) return; const p=pieces[d.k]; p.c=flipIt?flip(p.c):rot(p.c); SFX.tap(); try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}
   buildGhost(d); d.grab={x:(d.mw*d.g.pitch-(d.g.pitch-d.g.cs))/2,y:(d.mh*d.g.pitch-(d.g.pitch-d.g.cs))/2}; moveDrag(d.last); }
 function startDrag(k,ev,grab){ const p=pieces[k], g=geom(); const fromB=!!grab; const d={k,g,sx:ev.clientX,sy:ev.clientY,moved:false,at:null,pv:[],id:ev.pointerId,last:ev,wasSel:false}; drag=d; buildGhost(d);
-  if(!grab&&ev.currentTarget&&ev.currentTarget.getBoundingClientRect){ const r=ev.currentTarget.getBoundingClientRect(), tcs=pieces.length>9?13:16, ox=r.left+7, oy=r.top+7; const rx=Math.max(0,Math.min(d.mw,(ev.clientX-ox)/(tcs+1))), ry=Math.max(0,Math.min(d.mh,(ev.clientY-oy)/(tcs+1))); grab={x:rx*g.pitch,y:ry*g.pitch}; }
+  if(!grab&&ev.currentTarget&&ev.currentTarget.getBoundingClientRect){ const r=ev.currentTarget.getBoundingClientRect(), tcs=pieces.length>9?13:16, bz=parseFloat(document.body.style.zoom)||1, ox=r.left+7*bz, oy=r.top+7*bz; const rx=Math.max(0,Math.min(d.mw,(ev.clientX-ox)/((tcs+1)*bz))), ry=Math.max(0,Math.min(d.mh,(ev.clientY-oy)/((tcs+1)*bz))); grab={x:rx*g.pitch,y:ry*g.pitch}; }
   d.grab=grab||null; d.lift=(!fromB&&ev.pointerType!=='mouse')?Math.round(g.cs*.9):0;
   d.el.style.transform='scale(1.07)'; d.el.style.transformOrigin=(d.grab?d.grab.x+'px '+d.grab.y+'px':'50% 50%');
   try{navigator.vibrate&&navigator.vibrate(10)}catch(_){}
