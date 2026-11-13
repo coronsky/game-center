@@ -616,7 +616,7 @@ function useHint(){
   let br=null;
   for(const h of G.hint){if(h.skip)continue;const q=G.board[h.r][h.c];if(!(q&&!q.rock&&has(q,h.e)&&has(q,h.x))){br=h;break}}
   if(!br){say('colon','ぜんぶつながってるよ！しゅっぱつ！');return}
-  G.hintsLeft--;G.hintT=4;G.hintCell=br;hudHint();say('moon','ここにこの形のレールがほしいな！');
+  G.hintsLeft--;G.hintUsed=true;G.hintT=4;G.hintCell=br;hudHint();say('moon','ここにこの形のレールがほしいな！');
 }
 function hud(){
   $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
@@ -639,7 +639,7 @@ function withSeed(seed,fn){const old=Math.random;let a=seed>>>0;
   try{return fn()}finally{Math.random=old}}
 function newStage(){
   const L=mode==='stage'?withSeed(+sizeMode*100003+G.stage*7919+12345,()=>genLevel(effStage(G.stage))):genLevel(Math.min(NST,3+G.rs));
-  G.board=L.board;G.S0=L.S0;G.Gl=L.Gl;G.hint=L.hint;G.hintsLeft=3;G.hintT=0;G.hintCell=null;hudHint();G.snap=JSON.stringify(G.board);G.starsTot=countStars(G.board);
+  G.board=L.board;G.S0=L.S0;G.Gl=L.Gl;G.hint=L.hint;G.hintsLeft=3;G.hintUsed=false;G.hintT=0;G.hintCell=null;hudHint();G.snap=JSON.stringify(G.board);G.starsTot=countStars(G.board);
   G.miss=0;G.moves=0;G.stageScore=G.score;begin();
 }
 function begin(){
@@ -697,7 +697,7 @@ function clearStage(){
   const all=G.starsTot>0&&G.starsGot>=G.starsTot;
   if(G.miss===0){addScore(2000);bonus='\nノーミスボーナス +2,000'}
   if(all){addScore(1500);bonus+='\nスター全部ボーナス +1,500'}
-  const gt=G.starsGot,tt=G.starsTot;const st=tt<=0||gt>=tt?3:tt===3?Math.max(1,gt):gt+1;
+  const gt=G.starsGot,tt=G.starsTot;let st=tt<=0||gt>=tt?3:tt===3?Math.max(1,gt):gt+1;if(G.hintUsed)st=Math.min(st,2);
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
   try{SFX.win()}catch(_){}G.state='clearing';G.timer=1.6;say('colon','やったー！');say('moon','やったー！');
   if(mode==='stage'&&st>starsOf(sizeMode,G.stage)){sbest[sizeMode+'_'+G.stage]=st;store.set('wanwan_stars',JSON.stringify(sbest))}
