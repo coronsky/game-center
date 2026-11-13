@@ -288,7 +288,7 @@ body[data-vt=neon] .tray{padding:0;border:solid transparent;border-width:10px 10
   <div class="lvRow" id="lvs" style="display:none"></div>
   <div class="panel"><div class="in" style="padding:6px"><div id="bd"></div></div></div>
   <div class="tray" id="tray"></div>
-  <div class="lvRow"><button id="bRot">↻ 回転</button><button id="bFlip">⇋ 裏返す</button><button id="bFs">⛶ 全画面</button><button id="bMenu">🎮 メニュー</button></div>
+  <div class="lvRow"><button id="bRot">↻ 回転</button><button id="bFlip" style="display:none">⇋ 裏返す</button><button id="bFs">⛶ 全画面</button><button id="bMenu">🎮 メニュー</button></div>
 <button id="fsX" style="display:none">✕ もどる</button>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
@@ -301,7 +301,7 @@ body[data-vt=neon] .tray{padding:0;border:solid transparent;border-width:10px 10
   <div class="acts" style="margin-top:8px" id="mSelRow"><button class="btn c" id="mSelBtn">🗺 ステージセレクト</button></div></div></div>
 <div class="modal" id="mSel"><div class="card"><h2 id="mSelT">🗺 ステージをえらぶ</h2><div class="selGridB" id="selGrid"></div><div class="acts"><button class="btn g" data-close="mSel">とじる</button></div></div></div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 ピタッとパズル</h2><p>下のブロックを全部使って、<b>わくをすきまなくうめよう</b>！</p>
-<p>👆 下のブロックを<b>ドラッグして、わくに持っていって離す</b>と置けます（近くの合う場所にピタッと吸いつきます）。向きを変えたいときは、ブロックをタップ → ↻回転・⇋裏返し。<b>もう一度タップ</b>、またはブロックを持ったまま<b>もう1本の指でタップ</b>（PCは右クリックかRキー）でも回転します。</p>
+<p>👆 下のブロックを<b>ドラッグして、わくに持っていって離す</b>と置けます（近くの合う場所にピタッと吸いつきます）。向きを変えたいときは、ブロックをタップ → ↻回転。<b>もう一度タップ</b>、またはブロックを持ったまま<b>もう1本の指でタップ</b>（PCは右クリックかRキー）でも回転します。</p>
 <p>置いたブロックは、ドラッグで置きなおし・下にもどす、またはタップで下にもどせます。全100ステージ（5段階×20）＋♾️エンドレス（毎回ちがう問題）。必ずとけるよ。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -431,7 +431,7 @@ function drawNav(){ const t=endT>=0?endT:((P.cur/ST)|0);
 function load(i){ endT=-1; P.cur=i; svP(); begin(stageCfg(i)); }
 function loadEnd(t){ endT=t; P.endT=t; svP(); const T=TI[t],g=T.g[(Math.random()*T.g.length)|0],mn=Math.round((T.a[0]+T.b[0])/2),mx=Math.max(mn,Math.round((T.a[1]+T.b[1])/2)); begin({w:g[0],h:g[1],mn,mx,pc:Math.ceil(g[0]*g[1]/mn)+2,seed:0}); }
 function rot(c){return norm(c.map(([x,y])=>[-y,x]))} function flip(c){return norm(c.map(([x,y])=>[-x,y]))}
-function randOrient(c){ let r=c; for(let k=(Math.random()*4)|0;k>0;k--) r=rot(r); if(Math.random()<.5) r=flip(r); return r; }
+function randOrient(c){ let r=c; for(let k=(Math.random()*4)|0;k>0;k--) r=rot(r); return r; }
 function cellsAt(p,at){ const ax=at%W,ay=(at/W)|0, a0=p.c[0]; return p.c.map(([x,y])=>{const X=ax+x-a0[0],Y=ay+y-a0[1]; return (X<0||X>=W||Y<0||Y>=H)?-1:Y*W+X}); }
 function resolve(k,i){ if(fits(k,i)) return i; const p=pieces[k],a0=p.c[0],tx=i%W,ty=(i/W)|0; const mx=p.c.reduce((a,q)=>a+q[0],0)/p.c.length,my=p.c.reduce((a,q)=>a+q[1],0)/p.c.length; let best=-1,bd=1e9;
   for(const q of p.c){ const X=tx+a0[0]-q[0],Y=ty+a0[1]-q[1]; if(X<0||X>=W||Y<0||Y>=H) continue; const at=Y*W+X; if(!fits(k,at)) continue; const d=Math.hypot(q[0]-mx,q[1]-my); if(d<bd){bd=d;best=at} }
@@ -479,7 +479,7 @@ addEventListener('pointermove',e=>{ if(pend&&!drag&&Math.hypot(e.clientX-pend.sx
   if(drag){ e.preventDefault(); moveDrag(e); } },{passive:false});
 addEventListener('pointerdown',e=>{ if(drag&&e.pointerId!==drag.id){ e.preventDefault(); holdRot(false); } },{passive:false});
 addEventListener('contextmenu',e=>{ if(drag){ e.preventDefault(); holdRot(false); } });
-addEventListener('keydown',e=>{ if(!drag) return; if(e.key==='r'||e.key==='R'||e.key===' '){ e.preventDefault(); holdRot(false); } else if(e.key==='f'||e.key==='F'){ holdRot(true); } });
+addEventListener('keydown',e=>{ if(!drag) return; if(e.key==='r'||e.key==='R'||e.key===' '){ e.preventDefault(); holdRot(false); }  });
 addEventListener('pointerup',e=>{ if(e.pointerId!==undefined&&drag&&e.pointerId!==drag.id) return; if(pend){ const i=pend.i; pend=null; tapCell(i); return; } endDrag(e,false); }); addEventListener('pointercancel',e=>{ pend=null; endDrag(e,true); });
 
 // ---- 全画面 ----
