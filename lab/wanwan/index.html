@@ -554,7 +554,7 @@ function genLevel(stage){
   {
     const kinds=stage<3?['slow','stop']:['slow','stop','fast'];shuffle(kinds);
     const at=i=>board[path[i][0]][path[i][1]],take=()=>mids.length?mids.pop():null;
-    const nIt=stage<2?1:2,nStar=stage<=2?2:3,nPax=0;
+    const nIt=stage<2?1:2,nStar=3,nPax=0;
     for(let k=0;k<nStar;k++){const i=take();if(i!=null)at(i).bonus='star'}
     for(let k=0;k<nIt;k++){const i=take();if(i!=null)at(i).bonus=kinds[k%kinds.length]}
     for(let k=0;k<nPax;k++){const i=take();if(i!=null)at(i).bonus='pax'}
