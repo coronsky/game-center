@@ -6,7 +6,7 @@
   function set(v){ try{ localStorage.setItem('mc_size',v); }catch(e){} }
   function fit(){
     var w=innerWidth,h=innerHeight,s=1;
-    if(w>=700){ s=Math.min(w/500,h/820); s=Math.max(1,Math.min(s,1.9)); }
+    if(w>=700){ var H0=(w>h&&window.MC_HL)||window.MC_H||820; s=Math.min(w/500,h/H0); s=Math.max(window.MC_H?.8:1,Math.min(s,1.9)); }
     var lv=LV.filter(function(x){return x.k===get()})[0]||LV[1];
     s=s*lv.m;
     if(w<700) s=Math.min(s,w/340);       // スマホでは幅がくずれない範囲まで
