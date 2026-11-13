@@ -674,7 +674,7 @@ function useHint(){
   const d=sol.mv[0];let k=1;while(k<sol.mv.length&&sol.mv[k]===d)k++;
   const [hr,hc]=sol.hole,tr=hr+DR[d]*k,tc=hc+DC[d]*k,mdir=(d+2)%4;
   G.hintsLeft--;G.hintUsed=true;G.hintT=6;G.hintMove={r:tr,c:tc,d:mdir,hr,hc};hudHint();
-  say('moon','この光ってるパネルを「'+['うえ','みぎ','した','ひだり'][mdir]+'」に動かしてみて！');
+  try{SFX.hint()}catch(_){}say('moon','この光ってるパネルを「'+['うえ','みぎ','した','ひだり'][mdir]+'」に動かしてみて！');
 }
 function hud(){
   $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
@@ -706,7 +706,7 @@ function begin(){
   resetTrain();G.eff=null;G.goT=0;G.pax=0;G.hasKey=false;G.paxTot=G.board.flat().filter(p=>p&&p.bonus==='pax').length;G.keyTot=G.board.flat().filter(p=>p&&p.bonus==='key').length;G.fast=false;$('#bFast').classList.remove('on');G.starsGot=0;G.state='ready';G.timer=6;hud();
   say('colon','線路をつないで！');
 }
-function go(){if(G.state==='ready'){G.state='run';G.goT=.9;say('colon','しゅっぱーつ！')}}
+function go(){if(G.state==='ready'){G.state='run';G.goT=.9;try{SFX.go()}catch(_){}say('colon','しゅっぱーつ！')}}
 function addScore(n){G.score+=n;hud()}
 function collect(p){
   if(p.bonus==='pax'){G.pax++;try{SFX.star()}catch(_){}addScore(200*G.pax);say('colon','おきゃくさん！ +'+200*G.pax);p.bonus=null;return}
@@ -716,7 +716,7 @@ function collect(p){
   if(p.bonus==='station'){addScore(500);say('colon','えきだよ！ +500')}
   else if(p.bonus==='star'){G.starsGot++;const v=[300,500,800][Math.min(2,G.starsGot-1)];try{SFX.star()}catch(_){}addScore(v);say('moon','スター！ +'+v)}
   else if(p.bonus==='slow'||p.bonus==='stop'||p.bonus==='fast'){
-    const k=p.bonus,d={slow:4,stop:3,fast:4}[k];G.eff={k,t:d,m:d};try{SFX.star()}catch(_){}
+    const k=p.bonus,d={slow:4,stop:3,fast:4}[k];G.eff={k,t:d,m:d};try{SFX.item()}catch(_){}
     addScore(k==='fast'?200:100);say(k==='fast'?'moon':'colon',k==='slow'?'ゆっくり〜！':k==='stop'?'ときが止まった！':'はやーい！')}
   p.bonus=null;
 }
@@ -735,7 +735,7 @@ function enterCell(r,c,e){
   T.r=r;T.c=c;T.e=e;T.t=0;T.warned=false;T.phase='cell';
   T.mode=p.kind==='warp'?'wi':p.kind==='jump'?'ramp':'norm';
   if((p.door&&!G.hasKey)||(p.ow!==undefined&&p.ow!==e)){derail();return}
-  collect(p);
+  collect(p);try{SFX.chug()}catch(_){}
 }
 function derail(){
   const pose=trainWorld();
@@ -743,7 +743,7 @@ function derail(){
   G.dPose={...pose};G.dT=0;G.dSign=Math.random()<.5?-1:1;G.dPuff=0;
   try{SFX.bad()}catch(_){}G.state='derail';G.timer=1.8;G.miss++;hud();say('moon','あぶなーい！');
 }
-function gameOver(why){
+function gameOver(why){try{SFX.over()}catch(_){}
   addRank(false);
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
   G.state='over';say('moon','もういっかい！');hud();
@@ -796,7 +796,7 @@ function off(p){
 
 function update(dt){
   if(G.goT>0)G.goT-=dt;
-  if(G.state==='ready'){G.timer-=dt;if(G.timer<=0)go()}
+  if(G.state==='ready'){G.timer-=dt;{const cn=Math.ceil(G.timer);if(cn!==G._cn){G._cn=cn;if(cn>=1&&cn<=3)try{SFX.cd()}catch(_){}}}if(G.timer<=0)go()}
   if(G.state==='run')moveTrain(dt);
   if(G.state==='derail'){G.timer-=dt;G.dT+=dt;G.dPuff-=dt;
     if(G.dPuff<=0&&G.dPose&&G.dT<1.5){G.dPuff=.07;const q=G.dPose;G.parts.push({x:q.x+(Math.random()-.5)*14,y:q.y-8,vx:(Math.random()-.5)*14,vy:-22-Math.random()*16,l:1.1,m:1.1,r:6+Math.random()*4,puff:true,dark:true})}
@@ -1124,7 +1124,27 @@ let AC=null,snd=store.get('wanwan_snd','1')==='1';
 function actx(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume().catch(()=>{});return AC}
 function tone(f,d,l,ty,v){if(!snd)return;const a=actx();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+d;
   o.type=ty||'sine';o.frequency.value=f;g.gain.setValueAtTime(v||.15,t);g.gain.exponentialRampToValueAtTime(.001,t+l);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+l+.02)}
-window.SFX={tap(){tone(700,0,.05,'sine',.08)},star(){tone(880,0,.1,'triangle',.2);tone(1320,.08,.14,'triangle',.18)},bad(){tone(160,0,.3,'sawtooth',.18)},win(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.11,.22,'triangle',.2))}};
+/* 合成効果音（ファイル不要）：木のコトッ／ポッポー／ガシャーン＋プシュー／ファンファーレなど */
+function noiseBuf(a,l){const n=a.sampleRate*l|0,b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;return b}
+function noise(d,l,ty,f0,f1,v,q){if(!snd)return;const a=actx();if(!a)return;const t=a.currentTime+d,s=a.createBufferSource(),fl=a.createBiquadFilter(),g=a.createGain();
+  s.buffer=noiseBuf(a,l+.05);fl.type=ty;fl.Q.value=q||1;fl.frequency.setValueAtTime(f0,t);if(f1)fl.frequency.exponentialRampToValueAtTime(f1,t+l);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+l);s.connect(fl);fl.connect(g);g.connect(a.destination);s.start(t);s.stop(t+l+.05)}
+function glide(f0,f1,d,l,ty,v,att){if(!snd)return;const a=actx();if(!a)return;const t=a.currentTime+d,o=a.createOscillator(),g=a.createGain();
+  o.type=ty||'sine';o.frequency.setValueAtTime(f0,t);if(f1!==f0)o.frequency.exponentialRampToValueAtTime(f1,t+l);
+  g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+(att||.01));g.gain.exponentialRampToValueAtTime(.001,t+l);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+l+.03)}
+const bell=(f,d,v)=>{tone(f,d,.5,'sine',v);tone(f*2.01,d,.25,'sine',v*.35);tone(f*3.02,d,.12,'sine',v*.15)};
+window.SFX={
+  tap(){noise(0,.05,'bandpass',900,500,.18,2);glide(190,120,0,.07,'sine',.2)},
+  cd(){glide(660,660,0,.12,'triangle',.16)},
+  go(){glide(523,523,0,.28,'triangle',.16,.03);glide(659,659,.02,.28,'triangle',.12,.03);glide(523,523,.32,.5,'triangle',.16,.03);glide(659,659,.34,.5,'triangle',.12,.03);noise(.0,.18,'highpass',2500,1500,.05)},
+  chug(){noise(0,.06,'bandpass',1400,900,.04,1.5)},
+  star(){[784,988,1319].forEach((f,i)=>bell(f,i*.07,.13))},
+  item(){glide(400,1200,0,.22,'sine',.16,.02);bell(1568,.2,.1)},
+  hint(){bell(1047,0,.14);bell(1568,.1,.12)},
+  bad(){noise(0,.35,'lowpass',2400,200,.5,.7);glide(220,55,0,.4,'sawtooth',.2);tone(1200,0,.12,'square',.07);tone(900,.05,.14,'square',.06);noise(.35,.9,'highpass',3500,1500,.07,.5)},
+  win(){[523,659,784,1047].forEach((f,i)=>{tone(f,i*.12,.3,'triangle',.18);tone(f*2,i*.12,.18,'sine',.05)});[784,1047,1319].forEach(f=>tone(f,.52,.7,'triangle',.14));bell(2093,.55,.1);bell(2637,.68,.07)},
+  over(){[392,349,330,262].forEach((f,i)=>{glide(f,f*.97,i*.26,.4,'triangle',.17,.02)})}
+};
 const sw=document.querySelector('.sw[data-k=sound]');sw.classList.toggle('on',snd);
 sw.onclick=()=>{snd=!snd;store.set('wanwan_snd',snd?'1':'0');sw.classList.toggle('on',snd);if(snd)SFX.tap()};
 window.actx=actx;
