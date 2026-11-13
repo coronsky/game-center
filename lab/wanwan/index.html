@@ -680,7 +680,7 @@ function hud(){
   $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
   $('#stRow').style.display=mode==='stage'?'':'none';$('#diffs').style.display=mode==='stage'?'none':'';
   {const t=G.score.toLocaleString();$('#scN').textContent=t;$('#scN').style.fontSize=t.length>=8?'12px':t.length>=7?'14px':t.length>=6?'16px':''}
-  {const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stTxt').textContent='ステージ '+G.stage+'（'+tierName(G.stage)+'）'+(starsOf(sizeMode,G.stage)?' '+starTxt(starsOf(sizeMode,G.stage)):G.stage<=(prog[sizeMode]||0)?' ✓':'')+' ▾';$('#stNext').textContent=G.stage<mx?'▶':'🔒'}
+  {const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stTxt').textContent='ステージ '+G.stage+' '+starTxt(starsOf(sizeMode,G.stage))+' ▾';$('#stNext').textContent=G.stage<mx?'▶':'🔒'}
   $('#stars').textContent=G.starsGot+'/'+G.starsTot;
   $('#lives').textContent='♥'.repeat(Math.max(0,G.lives))+'♡'.repeat(Math.max(0,3-G.lives));
 }
