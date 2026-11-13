@@ -378,6 +378,7 @@ body[data-vt=neon] .tile.pf{background-image:url(assets/ui/neon_t4.webp);padding
 .modal .card .xBtn{position:absolute;top:-136px;right:-14px;width:34px;height:34px;border-radius:50%;border:2px solid #f2d48a;background:rgba(70,40,20,.9);color:#fff;font:900 20px/1 sans-serif;padding:0;cursor:pointer;z-index:5;box-shadow:0 2px 6px rgba(0,0,0,.4)}
 #mMsg .card:not(.canx) .xBtn{display:none}
 #mMsg .acts{flex-direction:column}#mMsg .acts .btn{width:100%}
+.tile .ts{display:block;font-style:normal;font-size:10px;line-height:1;margin-top:2px;color:#e8a317;text-shadow:0 1px 0 rgba(0,0,0,.35)}
 </style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../../">🏠 ホーム</a>
@@ -441,7 +442,10 @@ let sizeMode=store.get('wanwan_size','4');if(!['4','5','6'].includes(sizeMode))s
 let mode=store.get('wanwan_mode','stage');if(mode!=='random')mode='stage';
 let prog={4:0,5:0,6:0};try{Object.assign(prog,JSON.parse(store.get('wanwan_prog','{}')))}catch(_){}
 let perf={};try{perf=JSON.parse(store.get('wanwan_perf','{}'))||{}}catch(_){perf={}}
-const isPerf=(sz,st)=>!!perf[sz+'_'+st];
+let sbest={};try{sbest=JSON.parse(store.get('wanwan_stars','{}'))||{}}catch(_){sbest={}}
+const starsOf=(sz,st)=>Math.max(sbest[sz+'_'+st]||0,perf[sz+'_'+st]?3:0);
+const isPerf=(sz,st)=>starsOf(sz,st)>=3;
+const starTxt=n=>'★'.repeat(n)+'☆'.repeat(3-n);
 let rank={};try{const r=JSON.parse(store.get('wanwan_rank','{}'))||{};
   for(const k in r){if(!Array.isArray(r[k]))continue;if(/^[456]$/.test(k)){r[k].forEach(e=>{const kk=k+'_'+(e.m==='random'?'random':'stage');(rank[kk]=rank[kk]||[]).push(e)})}else rank[k]=r[k]}}catch(_){}
 function addRank(full){if(G.score<=0)return;const t=new Date(),d=t.getFullYear()+'/'+(t.getMonth()+1)+'/'+t.getDate();
@@ -608,7 +612,7 @@ function hud(){
   $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
   $('#stRow').style.display=mode==='stage'?'':'none';$('#diffs').style.display=mode==='stage'?'none':'';
   {const t=G.score.toLocaleString();$('#scN').textContent=t;$('#scN').style.fontSize=t.length>=8?'12px':t.length>=7?'14px':t.length>=6?'16px':''}
-  {const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stTxt').textContent='ステージ '+G.stage+'（'+tierName(G.stage)+'）'+(isPerf(sizeMode,G.stage)?' ⭐':G.stage<=(prog[sizeMode]||0)?' ✓':'')+' ▾';$('#stNext').textContent=G.stage<mx?'▶':'🔒'}
+  {const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stTxt').textContent='ステージ '+G.stage+'（'+tierName(G.stage)+'）'+(starsOf(sizeMode,G.stage)?' '+starTxt(starsOf(sizeMode,G.stage)):G.stage<=(prog[sizeMode]||0)?' ✓':'')+' ▾';$('#stNext').textContent=G.stage<mx?'▶':'🔒'}
   $('#stars').textContent=G.starsGot+'/'+G.starsTot;
   $('#lives').textContent='♥'.repeat(Math.max(0,G.lives))+'♡'.repeat(Math.max(0,3-G.lives));
 }
@@ -682,10 +686,10 @@ function clearStage(){
   const all=G.starsTot>0&&G.starsGot>=G.starsTot;
   if(G.miss===0){addScore(2000);bonus='\nノーミスボーナス +2,000'}
   if(all){addScore(1500);bonus+='\nスター全部ボーナス +1,500'}
-  let st=G.miss===0?3:G.miss===1?2:1;if(G.starsTot>0&&!all)st=Math.max(1,st-1);
+  const gt=G.starsGot,tt=G.starsTot;const st=tt<=0||gt>=tt?3:tt===3?Math.max(1,gt):gt+1;
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
   try{SFX.win()}catch(_){}G.state='clearing';G.timer=1.6;say('colon','やったー！');say('moon','やったー！');
-  if(mode==='stage'&&G.starsTot&&G.starsGot>=G.starsTot&&!isPerf(sizeMode,G.stage)){perf[sizeMode+'_'+G.stage]=1;store.set('wanwan_perf',JSON.stringify(perf))}
+  if(mode==='stage'&&st>starsOf(sizeMode,G.stage)){sbest[sizeMode+'_'+G.stage]=st;store.set('wanwan_stars',JSON.stringify(sbest))}
   if(mode==='stage'&&G.stage>=NST)addRank(true);
   if(mode==='stage'&&G.stage>(prog[sizeMode]||0)){prog[sizeMode]=G.stage;store.set('wanwan_prog',JSON.stringify(prog))}
   G.showClear=()=>overlay((mode==='stage'?'ステージ '+G.stage:'ランダム '+(G.rs+1))+' クリア！','★'.repeat(st)+'☆'.repeat(3-st)+(G.starsTot?'\nスター '+G.starsGot+'/'+G.starsTot:'')+'\nSCORE '+G.score.toLocaleString()+bonus,mode==='stage'&&G.stage>=NST?'さいごまでクリア！':'つぎのステージへ',()=>{if(mode==='stage'){if(G.stage<NST)G.stage++;else{G.stage=1;G.score=0}}else G.rs++;newStage()});
@@ -1023,7 +1027,7 @@ $('#rkX').onclick=()=>$('#mRank').classList.remove('show');
 function openSel(){
   const mx=Math.min(NST,(prog[sizeMode]||0)+1),g=$('#selG');g.innerHTML='';
   for(let i=1;i<=NST;i++){const b=document.createElement('button');const lock=i>mx,done=i<=(prog[sizeMode]||0);
-    b.className='tile '+(lock?'lk':isPerf(sizeMode,i)?'pf':i===G.stage?'cur':done?'ck':'');b.textContent=lock?'':String(i);
+    b.className='tile '+(lock?'lk':isPerf(sizeMode,i)?'pf':i===G.stage?'cur':done?'ck':'');b.innerHTML=lock?'':'<span>'+i+'</span><i class="ts">'+(done||starsOf(sizeMode,i)?starTxt(starsOf(sizeMode,i)||1):'')+'</i>';
     if(!lock)b.onclick=()=>{$('#mSel').classList.remove('show');G.state='ready';G.score=0;G.stage=i;newStage();refresh()};g.appendChild(b)}
   $('#mSel').classList.add('show')}
 $('#stTxt').onclick=()=>{if(G.state!=='clearing')openSel()};$('#selX').onclick=()=>$('#mSel').classList.remove('show');
