@@ -397,6 +397,7 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
   $('resTitle').textContent=o.title; $('resScore').textContent=o.score||''; $('resMsg').textContent=o.msg||''; $('resExtra').innerHTML=o.extra||''; $('resRec').textContent=o.rec||'';
   $('avB').className=o.winner===1?'win':(o.winner?'lose':''); $('avW').className=o.winner===2?'win':(o.winner?'lose':'');
   $('avB').querySelector('.crown').textContent=o.winner===1?'👑':''; $('avW').querySelector('.crown').textContent=o.winner===2?'👑':'';
+  try{window.soloAvatar&&window.soloAvatar(o)}catch(e){}
   setTimeout(()=>openM('mRes'),o.delay??900);
 }
 
@@ -505,4 +506,4 @@ document.getElementById('vtBtn').addEventListener('click',e=>{e.stopPropagation(
 })();
 
 })();</script><script src="../fit.js"></script><script src="../backup.js"></script><script>if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
-<script src="../bgm.js" data-mount=".app"></script></body></html>
+<script src="../bgm.js" data-mount=".app"></script><script src="../result-bubble.js"></script></body></html>
