@@ -747,7 +747,7 @@ function gameOver(why){try{SFX.over()}catch(_){}
   addRank(false);
   if(G.score>hi){hi=G.score;store.set('wanwan_hi',hi)}
   G.state='over';say('moon','もういっかい！');hud();
-  overlay('ゲームオーバー','ミスが'+MAXMISS+'回になりました\nSCORE '+G.score.toLocaleString(),'コンティニュー',()=>{G.miss=0;begin()},'メニューに戻る',()=>openMenu(false),'ホームに戻る',()=>{location.href=$('#homeBtn').href});
+  overlay('ゲームオーバー','ミスが'+MAXMISS+'回になりました\nSCORE '+G.score.toLocaleString(),'コンティニュー',()=>{G.miss=0;G.hintsLeft=3;G.hintUsed=false;hudHint();begin()},'メニューに戻る',()=>openMenu(false),'ホームに戻る',()=>{location.href=$('#homeBtn').href});
 }
 function afterDerail(){if(G.miss>=MAXMISS)gameOver('miss');else begin()}
 function clearStage(){
@@ -1121,7 +1121,7 @@ $('#stPrev').onclick=()=>{if(G.stage>1){$('#mMsg').classList.remove('show');G.st
 $('#stNext').onclick=()=>{if(G.stage<Math.min(NST,(prog[sizeMode]||0)+1)){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.stage++;newStage();refresh()}};
 $('#bGo').onclick=()=>{actx();go()};
 $('#bFast').onclick=()=>{actx();if(G.state==='run')try{SFX.go()}catch(_){}if(G.state==='ready')go();if(G.state==='run'||G.state==='ready'){G.fast=!G.fast;$('#bFast').classList.toggle('on',G.fast)}};
-$('#bRestart').onclick=()=>{if(['ready','run','derail'].includes(G.state)){actx();begin()}else if(G.state==='over'){G.miss=0;begin()}};
+$('#bRestart').onclick=()=>{if(['ready','run','derail'].includes(G.state)){actx();begin()}else if(G.state==='over'){G.miss=0;G.hintsLeft=3;G.hintUsed=false;hudHint();begin()}};
 $('#bHint').onclick=()=>{actx();useHint()};
 $('#bHome').onclick=()=>{location.href=$('#homeBtn').href};
 function openHelp(){if(G.state==='ready'||G.state==='run'){G.prev=G.state;G.state='pause'}$('#mHelp').classList.add('show')}
