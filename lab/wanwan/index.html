@@ -893,7 +893,7 @@ function tryMove(r,c,dir){
     if(!best||chain.length<best.chain.length)best={chain,d};
   }
   if(!best){p.shake=performance.now();return}
-  G.hintT=0;try{SFX.tap()}catch(_){}
+  G.hintT=0;try{SFX.tap(best.chain.length)}catch(_){}
   const{chain,d}=best,t0=performance.now();
   for(let i=chain.length-1;i>=0;i--){
     const[cr,cc]=chain[i],q=b[cr][cc],nr=cr+DR[d],nc=cc+DC[d];
@@ -1150,8 +1150,13 @@ function glide(f0,f1,d,l,ty,v,att){if(!snd)return;const a=actx();if(!a)return;co
   o.type=ty||'sine';o.frequency.setValueAtTime(f0,t);if(f1!==f0)o.frequency.exponentialRampToValueAtTime(f1,t+l);
   g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+(att||.01));g.gain.exponentialRampToValueAtTime(.001,t+l);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+l+.03)}
 const bell=(f,d,v)=>{tone(f,d,.5,'sine',v);tone(f*2.01,d,.25,'sine',v*.35);tone(f*3.02,d,.12,'sine',v*.15)};
+let slideBuf=null,slideLoading=false;
+function loadSlide(){if(slideBuf||slideLoading)return;const a=actx();if(!a)return;slideLoading=true;
+  fetch('assets/snd/slide.mp3').then(r=>r.arrayBuffer()).then(b=>new Promise((ok,ng)=>a.decodeAudioData(b,ok,ng))).then(d=>{slideBuf=d}).catch(()=>{slideLoading=false})}
+function slideSnd(d,v,rate){if(!snd||!slideBuf)return false;const a=actx();if(!a)return false;const s=a.createBufferSource(),g=a.createGain();
+  s.buffer=slideBuf;s.playbackRate.value=rate||1;g.gain.value=v||.9;s.connect(g);g.connect(a.destination);s.start(a.currentTime+d);return true}
 window.SFX={
-  tap(){noise(0,.05,'bandpass',900,500,.18,2);glide(190,120,0,.07,'sine',.2)},
+  tap(n){loadSlide();n=n||1;let ok=false;for(let i=0;i<Math.min(n,3);i++)ok=slideSnd(i*.05,.9-i*.1,.96+Math.random()*.1+i*.04)||ok;if(!ok){noise(0,.05,'bandpass',900,500,.18,2);glide(190,120,0,.07,'sine',.2)}},
   cd(){glide(660,660,0,.12,'triangle',.16)},
   go(){glide(523,523,0,.28,'triangle',.16,.03);glide(659,659,.02,.28,'triangle',.12,.03);glide(523,523,.32,.5,'triangle',.16,.03);glide(659,659,.34,.5,'triangle',.12,.03);noise(.0,.18,'highpass',2500,1500,.05)},
   chug(){noise(0,.06,'bandpass',1400,900,.04,1.5)},
@@ -1164,7 +1169,7 @@ window.SFX={
 };
 const sw=document.querySelector('.sw[data-k=sound]');sw.classList.toggle('on',snd);
 sw.onclick=()=>{snd=!snd;store.set('wanwan_snd',snd?'1':'0');sw.classList.toggle('on',snd);if(snd)SFX.tap()};
-window.actx=actx;
+window.actx=actx;document.addEventListener('pointerdown',()=>{try{actx();loadSlide()}catch(_){}},{once:true});
 refresh();
 newGame();G.state='title';
 openMenu(true);
