@@ -293,7 +293,7 @@ body[data-vt=neon] .tray{padding:0;border:solid transparent;border-width:10px 10
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 ピタッとパズル</h2><p>下のブロックを全部使って、<b>わくをすきまなくうめよう</b>！</p>
 <p>👆 下のブロックを<b>ドラッグして、わくに持っていって離す</b>と置けます（近くの合う場所にピタッと吸いつきます）。向きを変えたいときは、ブロックをタップ → ↻回転・⇋裏返し。<b>もう一度タップ</b>、またはブロックを持ったまま<b>もう1本の指でタップ</b>（PCは右クリックかRキー）でも回転します。</p>
-<p>置いたブロックは、ドラッグで置きなおし・下にもどす、またはタップで下にもどせます。全30ステージ（5段階）＋♾️エンドレス（毎回ちがう問題）。必ずとけるよ。</p>
+<p>置いたブロックは、ドラッグで置きなおし・下にもどす、またはタップで下にもどせます。全100ステージ（5段階×20）＋♾️エンドレス（毎回ちがう問題）。必ずとけるよ。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
@@ -396,12 +396,12 @@ function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<but
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
 if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
 
-const TI=[{n:'かんたん',g:[[4,4],[4,4],[5,4],[5,4],[5,4],[5,4]],mn:3,mx:4,pc:7},{n:'ふつう',g:[[5,5],[5,5],[6,5],[6,5],[6,5],[6,5]],mn:4,mx:5,pc:8},{n:'むずかしい',g:[[6,6],[6,6],[6,6],[7,6],[7,6],[7,6]],mn:4,mx:5,pc:10},{n:'とても',g:[[7,6],[7,7],[7,7],[7,7],[8,6],[8,6]],mn:4,mx:6,pc:12},{n:'ちょう',g:[[8,7],[8,7],[8,7],[8,8],[8,8],[8,8]],mn:5,mx:6,pc:14}];
-const NST=30, stageCfg=i=>{const t=(i/6)|0,j=i%6,T=TI[t]; return {w:T.g[j][0],h:T.g[j][1],mn:T.mn,mx:T.mx,pc:T.pc,seed:1000+i*7919}};
+const ST=20,TI=[{n:'かんたん 4×4',n0:'かんたん',z:4,a:[4,5],b:[3,3],g:[[4,4],[4,4],[5,4]]},{n:'ふつう 5×5',n0:'ふつう',z:5,a:[5,5],b:[3,4],g:[[5,5],[5,5],[6,5]]},{n:'むずかしい 6×6',n0:'むずかしい',z:6,a:[5,6],b:[4,5],g:[[6,6],[6,6],[7,6]]},{n:'とても 7×7',n0:'とても',z:7,a:[5,6],b:[4,5],g:[[7,7],[7,7],[8,7]]},{n:'ちょう 8×8',n0:'ちょう',z:8,a:[6,6],b:[5,6],g:[[8,8],[8,8],[8,7]]}];
+const NST=TI.length*ST, stageCfg=i=>{const t=(i/ST)|0,j=i%ST,T=TI[t],k=j/(ST-1),L=(x,y)=>Math.round(x+(y-x)*k),mn=L(T.a[0],T.b[0]),mx=Math.max(mn,L(T.a[1],T.b[1])); return {w:T.z,h:T.z,mn,mx,pc:Math.ceil(T.z*T.z/mn)+2,seed:1000+i*7919}};
 const mul=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 let endT=-1;
 const COL=[0,1,2,3,4,5,6,7,8,9].map(k=>`var(--t${k}) center/100% 100% no-repeat`);
-const P=Object.assign({cur:0,done:{},endT:0,endN:0},store.get('prog2',{})); const svP=()=>store.set('prog2',P);
+const _o=store.get('prog2',{}); const P=Object.assign({cur:0,done:{},endT:_o.endT||0,endN:_o.endN||0},store.get('prog3',{})); const svP=()=>store.set('prog3',P);
 let W,H,pieces,place,sel=-1,hover=-1,hist=[];
 const norm=c=>{const mx=Math.min(...c.map(p=>p[0])),my=Math.min(...c.map(p=>p[1]));return c.map(([x,y])=>[x-mx,y-my]).sort((a,b)=>a[1]-b[1]||a[0]-b[0])};
 function gen(w,h,mn,mx,pcMax,seed){ const R=seed?mul(seed):Math.random;
@@ -415,12 +415,12 @@ function gen(w,h,mn,mx,pcMax,seed){ const R=seed?mul(seed):Math.random;
 function begin(c){ W=c.w;H=c.h;
   pieces=gen(c.w,c.h,c.mn,c.mx,c.pc,c.seed).map((q,k)=>({c:randOrient(q),col:COL[k%COL.length],at:-1})); place=new Array(W*H).fill(-1); sel=0; hist=[];
   drawNav(); draw(); setStatus('ブロックでわくをうめよう'); setTimeout(()=>sayText(1,'くみたてるワン！'),300); }
-function drawNav(){ const t=endT>=0?endT:(P.cur/6|0);
-  lvRow($('tiers'),TI.map(x=>x.n).concat(['♾️ 無限']),endT>=0?TI.length:t,k=>k<TI.length&&[0,1,2,3,4,5].every(j=>P.done[k*6+j])?1:0,k=>{ if(k===TI.length){ loadEnd(P.endT||0); } else if(endT>=0&&k===t) loadEnd(k); else { const f=[0,1,2,3,4,5].map(j=>k*6+j).find(i=>!P.done[i]); load(f==null?k*6:f); } });
-  if(endT>=0){ lvRow($('lvs'),TI.map(x=>x.n),endT,null,k=>{P.endT=k;svP();loadEnd(k)}); $('stN').textContent='♾️ '+(P.endN+1)+'問目'; }
-  else { lvRow($('lvs'),[0,1,2,3,4,5].map(j=>(t*6+j+1)+''),P.cur%6,j=>P.done[t*6+j]?1:0,j=>load(t*6+j)); $('stN').textContent=(P.cur+1)+'/'+NST; } }
+function drawNav(){ const t=endT>=0?endT:((P.cur/ST)|0);
+  lvRow($('tiers'),TI.map(x=>x.n).concat(['♾️ 無限']),endT>=0?TI.length:t,k=>k<TI.length&&Array.from({length:ST},(_,j)=>j).every(j=>P.done[k*ST+j])?1:0,k=>{ if(k===TI.length){ loadEnd(P.endT||0); } else if(endT>=0&&k===t) loadEnd(k); else { const f=Array.from({length:ST},(_,j)=>k*ST+j).find(i=>!P.done[i]); load(f==null?k*ST:f); } });
+  if(endT>=0){ lvRow($('lvs'),TI.map(x=>x.n0),endT,null,k=>{P.endT=k;svP();loadEnd(k)}); $('stN').textContent='♾️ '+(P.endN+1)+'問目'; }
+  else { lvRow($('lvs'),Array.from({length:ST},(_,j)=>(j+1)+''),P.cur%ST,j=>P.done[t*ST+j]?1:0,j=>load(t*ST+j)); $('stN').textContent=(P.cur+1)+'/'+NST; } }
 function load(i){ endT=-1; P.cur=i; svP(); begin(stageCfg(i)); }
-function loadEnd(t){ endT=t; P.endT=t; svP(); const T=TI[t],g=T.g[(Math.random()*6)|0]; begin({w:g[0],h:g[1],mn:T.mn,mx:T.mx,pc:T.pc,seed:0}); }
+function loadEnd(t){ endT=t; P.endT=t; svP(); const T=TI[t],g=T.g[(Math.random()*T.g.length)|0],mn=Math.round((T.a[0]+T.b[0])/2),mx=Math.max(mn,Math.round((T.a[1]+T.b[1])/2)); begin({w:g[0],h:g[1],mn,mx,pc:Math.ceil(g[0]*g[1]/mn)+2,seed:0}); }
 function rot(c){return norm(c.map(([x,y])=>[-y,x]))} function flip(c){return norm(c.map(([x,y])=>[-x,y]))}
 function randOrient(c){ let r=c; for(let k=(Math.random()*4)|0;k>0;k--) r=rot(r); if(Math.random()<.5) r=flip(r); return r; }
 function cellsAt(p,at){ const ax=at%W,ay=(at/W)|0, a0=p.c[0]; return p.c.map(([x,y])=>{const X=ax+x-a0[0],Y=ay+y-a0[1]; return (X<0||X>=W||Y<0||Y>=H)?-1:Y*W+X}); }
@@ -488,7 +488,7 @@ function tapCell(i){ actx(); if(place[i]>=0){ const k=place[i]; hist.push(['rm',
 function win(){ report('clear',{stars:3}); SFX.win(); confetti(['🧩','🐾','✨']); sayText(2,'ぴったり♪',true); setStatus('ぴったり完成！');
   let msg=pieces.length+'個のブロックでぴったり！';
   if(endT>=0){ P.endN++; svP(); $('bAgain').textContent='つぎの問題'; }
-  else { P.done[P.cur]=1; svP(); const last=P.cur>=NST-1; $('bAgain').textContent=last?'もう一回':'つぎのステージ'; if(last) msg='全30ステージクリア！おめでとう🎉'; }
+  else { P.done[P.cur]=1; svP(); const last=P.cur>=NST-1; $('bAgain').textContent=last?'もう一回':'つぎのステージ'; if(last) msg='全'+NST+'ステージクリア！おめでとう🎉'; }
   drawNav(); showResult({winner:0,title:endT>=0?'🎉 完成！':'🎉 ステージクリア！',score:W+'×'+H,msg}); }
 $('bRot').onclick=()=>{ if(sel<0||pieces[sel].at>=0) return; actx(); pieces[sel].c=rot(pieces[sel].c); SFX.tap(); draw(); };
 $('bFlip').onclick=()=>{ if(sel<0||pieces[sel].at>=0) return; actx(); pieces[sel].c=flip(pieces[sel].c); SFX.tap(); draw(); };
