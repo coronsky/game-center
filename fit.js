@@ -4,14 +4,31 @@
   var LV=[{k:'s',n:'小',m:.85},{k:'m',n:'中',m:1},{k:'l',n:'大',m:1.2}];
   function get(){ try{ return localStorage.getItem('mc_size')||'m'; }catch(e){ return 'm'; } }
   function set(v){ try{ localStorage.setItem('mc_size',v); }catch(e){} }
+  // ズームなし(1倍)での中身の高さ。iPadなど大きい画面で1画面に収めるための基準
+  function natH(){
+    var b=document.body,z=b.style.zoom,mh=b.style.minHeight;
+    b.style.zoom=1; b.style.minHeight='0';
+    var m=0,sy=window.pageYOffset||0;
+    [].forEach.call(b.children,function(el){
+      var cs=getComputedStyle(el);
+      if(cs.position==='fixed'||cs.position==='absolute'||cs.display==='none'||/^(SCRIPT|STYLE|LINK)$/.test(el.tagName)) return;
+      var r=el.getBoundingClientRect(); if(r.height>0) m=Math.max(m,r.bottom+sy);
+    });
+    m+=parseFloat(getComputedStyle(b).paddingBottom)||0;
+    b.style.zoom=z; b.style.minHeight=mh;
+    return m;
+  }
   function fit(){
     var w=innerWidth,h=innerHeight,s=1;
-    if(w>=700){ var H0=(w>h&&window.MC_HL)||window.MC_H||820; s=Math.min(w/500,h/H0); s=Math.max(window.MC_H?.8:1,Math.min(s,1.9)); }
+    if(w>=700){
+      var nh=document.querySelector('.hero')?0:natH();
+      s=Math.min(w/500,h/(nh>300?nh:820)); s=Math.max(nh>300?.6:1,Math.min(s,1.9));
+    }
     var lv=LV.filter(function(x){return x.k===get()})[0]||LV[1];
     s=s*lv.m;
     if(w<700) s=Math.min(s,w/340);       // スマホでは幅がくずれない範囲まで
-    s=Math.max(.7,Math.min(s,2.4));
-    document.body.style.zoom=s; document.documentElement.style.setProperty('--mcz',s);
+    s=Math.max(.6,Math.min(s,2.4));
+    document.body.style.zoom=s; if(innerWidth>=700) document.body.style.minHeight=(innerHeight/s)+'px'; document.documentElement.style.setProperty('--mcz',s);
     var b=document.getElementById('mcSizeBtn'); if(b) b.innerHTML='<b>'+lv.n+'</b>';
   }
   function btn(){
@@ -25,7 +42,7 @@
       var nx=LV[(i+1)%LV.length]; set(nx.k); fit(); tip.textContent='サイズ：'+nx.n; tip.classList.add('on'); clearTimeout(tip._t); tip._t=setTimeout(function(){tip.classList.remove('on')},900); };
     var hero=document.querySelector('.hero'); if(hero) b.style.top='-36px'; var host=hero||document.querySelector('.app')||document.body; host.appendChild(b); document.body.appendChild(tip);
   }
-  function init(){ btn(); fit(); }
+  function init(){ btn(); fit(); setTimeout(fit,700); addEventListener('load',function(){setTimeout(fit,300)}); }
   addEventListener('resize',fit); addEventListener('orientationchange',fit);
   if(document.body) init(); else addEventListener('DOMContentLoaded',init);
 })();
