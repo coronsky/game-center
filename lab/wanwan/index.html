@@ -389,7 +389,7 @@ body[data-vt=neon] .tile.pf{background-image:url(assets/ui/neon_t4.webp);padding
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv"></canvas></div></div>
   <div class="hud"><div class="box"><small id="stLbl">ステージ</small><b id="stN">1</b></div><div class="box"><small>スコア</small><b id="scN">0</b></div><div class="box"><small>ミス</small><b id="missN">0/3</b></div><div class="box" style="display:none"><b id="stars">0/0</b></div><div class="box" style="display:none"><b id="lives"></b></div></div>
   <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn g" id="bGo">🚂しゅっぱつ</button><button class="btn c" id="bFast">▶▶はやく</button><button class="btn c" id="bRestart">⟳やりなおし</button><button class="btn c" id="bHelp">❓あそびかた</button></div>
-  <div class="btns gbtns" style="grid-template-columns:1fr 1fr;margin-top:8px"><button class="btn c" id="bMenu">🎮メニュー</button><button class="btn c" id="bHome">🏠ホームへ戻る</button></div>
+  <div class="btns gbtns" style="grid-template-columns:1fr 1fr 1fr;margin-top:8px"><button class="btn c" id="bMenu">🎮メニュー</button><button class="btn c" id="bHint">💡ヒント 3</button><button class="btn c" id="bHome">🏠ホーム</button></div>
   <div class="foot"><span>ベスト <b id="bestN">0</b></span><span>右上の🎨でスキン変更</span></div>
 </div>
 <div class="modal" id="mHelp"><div class="card help"><button class="xBtn" aria-label="閉じる">×</button><h2>📖 わんわんトレイン</h2>
@@ -569,7 +569,8 @@ function genLevel(stage){
   }};
   scr(Math.min((N===4?10:6)+stage*2,40));
   for(let k=0;k<20&&simulate(board,S0,Gl);k++)scr(6);
-  return{board,S0,Gl};
+  const hint=path.map(([r,c],i)=>({r,c,e:i===0?S0.e:(dirs[i-1]+2)%4,x:i===path.length-1?Gl.x:dirs[i],skip:plan.rm.has(i)||(plan.sp[i]&&plan.sp[i].kind!=='cross')||false}));
+  return{board,S0,Gl,hint};
 }
 /* ギミック配置の計画：path上のどのマスを十字/ワープ/ジャンプ台にするか（作れなければnull） */
 function planGim(pa,di,S0,Gl,want,stage){
@@ -608,6 +609,15 @@ function say(who,text,ms=1600){
   $('#statusTxt').textContent=text;
 }
 const countStars=b=>b.flat().filter(p=>p&&p.bonus==='star').length;
+function hudHint(){const b=$('#bHint');if(b){b.textContent='💡ヒント '+G.hintsLeft;b.style.opacity=G.hintsLeft>0?1:.45}}
+function useHint(){
+  if(!['ready','run'].includes(G.state)||!G.hint)return;
+  if(G.hintsLeft<=0){say('moon','ヒントはもうないよ…');return}
+  let br=null;
+  for(const h of G.hint){if(h.skip)continue;const q=G.board[h.r][h.c];if(!(q&&!q.rock&&has(q,h.e)&&has(q,h.x))){br=h;break}}
+  if(!br){say('colon','ぜんぶつながってるよ！しゅっぱつ！');return}
+  G.hintsLeft--;G.hintT=4;G.hintCell=br;hudHint();say('moon','ここにこの形のレールがほしいな！');
+}
 function hud(){
   $('#stLbl').textContent=mode==='stage'?'ステージ':'ランダム';$('#stN').textContent=mode==='stage'?G.stage:(G.rs+1);$('#missN').textContent=G.miss+'/'+MAXMISS;
   $('#stRow').style.display=mode==='stage'?'':'none';$('#diffs').style.display=mode==='stage'?'none':'';
@@ -629,11 +639,12 @@ function withSeed(seed,fn){const old=Math.random;let a=seed>>>0;
   try{return fn()}finally{Math.random=old}}
 function newStage(){
   const L=mode==='stage'?withSeed(+sizeMode*100003+G.stage*7919+12345,()=>genLevel(effStage(G.stage))):genLevel(Math.min(NST,3+G.rs));
-  G.board=L.board;G.S0=L.S0;G.Gl=L.Gl;G.snap=JSON.stringify(G.board);G.starsTot=countStars(G.board);
+  G.board=L.board;G.S0=L.S0;G.Gl=L.Gl;G.hint=L.hint;G.hintsLeft=3;G.hintT=0;G.hintCell=null;hudHint();G.snap=JSON.stringify(G.board);G.starsTot=countStars(G.board);
   G.miss=0;G.moves=0;G.stageScore=G.score;begin();
 }
 function begin(){
   G.board=JSON.parse(G.snap);
+  G.hintT=0;
   resetTrain();G.eff=null;G.goT=0;G.pax=0;G.hasKey=false;G.paxTot=G.board.flat().filter(p=>p&&p.bonus==='pax').length;G.keyTot=G.board.flat().filter(p=>p&&p.bonus==='key').length;G.fast=false;$('#bFast').classList.remove('on');G.starsGot=0;G.state='ready';G.timer=6;hud();
   say('colon','線路をつないで！');
 }
@@ -744,6 +755,7 @@ function update(dt){
 }
 function moveTrain(dt){
   const T=G.train;
+  if(G.hintT>0)G.hintT-=dt;
   if(G.eff){G.eff.t-=dt;if(G.eff.t<=0)G.eff=null}
   if(G.eff&&G.eff.k==='stop')return;
   const ct=CT()/(G.fast?3:1)/(G.eff?(G.eff.k==='slow'?.5:G.eff.k==='fast'?1.7:1):1);
@@ -965,6 +977,12 @@ function draw(){
     const nw=gi.naturalWidth,nh=gi.naturalHeight,Lw=Math.min(S,64)*.6,Lh=Lw*(.2*nh)/(.34*nw);
     ctx.save();ctx.translate(ox,oy);ctx.rotate(d*Math.PI/2);
     ctx.drawImage(gi,.33*nw,.30*nh,.34*nw,.2*nh,-Lw/2,-t/2-Lh/2,Lw,Lh);ctx.restore()})}
+  if(G.hintT>0&&G.hint){
+    const a=Math.min(1,G.hintT)*(.5+.5*Math.sin(performance.now()/180));
+    ctx.save();ctx.lineWidth=3;ctx.strokeStyle='rgba(255,210,60,'+(.35+.4*a)+')';ctx.fillStyle='rgba(255,230,120,'+(.10+.12*a)+')';
+    G.hint.forEach(h=>{if(h.skip)return;rr(M+h.c*S+3,BY+h.r*S+3,S-6,S-6,8);ctx.fill();ctx.stroke()});
+    const b=G.hintCell;if(b){ctx.globalAlpha=.55+.4*a;drawTrack([b.e,b.x],th,M+b.c*S,BY+b.r*S);ctx.globalAlpha=1;ctx.lineWidth=4;ctx.strokeStyle='#ff9a1f';rr(M+b.c*S+2,BY+b.r*S+2,S-4,S-4,9);ctx.stroke()}
+    ctx.restore()}
   if(G.train){
     if(G.state==='derail'&&G.dPose){const q=G.dPose,t=G.dT,e=Math.min(1,t/.45),k=1-Math.pow(1-e,3),bounce=e>=1?Math.sin(Math.min(1,(t-.45)/.3)*Math.PI)*.12:0;
       const ang=G.dSign*(Math.PI/2*k*.95+bounce);ctx.save();ctx.translate(q.x,q.y+S*.12*k);ctx.rotate(ang);ctx.translate(-q.x,-q.y);
@@ -1036,6 +1054,7 @@ $('#stNext').onclick=()=>{if(G.stage<Math.min(NST,(prog[sizeMode]||0)+1)){$('#mM
 $('#bGo').onclick=()=>{actx();go()};
 $('#bFast').onclick=()=>{actx();if(G.state==='ready')go();if(G.state==='run'||G.state==='ready'){G.fast=!G.fast;$('#bFast').classList.toggle('on',G.fast)}};
 $('#bRestart').onclick=()=>{if(['ready','run','derail'].includes(G.state)){actx();begin()}else if(G.state==='over'){G.miss=0;begin()}};
+$('#bHint').onclick=()=>{actx();useHint()};
 $('#bHome').onclick=()=>{location.href=$('#homeBtn').href};
 function openHelp(){if(G.state==='ready'||G.state==='run'){G.prev=G.state;G.state='pause'}$('#mHelp').classList.add('show')}
 $('#bHelp').onclick=openHelp;
