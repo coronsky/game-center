@@ -241,6 +241,30 @@ body[data-vt=natural] .pn.t_sea{background:url(img/bg_natural_sea.webp) center/c
 body[data-vt=natural] .pn.t_kitchen{background:url(img/bg_natural_kitchen.webp) center/cover}
 body[data-vt=natural] .pn.t_space{background:url(img/bg_natural_space.webp) center/cover}
 body[data-vt=natural] .pn.t_toys{background:url(img/bg_natural_toys.webp) center/cover}
+body[data-vt=natural] .pn{margin:12px 12px;width:calc(100% - 24px);border-radius:6px;box-shadow:none;overflow:visible}
+body[data-vt=natural] .pn::after{content:"";position:absolute;inset:-13px;pointer-events:none;border:13px solid transparent;border-image:url(img/frame_natural.webp) 46 fill;border-image-slice:46;z-index:5}
+body[data-vt=natural] .pn .it.sp{width:1.15em;height:1.15em;font-size:calc(var(--pw,300px)*0);color:transparent;filter:drop-shadow(0 2px 2px rgba(0,0,0,.28));background-repeat:no-repeat;background-size:400% 400%}
+body[data-vt=natural] .pn.t_garden .it.sp{background-image:url(img/sp_garden.webp)}
+body[data-vt=natural] .pn.t_sea .it.sp{background-image:url(img/sp_sea.webp)}
+body[data-vt=natural] .pn.t_kitchen .it.sp{background-image:url(img/sp_kitchen.webp)}
+body[data-vt=natural] .pn.t_space .it.sp{background-image:url(img/sp_space.webp)}
+body[data-vt=natural] .pn.t_toys .it.sp{background-image:url(img/sp_toys.webp)}
+body[data-vt=natural] .it.s0{background-position:0.0000% 0.0000%}
+body[data-vt=natural] .it.s1{background-position:33.3333% 0.0000%}
+body[data-vt=natural] .it.s2{background-position:66.6667% 0.0000%}
+body[data-vt=natural] .it.s3{background-position:100.0000% 0.0000%}
+body[data-vt=natural] .it.s4{background-position:0.0000% 33.3333%}
+body[data-vt=natural] .it.s5{background-position:33.3333% 33.3333%}
+body[data-vt=natural] .it.s6{background-position:66.6667% 33.3333%}
+body[data-vt=natural] .it.s7{background-position:100.0000% 33.3333%}
+body[data-vt=natural] .it.s8{background-position:0.0000% 66.6667%}
+body[data-vt=natural] .it.s9{background-position:33.3333% 66.6667%}
+body[data-vt=natural] .it.s10{background-position:66.6667% 66.6667%}
+body[data-vt=natural] .it.s11{background-position:100.0000% 66.6667%}
+body[data-vt=natural] .it.s12{background-position:0.0000% 100.0000%}
+body[data-vt=natural] .it.s13{background-position:33.3333% 100.0000%}
+body[data-vt=natural] .it.s14{background-position:66.6667% 100.0000%}
+body[data-vt=natural] .it.s15{background-position:100.0000% 100.0000%}
 
 </style>
 </head>
@@ -364,6 +388,7 @@ function itemHTML(it,side){ // side 'A' | 'B'
   if(side==='A'&&it.t==='add') return '';
   if(side==='B'&&it.t){ if(it.t==='remove') return ''; if(it.t==='swap') e=it.e2;
     if(it.t==='color') st+='filter:hue-rotate(150deg) saturate(1.3);'; if(it.t==='size') st+='transform:translate(-50%,-50%) scale(1.32);'; if(it.t==='flip') st+='transform:translate(-50%,-50%) scaleX(-1);'; }
+  const ix=G.g.th.e.indexOf(e); if(ix>=0) cls+=' sp s'+ix;
   return `<span class="${cls}" style="left:${it.x}%;top:${it.y}%;font-size:calc(var(--pw,300px)*${it.s});${st}">${e}</span>`; }
 function renderPanels(){ const g=G.g; ['A','B'].forEach(sd=>{ const el=$('pn'+sd); el.className='pn t_'+g.th.k; el.style.setProperty('--g',g.th.bg);
   el.innerHTML=g.items.map(it=>itemHTML(it,sd)).join('')+g.diffs.filter(d=>d.found).map(d=>ringHTML(d)).join('')+(G.hint!=null&&!g.diffs[G.hint].found?ringHTML(g.diffs[G.hint],'hint'):''); });
