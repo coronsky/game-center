@@ -225,7 +225,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 body:is([data-vt=retro],[data-vt=neon]) .hud .box{background:rgba(0,0,0,.35);border-color:rgba(255,255,255,.25);color:inherit}
 body:is([data-vt=retro],[data-vt=neon]) .hud .box small{color:inherit;opacity:.75}
 .boardWrap{margin:10px 6px 0;padding:8px;border-radius:20px;background:linear-gradient(145deg,#ecd3ad,var(--wood) 40%,var(--wood-d));box-shadow:0 8px 20px rgba(90,61,43,.25),inset 0 2px 0 rgba(255,255,255,.5);display:flex;flex-direction:column;gap:8px}
-.pn{position:relative;width:100%;aspect-ratio:4/3;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(0,0,0,.15);touch-action:manipulation;cursor:pointer}
+.pn{background:var(--g);position:relative;width:100%;aspect-ratio:4/3;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(0,0,0,.15);touch-action:manipulation;cursor:pointer}
 .it{position:absolute;transform:translate(-50%,-50%);line-height:1;pointer-events:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25));font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
 .ring{position:absolute;transform:translate(-50%,-50%);border:3.5px solid #e8453c;border-radius:50%;pointer-events:none;box-shadow:0 0 0 2px #fff;animation:rpop .3s cubic-bezier(.2,1.6,.4,1)}
 .ring.hint{border-color:#ffc93c;animation:rhint .6s infinite alternate}
@@ -236,6 +236,11 @@ body:is([data-vt=retro],[data-vt=neon]) .hud .box small{color:inherit;opacity:.7
 .mmLb{font-weight:900;font-size:13px;margin:12px 0 6px}
 body:is([data-vt=retro],[data-vt=neon]) .selGridB button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.25)}
 body[data-vt=retro] .selGridB button.on{background:#c0392b;border-color:#f2b134;color:#fff}body[data-vt=neon] .selGridB button.on{background:#ff4fd8;border-color:#fff;color:#fff}
+body[data-vt=natural] .pn.t_garden{background:url(img/bg_natural_garden.webp) center/cover}
+body[data-vt=natural] .pn.t_sea{background:url(img/bg_natural_sea.webp) center/cover}
+body[data-vt=natural] .pn.t_kitchen{background:url(img/bg_natural_kitchen.webp) center/cover}
+body[data-vt=natural] .pn.t_space{background:url(img/bg_natural_space.webp) center/cover}
+body[data-vt=natural] .pn.t_toys{background:url(img/bg_natural_toys.webp) center/cover}
 
 </style>
 </head>
@@ -334,11 +339,11 @@ SND.on=S.sound; TALK.on=S.talk;
 const P=Object.assign({cur:0,stars:{}},store.get('prog',{})); const svP=()=>store.set('prog',P);
 const NST=30;
 const TH=[
- {n:'おにわ',bg:'linear-gradient(#bfe6f5 0 38%,#a8dc8e 38%)',e:['🌷','🌻','🌼','🌸','🍄','🦋','🐝','🐞','🌳','🌲','🌿','🍀','🐿️','🐇','🥕','🐛']},
- {n:'うみ',bg:'linear-gradient(#bfe9f7,#79c4e6 60%,#e8d59b 60%)',e:['🐠','🐟','🐡','🐙','🦀','🐚','🐳','🐬','🦑','🦐','⭐','🪸','🐢','🦈','🌊','⚓']},
- {n:'キッチン',bg:'linear-gradient(#fff3d6,#f5dba5)',e:['🍎','🍐','🍊','🍋','🍌','🍇','🍓','🍞','🧀','🥐','🍩','🍪','🥕','🍅','🍆','🥦']},
- {n:'うちゅう',bg:'radial-gradient(circle at 30% 30%,#3a2a7a,#14104a 70%)',e:['🚀','🌙','⭐','🪐','🛸','☄️','👽','🌍','🌟','🔭','🛰️','🌞','✨','🌠','🧑‍🚀','🌑']},
- {n:'おもちゃ',bg:'linear-gradient(#ffe1ec,#ffd0a8)',e:['🧸','🎈','🎁','🚗','🎨','⚽','🪀','🎲','🧩','🪁','🥁','🎺','🚂','🪆','🎸','🏀']}];
+ {k:'garden',n:'おにわ',bg:'linear-gradient(#bfe6f5 0 38%,#a8dc8e 38%)',e:['🌷','🌻','🌼','🌸','🍄','🦋','🐝','🐞','🌳','🌲','🌿','🍀','🐿️','🐇','🥕','🐛']},
+ {k:'sea',n:'うみ',bg:'linear-gradient(#bfe9f7,#79c4e6 60%,#e8d59b 60%)',e:['🐠','🐟','🐡','🐙','🦀','🐚','🐳','🐬','🦑','🦐','⭐','🪸','🐢','🦈','🌊','⚓']},
+ {k:'kitchen',n:'キッチン',bg:'linear-gradient(#fff3d6,#f5dba5)',e:['🍎','🍐','🍊','🍋','🍌','🍇','🍓','🍞','🧀','🥐','🍩','🍪','🥕','🍅','🍆','🥦']},
+ {k:'space',n:'うちゅう',bg:'radial-gradient(circle at 30% 30%,#3a2a7a,#14104a 70%)',e:['🚀','🌙','⭐','🪐','🛸','☄️','👽','🌍','🌟','🔭','🛰️','🌞','✨','🌠','🧑‍🚀','🌑']},
+ {k:'toys',n:'おもちゃ',bg:'linear-gradient(#ffe1ec,#ffd0a8)',e:['🧸','🎈','🎁','🚗','🎨','⚽','🪀','🎲','🧩','🪁','🥁','🎺','🚂','🪆','🎸','🏀']}];
 const mul=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 let G=null, tmr=null;
 function makeStage(seed,lv){ const R=mul(seed), th=TH[(R()*TH.length)|0];
@@ -360,7 +365,7 @@ function itemHTML(it,side){ // side 'A' | 'B'
   if(side==='B'&&it.t){ if(it.t==='remove') return ''; if(it.t==='swap') e=it.e2;
     if(it.t==='color') st+='filter:hue-rotate(150deg) saturate(1.3);'; if(it.t==='size') st+='transform:translate(-50%,-50%) scale(1.32);'; if(it.t==='flip') st+='transform:translate(-50%,-50%) scaleX(-1);'; }
   return `<span class="${cls}" style="left:${it.x}%;top:${it.y}%;font-size:calc(var(--pw,300px)*${it.s});${st}">${e}</span>`; }
-function renderPanels(){ const g=G.g; ['A','B'].forEach(sd=>{ const el=$('pn'+sd); el.style.background=g.th.bg;
+function renderPanels(){ const g=G.g; ['A','B'].forEach(sd=>{ const el=$('pn'+sd); el.className='pn t_'+g.th.k; el.style.setProperty('--g',g.th.bg);
   el.innerHTML=g.items.map(it=>itemHTML(it,sd)).join('')+g.diffs.filter(d=>d.found).map(d=>ringHTML(d)).join('')+(G.hint!=null&&!g.diffs[G.hint].found?ringHTML(g.diffs[G.hint],'hint'):''); });
   fitPanels(); }
 const ringHTML=(d,c='')=>`<span class="ring ${c}" style="left:${d.x}%;top:${d.y}%;width:calc(var(--pw,300px)*${d.s*1.9});height:calc(var(--pw,300px)*${d.s*1.9})"></span>`;
