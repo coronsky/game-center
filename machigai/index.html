@@ -294,6 +294,35 @@ body[data-vt=retro] .it.s12{background-position:0.0000% 100.0000%}
 body[data-vt=retro] .it.s13{background-position:33.3333% 100.0000%}
 body[data-vt=retro] .it.s14{background-position:66.6667% 100.0000%}
 body[data-vt=retro] .it.s15{background-position:100.0000% 100.0000%}
+body[data-vt=neon] .pn{margin:12px 12px;width:calc(100% - 24px);border-radius:6px;box-shadow:none;overflow:visible}
+body[data-vt=neon] .pn::after{content:"";position:absolute;inset:-14px;pointer-events:none;border:14px solid transparent;border-image:url(img/frame_neon.webp) 70 fill;border-image-slice:70;z-index:5}
+body[data-vt=neon] .pn .it.sp{width:1.15em;height:1.15em;color:transparent;filter:drop-shadow(0 0 3px rgba(255,120,255,.55));background-repeat:no-repeat;background-size:400% 400%}
+body[data-vt=neon] .pn.t_garden{background:url(img/bg_neon_garden.webp) center/cover}
+body[data-vt=neon] .pn.t_garden .it.sp{background-image:url(img/sp_neon_garden.webp)}
+body[data-vt=neon] .pn.t_sea{background:url(img/bg_neon_sea.webp) center/cover}
+body[data-vt=neon] .pn.t_sea .it.sp{background-image:url(img/sp_neon_sea.webp)}
+body[data-vt=neon] .pn.t_kitchen{background:url(img/bg_neon_kitchen.webp) center/cover}
+body[data-vt=neon] .pn.t_kitchen .it.sp{background-image:url(img/sp_neon_kitchen.webp)}
+body[data-vt=neon] .pn.t_space{background:url(img/bg_neon_space.webp) center/cover}
+body[data-vt=neon] .pn.t_space .it.sp{background-image:url(img/sp_neon_space.webp)}
+body[data-vt=neon] .pn.t_toys{background:url(img/bg_neon_toys.webp) center/cover}
+body[data-vt=neon] .pn.t_toys .it.sp{background-image:url(img/sp_neon_toys.webp)}
+body[data-vt=neon] .it.s0{background-position:0.0000% 0.0000%}
+body[data-vt=neon] .it.s1{background-position:33.3333% 0.0000%}
+body[data-vt=neon] .it.s2{background-position:66.6667% 0.0000%}
+body[data-vt=neon] .it.s3{background-position:100.0000% 0.0000%}
+body[data-vt=neon] .it.s4{background-position:0.0000% 33.3333%}
+body[data-vt=neon] .it.s5{background-position:33.3333% 33.3333%}
+body[data-vt=neon] .it.s6{background-position:66.6667% 33.3333%}
+body[data-vt=neon] .it.s7{background-position:100.0000% 33.3333%}
+body[data-vt=neon] .it.s8{background-position:0.0000% 66.6667%}
+body[data-vt=neon] .it.s9{background-position:33.3333% 66.6667%}
+body[data-vt=neon] .it.s10{background-position:66.6667% 66.6667%}
+body[data-vt=neon] .it.s11{background-position:100.0000% 66.6667%}
+body[data-vt=neon] .it.s12{background-position:0.0000% 100.0000%}
+body[data-vt=neon] .it.s13{background-position:33.3333% 100.0000%}
+body[data-vt=neon] .it.s14{background-position:66.6667% 100.0000%}
+body[data-vt=neon] .it.s15{background-position:100.0000% 100.0000%}
 
 </style>
 </head>
@@ -409,7 +438,7 @@ function makeStage(seed,lv){ const R=mul(seed), th=TH[(R()*TH.length)|0];
   const pool=['remove','swap','color']; if(lv>=6) pool.push('size','flip'); if(lv>=14) pool.push('add');
   const diffs=[]; let hasAdd=0;
   for(const i of idx){ if(diffs.length>=nd) break; let ty=pool[(R()*pool.length)|0]; if(ty==='add'){ if(hasAdd) ty='color'; else hasAdd=1; }
-    const it=items[i]; it.t=ty; if(ty==='swap'){ let e2; do{e2=th.e[(R()*th.e.length)|0]}while(e2===it.e); it.e2=e2; }
+    const it=items[i]; it.t=ty; if(ty==='swap'){ let e2; do{e2=th.e[(R()*th.e.length)|0]}while(th.e.indexOf(e2)%8===th.e.indexOf(it.e)%8); it.e2=e2; }
     diffs.push({i,ty,x:it.x,y:it.y,s:it.s,found:false}); }
   return {th,items,diffs,seed,lv}; }
 function itemHTML(it,side){ // side 'A' | 'B'
