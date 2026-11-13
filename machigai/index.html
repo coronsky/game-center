@@ -236,19 +236,19 @@ body:is([data-vt=retro],[data-vt=neon]) .hud .box small{color:inherit;opacity:.7
 .mmLb{font-weight:900;font-size:13px;margin:12px 0 6px}
 body:is([data-vt=retro],[data-vt=neon]) .selGridB button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.25)}
 body[data-vt=retro] .selGridB button.on{background:#c0392b;border-color:#f2b134;color:#fff}body[data-vt=neon] .selGridB button.on{background:#ff4fd8;border-color:#fff;color:#fff}
-body[data-vt=natural] .pn.t_garden{background:url(img/bg_natural_garden.webp) center/cover}
-body[data-vt=natural] .pn.t_sea{background:url(img/bg_natural_sea.webp) center/cover}
-body[data-vt=natural] .pn.t_kitchen{background:url(img/bg_natural_kitchen.webp) center/cover}
-body[data-vt=natural] .pn.t_space{background:url(img/bg_natural_space.webp) center/cover}
-body[data-vt=natural] .pn.t_toys{background:url(img/bg_natural_toys.webp) center/cover}
+/*N*/body[data-vt=natural] .pn.t_garden{background:url(img/bg_natural_garden.webp) center/cover}
+/*N*/body[data-vt=natural] .pn.t_sea{background:url(img/bg_natural_sea.webp) center/cover}
+/*N*/body[data-vt=natural] .pn.t_kitchen{background:url(img/bg_natural_kitchen.webp) center/cover}
+/*N*/body[data-vt=natural] .pn.t_space{background:url(img/bg_natural_space.webp) center/cover}
+/*N*/body[data-vt=natural] .pn.t_toys{background:url(img/bg_natural_toys.webp) center/cover}
 body[data-vt=natural] .pn{margin:12px 12px;width:calc(100% - 24px);border-radius:6px;box-shadow:none;overflow:visible}
 body[data-vt=natural] .pn::after{content:"";position:absolute;inset:-13px;pointer-events:none;border:13px solid transparent;border-image:url(img/frame_natural.webp) 46 fill;border-image-slice:46;z-index:5}
 body[data-vt=natural] .pn .it.sp{width:1.15em;height:1.15em;font-size:calc(var(--pw,300px)*0);color:transparent;filter:drop-shadow(0 2px 2px rgba(0,0,0,.28));background-repeat:no-repeat;background-size:400% 400%}
-body[data-vt=natural] .pn.t_garden .it.sp{background-image:url(img/sp_garden.webp)}
-body[data-vt=natural] .pn.t_sea .it.sp{background-image:url(img/sp_sea.webp)}
-body[data-vt=natural] .pn.t_kitchen .it.sp{background-image:url(img/sp_kitchen.webp)}
-body[data-vt=natural] .pn.t_space .it.sp{background-image:url(img/sp_space.webp)}
-body[data-vt=natural] .pn.t_toys .it.sp{background-image:url(img/sp_toys.webp)}
+/*N*/body[data-vt=natural] .pn.t_garden .it.sp{background-image:url(img/sp_garden.webp)}
+/*N*/body[data-vt=natural] .pn.t_sea .it.sp{background-image:url(img/sp_sea.webp)}
+/*N*/body[data-vt=natural] .pn.t_kitchen .it.sp{background-image:url(img/sp_kitchen.webp)}
+/*N*/body[data-vt=natural] .pn.t_space .it.sp{background-image:url(img/sp_space.webp)}
+/*N*/body[data-vt=natural] .pn.t_toys .it.sp{background-image:url(img/sp_toys.webp)}
 body[data-vt=natural] .it.s0{background-position:0.0000% 0.0000%}
 body[data-vt=natural] .it.s1{background-position:33.3333% 0.0000%}
 body[data-vt=natural] .it.s2{background-position:66.6667% 0.0000%}
@@ -265,6 +265,35 @@ body[data-vt=natural] .it.s12{background-position:0.0000% 100.0000%}
 body[data-vt=natural] .it.s13{background-position:33.3333% 100.0000%}
 body[data-vt=natural] .it.s14{background-position:66.6667% 100.0000%}
 body[data-vt=natural] .it.s15{background-position:100.0000% 100.0000%}
+body[data-vt=retro] .pn{margin:12px 12px;width:calc(100% - 24px);border-radius:6px;box-shadow:none;overflow:visible}
+body[data-vt=retro] .pn::after{content:"";position:absolute;inset:-13px;pointer-events:none;border:13px solid transparent;border-image:url(img/frame_retro.webp) 46 fill;border-image-slice:46;z-index:5}
+body[data-vt=retro] .pn .it.sp{width:1.15em;height:1.15em;color:transparent;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));background-repeat:no-repeat;background-size:400% 400%}
+body[data-vt=retro] .pn.t_garden{background:url(img/bg_retro_garden.webp) center/cover}
+body[data-vt=retro] .pn.t_garden .it.sp{background-image:url(img/sp_retro_garden.webp)}
+body[data-vt=retro] .pn.t_sea{background:url(img/bg_retro_sea.webp) center/cover}
+body[data-vt=retro] .pn.t_sea .it.sp{background-image:url(img/sp_retro_sea.webp)}
+body[data-vt=retro] .pn.t_kitchen{background:url(img/bg_retro_kitchen.webp) center/cover}
+body[data-vt=retro] .pn.t_kitchen .it.sp{background-image:url(img/sp_retro_kitchen.webp)}
+body[data-vt=retro] .pn.t_space{background:url(img/bg_retro_space.webp) center/cover}
+body[data-vt=retro] .pn.t_space .it.sp{background-image:url(img/sp_retro_space.webp)}
+body[data-vt=retro] .pn.t_toys{background:url(img/bg_retro_toys.webp) center/cover}
+body[data-vt=retro] .pn.t_toys .it.sp{background-image:url(img/sp_retro_toys.webp)}
+body[data-vt=retro] .it.s0{background-position:0.0000% 0.0000%}
+body[data-vt=retro] .it.s1{background-position:33.3333% 0.0000%}
+body[data-vt=retro] .it.s2{background-position:66.6667% 0.0000%}
+body[data-vt=retro] .it.s3{background-position:100.0000% 0.0000%}
+body[data-vt=retro] .it.s4{background-position:0.0000% 33.3333%}
+body[data-vt=retro] .it.s5{background-position:33.3333% 33.3333%}
+body[data-vt=retro] .it.s6{background-position:66.6667% 33.3333%}
+body[data-vt=retro] .it.s7{background-position:100.0000% 33.3333%}
+body[data-vt=retro] .it.s8{background-position:0.0000% 66.6667%}
+body[data-vt=retro] .it.s9{background-position:33.3333% 66.6667%}
+body[data-vt=retro] .it.s10{background-position:66.6667% 66.6667%}
+body[data-vt=retro] .it.s11{background-position:100.0000% 66.6667%}
+body[data-vt=retro] .it.s12{background-position:0.0000% 100.0000%}
+body[data-vt=retro] .it.s13{background-position:33.3333% 100.0000%}
+body[data-vt=retro] .it.s14{background-position:66.6667% 100.0000%}
+body[data-vt=retro] .it.s15{background-position:100.0000% 100.0000%}
 
 </style>
 </head>
