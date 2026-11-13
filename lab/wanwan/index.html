@@ -948,7 +948,7 @@ function drawTrain(p,th){
   ctx.save();if(th.glow){ctx.shadowColor=th.glow;ctx.shadowBlur=12}
   if(p.al!==undefined)ctx.globalAlpha=p.al;
   const sc=p.sc||1;
-  if(im){drawImg(im,p.x,p.y-S*.08,Math.min(S,56)*.95*sc,Math.min(S,56)*.95*sc);ctx.restore();return}
+  if(im){drawImg(im,p.x,p.y-S*.04,S*.98*sc,S*.98*sc);ctx.restore();return}
   ctx.translate(p.x,p.y);ctx.rotate(p.a);
   ctx.fillStyle=th.body;rr(-17,-9,34,18,5);ctx.fill();
   ctx.fillStyle=th.front;rr(2,-7,15,14,4);ctx.fill();
