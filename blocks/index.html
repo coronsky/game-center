@@ -58,9 +58,9 @@ body{min-height:100vh;display:flex;justify-content:center;background:radial-grad
 @keyframes pop{0%{transform:scale(.8);opacity:0}100%{transform:none;opacity:1}}
 .card h2{margin:0 0 14px;text-align:center;font-size:21px;font-weight:900;color:var(--green-d)}
 .row{margin-bottom:14px}.row .lb{font-size:13px;font-weight:900;color:var(--ink2);margin-bottom:6px}
-.seg{display:flex;gap:6px;flex-wrap:wrap}
-.seg button{flex:1;min-width:0;border:2px solid #e2cfb2;background:#fff;border-radius:14px;padding:9px 4px;font:inherit;font-weight:700;font-size:14px;color:var(--ink);cursor:pointer;line-height:1.4}
-.seg button.on{background:var(--green);border-color:var(--green-d);color:#fff}
+.seg,.mseg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button,.mseg button{flex:1;min-width:0;border:2px solid #e2cfb2;background:#fff;border-radius:14px;padding:9px 4px;font:inherit;font-weight:700;font-size:14px;color:var(--ink);cursor:pointer;line-height:1.4}
+.seg button.on,.mseg button.on{background:var(--green);border-color:var(--green-d);color:#fff}
 .tg{display:flex;align-items:center;justify-content:space-between;padding:8px 2px;border-top:1px dashed #e3d3ba;font-weight:700;font-size:14px}
 .sw{width:48px;height:28px;border-radius:20px;background:#d8cbb6;position:relative;cursor:pointer;transition:background .2s;flex:none}
 .sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}
@@ -151,7 +151,7 @@ body:is([data-vt=retro],[data-vt=neon]) .gTitle{display:block}
 body:is([data-vt=retro],[data-vt=neon]) .bubble{top:36%}
 body:is([data-vt=retro],[data-vt=neon]) .card{color:inherit}
 body:is([data-vt=retro],[data-vt=neon]) :is(.lb,.rec,.subTitle,.help p,.note,.soloBox,.lastBox,.exitLbl){color:inherit!important;opacity:.9}
-body:is([data-vt=retro],[data-vt=neon]) .seg button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.25)}
+body:is([data-vt=retro],[data-vt=neon]) .seg button,.mseg button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.25)}
 body:is([data-vt=retro],[data-vt=neon]) .tg{border-color:rgba(255,255,255,.2)}
 body:is([data-vt=retro],[data-vt=neon]) :is(.stb,.prs button,.legend div,.quick button,.sizes button){background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25);color:inherit}
 body:is([data-vt=retro],[data-vt=neon]) :is(.stb small,.score .nm small,.hud .box small){color:inherit;opacity:.8}
@@ -172,7 +172,7 @@ body[data-vt=retro] .foot{color:#e0b98a}body[data-vt=retro] .foot b{color:#ffd36
 body[data-vt=retro] :is(.boardWrap,.panel,.frame){background:linear-gradient(#8a2a1d,#55190f);border:3px solid #f2b134;box-shadow:0 0 0 3px #5a1a10,0 0 14px rgba(255,154,46,.3)}
 body[data-vt=retro] .card{background:linear-gradient(rgba(42,18,8,.9),rgba(42,18,8,.94)),url(../img/retro/bg_modal.webp) center/cover;border:3px solid #f2b134;color:#fbe9c8;box-shadow:0 0 20px rgba(255,154,46,.5)}
 body[data-vt=retro] .card h2{color:#ffd36b;font-family:"Mochiy Pop One";font-weight:400}
-body[data-vt=retro] .seg button.on{background:#c0392b;border-color:#f2b134;color:#fff}
+body[data-vt=retro] .seg button.on,body[data-vt=retro] .mseg button.on{background:#c0392b;border-color:#f2b134;color:#fff}
 body[data-vt=retro] .result .msg{color:#ffd36b}
 /* NEON */
 body[data-vt=neon]{--paper:#0d0626;--ink:#fff;--ink2:#c9b8ff;background:#0d0626;color:#fff}
@@ -190,7 +190,7 @@ body[data-vt=neon] .foot{color:#c9b8ff}body[data-vt=neon] .foot b{color:#fff}
 body[data-vt=neon] :is(.boardWrap,.panel,.frame){background:rgba(10,4,35,.65);border:2px solid #ff4fd8;box-shadow:0 0 16px #ff4fd8,0 0 34px rgba(63,240,255,.3),inset 0 0 16px rgba(255,79,216,.3)}
 body[data-vt=neon] .card{background:linear-gradient(rgba(13,6,38,.86),rgba(13,6,38,.92)),url(../img/neon/bg_modal.webp) center/cover;border:1.5px solid #3ff0ff;color:#fff;box-shadow:0 0 22px rgba(255,79,216,.5)}
 body[data-vt=neon] .card h2{color:#fff;font-family:"DotGothic16";font-weight:400;text-shadow:0 0 8px #ff4fd8}
-body[data-vt=neon] .seg button.on{background:#ff4fd8;border-color:#fff;color:#fff;box-shadow:0 0 10px #ff4fd8}
+body[data-vt=neon] .seg button.on,body[data-vt=neon] .mseg button.on{background:#ff4fd8;border-color:#fff;color:#fff;box-shadow:0 0 10px #ff4fd8}
 body[data-vt=neon] .result .msg{color:#3ff0ff;text-shadow:0 0 8px #3ff0ff}
 
 /* ---- game specific ---- */
@@ -274,6 +274,9 @@ body[data-vt=neon] .panel .in{background:none;box-shadow:none;border-radius:0}
 body[data-vt=neon] .tray{padding:0;border:solid transparent;border-width:10px 10px;border-image:url(../img/pz/neon_tray.webp) 34 32 fill/10px 10px stretch;margin:8px 4px 0}
 .tray{align-items:flex-start;align-content:flex-start}.pc{align-content:start;align-self:flex-start}.bc{border-radius:0}.pc i{border-radius:0}.pc{background:transparent!important;border-radius:10px}.pc.sel{background:rgba(255,230,120,.35)!important}
 #tiers{gap:3px;overflow:visible}#tiers button{flex:1 1 0;min-width:0;padding:7px 1px;font-size:clamp(8px,2.55vw,12px);border-radius:12px}
+
+.selGridB{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.selGridB button{padding:7px 0!important;line-height:1.25;font-size:15px!important}.selGridB button small{display:block;font-size:10px;font-weight:700;opacity:.85;min-height:12px}
+.mmLb{font-weight:900;font-size:13px;margin:12px 0 6px}.mseg button.on:active{transform:none}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -285,12 +288,18 @@ body[data-vt=neon] .tray{padding:0;border:solid transparent;border-width:10px 10
   <div class="lvRow" id="lvs"></div>
   <div class="panel"><div class="in" style="padding:6px"><div id="bd"></div></div></div>
   <div class="tray" id="tray"></div>
-  <div class="lvRow"><button id="bRot">↻ 回転</button><button id="bFlip">⇋ 裏返す</button><button id="bFs">⛶ 全画面</button></div>
+  <div class="lvRow"><button id="bRot">↻ 回転</button><button id="bFlip">⇋ 裏返す</button><button id="bFs">⛶ 全画面</button><button id="bMenu">🎮 メニュー</button></div>
 <button id="fsX" style="display:none">✕ もどる</button>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
 </div>
+<div class="modal" id="mMenu"><div class="card" style="text-align:center"><h2>🧩 ピタッとパズル</h2>
+  <div class="mmLb">あそびかたをえらぼう</div><div class="mseg" id="mMode"><button data-m="stage">ステージ</button><button data-m="random">ランダム</button></div>
+  <div class="mmLb">おおきさ</div><div class="mseg" id="mSize" style="flex-wrap:wrap"></div>
+  <div class="acts" style="margin-top:14px"><button class="btn g" id="mGo">スタート！</button></div>
+  <div class="acts" style="margin-top:8px" id="mSelRow"><button class="btn c" id="mSelBtn">🗺 ステージセレクト</button></div></div></div>
+<div class="modal" id="mSel"><div class="card"><h2 id="mSelT">🗺 ステージをえらぶ</h2><div class="selGridB" id="selGrid"></div><div class="acts"><button class="btn g" data-close="mSel">とじる</button></div></div></div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 ピタッとパズル</h2><p>下のブロックを全部使って、<b>わくをすきまなくうめよう</b>！</p>
 <p>👆 下のブロックを<b>ドラッグして、わくに持っていって離す</b>と置けます（近くの合う場所にピタッと吸いつきます）。向きを変えたいときは、ブロックをタップ → ↻回転・⇋裏返し。<b>もう一度タップ</b>、またはブロックを持ったまま<b>もう1本の指でタップ</b>（PCは右クリックかRキー）でも回転します。</p>
 <p>置いたブロックは、ドラッグで置きなおし・下にもどす、またはタップで下にもどせます。全100ステージ（5段階×20）＋♾️エンドレス（毎回ちがう問題）。必ずとけるよ。</p>
@@ -496,6 +505,19 @@ $('bUndo').onclick=()=>{ const h=hist.pop(); if(!h) return; if(h[0]==='add'){ co
   else { const [,k,at]=h; cellsAt(pieces[k],at).forEach(c=>place[c]=k); pieces[k].at=at; } SFX.tap(); draw(); };
 $('bReset').onclick=()=>{actx();SFX.tap();if(endT>=0) loadEnd(endT); else load(P.cur)}; $('bAgain').onclick=()=>{closeM('mRes'); if(endT>=0) loadEnd(endT); else load(P.cur>=NST-1?0:P.cur+1)};
 addEventListener('resize',draw); if(P.cur>=NST) P.cur=0; load(P.cur);
+let mm='stage',mt=0;
+function menuRefresh(){ document.querySelectorAll('#mMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===mm));
+  $('mSize').innerHTML=TI.map((T,i)=>`<button data-t="${i}" class="${i===mt?'on':''}" style="flex:1 0 30%">${T.z}×${T.z}<small style="display:block;font-size:10px;opacity:.85">${T.n0}</small></button>`).join('');
+  $('mSize').querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();mt=+b.dataset.t;menuRefresh()});
+  $('mSelRow').style.display=mm==='stage'?'':'none'; $('mGo').textContent=mm==='stage'?'スタート！（つづきから）':'スタート！'; }
+document.querySelectorAll('#mMode button').forEach(b=>b.onclick=()=>{actx();SFX.tap();mm=b.dataset.m;menuRefresh()});
+function openMenu(){ mt=endT>=0?endT:((P.cur/ST)|0); mm=endT>=0?'random':'stage'; menuRefresh(); openM('mMenu'); }
+$('bMenu').onclick=()=>{actx();SFX.tap();openMenu()};
+$('mGo').onclick=()=>{actx();SFX.tap();closeM('mMenu'); if(mm==='random') loadEnd(mt); else { const f=Array.from({length:ST},(_,j)=>mt*ST+j).find(i=>!P.done[i]); load(f==null?mt*ST:f); } };
+$('mSelBtn').onclick=()=>{actx();SFX.tap();openSel()};
+function openSel(){ $('mSelT').textContent='🗺 '+TI[mt].n+' のステージ'; $('selGrid').innerHTML=Array.from({length:ST},(_,j)=>{const i=mt*ST+j;return `<button data-i="${i}" class="${i===P.cur&&endT<0?'on':''}">${j+1}<small>${P.done[i]?'★':'&nbsp;'}</small></button>`}).join('');
+  $('selGrid').querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();closeM('mSel');closeM('mMenu');load(+b.dataset.i)}); openM('mSel'); }
+openMenu();
 
 
 ;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();
