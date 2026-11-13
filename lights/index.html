@@ -279,7 +279,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 ライツアウト</h2><p>ワンコたちが寝られるように、<b>全部のライト💡を消そう</b>！</p>
 <p>👆 マスをタップすると、そのマスと<b>上下左右</b>のライトが切りかわります（ついている⇔消えている）。</p>
-<p>🎮 <b>ステージ</b>は20面、<b>ランダム</b>は3×3〜6×6を好きなだけ。</p>
+<p>🎮 <b>ステージ</b>は50面、<b>ランダム</b>は3×3〜6×6を好きなだけ。</p>
 <p>★は手数で決まるよ。<b>最短の手数</b>で消せたら★3つ！💡ヒントを使うと★2つまで。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -393,7 +393,9 @@ function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<but
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
 
 
-const SIZES=[3,4,5,6],SG=[3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,6],SMIN=[2,2,3,3,3,4,4,5,6,4,5,6,7,8,5,6,7,8,9,10],NST=SG.length;
+const SIZES=[3,4,5,6],SG=[],SMIN=[];
+[[3,5,2,4],[4,10,3,6],[5,15,4,10],[6,20,5,13]].forEach(([n,c,lo,hi])=>{for(let i=0;i<c;i++){SG.push(n);SMIN.push(Math.round(lo+(hi-lo)*i/(c-1)))}});
+const NST=SG.length;
 const P=Object.assign({stars:{},rsz:1},store.get('prog2',{}));
 let mode='stage',stage=0,N,M,on,mv=0,hist=[],hintI=-1,done=false,hintUsed=false;
 const rng=seed=>()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
