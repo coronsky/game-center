@@ -263,6 +263,41 @@ html body .app .vtBtn,html body .app .homeBtn{width:90px!important;height:30px!i
 html body[data-vt=natural] .app .vtBtn{background-image:url(../img/ui/natural_skin.webp?v=2)!important}html body[data-vt=natural] .app .homeBtn{background-image:url(../img/ui/natural_home.webp?v=2)!important}
 html body[data-vt=retro] .app .vtBtn{background-image:url(../img/ui/retro_skin.webp?v=2)!important}html body[data-vt=retro] .app .homeBtn{background-image:url(../img/ui/retro_home.webp?v=2)!important}
 html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../img/ui/neon_home.webp?v=2)!important}
+
+/* 新UI部品（盤面・ボタン・プレート・バー・ダイアログ） */
+body[data-vt=natural]{--lb:url(assets/ui_natural_board.webp);--ar:1.0298;--bx:12.171%;--by:11.293%;--bw:75.658%}
+body[data-vt=retro]{--lb:url(assets/ui_retro_board.webp);--ar:1.0106;--bx:12.972%;--by:12.019%;--bw:73.816%}
+body[data-vt=neon]{--lb:url(assets/ui_neon_board.webp);--ar:.9909;--bx:10.724%;--by:11.332%;--bw:78.553%}
+body[data-vt]{--uP:url(assets/ui_natural_btnP.webp);--uN:url(assets/ui_natural_btnN.webp);--uD:url(assets/ui_natural_btnD.webp);--rOn:url(assets/ui_natural_rOn.webp);--rOff:url(assets/ui_natural_rOff.webp);--uPl:url(assets/ui_natural_plate.webp);--uBar:url(assets/ui_natural_bar.webp);--uCard:url(assets/ui_natural_card.webp);--tP:#fff;--tN:#5a3520;--tD:#efe6da;--tOn:#5a3520;--tOff:#7a5a3c;--tCard:#4a3322;--sh:0 1px 2px rgba(90,50,20,.55)}
+body[data-vt=retro]{--uP:url(assets/ui_retro_btnP.webp);--uN:url(assets/ui_retro_btnN.webp);--uD:url(assets/ui_retro_btnD.webp);--rOn:url(assets/ui_retro_rOn.webp);--rOff:url(assets/ui_retro_rOff.webp);--uPl:url(assets/ui_retro_plate.webp);--uBar:url(assets/ui_retro_bar.webp);--uCard:url(assets/ui_retro_card.webp);--tP:#ffe7b0;--tN:#7a2a10;--tD:#f0e0cc;--tOn:#5a2208;--tOff:#f3dcc0;--tCard:#4a2412;--sh:0 1px 2px rgba(60,10,0,.6)}
+body[data-vt=neon]{--uP:url(assets/ui_neon_btnP.webp);--uN:url(assets/ui_neon_btnN.webp);--uD:url(assets/ui_neon_btnD.webp);--rOn:url(assets/ui_neon_rOn.webp);--rOff:url(assets/ui_neon_rOff.webp);--uPl:url(assets/ui_neon_plate.webp);--uBar:url(assets/ui_neon_bar.webp);--uCard:url(assets/ui_neon_card.webp);--tP:#fff;--tN:#fff;--tD:#e4e0ee;--tOn:#fff;--tOff:#fff;--tCard:#fff;--sh:0 0 6px rgba(255,255,255,.55)}
+html body[data-vt] :is(.btn,.lvRow button,.seg button,.lsg:not(.selGrid) button){border:solid transparent!important;border-width:13px 19px!important;border-image:var(--uN) 42 62 fill/13px 19px stretch!important;background:none!important;box-shadow:none!important;border-radius:0!important;padding:0 2px!important;min-height:0;color:var(--tN)!important;text-shadow:none!important;font-family:inherit;font-weight:900;line-height:1.25;filter:none!important;transform-origin:center}
+html body[data-vt] :is(.btn.g,.lvRow button.on,.seg button.on,.lsg:not(.selGrid) button.on){border-image-source:var(--uP)!important;color:var(--tP)!important;text-shadow:var(--sh)!important}
+html body[data-vt] :is(.btn,.lvRow button):disabled{border-image-source:var(--uD)!important;color:var(--tD)!important;opacity:1!important}
+html body[data-vt] :is(.lvRow button){border-width:11px 17px!important;border-image-width:11px 17px!important;font-size:13px}
+html body[data-vt] .lvRow button i{color:#ffd24a;text-shadow:0 1px 1px rgba(0,0,0,.45)}
+html body[data-vt] .btn:active,html body[data-vt] .lvRow button:active{transform:scale(.95)}
+html body[data-vt] .acts .btn{padding:0 2px!important}
+html body[data-vt] .hud{gap:3px;margin-left:4px;margin-right:4px}
+html body[data-vt] .hud .box{background:none!important;border:solid transparent!important;border-width:13px 22px!important;border-image:var(--uPl) 42 56 fill/13px 22px stretch!important;box-shadow:none!important;border-radius:0!important;padding:0!important;color:var(--tN)!important;display:flex;align-items:baseline;justify-content:center;gap:4px;white-space:nowrap}
+html body[data-vt] .hud .box small{display:inline!important;font-size:10px;color:inherit!important;opacity:.85}
+html body[data-vt] .hud .box b{font-size:clamp(14px,4.4vw,18px);color:inherit!important;text-shadow:none!important;border:0!important}
+html body[data-vt=neon] .hud .box,html body[data-vt=neon] .hud .box b{color:#fff!important}html body[data-vt=neon] .hud .box b{text-shadow:0 0 6px #3ff0ff!important}
+html body[data-vt=retro] .hud .box{color:#7a2a10!important}
+html body[data-vt] .status{background:none!important;border:solid transparent!important;border-width:13px 30px!important;border-image:var(--uBar) 30 70 fill/13px 30px stretch!important;border-radius:0!important;box-shadow:none!important;width:90%;padding:0!important;color:var(--tN)!important;text-shadow:none!important}
+html body[data-vt=neon] .status{color:#fff!important;text-shadow:0 0 6px #ff4fd8!important}
+html body[data-vt=retro] .status{color:#ffd36b!important}
+html body[data-vt] .card{background:none!important;border:solid transparent!important;border-width:64px 48px 52px!important;border-image:var(--uCard) 78 58 62 fill/64px 48px 52px stretch!important;border-radius:0!important;box-shadow:none!important;padding:0 2px 4px!important;color:var(--tCard)!important;max-width:410px;filter:drop-shadow(0 10px 18px rgba(0,0,0,.4))}
+html body[data-vt] .card h2{color:inherit!important;margin:0 0 10px!important;text-shadow:none!important}
+html body[data-vt=neon] .card h2{text-shadow:0 0 8px #ff4fd8!important}
+html body[data-vt] .card .tg{border-top-color:rgba(120,90,60,.35)}
+html body[data-vt=neon] .card .tg{border-top-color:rgba(255,255,255,.25)}
+html body[data-vt] .gbtns{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0 6px}
+html body[data-vt] .gbtns .btn{font-size:14px}
+html body[data-vt] .lsg.selGrid{gap:5px}
+html body[data-vt] .lsg.selGrid button{border:0!important;border-image:none!important;border-radius:0!important;background:var(--rOff) center/100% 100% no-repeat!important;aspect-ratio:1;padding:0!important;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--tOff)!important;font-size:14px!important;box-shadow:none!important;text-shadow:none!important}
+html body[data-vt] .lsg.selGrid button.on{background-image:var(--rOn)!important;color:var(--tOn)!important}
+html body[data-vt] .lsg.selGrid button small{font-size:9px;min-height:0;line-height:1}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
