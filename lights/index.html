@@ -109,12 +109,17 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 .dog.c{background-image:var(--colon)}.dog.m{background-image:var(--moon)}
 .help p{font-size:14px;line-height:1.65;margin:0 0 8px}
 
-#bd{display:grid;gap:6px;margin:10px auto;touch-action:manipulation}
-.lc{aspect-ratio:1;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:min(8vw,34px);cursor:pointer;transition:background .15s,transform .1s;background:#d9ccb4;box-shadow:inset 0 -3px 0 rgba(0,0,0,.15)}
-.lc.on{background:radial-gradient(circle,#fff6c8,#ffd23a);box-shadow:0 0 12px rgba(255,200,60,.8),inset 0 -3px 0 rgba(0,0,0,.1)}
-.lc:active{transform:scale(.92)}.lc.hint{outline:3px dashed #e0452f;outline-offset:-4px}
-body[data-vt=retro] .lc{background:#4a2410}body[data-vt=retro] .lc.on{background:radial-gradient(circle,#ffe7b0,#f2b134)}
-body[data-vt=neon] .lc{background:#1a0e50;box-shadow:inset 0 0 0 1px #3a2a7a}body[data-vt=neon] .lc.on{background:radial-gradient(circle,#fff,#ff4fd8);box-shadow:0 0 14px #ff4fd8}
+/* 新UI：盤面フレーム＋ライト（3スキン共通の仕組み） */
+body{--lb:url(assets/natural_board.webp);--lon:url(assets/natural_on.webp);--loff:url(assets/natural_off.webp);--ar:1.0346;--bx:8.153%;--by:7.622%;--bw:83.89%}
+body[data-vt=retro]{--lb:url(assets/retro_board.webp);--lon:url(assets/retro_on.webp);--loff:url(assets/retro_off.webp);--ar:1.006;--bx:9.719%;--by:9.778%;--bw:80.361%}
+body[data-vt=neon]{--lb:url(assets/neon_board.webp);--lon:url(assets/neon_on.webp);--loff:url(assets/neon_off.webp);--ar:1.0433;--bx:8.399%;--by:8.144%;--bw:83.597%}
+.panel{position:relative;width:min(96%,520px);aspect-ratio:var(--ar);margin:10px auto 0!important;padding:0!important;border:0!important;border-radius:0!important;background:var(--lb) center/100% 100% no-repeat!important;box-shadow:none!important;filter:drop-shadow(0 8px 14px rgba(0,0,0,.28))}
+.panel .in{position:absolute;inset:0;padding:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}
+#bd{position:absolute;left:var(--bx);top:var(--by);width:var(--bw);display:grid;gap:1.2%;touch-action:manipulation}
+.lc{aspect-ratio:1;border-radius:17%;cursor:pointer;background:var(--loff) center/100% 100% no-repeat;transition:transform .12s,filter .2s}
+.lc.on{background-image:var(--lon);filter:drop-shadow(0 0 6px rgba(255,190,60,.45))}
+body[data-vt=retro] .lc.on{filter:drop-shadow(0 0 7px rgba(255,140,30,.5))}body[data-vt=neon] .lc.on{filter:drop-shadow(0 0 8px rgba(255,79,216,.6))}
+.lc:active{transform:scale(.93)}.lc.hint{outline:3px dashed #e0452f;outline-offset:-3px}
 body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
 body[data-vt=neon] .pkRow button{background:rgba(255,255,255,.06);border-color:#5a3bb0;color:#fff}body[data-vt=neon] .pkRow button.on{border-color:#ff4fd8;background:rgba(255,79,216,.25);box-shadow:0 0 12px #ff4fd8}
 
@@ -373,8 +378,8 @@ let N,K,on,sol,mv=0,hist=[],hintI=-1,done=false;
 function press(a,i){ const x=i%N,y=(i/N)|0; [[0,0],[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{const X=x+dx,Y=y+dy; if(X>=0&&X<N&&Y>=0&&Y<N) a[Y*N+X]^=1}); }
 function load(i){ P.cur=i; store.set('prog',P); [N,K]=LV[i]; do{ on=new Array(N*N).fill(0); sol=new Set(); while(sol.size<K) sol.add((Math.random()*N*N)|0); sol.forEach(j=>press(on,j)); }while(on.every(v=>!v));
   mv=0; hist=[]; hintI=-1; done=false; $('stN').textContent=(i+1)+'/'+LV.length; $('par').textContent=K; lvRow($('lvs'),LV.map(l=>l[0]+'×'+l[0]),i,k=>P.stars[k]||0,load); draw(); setStatus('ライトを全部消そう'); setTimeout(()=>sayText(2,'まぶしい〜♪'),300); }
-function draw(){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${N},1fr)`; bd.style.width=`min(${N*17}vw,${N*72}px)`; bd.innerHTML='';
-  for(let i=0;i<N*N;i++){ const e=document.createElement('div'); e.className='lc'+(on[i]?' on':'')+(i===hintI?' hint':''); e.textContent=on[i]?'💡':'🐾'; e.onclick=()=>tap(i); bd.appendChild(e); }
+function draw(){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${N},1fr)`; bd.innerHTML='';
+  for(let i=0;i<N*N;i++){ const e=document.createElement('div'); e.className='lc'+(on[i]?' on':'')+(i===hintI?' hint':''); e.onclick=()=>tap(i); bd.appendChild(e); }
   $('mv').textContent=mv; $('bUndo').disabled=!hist.length; }
 function tap(i){ if(done) return; actx(); hist.push([on.slice(),new Set(sol)]); press(on,i); if(sol.has(i)) sol.delete(i); else sol.add(i); mv++; hintI=-1; SFX.tap(); draw();
   if(on.every(v=>!v)){ done=true; const s=mv<=K?3:mv<=K*2?2:1; P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog',P); report('clear',{stars:s}); SFX.win(); confetti(['🌙','🐾','✨']);
