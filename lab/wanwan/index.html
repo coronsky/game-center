@@ -1092,6 +1092,7 @@ function loop(t){
 
 /* ---------- UI ---------- */
 function refresh(){
+  {const sb=$('#mSelBtn');if(sb)sb.style.display=mode==='stage'?'':'none'}
   document.querySelectorAll('#sizes button').forEach(b=>b.classList.toggle('on',b.dataset.v===sizeMode));
   document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.v===mode));
   const mx=Math.min(NST,(prog[sizeMode]||0)+1);$('#stPrev').style.opacity=G.stage>1?1:.35;$('#stNext').style.opacity=G.stage<mx?1:.35;
@@ -1105,7 +1106,7 @@ $('#sizes').onclick=e=>{const v=e.target.dataset.v;if(v){sizeMode=v;store.set('w
 $('#modes').onclick=e=>{const v=e.target.dataset.v;if(v){mode=v;store.set('wanwan_mode',v);refresh();hud()}};
 let menuFirst=true,selFromMenu=false;
 function openMenu(first){menuFirst=!!first;$('#mMenu .xBtn').style.display=first?'none':'';$('#mBackMenu').style.display=first?'none':'';refresh();hud();$('#mMenu').classList.add('show')}
-$('#mSelBtn').onclick=()=>{mode='stage';store.set('wanwan_mode','stage');refresh();hud();$('#mMenu').classList.remove('show');selFromMenu=true;openSel()};
+$('#mSelBtn').onclick=()=>{$('#mMenu').classList.remove('show');selFromMenu=true;openSel()};
 $('#mGoMenu').onclick=()=>{$('#mMenu').classList.remove('show');relaunch()};
 $('#mBackMenu').onclick=()=>$('#mMenu').classList.remove('show');
 $('#bMenu').onclick=()=>openMenu(false);
