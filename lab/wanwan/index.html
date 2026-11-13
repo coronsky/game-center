@@ -409,7 +409,7 @@ body[data-vt=neon] .tile.pf{background-image:url(assets/ui/neon_t4.webp);padding
   <div class="lvRow" id="modes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div>
   <div class="lvRow" id="sizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div>
   <div class="lvRow" id="diffs"><button data-v="easy">かんたん</button><button data-v="normal">ふつう</button><button data-v="hard">むずかしい</button></div>
-<div class="acts" style="flex-direction:column"><button class="btn g" id="mGoMenu">スタート！</button><button class="btn c" id="mRankBtn" style="margin-top:8px">🏆ランキング</button><button class="btn c" id="mBackMenu" style="margin-top:8px">もどる</button></div></div></div>
+<div class="acts" style="flex-direction:column"><button class="btn g" id="mGoMenu">スタート！</button><button class="btn c" id="mSelBtn" style="margin-top:8px">🗺ステージセレクト</button><button class="btn c" id="mRankBtn" style="margin-top:8px">🏆ランキング</button><button class="btn c" id="mBackMenu" style="margin-top:8px">もどる</button></div></div></div>
 <div class="modal" id="mRank"><div class="card result"><button class="xBtn" aria-label="閉じる">×</button><h2>ランキング</h2><div class="lvRow" id="rkModes"><button data-v="stage">ステージ</button><button data-v="random">ランダム</button></div><div class="lvRow" id="rkSizes"><button data-v="4">4×4</button><button data-v="5">5×5</button><button data-v="6">6×6</button></div><div id="rkList" style="margin:8px 2px;font-size:13px;font-weight:700"></div><div class="acts"><button class="btn c" id="rkX">とじる</button></div></div></div>
 <div class="modal" id="mSel"><div class="card result"><button class="xBtn" aria-label="閉じる">×</button><h2>ステージせんたく</h2><div id="selG" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0"></div><div class="acts"><button class="btn c" id="selX">とじる</button></div></div></div>
 <div class="modal" id="mMsg"><div class="card result"><button class="xBtn" aria-label="閉じる">×</button>
@@ -1103,7 +1103,9 @@ $('#diffs').onclick=e=>{const v=e.target.dataset.v;if(v){diff=v;store.set('wanwa
 function relaunch(){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.rs=0;G.stage=1;newStage();refresh()}
 $('#sizes').onclick=e=>{const v=e.target.dataset.v;if(v){sizeMode=v;store.set('wanwan_size',v);refresh();hud()}};
 $('#modes').onclick=e=>{const v=e.target.dataset.v;if(v){mode=v;store.set('wanwan_mode',v);refresh();hud()}};
-function openMenu(first){$('#mMenu .xBtn').style.display=first?'none':'';$('#mBackMenu').style.display=first?'none':'';refresh();hud();$('#mMenu').classList.add('show')}
+let menuFirst=true,selFromMenu=false;
+function openMenu(first){menuFirst=!!first;$('#mMenu .xBtn').style.display=first?'none':'';$('#mBackMenu').style.display=first?'none':'';refresh();hud();$('#mMenu').classList.add('show')}
+$('#mSelBtn').onclick=()=>{mode='stage';store.set('wanwan_mode','stage');refresh();hud();$('#mMenu').classList.remove('show');selFromMenu=true;openSel()};
 $('#mGoMenu').onclick=()=>{$('#mMenu').classList.remove('show');relaunch()};
 $('#mBackMenu').onclick=()=>$('#mMenu').classList.remove('show');
 $('#bMenu').onclick=()=>openMenu(false);
@@ -1124,9 +1126,9 @@ function openSel(){
   const mx=Math.min(NST,(prog[sizeMode]||0)+1),g=$('#selG');g.innerHTML='';
   for(let i=1;i<=NST;i++){const b=document.createElement('button');const lock=i>mx,done=i<=(prog[sizeMode]||0);
     b.className='tile '+(lock?'lk':isPerf(sizeMode,i)?'pf':i===G.stage?'cur':done?'ck':'');b.innerHTML=lock?'':'<span>'+i+'</span><i class="ts">'+(done||starsOf(sizeMode,i)?starTxt(starsOf(sizeMode,i)||1):'')+'</i>';
-    if(!lock)b.onclick=()=>{$('#mSel').classList.remove('show');G.state='ready';G.score=0;G.stage=i;newStage();refresh()};g.appendChild(b)}
+    if(!lock)b.onclick=()=>{selFromMenu=false;$('#mSel').classList.remove('show');G.state='ready';G.score=0;G.stage=i;newStage();refresh()};g.appendChild(b)}
   $('#mSel').classList.add('show')}
-$('#stTxt').onclick=()=>{if(G.state!=='clearing')openSel()};$('#selX').onclick=()=>$('#mSel').classList.remove('show');
+$('#stTxt').onclick=()=>{if(G.state!=='clearing')openSel()};$('#selX').onclick=()=>{$('#mSel').classList.remove('show');if(selFromMenu){selFromMenu=false;openMenu(menuFirst)}};
 $('#stPrev').onclick=()=>{if(G.stage>1){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.stage--;newStage();refresh()}};
 $('#stNext').onclick=()=>{if(G.stage<Math.min(NST,(prog[sizeMode]||0)+1)){$('#mMsg').classList.remove('show');G.state='ready';G.score=0;G.stage++;newStage();refresh()}};
 $('#bGo').onclick=()=>{actx();go()};
@@ -1158,7 +1160,7 @@ function loadSlide(){if(slideBuf||slideLoading)return;const a=actx();if(!a)retur
 function slideSnd(d,v,rate){if(!snd||!slideBuf)return false;const a=actx();if(!a)return false;const s=a.createBufferSource(),g=a.createGain();
   s.buffer=slideBuf;s.playbackRate.value=rate||1;g.gain.value=v||.9;s.connect(g);g.connect(a.destination);s.start(a.currentTime+d);return true}
 window.SFX={
-  tap(n){loadSlide();n=n||1;let ok=false;for(let i=0;i<Math.min(n,3);i++)ok=slideSnd(i*.11,.9-i*.1,.97+Math.random()*.06+i*.03)||ok;if(!ok){noise(0,.05,'bandpass',900,500,.18,2);glide(190,120,0,.07,'sine',.2)}},
+  tap(n){loadSlide();n=n||1;let ok=false;for(let i=0;i<Math.min(n,3);i++)ok=slideSnd(i*.11,.38-i*.06,.97+Math.random()*.06+i*.03)||ok;if(!ok){noise(0,.05,'bandpass',900,500,.18,2);glide(190,120,0,.07,'sine',.2)}},
   cd(){glide(660,660,0,.12,'triangle',.16)},
   go(){glide(523,523,0,.28,'triangle',.16,.03);glide(659,659,.02,.28,'triangle',.12,.03);glide(523,523,.32,.5,'triangle',.16,.03);glide(659,659,.34,.5,'triangle',.12,.03);noise(.0,.18,'highpass',2500,1500,.05)},
   chug(){noise(0,.06,'bandpass',1400,900,.04,1.5)},
