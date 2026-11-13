@@ -462,7 +462,9 @@ function startDrag(k,ev,grab){ const p=pieces[k], g=geom(); const fromB=!!grab; 
   d.grab=grab||null; d.lift=(!fromB&&ev.pointerType!=='mouse')?Math.round(g.cs*.9):0;
   d.el.style.transform='scale(1.07)'; d.el.style.transformOrigin=(d.grab?d.grab.x+'px '+d.grab.y+'px':'50% 50%');
   try{navigator.vibrate&&navigator.vibrate(10)}catch(_){}
-  document.querySelectorAll('#tray .pc')[k]&&document.querySelectorAll('#tray .pc')[k].classList.add('lifted'); moveDrag(ev); }
+  document.querySelectorAll('#tray .pc')[k]&&document.querySelectorAll('#tray .pc')[k].classList.add('lifted');
+  const L=d.lift, tcs=pieces.length>9?13:16, sc0=fromB?1:Math.max(.25,Math.min(1,tcs*(parseFloat(document.body.style.zoom)||1)/g.cs)); d.lift=0; d.el.style.transition='none'; moveDrag(ev); d.el.style.transform='scale('+sc0+')'; void d.el.offsetWidth;
+  d.lift=L; d.el.style.transition='transform .2s cubic-bezier(.2,1.5,.4,1),left .06s,top .2s cubic-bezier(.2,1.2,.4,1)'; moveDrag(ev); }
 function dragTarget(d,gx,gy){ const p=pieces[d.k], fx=(gx-d.g.ox)/d.g.pitch, fy=(gy-d.g.oy)/d.g.pitch, bx0=Math.round(fx), by0=Math.round(fy), a0=p.c[0]; let best=null,bd=9;
   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){ const bx=bx0+dx,by=by0+dy; const dist=Math.hypot(bx-fx,by-fy); if(dist>=bd) continue; const X=bx+a0[0],Y=by+a0[1]; if(X<0||X>=W||Y<0||Y>=H) continue; const at=Y*W+X; if(fits(d.k,at)){ bd=dist; best=at; } }
   return best; }
