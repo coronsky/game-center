@@ -324,6 +324,9 @@ body[data-vt=neon] .it.s13{background-position:33.3333% 100.0000%}
 body[data-vt=neon] .it.s14{background-position:66.6667% 100.0000%}
 body[data-vt=neon] .it.s15{background-position:100.0000% 100.0000%}
 
+.pn{touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+html,body{overscroll-behavior:none}
+
 </style>
 </head>
 <body data-vt="natural"><div class="app">
@@ -469,7 +472,11 @@ function tap(ev,side){ if(!G||G.over) return; actx(); const el=$('pn'+side), r=e
   if(d){ d.found=true; G.found++; G.hint=null; SFX.ok(); try{navigator.vibrate&&navigator.vibrate(15)}catch(e){} burstAt(ev.clientX,ev.clientY,['✨','⭕'],6,40); sayText(pick([1,2]),pick(['みつけた！','すごいワン！','やったね♪','するどい〜']));
     renderPanels(); upd(); if(G.found===G.g.diffs.length) finish(); else setStatus('あと '+(G.g.diffs.length-G.found)+' こ！'); }
   else { G.miss++; SFX.ng(); el.classList.remove('shk'); void el.offsetWidth; el.classList.add('shk'); const m=document.createElement('span'); m.className='xm'; m.textContent='✖'; m.style.left=x+'%'; m.style.top=y+'%'; el.appendChild(m); setTimeout(()=>m.remove(),600); setStatus('ちがうよ… 〔まちがい '+G.miss+'回〕'); } }
-$('pnA').addEventListener('pointerdown',e=>{e.preventDefault();tap(e,'A')}); $('pnB').addEventListener('pointerdown',e=>{e.preventDefault();tap(e,'B')});
+['A','B'].forEach(sd=>{ let dn=null; const el=$('pn'+sd);
+  el.addEventListener('pointerdown',e=>{e.preventDefault(); dn={t:Date.now(),x:e.clientX,y:e.clientY,id:e.pointerId};});
+  el.addEventListener('pointermove',e=>{ if(dn&&Math.hypot(e.clientX-dn.x,e.clientY-dn.y)>10) dn.mv=true; });
+  el.addEventListener('pointerup',e=>{ const d=dn; dn=null; if(!d||d.mv) return; if(Date.now()-d.t>300) return; e.preventDefault(); tap(e,sd); });
+  el.addEventListener('pointercancel',()=>{dn=null}); el.addEventListener('contextmenu',e=>e.preventDefault()); });
 function finish(){ G.over=true; clearInterval(tmr); const st=G.miss<=2&&G.hints===0?3:G.miss<=5&&G.hints<=1?2:1; G.el=Math.floor((Date.now()-G.t0)/1000);
   if(G.mode==='stage'){ if((P.stars[G.idx]||0)<st) P.stars[G.idx]=st; svP(); }
   SFX.win(); confetti(['🐾','🦴','✨','🎉']); sayText(1,'ぜんぶ見つけた！',true); sayText(2,'すごーい！',true); setStatus('ぜんぶ見つけた！🎉'); upd();
