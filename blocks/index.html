@@ -111,6 +111,7 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 
 #bd{display:grid;justify-content:center;gap:2px;margin:8px auto;touch-action:none}
 .bc{aspect-ratio:1;border-radius:5px;background:#efe2cb;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);cursor:pointer}
+.bc.pop{animation:bcpop .28s cubic-bezier(.2,1.6,.4,1)}@keyframes bcpop{0%{transform:scale(.8);filter:brightness(1.5)}60%{transform:scale(1.1)}100%{transform:scale(1);filter:none}}
 .bc.prev{outline:3px solid rgba(80,150,80,.8);outline-offset:-3px}.bc.bad{outline-color:rgba(220,60,50,.85)}
 .tray{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 8px 0}
 .pc{display:grid;gap:1px;padding:5px;border-radius:10px;border:2px solid transparent;background:rgba(255,255,255,.5);cursor:pointer}
@@ -453,7 +454,7 @@ function geom(){ const c=$('bd').children; const r0=c[0].getBoundingClientRect()
 function buildGhost(d){ const p=pieces[d.k], g=d.g; d.mw=Math.max(...p.c.map(q=>q[0]))+1; d.mh=Math.max(...p.c.map(q=>q[1]))+1; if(d.el) d.el.remove();
   const el=document.createElement('div'); el.style.cssText=`position:fixed;z-index:60;pointer-events:none;display:grid;gap:${g.pitch-g.cs}px;grid-template-columns:repeat(${d.mw},${g.cs}px);opacity:.96;filter:drop-shadow(0 10px 10px rgba(0,0,0,.38));left:-999px;top:0;transition:transform .12s,left .06s,top .06s`;
   for(let y=0;y<d.mh;y++)for(let x=0;x<d.mw;x++){ const i=document.createElement('i'); i.style.cssText=`width:${g.cs}px;height:${g.cs}px;`+(p.c.some(q=>q[0]===x&&q[1]===y)?`background:${p.col}`:''); el.appendChild(i); }
-  document.documentElement.appendChild(el); d.el=el; }
+  el.style.zoom=1/(parseFloat(document.body.style.zoom)||1); document.body.appendChild(el); d.el=el; }
 function holdRot(flipIt){ const d=drag; if(!d) return; const p=pieces[d.k]; p.c=flipIt?flip(p.c):rot(p.c); SFX.tap(); try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}
   buildGhost(d); d.grab={x:(d.mw*d.g.pitch-(d.g.pitch-d.g.cs))/2,y:(d.mh*d.g.pitch-(d.g.pitch-d.g.cs))/2}; moveDrag(d.last); }
 function startDrag(k,ev,grab){ const p=pieces[k], g=geom(); const fromB=!!grab; const d={k,g,sx:ev.clientX,sy:ev.clientY,moved:false,at:null,pv:[],id:ev.pointerId,last:ev,wasSel:false}; drag=d; buildGhost(d);
@@ -470,10 +471,10 @@ function moveDrag(ev){ const d=drag; if(!d) return; d.last=ev; if(Math.hypot(ev.
   const at=d.moved?dragTarget(d,gx,gy):null;
   if(at!=null){ const a0=pieces[d.k].c[0]; d.el.style.left=(d.g.ox+((at%W)-a0[0])*d.g.pitch)+'px'; d.el.style.top=(d.g.oy+(((at/W)|0)-a0[1])*d.g.pitch)+'px'; d.el.style.transform='scale(1)'; }
   else { d.el.style.left=gx+'px'; d.el.style.top=gy+'px'; d.el.style.transform='scale(1.07)'; }
-   const bdc=$('bd').children; d.pv.forEach(i=>bdc[i]&&bdc[i].classList.remove('prev')); d.pv=[]; d.at=at;
+   const bdc=$('bd').children; d.pv.forEach(i=>bdc[i]&&bdc[i].classList.remove('prev')); d.pv=[]; if(at!=null&&at!==d.at){ SFX.tap(); try{navigator.vibrate&&navigator.vibrate(7)}catch(_){} } d.at=at;
   if(at!=null){ d.pv=cellsAt(pieces[d.k],at); d.pv.forEach(i=>bdc[i].classList.add('prev')); } }
 function endDrag(ev,cancel){ const d=drag; if(!d) return; drag=null; d.el.remove(); const bdc=$('bd').children; d.pv.forEach(i=>bdc[i]&&bdc[i].classList.remove('prev'));
-  if(!cancel&&d.at!=null){ const k=d.k, at=d.at; cellsAt(pieces[k],at).forEach(c=>place[c]=k); pieces[k].at=at; hist.push(['add',k]); SFX.put(); const nx=pieces.findIndex(q=>q.at<0); sel=nx; hover=-1; draw(); if(nx<0) win(); }
+  if(!cancel&&d.at!=null){ const k=d.k, at=d.at; cellsAt(pieces[k],at).forEach(c=>place[c]=k); pieces[k].at=at; hist.push(['add',k]); SFX.put(); try{navigator.vibrate&&navigator.vibrate(22)}catch(_){} const nx=pieces.findIndex(q=>q.at<0); sel=nx; hover=-1; draw(); { const bc=$('bd').children; cellsAt(pieces[k],at).forEach(c=>bc[c]&&bc[c].classList.add('pop')); } if(nx<0) win(); }
   else { if(!d.moved&&!cancel&&d.wasSel&&!d.fromBoard){ pieces[d.k].c=rot(pieces[d.k].c); SFX.tap(); } else if(d.moved&&!cancel) SFX.ng(); draw(); } }
 addEventListener('pointermove',e=>{ if(pend&&!drag&&Math.hypot(e.clientX-pend.sx,e.clientY-pend.sy)>6){ const k=pend.k; pend=null; const gm=geom(), a0=pieces[k].c[0], at0=pieces[k].at, grab={x:e.clientX-(gm.ox+((at0%W)-a0[0])*gm.pitch), y:e.clientY-(gm.oy+(((at0/W)|0)-a0[1])*gm.pitch)}; hist.push(['rm',k,pieces[k].at]); for(let j=0;j<W*H;j++) if(place[j]===k) place[j]=-1; pieces[k].at=-1; sel=k; SFX.tap(); draw(); startDrag(k,e,grab); if(drag) drag.fromBoard=1; return; }
   if(drag){ e.preventDefault(); moveDrag(e); } },{passive:false});
