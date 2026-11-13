@@ -59,8 +59,11 @@ body{min-height:100vh;display:flex;justify-content:center;background:radial-grad
 .card h2{margin:0 0 14px;text-align:center;font-size:21px;font-weight:900;color:var(--green-d)}
 .row{margin-bottom:14px}.row .lb{font-size:13px;font-weight:900;color:var(--ink2);margin-bottom:6px}
 .seg{display:flex;gap:6px;flex-wrap:wrap}
+.lsg{display:flex;gap:6px;flex-wrap:wrap}
 .seg button{flex:1;min-width:0;border:2px solid #e2cfb2;background:#fff;border-radius:14px;padding:9px 4px;font:inherit;font-weight:700;font-size:14px;color:var(--ink);cursor:pointer;line-height:1.4}
+.lsg button{flex:1;min-width:0;border:2px solid #e2cfb2;background:#fff;border-radius:14px;padding:9px 4px;font:inherit;font-weight:700;font-size:14px;color:var(--ink);cursor:pointer;line-height:1.4}
 .seg button.on{background:var(--green);border-color:var(--green-d);color:#fff}
+.lsg button.on{background:var(--green);border-color:var(--green-d);color:#fff}
 .tg{display:flex;align-items:center;justify-content:space-between;padding:8px 2px;border-top:1px dashed #e3d3ba;font-weight:700;font-size:14px}
 .sw{width:48px;height:28px;border-radius:20px;background:#d8cbb6;position:relative;cursor:pointer;transition:background .2s;flex:none}
 .sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}
@@ -110,15 +113,16 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 .help p{font-size:14px;line-height:1.65;margin:0 0 8px}
 
 /* 新UI：盤面フレーム＋ライト（3スキン共通の仕組み） */
-body{--lb:url(assets/natural_board.webp);--lon:url(assets/natural_on.webp);--loff:url(assets/natural_off.webp);--ar:1.0346;--bx:8.153%;--by:7.622%;--bw:83.89%}
-body[data-vt=retro]{--lb:url(assets/retro_board.webp);--lon:url(assets/retro_on.webp);--loff:url(assets/retro_off.webp);--ar:1.006;--bx:9.719%;--by:9.778%;--bw:80.361%}
-body[data-vt=neon]{--lb:url(assets/neon_board.webp);--lon:url(assets/neon_on.webp);--loff:url(assets/neon_off.webp);--ar:1.0433;--bx:8.399%;--by:8.144%;--bw:83.597%}
+body{--lb:url(assets/natural_board.webp);--ar:1.0346;--bx:8.153%;--by:7.622%;--bw:83.89%;--bon:url(assets/ball_natural_on.webp);--boff:url(assets/ball_natural_off.webp);--son:url(assets/sq_natural_on.webp);--soff:url(assets/sq_natural_off.webp)}
+body[data-vt=retro]{--lb:url(assets/retro_board.webp);--ar:1.006;--bx:9.719%;--by:9.778%;--bw:80.361%;--bon:url(assets/ball_retro_on.webp);--boff:url(assets/ball_retro_off.webp);--son:url(assets/sq_retro_on.webp);--soff:url(assets/sq_retro_off.webp)}
+body[data-vt=neon]{--lb:url(assets/neon_board.webp);--ar:1.0433;--bx:8.399%;--by:8.144%;--bw:83.597%;--bon:url(assets/ball_neon_on.webp);--boff:url(assets/ball_neon_off.webp);--son:url(assets/sq_neon_on.webp);--soff:url(assets/sq_neon_off.webp)}
 .panel{position:relative;width:min(96%,520px);aspect-ratio:var(--ar);margin:10px auto 0!important;padding:0!important;border:0!important;border-radius:0!important;background:var(--lb) center/100% 100% no-repeat!important;box-shadow:none!important;filter:drop-shadow(0 8px 14px rgba(0,0,0,.28))}
 .panel .in{position:absolute;inset:0;padding:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}
 #bd{position:absolute;left:var(--bx);top:var(--by);width:var(--bw);display:grid;gap:1.2%;touch-action:manipulation}
-.lc{aspect-ratio:1;border-radius:17%;cursor:pointer;background:var(--loff) center/100% 100% no-repeat;transition:transform .12s,filter .2s}
-.lc.on{background-image:var(--lon);filter:drop-shadow(0 0 6px rgba(255,190,60,.45))}
-body[data-vt=retro] .lc.on{filter:drop-shadow(0 0 7px rgba(255,140,30,.5))}body[data-vt=neon] .lc.on{filter:drop-shadow(0 0 8px rgba(255,79,216,.6))}
+.lc{aspect-ratio:1;border-radius:50%;cursor:pointer;background:var(--boff) center/100% 100% no-repeat;transition:transform .12s}
+.lc.on{background-image:var(--bon)}
+body[data-ls=sq] .lc{border-radius:17%;background-image:var(--soff)}body[data-ls=sq] .lc.on{background-image:var(--son)}
+body[data-ls=sq] #bd{gap:1.6%}
 .lc:active{transform:scale(.93)}.lc.hint{outline:3px dashed #e0452f;outline-offset:-3px}
 body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
 body[data-vt=neon] .pkRow button{background:rgba(255,255,255,.06);border-color:#5a3bb0;color:#fff}body[data-vt=neon] .pkRow button.on{border-color:#ff4fd8;background:rgba(255,79,216,.25);box-shadow:0 0 12px #ff4fd8}
@@ -154,6 +158,7 @@ body:is([data-vt=retro],[data-vt=neon]) .bubble{top:36%}
 body:is([data-vt=retro],[data-vt=neon]) .card{color:inherit}
 body:is([data-vt=retro],[data-vt=neon]) :is(.lb,.rec,.subTitle,.help p,.note,.soloBox,.lastBox,.exitLbl){color:inherit!important;opacity:.9}
 body:is([data-vt=retro],[data-vt=neon]) .seg button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.25)}
+body:is([data-vt=retro],[data-vt=neon]) .lsg button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.25)}
 body:is([data-vt=retro],[data-vt=neon]) .tg{border-color:rgba(255,255,255,.2)}
 body:is([data-vt=retro],[data-vt=neon]) :is(.stb,.prs button,.legend div,.quick button,.sizes button){background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25);color:inherit}
 body:is([data-vt=retro],[data-vt=neon]) :is(.stb small,.score .nm small,.hud .box small){color:inherit;opacity:.8}
@@ -175,6 +180,7 @@ body[data-vt=retro] :is(.boardWrap,.panel,.frame){background:linear-gradient(#8a
 body[data-vt=retro] .card{background:linear-gradient(rgba(42,18,8,.9),rgba(42,18,8,.94)),url(../img/retro/bg_modal.webp) center/cover;border:3px solid #f2b134;color:#fbe9c8;box-shadow:0 0 20px rgba(255,154,46,.5)}
 body[data-vt=retro] .card h2{color:#ffd36b;font-family:"Mochiy Pop One";font-weight:400}
 body[data-vt=retro] .seg button.on{background:#c0392b;border-color:#f2b134;color:#fff}
+body[data-vt=retro] .lsg button.on{background:#c0392b;border-color:#f2b134;color:#fff}
 body[data-vt=retro] .result .msg{color:#ffd36b}
 /* NEON */
 body[data-vt=neon]{--paper:#0d0626;--ink:#fff;--ink2:#c9b8ff;background:#0d0626;color:#fff}
@@ -193,6 +199,7 @@ body[data-vt=neon] :is(.boardWrap,.panel,.frame){background:rgba(10,4,35,.65);bo
 body[data-vt=neon] .card{background:linear-gradient(rgba(13,6,38,.86),rgba(13,6,38,.92)),url(../img/neon/bg_modal.webp) center/cover;border:1.5px solid #3ff0ff;color:#fff;box-shadow:0 0 22px rgba(255,79,216,.5)}
 body[data-vt=neon] .card h2{color:#fff;font-family:"DotGothic16";font-weight:400;text-shadow:0 0 8px #ff4fd8}
 body[data-vt=neon] .seg button.on{background:#ff4fd8;border-color:#fff;color:#fff;box-shadow:0 0 10px #ff4fd8}
+body[data-vt=neon] .lsg button.on{background:#ff4fd8;border-color:#fff;color:#fff;box-shadow:0 0 10px #ff4fd8}
 body[data-vt=neon] .result .msg{color:#3ff0ff;text-shadow:0 0 8px #3ff0ff}
 
 /* ---- game specific ---- */
@@ -272,6 +279,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 <p>めやすの手数以内で消せたら★3つ。💡ヒントで次に押すマスを教えるよ。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
+  <div class="row" style="margin-top:10px"><div class="lb">ライトのかたち</div><div class="lsg" id="lsSeg"><button data-v="ball">⚪ 丸</button><button data-v="sq">⬜ 四角</button></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
 
 <div style="display:none">
@@ -358,6 +366,8 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
 const GID='lights';
 
 const store=mkStore('mc_'+GID+'_');
+{const ls=()=>store.get('ls','ball')==='sq'?'sq':'ball',ap=()=>{document.body.dataset.ls=ls();document.querySelectorAll('#lsSeg button').forEach(b=>b.classList.toggle('on',b.dataset.v===ls()))};
+ ap();document.querySelectorAll('#lsSeg button').forEach(b=>b.onclick=()=>{store.set('ls',b.dataset.v);ap()});}
 const S=Object.assign({sound:true,talk:true},store.get('settings',{})); SND.on=S.sound; TALK.on=S.talk;
 const syncHelp=bindSettings($('mHelp'),S,()=>{SND.on=S.sound;TALK.on=S.talk;store.set('settings',S)}); syncHelp();
 $('bHelp').onclick=()=>{actx();SFX.tap();syncHelp();openM('mHelp')};
