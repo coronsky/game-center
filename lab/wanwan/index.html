@@ -71,7 +71,7 @@ body{min-height:100vh;display:flex;justify-content:center;background:radial-grad
 .result .avs{display:flex;justify-content:center;gap:18px;margin:6px 0 10px}
 .result .avs>div{text-align:center;font-weight:900;font-size:14px}
 .result .avs .ph{width:88px;height:88px;border-radius:50%;background-size:cover;background-position:center;border:4px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.18);margin:0 auto 4px;transition:transform .3s}
-.result .avs .solo{flex:0 0 auto}.result .avs .bub2{position:relative;align-self:center;max-width:150px;background:#fff;border:3px solid #f0c35a;border-radius:16px;padding:8px 12px;font-weight:900;font-size:15px;line-height:1.35;color:#5b3a14;text-align:left;box-shadow:0 3px 8px rgba(0,0,0,.15);animation:bubIn .4s ease-out}
+.result .avs .solo{flex:0 0 auto}.result .avs .bub2 span{display:block;white-space:nowrap}.result .avs .bub2{position:relative;align-self:center;max-width:none;background:#fff;border:3px solid #f0c35a;border-radius:16px;padding:8px 12px;font-weight:900;font-size:15px;line-height:1.35;color:#5b3a14;text-align:left;box-shadow:0 3px 8px rgba(0,0,0,.15);animation:bubIn .4s ease-out}
 .result .avs .bub2:before{content:'';position:absolute;left:-12px;top:50%;margin-top:-8px;border:8px solid transparent;border-right:12px solid #f0c35a;border-left:0}
 .result .avs .bub2:after{content:'';position:absolute;left:-7px;top:50%;margin-top:-6px;border:6px solid transparent;border-right:9px solid #fff;border-left:0}
 @keyframes bubIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
@@ -693,8 +693,10 @@ function overlay(title,body,btn,cb,btn2,cb2,btn3,cb3){
   {const cd=$('#mMsg .card');cd.classList.toggle('over',/ゲームオーバー|じかんぎれ/.test(title));cd.classList.toggle('long',title.length>9);cd.classList.toggle('canx',/ゲームオーバー|じかんぎれ/.test(title))}
   $('#mT').textContent=title;$('#mM').textContent=body;$('#mBtn').textContent=btn;
   {const over=/ゲームオーバー|じかんぎれ/.test(title),who=Math.random()<.5?'colon':'moon',nm=who==='colon'?'コロン':'ムーン',
-   L=over?['どんまい！つぎはいけるよ！','だいじょうぶ！もういっかい！','おしかった〜！','あきらめないで！']:body.startsWith('★★★')?['パーフェクト！すごーい！','かんぺき！おめでとう！','さいこう！３つともゲット！']:['おめでとう！','やったね！','ゴールだよ！すごーい！','いいちょうし！つぎもがんばろう！'];
-   $('#mMsg .avs').innerHTML='<div class="solo '+(over?'lose':'win')+'"><div class="ph" style="background-image:var(--'+who+')"></div>'+nm+'</div><div class="bub2">'+L[Math.random()*L.length|0]+'</div>'}
+   L=over?[['どんまい！','つぎはいけるよ！'],['だいじょうぶ！','もういっかい！'],['おしかった〜！','あとすこしだよ！'],['あきらめないで！','きっとできるよ！'],['ざんねん…','でもいいちょうし！'],['まだまだ！','つぎでとりかえそう！'],['ドンマイ！','つぎもがんばろう！']]
+   :body.startsWith('★★★')?[['パーフェクト！','かんぺきおめでとう！'],['すごーい！','ぜんぶゲットだね！'],['さいこう！','かんぺきだよ！'],['かんぺき！','おめでとう！'],['やったー！','★３つだよ！'],['てんさい！','ぱちぱちぱち！'],['かんぺきすぎる！','かっこいい！'],['おめでとう！','ごうかくだよ！']]
+   :[['おめでとう！','ゴールしたよ！'],['やったね！','ナイスプレイ！'],['すごーい！','じょうずだね！'],['ゴール！','おめでとう！'],['いいちょうし！','つぎもがんばろう！'],['ナイス！','さすがだね！'],['やったー！','クリアだよ！'],['じょうず！','ほしもとれるかも！'],['えらい！','よくがんばったね！']];
+   $('#mMsg .avs').innerHTML='<div class="solo '+(over?'lose':'win')+'"><div class="ph" style="background-image:var(--'+who+')"></div>'+nm+'</div><div class="bub2">'+L[Math.random()*L.length|0].map(t=>'<span>'+t+'</span>').join('')+'</div>'}
   const hide=()=>$('#mMsg').classList.remove('show');
   [[ '#mBtn2',btn2,cb2],['#mBtn3',btn3,cb3]].forEach(([id,t,f])=>{const el=$(id);el.style.display=t?'':'none';if(t){el.textContent=t;el.onclick=()=>{hide();f()}}});
   $('#mMsg').classList.add('show');$('#mBtn').onclick=()=>{hide();cb()};
