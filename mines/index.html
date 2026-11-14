@@ -110,7 +110,7 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 .help p{font-size:14px;line-height:1.65;margin:0 0 8px}
 
 #bd{display:grid;gap:2px;padding:6px;touch-action:manipulation}
-.mc{aspect-ratio:1;border-radius:6px;background:linear-gradient(#9cc98a,#6fa05e);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),inset 0 2px 0 rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:min(5.4vw,22px);cursor:pointer}
+.mc{aspect-ratio:1;border-radius:6px;background:linear-gradient(#9cc98a,#6fa05e);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),inset 0 2px 0 rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:var(--fs,min(5.4vw,22px));cursor:pointer}
 .mc.op{background:#f6ead2;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
 .mc.boom{background:#ff8a7a}
 .mc .n1{color:#2f6a9e}.mc .n2{color:#3d8a3c}.mc .n3{color:#c0392b}.mc .n4{color:#6a3d9a}.mc .n5{color:#8a3b12}.mc .n6{color:#178a8a}.mc .n7,.mc .n8{color:#333}
@@ -255,24 +255,30 @@ html body .app .vtBtn,html body .app .homeBtn{width:90px!important;height:30px!i
 html body[data-vt=natural] .app .vtBtn{background-image:url(../img/ui/natural_skin.webp?v=2)!important}html body[data-vt=natural] .app .homeBtn{background-image:url(../img/ui/natural_home.webp?v=2)!important}
 html body[data-vt=retro] .app .vtBtn{background-image:url(../img/ui/retro_skin.webp?v=2)!important}html body[data-vt=retro] .app .homeBtn{background-image:url(../img/ui/retro_home.webp?v=2)!important}
 html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../img/ui/neon_home.webp?v=2)!important}
+.mc.hint{animation:mchint .5s infinite alternate;box-shadow:0 0 0 3px #ffc93c,0 0 12px #ffc93c!important}
+@keyframes mchint{from{filter:brightness(1)}to{filter:brightness(1.35)}}
+@keyframes mcpop{0%{transform:scale(.5);opacity:.2}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+.gbtns .btn:disabled{opacity:.5}
+#bd{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">マインスイーパー</div></div>
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">マインスイーパー</div></div>
 
-  <div class="hud"><div class="box"><small>のこり🍖</small><b id="left"></b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
+  <div class="hud"><div class="box"><small>のこり🦴</small><b id="left"></b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
   <div class="lvRow" id="lvs"></div>
   <div class="panel"><div class="in"><div id="bd"></div></div></div>
-  <div class="modeRow"><button id="mOpen" class="on">👆 ひらく</button><button id="mFlag">🚩 はたを立てる</button></div>
+  <div class="modeRow"><button id="mOpen" class="on">👆 ひらく</button><button id="mFlag">🐾 あしあと（目印）</button></div>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
-  <div class="btns gbtns" style="grid-template-columns:repeat(3,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
+  <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bHint">💡ヒント(3)</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn g" id="bHome">🏠ホーム</button></div>
 </div>
-<div class="modal" id="mHelp"><div class="card help"><h2>📖 マインスイーパー</h2><p>草むらにかくれた<b>こげたお肉🍖（地雷）</b>をふまないように、安全なマスを全部ひらこう。</p>
+<div class="modal" id="mHelp"><div class="card help"><h2>📖 マインスイーパー</h2><p>草むらにかくれた<b>ほねっこ🦴（地雷）</b>をふまないように、安全なマスを全部ひらこう。</p>
 <p>🔢 ひらいたマスの数字は、まわり8マスにあるお肉の数です。</p>
-<p>🚩「はたを立てる」に切りかえると、あやしいマスに旗を立てられます（長押しでも旗）。</p>
-<p>最初の1マスは必ず安全。お肉以外をぜんぶひらいたらクリア！</p>
+<p>🐾「あしあと（目印）」に切りかえると、あやしいマスにあしあとを付けられます（長押しでもあしあと）。</p>
+<p>最初の1マスは必ず安全。運だけの2択が出ない盤面になるよ。💡ヒントは3回まで、ほねっこをふんでも1回だけセーフ（やりなおし）。数字のまわりのあしあとが数字と同じ数なら、その数字をタップで残りを一気にひらけるよ。<br>★3つは、ヒントもやりなおしも使わずクリア！</p><p>お肉以外をぜんぶひらいたらクリア！</p>
+  <div class="tg"><span>やりなおし（1回だけセーフ）</span><div class="sw" data-k="undo"></div></div>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
@@ -361,7 +367,7 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
 const GID='mines';
 
 const store=mkStore('mc_'+GID+'_');
-const S=Object.assign({sound:true,talk:true},store.get('settings',{})); SND.on=S.sound; TALK.on=S.talk;
+const S=Object.assign({sound:true,talk:true,undo:true},store.get('settings',{})); SND.on=S.sound; TALK.on=S.talk;
 const syncHelp=bindSettings($('mHelp'),S,()=>{SND.on=S.sound;TALK.on=S.talk;store.set('settings',S)}); syncHelp();
 $('bHelp').onclick=()=>{actx();SFX.tap();syncHelp();openM('mHelp')};
 $('bHome').onclick=()=>{location.href=$('homeBtn').href};
@@ -375,42 +381,86 @@ function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<but
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
 if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
 
-const LVS=[{w:8,h:8,m:8,name:'やさしい 8×8'},{w:9,h:9,m:12,name:'ふつう 9×9'},{w:9,h:11,m:18,name:'むずかしい 9×11'}];
-const P=Object.assign({cur:0,best:{}},store.get('prog',{}));
-let L,mines,open,flag,first,over,t0,tick,flagMode=false;
-function load(i){ clearInterval(tick); P.cur=i; store.set('prog',P); L=LVS[i]; const n=L.w*L.h; mines=new Array(n).fill(false); open=new Array(n).fill(false); flag=new Array(n).fill(false);
-  first=true; over=false; t0=0; $('tm').textContent='0:00'; lvRow($('lvs'),LVS.map(l=>l.name),i,k=>P.best[k]?1:0,load); draw(); setStatus('どこからでもタップしてね'); }
+const LVS=[{w:9,h:9,m:10,name:'やさしい 9×9'},{w:12,h:12,m:25,name:'ふつう 12×12'},{w:16,h:16,m:50,name:'むずかしい 16×16'}];
+const NST=30;
+const stageCfg=n=>{const w=Math.min(16,7+Math.floor((n-1)/3)),d=.12+(n-1)*.0035; return {w,h:w,m:Math.round(w*w*d),name:'ステージ '+n+'（'+w+'×'+w+'）'}};
+const P=Object.assign({cur:0,best2:{},stage:1,stars:{}},store.get('prog',{})); if(!(P.cur>=0&&P.cur<=3)) P.cur=0; if(!P.best2) P.best2={}; if(!P.stars) P.stars={}; if(!(P.stage>=1)) P.stage=1;
+if(S.undo===undefined) S.undo=true;
+let L,mines,open,flag,first,over,t0,tick,flagMode=false,N=0,H=-1,wonLast=false;
+const GS={lives:0,undone:0,hints:0,streak:0,lock:false};
+const lvNames=()=>[...LVS.map(l=>l.name),'ステージ '+P.stage];
+const lvStar=k=>k<3?(P.best2[k]?1:0):((P.stars[P.stage-1]||0)?1:0);
+function updHint(){ const b=$('bHint'); if(b){ const left=3-GS.hints; b.textContent='💡ヒント'+(left>0?'('+left+')':''); b.disabled=over||left<=0; } }
+function load(i){ clearInterval(tick); P.cur=i; store.set('prog',P); L=i<3?LVS[i]:stageCfg(P.stage); N=L.w*L.h; mines=new Array(N).fill(false); open=new Array(N).fill(false); flag=new Array(N).fill(false);
+  first=true; over=false; t0=0; H=-1; GS.lives=S.undo?1:0; GS.undone=0; GS.hints=0; GS.streak=0; GS.lock=false; $('tm').textContent='0:00';
+  lvRow($('lvs'),lvNames(),i,lvStar,load); draw(); updHint(); setStatus('どこからでもタップしてね'); }
 const nbs=i=>{const x=i%L.w,y=(i/L.w)|0,r=[];for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const X=x+dx,Y=y+dy;if(X>=0&&X<L.w&&Y>=0&&Y<L.h)r.push(Y*L.w+X)}return r};
 const cnt=i=>nbs(i).filter(j=>mines[j]).length;
-function place(safe){ const ban=new Set([safe,...nbs(safe)]); const c=[...Array(L.w*L.h).keys()].filter(i=>!ban.has(i)).sort(()=>Math.random()-.5); c.slice(0,L.m).forEach(i=>mines[i]=true); }
-function draw(){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${L.w},1fr)`; bd.innerHTML='';
-  for(let i=0;i<L.w*L.h;i++){ const e=document.createElement('div'); e.className='mc'+(open[i]?' op':'');
-    if(open[i]){ if(mines[i]){e.textContent='🍖';e.classList.add('boom')} else { const c=cnt(i); if(c) e.innerHTML=`<span class="n${c}">${c}</span>`; } }
-    else if(flag[i]) e.textContent='🚩'; else if(over&&mines[i]) e.textContent='🍖';
+// ---- logic solver (single point + subset) ----
+function infer(openA){ const km=new Set(),ks=new Set(); let cons=[],ch=true;
+  while(ch){ ch=false; cons=[];
+    for(let i=0;i<N;i++){ if(!openA[i]) continue; const c=cnt(i); if(!c) continue; const U=[]; let r=c;
+      for(const j of nbs(i)){ if(openA[j]) continue; if(km.has(j)) r--; else if(!ks.has(j)) U.push(j); } if(U.length) cons.push({U,r}); }
+    for(const k of cons){ if(k.r===0){ for(const j of k.U) if(!ks.has(j)){ks.add(j);ch=true} } else if(k.r===k.U.length){ for(const j of k.U) if(!km.has(j)){km.add(j);ch=true} } }
+    if(ch) continue;
+    for(let a=0;a<cons.length&&!ch;a++){ const A=cons[a],sa=new Set(A.U);
+      for(let b=0;b<cons.length;b++){ if(a===b) continue; const B=cons[b]; if(B.U.length<=A.U.length) continue; if(!A.U.every(j=>B.U.includes(j))) continue;
+        const D=B.U.filter(j=>!sa.has(j)),rd=B.r-A.r; if(rd===0){D.forEach(j=>ks.add(j));ch=true} else if(rd===D.length){D.forEach(j=>km.add(j));ch=true} } } }
+  return {km,ks,cons}; }
+function solvable(start){ const o=new Array(N).fill(false);
+  const flood=i=>{ const st=[i]; o[i]=true; while(st.length){ const x=st.pop(); if(cnt(x)===0) for(const j of nbs(x)) if(!o[j]&&!mines[j]){o[j]=true;st.push(j)} } };
+  flood(start);
+  for(;;){ const {ks}=infer(o); let pr=false; for(const j of ks){ if(!o[j]){ if(mines[j]) return false; flood(j); pr=true } } if(!pr) break; }
+  return o.filter(Boolean).length===N-L.m; }
+function place(safe){ const ban=new Set([safe,...nbs(safe)]); const cand=[...Array(N).keys()].filter(i=>!ban.has(i)); const tEnd=Date.now()+900; let tries=0;
+  do{ tries++; mines.fill(false); const c=cand.slice().sort(()=>Math.random()-.5); c.slice(0,L.m).forEach(i=>mines[i]=true); if(solvable(safe)) return; }while(Date.now()<tEnd&&tries<400); }
+// ---- drawing ----
+function draw(fresh){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${L.w},1fr)`; bd.innerHTML=''; bd.style.setProperty('--fs',Math.max(9,Math.min(22,(bd.clientWidth||340)/L.w*.5))+'px');
+  for(let i=0;i<N;i++){ const e=document.createElement('div'); e.className='mc'+(open[i]?' op':'')+(i===H?' hint':'');
+    if(open[i]){ if(mines[i]){e.textContent='🦴';e.classList.add('boom')} else { const c=cnt(i); if(c) e.innerHTML=`<span class="n${c}">${c}</span>`; } }
+    else if(flag[i]) e.textContent=(over&&!mines[i])?'❌':'🐾'; else if(over&&mines[i]) e.textContent='🦴';
+    if(fresh&&fresh.has(i)) e.style.animation=`mcpop .34s ${Math.min(fresh.get(i),14)*34}ms backwards`;
     let lt; e.addEventListener('pointerdown',()=>{lt=setTimeout(()=>{lt=null;toggle(i)},420)});
     e.addEventListener('pointerup',()=>{ if(lt){clearTimeout(lt);lt=null; flagMode?toggle(i):dig(i);} });
     e.addEventListener('pointerleave',()=>{clearTimeout(lt);lt=null}); e.oncontextmenu=ev=>{ev.preventDefault()};
     bd.appendChild(e); }
   $('left').textContent=L.m-flag.filter(Boolean).length; }
-function toggle(i){ if(over||open[i]) return; actx(); flag[i]=!flag[i]; SFX.tap(); if(navigator.vibrate)try{navigator.vibrate(15)}catch(e){} draw(); }
-function dig(i){ if(over||flag[i]) return; actx();
+function toggle(i){ if(over||open[i]||GS.lock) return; actx(); flag[i]=!flag[i]; SFX.tap(); if(navigator.vibrate)try{navigator.vibrate(15)}catch(e){} draw(); }
+// ---- play ----
+function expand(i,base,fresh){ if(open[i]||flag[i]||mines[i]) return; const q=[[i,base]]; open[i]=true; fresh.set(i,base);
+  while(q.length){ const [x,d]=q.shift(); if(cnt(x)===0) for(const j of nbs(x)){ if(!open[j]&&!flag[j]&&!mines[j]){open[j]=true;fresh.set(j,d+1);q.push([j,d+1])} } } }
+function hitMine(j){ if(GS.lives>0){ GS.lives--; GS.undone++; GS.lock=true; GS.streak=0; open[j]=true; SFX.ng(); sayText(1,pick(['いたっ！でももう一回！','だいじょうぶワン','つぎがんばろ！']),true); draw(); setStatus('ほねっこをふんじゃった…もう一回だけセーフ！');
+      setTimeout(()=>{ open[j]=false; flag[j]=true; GS.lock=false; draw(); },950); return false; }
+  open[j]=true; over=true; clearInterval(tick); SFX.lose(); sayText(1,'ほねっこをふんじゃったワン…',true); setStatus('ほねっこをふんじゃった…'); report('lose',{lv:P.cur+1}); updHint();
+  setTimeout(()=>showResult({winner:0,title:'🦴 ざんねん…',score:'',msg:'もう一回チャレンジ！',delay:0}),700); return true; }
+function dig(i){ if(over||GS.lock||flag[i]) return; actx();
   if(first){ first=false; place(i); t0=Date.now(); tick=setInterval(()=>$('tm').textContent=fmt(Date.now()-t0),500); }
-  if(open[i]){ // chord
-    const ns=nbs(i); if(ns.filter(j=>flag[j]).length===cnt(i)) ns.forEach(j=>{if(!flag[j]&&!open[j]) reveal(j)}); }
-  else reveal(i);
-  draw(); if(over) return; if(open.filter(Boolean).length===L.w*L.h-L.m) win(); }
-function reveal(i){ if(open[i]||flag[i]) return; open[i]=true;
-  if(mines[i]){ over=true; clearInterval(tick); SFX.lose(); sayText(1,'こげたお肉だワン…',true); setStatus('お肉をふんじゃった…'); report('lose',{lv:P.cur+1});
-    setTimeout(()=>showResult({winner:0,title:'🍖 ざんねん…',score:'',msg:'もう一回チャレンジ！',delay:0}),700); return; }
-  SFX.tap(); if(cnt(i)===0) nbs(i).forEach(reveal); }
-function win(){ over=true; clearInterval(tick); const t=Date.now()-t0; const b=P.best[P.cur]; if(!b||t<b) P.best[P.cur]=t; store.set('prog',P);
-  report('clear',{stars:3}); SFX.win(); confetti(['🚩','🐾','✨']); sayText(2,'ぜんぶ見つけた♪',true); setStatus('クリア！'); draw();
-  lvRow($('lvs'),LVS.map(l=>l.name),P.cur,k=>P.best[k]?1:0,load);
-  showResult({winner:0,title:'🎉 クリア！',score:fmt(t),msg:L.name,rec:'ベスト：'+fmt(P.best[P.cur])}); }
+  const fresh=new Map();
+  if(open[i]){ const ns=nbs(i); if(ns.filter(j=>flag[j]).length===cnt(i)){ for(const j of ns){ if(flag[j]||open[j]) continue; if(mines[j]){ draw(fresh); hitMine(j); return; } expand(j,0,fresh); } } else return; }
+  else { if(mines[i]){ if(hitMine(i)) { draw(); } return; } expand(i,0,fresh); SFX.tap(); }
+  draw(fresh); if(over) return;
+  if(fresh.size>=12){ sayText(2,pick(['ひろがったワン！','いっきにひらけた♪']),true); try{navigator.vibrate&&navigator.vibrate(25)}catch(e){} }
+  GS.streak++; if(GS.streak%8===0) sayText(pick([1,2]),pick(['すごいワン！','いいぞ〜','かんぺき！','その調子！']),true);
+  if(open.filter(Boolean).length===N-L.m) win(); }
+function hint(){ if(over||GS.lock) return; actx(); if(first){ toast('まず好きなマスを1つひらいてね'); return; } if(GS.hints>=3) return;
+  const {ks,cons}=infer(open); let cands=[...ks].filter(j=>!open[j]),t=-1,msg;
+  if(cands.length){ t=pick(cands); msg='ここは安全だワン！'; }
+  else { let best=2; const pr={}; cons.forEach(k=>k.U.forEach(j=>{(pr[j]=pr[j]||[]).push(k.r/k.U.length)}));
+    Object.keys(pr).forEach(j=>{ const p=pr[j].reduce((a,b)=>a+b,0)/pr[j].length; if(p<best){best=p;t=+j} });
+    if(t<0){ const un=[...Array(N).keys()].filter(j=>!open[j]); t=pick(un); } msg='決め手なし…ここが一番あんぜんそう'; }
+  GS.hints++; H=t; SFX.ok(); setStatus(msg); sayText(2,msg,true); draw(); updHint(); setTimeout(()=>{H=-1;if(!over)draw()},2800); }
+function win(){ over=true; clearInterval(tick); const t=Date.now()-t0; wonLast=true; const pen=GS.undone+GS.hints, stars=pen===0?3:pen<=2?2:1;
+  if(P.cur<3){ const b=P.best2[P.cur]; if(!b||t<b) P.best2[P.cur]=t; } else P.stars[P.stage-1]=Math.max(P.stars[P.stage-1]||0,stars);
+  store.set('prog',P); report('clear',{stars}); SFX.win(); confetti(['🐾','🦴','✨']); sayText(2,'ぜんぶ見つけた♪',true); setStatus('クリア！'); draw(); updHint();
+  const last=P.cur===3&&P.stage>=NST;
+  $('bAgain').textContent=P.cur===3?(last?'もう一回！':'つぎのステージ'):'もう一回！';
+  lvRow($('lvs'),lvNames(),P.cur,lvStar,load);
+  showResult({winner:0,title:'🎉 クリア！',score:'★'.repeat(stars)+'☆'.repeat(3-stars),msg:L.name+'　'+fmt(t),rec:(P.cur<3?'ベスト：'+fmt(P.best2[P.cur]):'')+(pen?'（ヒント'+GS.hints+'・やりなおし'+GS.undone+'）':'（ノーヒント・ノーミス！）')}); }
 $('mOpen').onclick=()=>{flagMode=false;$('mOpen').classList.add('on');$('mFlag').classList.remove('on');SFX.tap()};
 $('mFlag').onclick=()=>{flagMode=true;$('mFlag').classList.add('on');$('mOpen').classList.remove('on');SFX.tap()};
-$('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)};
-$('bAgain').onclick=()=>{closeM('mRes');load(P.cur)};
+$('bReset').onclick=()=>{actx();SFX.tap();wonLast=false;load(P.cur)};
+$('bHint').onclick=hint;
+$('bAgain').onclick=()=>{ closeM('mRes'); if(wonLast&&P.cur===3&&P.stage<NST) P.stage++; wonLast=false; load(P.cur); };
 load(P.cur);
 
 
