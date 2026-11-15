@@ -372,6 +372,12 @@ function bark(p,t0=0){ const a=actx(); if(!a||!SND.on) return; const base=p===1?
   const o=a.createOscillator(),g=a.createGain(),fl=a.createBiquadFilter(); o.type='sawtooth'; fl.type='bandpass'; fl.frequency.value=base*1.6; fl.Q.value=2; const s=a.currentTime+t0;
   o.frequency.setValueAtTime(base,s); o.frequency.linearRampToValueAtTime(base*1.35,s+.04); o.frequency.exponentialRampToValueAtTime(base*.55,s+.16);
   g.gain.setValueAtTime(0,s); g.gain.linearRampToValueAtTime(.35,s+.015); g.gain.exponentialRampToValueAtTime(.001,s+.18); o.connect(fl).connect(g).connect(a.destination); o.start(s); o.stop(s+.2); }
+function nzb(t,dur,type,f,q,vol){ const a=actx(); if(!a||!SND.on) return; const n=Math.max(1,a.sampleRate*dur|0),b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0); for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+  const src=a.createBufferSource(),fl=a.createBiquadFilter(),g=a.createGain(),st=a.currentTime+t; src.buffer=b; fl.type=type; fl.frequency.value=f; fl.Q.value=q;
+  g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(vol,st+.002); g.gain.exponentialRampToValueAtTime(.0008,st+dur); src.connect(fl).connect(g).connect(a.destination); src.start(st); src.stop(st+dur+.02); }
+function swClick(isOn,t,v){ if(isOn){ nzb(t,.03,'bandpass',2600,3,.7*v); tone(180,t,.05,'sine',.5*v,90); nzb(t+.03,.02,'highpass',5000,1,.2*v); }
+  else { nzb(t,.03,'bandpass',1700,3,.7*v); tone(130,t,.06,'sine',.55*v,60); nzb(t+.035,.02,'highpass',4000,1,.2*v); } }
+function lightsSfx(prev,cur){ let k=0; for(let i=0;i<cur.length;i++){ if(prev[i]!==cur[i]){ swClick(!!cur[i],k*.03,k===0?1:.6); if(++k>=5) break; } } if(!k) SFX.tap(); }
 const SFX={tap(){tone(700,0,.05,'sine',.08)},put(){tone(330,0,.09,'triangle',.25);tone(165,0,.06,'sine',.2)},
   win(){[523,659,784,1047].forEach((f,k)=>tone(f,k*.13,.25,'triangle',.2))},lose(){[392,349,311].forEach((f,k)=>tone(f,k*.18,.3,'triangle',.16))},
   ok(){[784,988].forEach((f,k)=>tone(f,k*.08,.14,'triangle',.15))},ng(){tone(220,0,.18,'triangle',.12)},alarm(){[880,660,880].forEach((f,k)=>tone(f,k*.12,.1,'square',.06))}};
@@ -465,7 +471,7 @@ let init0=[];
 function draw(){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${N},1fr)`; bd.innerHTML='';
   for(let i=0;i<N*N;i++){ const e=document.createElement('div'); e.className='lc'+(on[i]?' on':'')+(i===hintI?' hint':''); e.onclick=()=>tap(i); bd.appendChild(e); }
   $('mv').textContent=mv; $('bUndo').disabled=!hist.length; }
-function tap(i){ if(done) return; actx(); hist.push(on.slice()); press(on,i); mv++; hintI=-1; SFX.tap(); draw();
+function tap(i){ if(done) return; actx(); hist.push(on.slice()); press(on,i); mv++; hintI=-1; lightsSfx(hist[hist.length-1],on); draw();
   if(on.every(v=>!v)){ done=true; let s=mv<=M?3:mv<=M+2?2:1; if(hintUsed) s=Math.min(s,2);
     if(mode==='stage'){ P.stars[stage]=Math.max(P.stars[stage]||0,s); store.set('prog2',P); rows() }
     report('clear',{stars:s}); SFX.win(); confetti(['🌙','🐾','✨']); sayText(1,'おやすみワン…',true); setStatus('ぜんぶ消えた！');
