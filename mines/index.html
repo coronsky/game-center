@@ -339,6 +339,10 @@ body[data-vt=neon] .mc.boom::after{content:"";position:absolute;inset:14%;backgr
 body[data-vt=retro] .selG button{background:#3a160a;color:#ffd36b;border-color:#a8651e}body[data-vt=retro] .selG button.on{background:linear-gradient(#d0452f,#8f2a1f);border-color:#f2b134;color:#ffe7b0}
 body[data-vt=neon] .selG button{background:rgba(20,8,55,.85);color:#fff;border-color:#5a3bb0}body[data-vt=neon] .selG button.on{border-color:#ff4fd8;box-shadow:0 0 10px #ff4fd8;background:rgba(255,79,216,.3)}
 body:is([data-vt=retro],[data-vt=neon]) .seg button.on{color:#fff}
+.mc.ms{outline:3px solid #ff3b30;outline-offset:-3px;animation:msb 1.1s ease-in-out infinite;z-index:1}
+.mc.ms::before{content:"❗";position:absolute;top:1px;right:2px;font-size:min(4.2vw,15px);line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5));font-size-adjust:none;color:initial}
+@keyframes msb{50%{box-shadow:0 0 0 3px rgba(255,59,48,.45) inset}}
+html,body{overscroll-behavior:none}#bd,#bd *{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -470,12 +474,12 @@ const NST=30;
 const stageCfg=n=>{const w=Math.min(16,7+Math.floor((n-1)/3)),d=.12+(n-1)*.0035; return {w,h:w,m:Math.round(w*w*d),name:'ステージ '+n+'（'+w+'×'+w+'）'}};
 const P=Object.assign({cur:0,best2:{},stage:1,stars:{}},store.get('prog',{})); if(!(P.cur>=0&&P.cur<=3)) P.cur=0; if(!P.best2) P.best2={}; if(!P.stars) P.stars={}; if(!(P.stage>=1)) P.stage=1;
 if(S.undo===undefined) S.undo=true;
-let L,mines,open,flag,first,over,t0,tick,flagMode=false,N=0,H=-1,wonLast=false;
+let MS=new Set(),L,mines,open,flag,first,over,t0,tick,flagMode=false,N=0,H=-1,wonLast=false;
 const GS={lives:0,undone:0,hints:0,streak:0,lock:false};
 const lvNames=()=>[...LVS.map(l=>l.name),'ステージ '+P.stage];
 const lvStar=k=>k<3?(P.best2[k]?1:0):((P.stars[P.stage-1]||0)?1:0);
 function updHint(){ const b=$('bHint'); if(b){ const left=3-GS.hints; b.textContent='💡ヒント'+(left>0?'('+left+')':''); b.disabled=over||left<=0; } }
-function load(i){ clearInterval(tick); P.cur=i; store.set('prog',P); L=i<3?LVS[i]:stageCfg(P.stage); N=L.w*L.h; mines=new Array(N).fill(false); open=new Array(N).fill(false); flag=new Array(N).fill(false);
+function load(i){ MS.clear(); clearInterval(tick); P.cur=i; store.set('prog',P); L=i<3?LVS[i]:stageCfg(P.stage); N=L.w*L.h; mines=new Array(N).fill(false); open=new Array(N).fill(false); flag=new Array(N).fill(false);
   first=true; over=false; t0=0; H=-1; GS.lives=S.undo?1:0; GS.undone=0; GS.hints=0; GS.streak=0; GS.lock=false; $('tm').textContent='0:00';
   renderTop(); draw(); updHint(); setStatus('どこからでもタップしてね'); }
 const nbs=i=>{const x=i%L.w,y=(i/L.w)|0,r=[];for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const X=x+dx,Y=y+dy;if(X>=0&&X<L.w&&Y>=0&&Y<L.h)r.push(Y*L.w+X)}return r};
@@ -502,7 +506,7 @@ function place(safe){ const ban=new Set([safe,...nbs(safe)]); const cand=[...Arr
 function draw(fresh){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${L.w},1fr)`; bd.innerHTML=''; bd.style.setProperty('--fs',Math.max(9,Math.min(22,(bd.clientWidth||340)/L.w*.5))+'px');
   for(let i=0;i<N;i++){ const e=document.createElement('div'); e.className='mc'+(open[i]?' op':'')+(i===H?' hint':'')+(((i%L.w)+((i/L.w)|0))%2?' a':'');
     if(open[i]){ if(mines[i]){e.textContent='🦴';e.classList.add('boom')} else { const c=cnt(i); if(c) e.innerHTML=`<span class="n${c}">${c}</span>`; } }
-    else if(flag[i]){ e.classList.add('fl'); if(over&&!mines[i]){e.classList.add('wr');e.textContent='❌'} else e.textContent='🐾'; } else if(over&&mines[i]){ e.classList.add('bn'); e.textContent='🦴'; }
+    else if(flag[i]){ e.classList.add('fl'); if(MS.has(i)) e.classList.add('ms'); if(over&&!mines[i]){e.classList.add('wr');e.textContent='❌'} else e.textContent='🐾'; } else if(over&&mines[i]){ e.classList.add('bn'); e.textContent='🦴'; }
     if(fresh&&fresh.has(i)) e.style.animation=`mcpop .34s ${Math.min(fresh.get(i),14)*34}ms backwards`;
     let lt; e.addEventListener('pointerdown',()=>{lt=setTimeout(()=>{lt=null;toggle(i)},420)});
     e.addEventListener('pointerup',()=>{ if(lt){clearTimeout(lt);lt=null; flagMode?toggle(i):dig(i);} });
@@ -514,7 +518,7 @@ function toggle(i){ if(over||open[i]||GS.lock) return; actx(); flag[i]=!flag[i];
 function expand(i,base,fresh){ if(open[i]||flag[i]||mines[i]) return; const q=[[i,base]]; open[i]=true; fresh.set(i,base);
   while(q.length){ const [x,d]=q.shift(); if(cnt(x)===0) for(const j of nbs(x)){ if(!open[j]&&!flag[j]&&!mines[j]){open[j]=true;fresh.set(j,d+1);q.push([j,d+1])} } } }
 function hitMine(j){ if(GS.lives>0){ GS.lives--; GS.undone++; GS.lock=true; GS.streak=0; open[j]=true; SFX.ng(); sayText(1,pick(['いたっ！でももう一回！','だいじょうぶワン','つぎがんばろ！']),true); draw(); setStatus('ほねっこをふんじゃった…もう一回だけセーフ！');
-      setTimeout(()=>{ open[j]=false; flag[j]=true; GS.lock=false; draw(); },950); return false; }
+      setTimeout(()=>{ open[j]=false; flag[j]=true; MS.add(j); GS.lock=false; draw(); },950); return false; }
   open[j]=true; over=true; clearInterval(tick); SFX.lose(); sayText(1,'ほねっこをふんじゃったワン…',true); setStatus('ほねっこをふんじゃった…'); report('lose',{lv:P.cur+1}); updHint();
   setTimeout(()=>showResult({winner:0,title:'🦴 ざんねん…',score:'',msg:'もう一回チャレンジ！',delay:0}),700); return true; }
 function dig(i){ if(over||GS.lock||flag[i]) return; actx();
