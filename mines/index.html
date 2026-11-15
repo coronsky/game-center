@@ -505,7 +505,7 @@ function solvable(start){ const o=new Array(N).fill(false);
 function place(safe){ const ban=new Set([safe,...nbs(safe)]); const cand=[...Array(N).keys()].filter(i=>!ban.has(i)); const tEnd=Date.now()+900; let tries=0;
   do{ tries++; mines.fill(false); const c=cand.slice().sort(()=>Math.random()-.5); c.slice(0,L.m).forEach(i=>mines[i]=true); if(solvable(safe)) return; }while(Date.now()<tEnd&&tries<400); }
 // ---- drawing ----
-function draw(fresh){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${L.w},1fr)`; bd.innerHTML=''; bd.style.setProperty('--fs',Math.max(9,Math.min(22,(bd.clientWidth||340)/L.w*.5))+'px');
+function draw(fresh){ const bd=$('bd'),sy=scrollY,sc=document.scrollingElement; if(bd.offsetHeight) bd.style.minHeight=bd.offsetHeight+'px'; bd.style.gridTemplateColumns=`repeat(${L.w},1fr)`; bd.innerHTML=''; bd.style.setProperty('--fs',Math.max(9,Math.min(22,(bd.clientWidth||340)/L.w*.5))+'px');
   for(let i=0;i<N;i++){ const e=document.createElement('div'); e.className='mc'+(open[i]?' op':'')+(i===H?' hint':'')+(((i%L.w)+((i/L.w)|0))%2?' a':'');
     if(open[i]){ if(mines[i]){e.textContent='🦴';e.classList.add('boom')} else { const c=cnt(i); if(c) e.innerHTML=`<span class="n${c}">${c}</span>`; } }
     else if(flag[i]){ e.classList.add('fl'); if(MS.has(i)) e.classList.add('ms'); if(over&&!mines[i]){e.classList.add('wr');e.textContent='❌'} else e.textContent='🐾'; } else if(over&&mines[i]){ e.classList.add('bn'); e.textContent='🦴'; }
@@ -514,6 +514,7 @@ function draw(fresh){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${L
     e.addEventListener('pointerup',()=>{ if(lt){clearTimeout(lt);lt=null; flagMode?toggle(i):dig(i);} });
     e.addEventListener('pointerleave',()=>{clearTimeout(lt);lt=null}); e.oncontextmenu=ev=>{ev.preventDefault()};
     bd.appendChild(e); }
+  bd.style.minHeight=''; if(sc&&sc.scrollTop!==sy) sc.scrollTop=sy;
   $('left').textContent=L.m-flag.filter(Boolean).length; }
 function toggle(i){ if(over||open[i]||GS.lock) return; actx(); flag[i]=!flag[i]; SFX.tap(); if(navigator.vibrate)try{navigator.vibrate(15)}catch(e){} draw(); }
 // ---- play ----
