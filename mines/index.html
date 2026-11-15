@@ -260,6 +260,50 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 @keyframes mcpop{0%{transform:scale(.5);opacity:.2}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
 .gbtns .btn:disabled{opacity:.5}
 #bd{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+
+/* ---- illustrated parts ---- */
+.stars{display:flex;justify-content:center;gap:6px;margin:4px 0 6px}.stars i{width:44px;height:44px;background:center/contain no-repeat;display:block}
+.mc{border-radius:0;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
+.mc.fl,.mc.hint,.mc.boom,.mc.bn{font-size:0;color:transparent}
+.mc.bn{position:relative}.mc.bn::after{content:"";position:absolute;inset:14%;background:center/contain no-repeat}
+.mc.hint{animation:mchint .5s infinite alternate;box-shadow:none!important}
+@keyframes mchint{from{filter:brightness(1) drop-shadow(0 0 3px #ffc93c)}to{filter:brightness(1.3) drop-shadow(0 0 9px #ffc93c)}}
+body[data-vt=natural] .mc{background-image:url(img/n_cover.webp);box-shadow:none}
+body[data-vt=natural] .mc:not(.op):active{background-image:url(img/n_press.webp)}
+body[data-vt=natural] .mc.op{background-image:url(img/n_open.webp);box-shadow:none}
+body[data-vt=natural] .mc.op.a{background-image:url(img/n_open2.webp)}
+body[data-vt=natural] .mc.boom{background-image:url(img/n_boom.webp)}
+body[data-vt=natural] .mc.fl{background-image:url(img/n_flag.webp)}
+body[data-vt=natural] .mc.fl.wr{background-image:url(img/n_wrong.webp)}
+body[data-vt=natural] .mc.hint{background-image:url(img/n_hint.webp)}
+body[data-vt=natural] .mc.bn::after{background-image:url(img/n_bone.webp)}
+body[data-vt=natural] .stars i.on{background-image:url(img/n_star.webp)}body[data-vt=natural] .stars i.off{background-image:url(img/n_star0.webp)}
+body[data-vt=natural] .panel{background:none!important;box-shadow:none!important;border:22px solid transparent;border-image:url(img/n_frame.webp) 60 fill;padding:0;margin:6px 0 0}
+body[data-vt=natural] .panel .in{background:transparent!important;box-shadow:none!important;margin:-14px}
+body[data-vt=retro] .mc{background-image:url(img/r_cover.webp);box-shadow:none}
+body[data-vt=retro] .mc:not(.op):active{background-image:url(img/r_press.webp)}
+body[data-vt=retro] .mc.op{background-image:url(img/r_open.webp);box-shadow:none}
+body[data-vt=retro] .mc.op.a{background-image:url(img/r_open2.webp)}
+body[data-vt=retro] .mc.boom{background-image:url(img/r_boom.webp)}
+body[data-vt=retro] .mc.fl{background-image:url(img/r_flag.webp)}
+body[data-vt=retro] .mc.fl.wr{background-image:url(img/r_wrong.webp)}
+body[data-vt=retro] .mc.hint{background-image:url(img/r_hint.webp)}
+body[data-vt=retro] .mc.bn::after{background-image:url(img/r_bone.webp)}
+body[data-vt=retro] .stars i.on{background-image:url(img/r_star.webp)}body[data-vt=retro] .stars i.off{background-image:url(img/r_star0.webp)}
+body[data-vt=retro] .panel{background:none!important;box-shadow:none!important;border:22px solid transparent;border-image:url(img/r_frame.webp) 60 fill;padding:0;margin:6px 0 0}
+body[data-vt=retro] .panel .in{background:transparent!important;box-shadow:none!important;margin:-14px}
+body[data-vt=neon] .mc{background-image:url(img/x_cover.webp);box-shadow:none}
+body[data-vt=neon] .mc:not(.op):active{background-image:url(img/x_press.webp)}
+body[data-vt=neon] .mc.op{background-image:url(img/x_open.webp);box-shadow:none}
+body[data-vt=neon] .mc.op.a{background-image:url(img/x_open2.webp)}
+body[data-vt=neon] .mc.boom{background-image:url(img/x_boom.webp)}
+body[data-vt=neon] .mc.fl{background-image:url(img/x_flag.webp)}
+body[data-vt=neon] .mc.fl.wr{background-image:url(img/x_wrong.webp)}
+body[data-vt=neon] .mc.hint{background-image:url(img/x_hint.webp)}
+body[data-vt=neon] .mc.bn::after{background-image:url(img/x_bone.webp)}
+body[data-vt=neon] .stars i.on{background-image:url(img/x_star.webp)}body[data-vt=neon] .stars i.off{background-image:url(img/x_star0.webp)}
+body[data-vt=neon] .panel{background:none!important;box-shadow:none!important;border:22px solid transparent;border-image:url(img/x_frame.webp) 60 fill;padding:0;margin:6px 0 0}
+body[data-vt=neon] .panel .in{background:transparent!important;box-shadow:none!important;margin:-14px}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -416,9 +460,9 @@ function place(safe){ const ban=new Set([safe,...nbs(safe)]); const cand=[...Arr
   do{ tries++; mines.fill(false); const c=cand.slice().sort(()=>Math.random()-.5); c.slice(0,L.m).forEach(i=>mines[i]=true); if(solvable(safe)) return; }while(Date.now()<tEnd&&tries<400); }
 // ---- drawing ----
 function draw(fresh){ const bd=$('bd'); bd.style.gridTemplateColumns=`repeat(${L.w},1fr)`; bd.innerHTML=''; bd.style.setProperty('--fs',Math.max(9,Math.min(22,(bd.clientWidth||340)/L.w*.5))+'px');
-  for(let i=0;i<N;i++){ const e=document.createElement('div'); e.className='mc'+(open[i]?' op':'')+(i===H?' hint':'');
+  for(let i=0;i<N;i++){ const e=document.createElement('div'); e.className='mc'+(open[i]?' op':'')+(i===H?' hint':'')+(((i%L.w)+((i/L.w)|0))%2?' a':'');
     if(open[i]){ if(mines[i]){e.textContent='🦴';e.classList.add('boom')} else { const c=cnt(i); if(c) e.innerHTML=`<span class="n${c}">${c}</span>`; } }
-    else if(flag[i]) e.textContent=(over&&!mines[i])?'❌':'🐾'; else if(over&&mines[i]) e.textContent='🦴';
+    else if(flag[i]){ e.classList.add('fl'); if(over&&!mines[i]){e.classList.add('wr');e.textContent='❌'} else e.textContent='🐾'; } else if(over&&mines[i]){ e.classList.add('bn'); e.textContent='🦴'; }
     if(fresh&&fresh.has(i)) e.style.animation=`mcpop .34s ${Math.min(fresh.get(i),14)*34}ms backwards`;
     let lt; e.addEventListener('pointerdown',()=>{lt=setTimeout(()=>{lt=null;toggle(i)},420)});
     e.addEventListener('pointerup',()=>{ if(lt){clearTimeout(lt);lt=null; flagMode?toggle(i):dig(i);} });
@@ -455,7 +499,7 @@ function win(){ over=true; clearInterval(tick); const t=Date.now()-t0; wonLast=t
   const last=P.cur===3&&P.stage>=NST;
   $('bAgain').textContent=P.cur===3?(last?'もう一回！':'つぎのステージ'):'もう一回！';
   lvRow($('lvs'),lvNames(),P.cur,lvStar,load);
-  showResult({winner:0,title:'🎉 クリア！',score:'★'.repeat(stars)+'☆'.repeat(3-stars),msg:L.name+'　'+fmt(t),rec:(P.cur<3?'ベスト：'+fmt(P.best2[P.cur]):'')+(pen?'（ヒント'+GS.hints+'・やりなおし'+GS.undone+'）':'（ノーヒント・ノーミス！）')}); }
+  showResult({winner:0,title:'🎉 クリア！',score:'',extra:'<div class="stars">'+[0,1,2].map(k=>'<i class="'+(k<stars?'on':'off')+'"></i>').join('')+'</div>',msg:L.name+'　'+fmt(t),rec:(P.cur<3?'ベスト：'+fmt(P.best2[P.cur]):'')+(pen?'（ヒント'+GS.hints+'・やりなおし'+GS.undone+'）':'（ノーヒント・ノーミス！）')}); }
 $('mOpen').onclick=()=>{flagMode=false;$('mOpen').classList.add('on');$('mFlag').classList.remove('on');SFX.tap()};
 $('mFlag').onclick=()=>{flagMode=true;$('mFlag').classList.add('on');$('mOpen').classList.remove('on');SFX.tap()};
 $('bReset').onclick=()=>{actx();SFX.tap();wonLast=false;load(P.cur)};
