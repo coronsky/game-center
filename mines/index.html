@@ -304,6 +304,35 @@ body[data-vt=neon] .mc.bn::after{background-image:url(img/x_bone.webp)}
 body[data-vt=neon] .stars i.on{background-image:url(img/x_star.webp)}body[data-vt=neon] .stars i.off{background-image:url(img/x_star0.webp)}
 body[data-vt=neon] .panel{background:none!important;box-shadow:none!important;border:22px solid transparent;border-image:url(img/x_frame.webp) 60 fill;padding:0;margin:6px 0 0}
 body[data-vt=neon] .panel .in{background:transparent!important;box-shadow:none!important;margin:-14px}
+
+/* ---- simple clear board (v2) ---- */
+.mc{background-image:none!important;border-radius:7px;position:relative}
+.mc.fl::after{content:"";position:absolute;inset:16%;background:center/contain no-repeat}
+.mc.fl.wr::after{opacity:.45}
+.mc.fl.wr{color:#e8453c;font-size:min(5.4vw,20px);display:flex}
+.mc.boom{background-image:none!important;background-color:#e8453c!important}
+.mc.hint{background-image:none!important;box-shadow:0 0 0 3px #ffc93c,0 0 14px #ffc93c!important}
+body[data-vt=natural] .mc{background:linear-gradient(#a6d58f,#78ae63)!important;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2),inset 0 2px 0 rgba(255,255,255,.4)!important}
+body[data-vt=natural] .mc:not(.op):active{filter:brightness(.88)}
+body[data-vt=natural] .mc.op{background:#f6ead2!important;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)!important}
+body[data-vt=natural] .mc.op.a{background:#f6ead2!important;filter:brightness(.97)}
+body[data-vt=natural] .mc.fl::after{background-image:url(img/n_paw.webp)}
+body[data-vt=natural] .mc.boom{background:#e8453c!important}
+body[data-vt=natural] .mc.boom::after{content:"";position:absolute;inset:14%;background:url(img/n_bone.webp) center/contain no-repeat}
+body[data-vt=retro] .mc{background:linear-gradient(#e0553d,#a8321f)!important;box-shadow:inset 0 -3px 0 rgba(0,0,0,.3),inset 0 0 0 1.5px #f2b134!important}
+body[data-vt=retro] .mc:not(.op):active{filter:brightness(.88)}
+body[data-vt=retro] .mc.op{background:#3a1a0c!important;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)!important}
+body[data-vt=retro] .mc.op.a{background:#3a1a0c!important;filter:brightness(.97)}
+body[data-vt=retro] .mc.fl::after{background-image:url(img/r_paw.webp)}
+body[data-vt=retro] .mc.boom{background:#e8453c!important}
+body[data-vt=retro] .mc.boom::after{content:"";position:absolute;inset:14%;background:url(img/r_bone.webp) center/contain no-repeat}
+body[data-vt=neon] .mc{background:linear-gradient(#3b2490,#241466)!important;box-shadow:inset 0 0 0 1.5px #3ff0ff,0 0 6px rgba(63,240,255,.35)!important}
+body[data-vt=neon] .mc:not(.op):active{filter:brightness(.88)}
+body[data-vt=neon] .mc.op{background:#0f0830!important;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)!important}
+body[data-vt=neon] .mc.op.a{background:#0f0830!important;filter:brightness(.97)}
+body[data-vt=neon] .mc.fl::after{background-image:url(img/x_paw.webp)}
+body[data-vt=neon] .mc.boom{background:#e8453c!important}
+body[data-vt=neon] .mc.boom::after{content:"";position:absolute;inset:14%;background:url(img/x_bone.webp) center/contain no-repeat}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
