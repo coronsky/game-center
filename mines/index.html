@@ -339,10 +339,12 @@ body[data-vt=neon] .mc.boom::after{content:"";position:absolute;inset:14%;backgr
 body[data-vt=retro] .selG button{background:#3a160a;color:#ffd36b;border-color:#a8651e}body[data-vt=retro] .selG button.on{background:linear-gradient(#d0452f,#8f2a1f);border-color:#f2b134;color:#ffe7b0}
 body[data-vt=neon] .selG button{background:rgba(20,8,55,.85);color:#fff;border-color:#5a3bb0}body[data-vt=neon] .selG button.on{border-color:#ff4fd8;box-shadow:0 0 10px #ff4fd8;background:rgba(255,79,216,.3)}
 body:is([data-vt=retro],[data-vt=neon]) .seg button.on{color:#fff}
-.mc.ms{outline:3px solid #ff3b30;outline-offset:-3px;animation:msb 1.1s ease-in-out infinite;z-index:1}
-.mc.ms::before{content:"❗";position:absolute;top:1px;right:2px;font-size:min(4.2vw,15px);line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5));font-size-adjust:none;color:initial}
-@keyframes msb{50%{box-shadow:0 0 0 3px rgba(255,59,48,.45) inset}}
 html,body{overscroll-behavior:none}#bd,#bd *{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.mc.ms{position:relative;z-index:2;border-radius:6px;outline:none;animation:msb 1s ease-in-out infinite}
+body[data-vt=natural] .mc.ms{box-shadow:0 0 0 3px #fff,0 0 0 6px #e8453c,0 0 12px 6px rgba(232,69,60,.6)!important}
+body[data-vt=retro] .mc.ms{box-shadow:0 0 0 3px #fff,0 0 0 7px #ffe14a,0 0 14px 8px rgba(255,225,74,.85)!important}
+body[data-vt=neon] .mc.ms{box-shadow:0 0 0 3px #fff,0 0 0 6px #ff2fd0,0 0 14px 7px rgba(255,47,208,.8)!important}
+@keyframes msb{50%{transform:scale(1.07)}}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -517,7 +519,7 @@ function toggle(i){ if(over||open[i]||GS.lock) return; actx(); flag[i]=!flag[i];
 // ---- play ----
 function expand(i,base,fresh){ if(open[i]||flag[i]||mines[i]) return; const q=[[i,base]]; open[i]=true; fresh.set(i,base);
   while(q.length){ const [x,d]=q.shift(); if(cnt(x)===0) for(const j of nbs(x)){ if(!open[j]&&!flag[j]&&!mines[j]){open[j]=true;fresh.set(j,d+1);q.push([j,d+1])} } } }
-function hitMine(j){ if(GS.lives>0){ GS.lives--; GS.undone++; GS.lock=true; GS.streak=0; open[j]=true; SFX.ng(); sayText(1,pick(['いたっ！でももう一回！','だいじょうぶワン','つぎがんばろ！']),true); draw(); setStatus('ほねっこをふんじゃった…もう一回だけセーフ！');
+function hitMine(j){ if(GS.lives>0){ GS.lives--; GS.undone++; GS.lock=true; GS.streak=0; open[j]=true; SFX.ng(); sayText(1,pick(['いたっ！でももう一回！','だいじょうぶワン','つぎがんばろ！']),true); draw(); setStatus('ほねっこをふんじゃった…もう一回だけセーフ！'); toast('🦴 ほねっこ！もう一回だけセーフ',true);
       setTimeout(()=>{ open[j]=false; flag[j]=true; MS.add(j); GS.lock=false; draw(); },950); return false; }
   open[j]=true; over=true; clearInterval(tick); SFX.lose(); sayText(1,'ほねっこをふんじゃったワン…',true); setStatus('ほねっこをふんじゃった…'); report('lose',{lv:P.cur+1}); updHint();
   setTimeout(()=>showResult({winner:0,title:'🦴 ざんねん…',score:'',msg:'もう一回チャレンジ！',delay:0}),700); return true; }
