@@ -333,6 +333,12 @@ body[data-vt=neon] .mc.op.a{background:#0f0830!important;filter:brightness(.97)}
 body[data-vt=neon] .mc.fl::after{background-image:url(img/x_paw.webp)}
 body[data-vt=neon] .mc.boom{background:#e8453c!important}
 body[data-vt=neon] .mc.boom::after{content:"";position:absolute;inset:14%;background:url(img/x_bone.webp) center/contain no-repeat}
+.selG{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:6px 0 10px}.selG button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:12px;padding:6px 0 2px;font:inherit;font-weight:900;font-size:14px;color:var(--ink);cursor:pointer;line-height:1.1}
+.selG button i{display:block;font-style:normal;font-size:9px;color:#f0b429;min-height:11px}.selG button.on{background:linear-gradient(#6c8a60,var(--green-d));color:#fff;border-color:transparent}
+.seg small{font-size:10px;font-weight:700;opacity:.75}
+body[data-vt=retro] .selG button{background:#3a160a;color:#ffd36b;border-color:#a8651e}body[data-vt=retro] .selG button.on{background:linear-gradient(#d0452f,#8f2a1f);border-color:#f2b134;color:#ffe7b0}
+body[data-vt=neon] .selG button{background:rgba(20,8,55,.85);color:#fff;border-color:#5a3bb0}body[data-vt=neon] .selG button.on{border-color:#ff4fd8;box-shadow:0 0 10px #ff4fd8;background:rgba(255,79,216,.3)}
+body:is([data-vt=retro],[data-vt=neon]) .seg button.on{color:#fff}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -347,6 +353,11 @@ body[data-vt=neon] .mc.boom::after{content:"";position:absolute;inset:14%;backgr
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bHint">💡ヒント(3)</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn g" id="bHome">🏠ホーム</button></div>
 </div>
+<div class="modal" id="mMenu"><div class="card"><h2>🐾 どれであそぶ？</h2>
+  <div class="seg" id="mMode"><button data-m="stage">🗺️ ステージ</button><button data-m="random">🎲 ランダム</button></div>
+  <div id="mStageBox"><div class="lb" style="margin-top:12px">ステージをえらぶ（全30）</div><div class="selG" id="selG"></div><div class="acts"><button class="btn g" id="mStart">はじめる</button></div></div>
+  <div id="mRandBox"><div class="lb" style="margin-top:12px">ランダムの大きさ</div><div class="seg" id="mSize"><button data-s="0">やさしい<br><small>9×9</small></button><button data-s="1">ふつう<br><small>12×12</small></button><button data-s="2">むずかしい<br><small>16×16</small></button></div><div class="acts"><button class="btn g" id="mRand">ランダムではじめる</button></div></div>
+</div></div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 マインスイーパー</h2><p>草むらにかくれた<b>ほねっこ🦴（地雷）</b>をふまないように、安全なマスを全部ひらこう。</p>
 <p>🔢 ひらいたマスの数字は、まわり8マスにあるお肉の数です。</p>
 <p>🐾「あしあと（目印）」に切りかえると、あやしいマスにあしあとを付けられます（長押しでもあしあと）。</p>
@@ -466,7 +477,7 @@ const lvStar=k=>k<3?(P.best2[k]?1:0):((P.stars[P.stage-1]||0)?1:0);
 function updHint(){ const b=$('bHint'); if(b){ const left=3-GS.hints; b.textContent='💡ヒント'+(left>0?'('+left+')':''); b.disabled=over||left<=0; } }
 function load(i){ clearInterval(tick); P.cur=i; store.set('prog',P); L=i<3?LVS[i]:stageCfg(P.stage); N=L.w*L.h; mines=new Array(N).fill(false); open=new Array(N).fill(false); flag=new Array(N).fill(false);
   first=true; over=false; t0=0; H=-1; GS.lives=S.undo?1:0; GS.undone=0; GS.hints=0; GS.streak=0; GS.lock=false; $('tm').textContent='0:00';
-  lvRow($('lvs'),lvNames(),i,lvStar,load); draw(); updHint(); setStatus('どこからでもタップしてね'); }
+  renderTop(); draw(); updHint(); setStatus('どこからでもタップしてね'); }
 const nbs=i=>{const x=i%L.w,y=(i/L.w)|0,r=[];for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const X=x+dx,Y=y+dy;if(X>=0&&X<L.w&&Y>=0&&Y<L.h)r.push(Y*L.w+X)}return r};
 const cnt=i=>nbs(i).filter(j=>mines[j]).length;
 // ---- logic solver (single point + subset) ----
@@ -527,14 +538,28 @@ function win(){ over=true; clearInterval(tick); const t=Date.now()-t0; wonLast=t
   store.set('prog',P); report('clear',{stars}); SFX.win(); confetti(['🐾','🦴','✨']); sayText(2,'ぜんぶ見つけた♪',true); setStatus('クリア！'); draw(); updHint();
   const last=P.cur===3&&P.stage>=NST;
   $('bAgain').textContent=P.cur===3?(last?'もう一回！':'つぎのステージ'):'もう一回！';
-  lvRow($('lvs'),lvNames(),P.cur,lvStar,load);
+  renderTop();
   showResult({winner:0,title:'🎉 クリア！',score:'',extra:'<div class="stars">'+[0,1,2].map(k=>'<i class="'+(k<stars?'on':'off')+'"></i>').join('')+'</div>',msg:L.name+'　'+fmt(t),rec:(P.cur<3?'ベスト：'+fmt(P.best2[P.cur]):'')+(pen?'（ヒント'+GS.hints+'・やりなおし'+GS.undone+'）':'（ノーヒント・ノーミス！）')}); }
 $('mOpen').onclick=()=>{flagMode=false;$('mOpen').classList.add('on');$('mFlag').classList.remove('on');SFX.tap()};
 $('mFlag').onclick=()=>{flagMode=true;$('mFlag').classList.add('on');$('mOpen').classList.remove('on');SFX.tap()};
 $('bReset').onclick=()=>{actx();SFX.tap();wonLast=false;load(P.cur)};
 $('bHint').onclick=hint;
 $('bAgain').onclick=()=>{ closeM('mRes'); if(wonLast&&P.cur===3&&P.stage<NST) P.stage++; wonLast=false; load(P.cur); };
-load(P.cur);
+
+function renderTop(){ const t=$('lvs'),st=P.cur===3; t.innerHTML=(st?'<button id="tPrev">◀</button>':'')+'<button class="on" id="tName">'+(st?'':'ランダム ')+L.name+'</button>'+(st?'<button id="tNext">▶</button>':'')+'<button id="tMenu">📋 メニュー</button>';
+  if(st){ $('tPrev').onclick=()=>{actx();SFX.tap();P.stage=Math.max(1,P.stage-1);load(3)}; $('tNext').onclick=()=>{actx();SFX.tap();P.stage=Math.min(NST,P.stage+1);load(3)}; }
+  $('tMenu').onclick=()=>{actx();SFX.tap();openMenu()}; }
+let mm='stage',rl=0;
+function menuRefresh(){ document.querySelectorAll('#mMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===mm)); document.querySelectorAll('#mSize button').forEach(b=>b.classList.toggle('on',+b.dataset.s===rl));
+  $('mStageBox').style.display=mm==='stage'?'':'none'; $('mRandBox').style.display=mm==='random'?'':'none'; $('mStart').textContent=(P.stage>1?'つづきから（ステージ '+P.stage+'）':'ステージ 1 からはじめる');
+  $('selG').innerHTML=Array.from({length:NST},(_,i)=>`<button data-n="${i+1}" class="${i+1===P.stage?'on':''}">${i+1}<i>${P.stars[i]?'★'.repeat(P.stars[i]):''}</i></button>`).join('');
+  $('selG').querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();P.stage=+b.dataset.n;closeM('mMenu');load(3)}); }
+function openMenu(){ mm=P.cur===3?'stage':'random'; rl=P.cur<3?P.cur:rl; menuRefresh(); openM('mMenu'); }
+document.querySelectorAll('#mMode button').forEach(b=>b.onclick=()=>{actx();SFX.tap();mm=b.dataset.m;menuRefresh()});
+document.querySelectorAll('#mSize button').forEach(b=>b.onclick=()=>{actx();SFX.tap();rl=+b.dataset.s;menuRefresh()});
+$('mStart').onclick=()=>{actx();SFX.tap();closeM('mMenu');load(3)};
+$('mRand').onclick=()=>{actx();SFX.tap();closeM('mMenu');load(rl)};
+load(P.cur); openMenu();
 
 
 ;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();
