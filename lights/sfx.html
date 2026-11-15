@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ライツアウト 効果音サンプル</title>
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ライツアウト 効果音サンプル②</title>
 <style>
 body{margin:0;background:#1b1530;color:#fff;font-family:"Hiragino Maru Gothic ProN","Zen Maru Gothic",sans-serif;padding:14px 14px 40px;-webkit-user-select:none;user-select:none}
 h1{font-size:18px;margin:4px 0 4px}p.s{font-size:12px;opacity:.75;margin:0 0 12px;line-height:1.5}
@@ -7,7 +7,7 @@ h1{font-size:18px;margin:4px 0 4px}p.s{font-size:12px;opacity:.75;margin:0 0 12p
 .r{display:flex;gap:8px}.r button{flex:1;padding:14px 4px;border:0;border-radius:12px;font:inherit;font-weight:900;font-size:14px;background:#ffd24a;color:#3a2a00;touch-action:manipulation}
 .r button.o{background:#4a3a8a;color:#fff}.r button.f{background:#ff7ab8;color:#3a0020}
 </style></head><body>
-<h1>💡 ライツアウト 効果音サンプル</h1>
+<h1>💡 ライツアウト 効果音サンプル②</h1>
 <p class="s">各案に「つく」「きえる」「パチパチ」の3つ。ボタンを押して聞きくらべてください（音量に注意）。</p>
 <div id="L"></div>
 <script>
@@ -18,21 +18,21 @@ function nz(a,t,dur,type,f,q,vol){const s=noise(a,dur),fl=a.createBiquadFilter()
 function tn(a,t,f,dur,type,vol,f2){const o=a.createOscillator(),g=env(a,t,vol,dur,.004);o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);o.connect(g).connect(a.destination);o.start(t);o.stop(t+dur+.02)}
 // 各案：on(a,t) / off(a,t)
 const S=[
-{n:'① カチッ（スイッチ）',d:'壁のスイッチをカチッと押す、いちばんリアルな音',
- on(a,t){nz(a,t,.03,'bandpass',2600,3,.7);tn(a,t,180,.05,'sine',.5,90);nz(a,t+.03,.02,'highpass',5000,1,.2)},
- off(a,t){nz(a,t,.03,'bandpass',1700,3,.7);tn(a,t,130,.06,'sine',.55,60);nz(a,t+.035,.02,'highpass',4000,1,.2)}},
-{n:'② パチッ（電球）',d:'フィラメントがはじける「パチッ」＋ほのかな「ポッ」',
- on(a,t){nz(a,t,.05,'highpass',3500,.7,.8);tn(a,t+.01,900,.12,'sine',.25,1500)},
- off(a,t){nz(a,t,.04,'highpass',2500,.7,.6);tn(a,t,1300,.12,'sine',.22,520)}},
-{n:'③ ジジッ（ネオン管）',d:'ジーッと震えてからポッと点く、蛍光灯っぽい音',
- on(a,t){const o=a.createOscillator(),g=a.createGain(),m=a.createOscillator(),mg=a.createGain();o.type='sawtooth';o.frequency.value=100;m.frequency.value=55;mg.gain.value=.5;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.2,t+.02);g.gain.setValueAtTime(.2,t+.13);g.gain.exponentialRampToValueAtTime(.001,t+.2);m.connect(mg).connect(g.gain);o.connect(g).connect(a.destination);o.start(t);m.start(t);o.stop(t+.22);m.stop(t+.22);tn(a,t+.14,1200,.12,'triangle',.22,1800);nz(a,t+.13,.03,'bandpass',3000,2,.4)},
- off(a,t){tn(a,t,1500,.1,'triangle',.2,300);nz(a,t+.08,.05,'bandpass',900,2,.35)}},
-{n:'④ ポン（かわいい木琴）',d:'やさしいマリンバ風。ついたら上がる音・消えたら下がる音',
- on(a,t){tn(a,t,784,.18,'sine',.3);tn(a,t,1568,.1,'sine',.1);tn(a,t+.07,1047,.2,'sine',.3);tn(a,t+.07,2094,.1,'sine',.1)},
- off(a,t){tn(a,t,1047,.15,'sine',.28);tn(a,t+.07,659,.22,'sine',.3);tn(a,t+.07,1318,.1,'sine',.08)}},
-{n:'⑤ チリン（ガラスのきらめき）',d:'きれいに光る感じ。消えるときは「フッ」と息のような音',
- on(a,t){[2093,3136,4186].forEach((f,k)=>tn(a,t+k*.035,f,.35-k*.07,'sine',.16));nz(a,t,.03,'highpass',6000,1,.2)},
- off(a,t){nz(a,t,.16,'bandpass',1400,.8,.5);tn(a,t,1568,.12,'sine',.12,700)}}
+{n:'① ぽわっ（やさしい光）',d:'やわらかくふくらむ、あたたかい電球の灯り。耳にやさしい音',
+ on(a,t){tn(a,t,440,.22,'sine',.26,880);tn(a,t,880,.18,'sine',.08,1320)},
+ off(a,t){tn(a,t,700,.22,'sine',.24,300);tn(a,t,350,.2,'sine',.08,200)}},
+{n:'② ピコッ（ゲーム風）',d:'ファミコンのような短い電子音。ついたら上がり、消えたら下がる',
+ on(a,t){tn(a,t,880,.06,'square',.09);tn(a,t+.06,1320,.08,'square',.09)},
+ off(a,t){tn(a,t,1100,.06,'square',.08);tn(a,t+.06,660,.1,'square',.08)}},
+{n:'③ ポーン（ベル）',d:'小さなベルのような、澄んだ余韻のある音',
+ on(a,t){tn(a,t,1047,.5,'sine',.22);tn(a,t,2094,.3,'sine',.07);tn(a,t,3141,.18,'sine',.04)},
+ off(a,t){tn(a,t,784,.4,'sine',.18);tn(a,t,1568,.22,'sine',.05)}},
+{n:'④ キラッ（きらめき）',d:'星がまたたくような、高い音の小さな連なり',
+ on(a,t){[1568,2093,2637,3136].forEach((f,k)=>tn(a,t+k*.04,f,.16,'sine',.1))},
+ off(a,t){[3136,2349,1760].forEach((f,k)=>tn(a,t+k*.045,f,.14,'sine',.08))}},
+{n:'⑤ ぷにっ（ゼリー）',d:'ゴムやゼリーを押したような、ぷるんとした弾む音',
+ on(a,t){tn(a,t,300,.14,'sine',.3,720);tn(a,t+.1,720,.1,'sine',.2,560)},
+ off(a,t){tn(a,t,600,.14,'sine',.28,240);tn(a,t+.1,240,.1,'sine',.18,300)}}
 ];
 function flick(i,a,t0){const s=S[i],ts=[0,.06,.11,.2,.26,.38];let on=false;ts.forEach(x=>{(on?s.off:s.on)(a,t0+x);on=!on});(on?s.off:s.on)(a,t0+.52)}
 const L=document.getElementById('L');
