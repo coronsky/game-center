@@ -78,10 +78,8 @@ body.st-full .stw .fc{display:block;inset:1px}
 .stPrev i b{position:absolute;border-radius:50%;background-size:cover;background-position:center}
 .stPrev.face i b{inset:3px}.stPrev.full i b{inset:1px}
 .stPrev i:not(.w) b{background-image:var(--colon)}.stPrev i.w b{background-image:var(--moon)}
-.disc.drop{animation:drop .3s ease-out}
-@keyframes drop{0%{transform:scale(1.5);opacity:0}100%{opacity:1}}
-.disc.W.drop{animation:dropW .3s ease-out}
-@keyframes dropW{0%{transform:rotateY(180deg) scale(1.5);opacity:0}100%{transform:rotateY(180deg);opacity:1}}
+.disc.drop,.disc.W.drop{animation:drop .3s ease-out}
+@keyframes drop{0%{scale:1.5;opacity:0}100%{scale:1;opacity:1}}
 .cell.last::before{content:"";position:absolute;left:50%;top:50%;width:16%;height:16%;transform:translate(-50%,-50%);border-radius:50%;background:#e9a23b;box-shadow:0 0 5px #ffd27a,0 0 0 2px rgba(255,255,255,.8);z-index:3}
 .dots{position:absolute;width:4.5%;height:4.5%;border-radius:50%;background:var(--grid);transform:translate(-50%,-50%);pointer-events:none;z-index:2}
 
@@ -781,9 +779,9 @@ function buildBoard(){
     const d=document.createElement('div'); d.className='dots'; d.style.left=(c*12.5)+'%'; d.style.top=(r*12.5)+'%'; bd.appendChild(d);
   }
 }
-function discEl(cell){
+function discEl(cell,isW){
   let d=cell.querySelector('.disc');
-  if(!d){d=document.createElement('div');d.className='disc';d.addEventListener('animationend',()=>d.classList.remove('drop'));d.innerHTML='<div class="f b1"></div><div class="f w1"></div>';cell.appendChild(d)}
+  if(!d){d=document.createElement('div');d.className='disc'+(isW?' W':'');d.addEventListener('animationend',()=>d.classList.remove('drop'));d.innerHTML='<div class="f b1"></div><div class="f w1"></div>';cell.appendChild(d)}
   return d;
 }
 function isHuman(p){return C.mode==='pvp'||p===C.side}
@@ -802,7 +800,7 @@ function render(newIdx){
     else if(tr) tr.remove();
     if(v===E||v===X){ const d=c.querySelector('.disc'); if(d) d.remove(); }
     else{
-      const fresh=!c.querySelector('.disc'); const d=discEl(c);
+      const fresh=!c.querySelector('.disc'); const d=discEl(c,v===W);
       if(fresh){ d.style.transition='none'; d.classList.toggle('W',v===W); void d.offsetWidth; d.style.transition=''; }
       else d.classList.toggle('W',v===W);
       if(fresh||i===newIdx){ d.classList.remove('drop'); void d.offsetWidth; d.classList.add('drop'); }
@@ -885,7 +883,7 @@ function play(i,f){
   const myGen=gen;
   const r0=(i/N)|0,c0=i%N;
   f.sort((a,b)=>Math.max(Math.abs(((a/N)|0)-r0),Math.abs(a%N-c0))-Math.max(Math.abs(((b/N)|0)-r0),Math.abs(b%N-c0)));
-  f.forEach((j,k)=>setTimeout(()=>{ if(myGen!==gen)return; board[j]=p; const d=discEl(cells[j]); d.classList.toggle('W',p===W); },90+k*55));
+  f.forEach((j,k)=>setTimeout(()=>{ if(myGen!==gen)return; board[j]=p; const d=discEl(cells[j],p===W); d.classList.toggle('W',p===W); },90+k*55));
   sfx.flip(f.length);
   if(isHuman(p)&&C.mode==='cpu') maxFlipG=Math.max(maxFlipG,f.length);
   if(C.mode==='pvp') maxFlipG=Math.max(maxFlipG,f.length);
