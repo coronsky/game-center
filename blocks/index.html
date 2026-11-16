@@ -407,40 +407,50 @@ function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<but
 if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
 
 const ST=20,TI=[{n:'かんたん 4×4',n0:'かんたん',z:4,a:[4,5],b:[3,3],g:[[4,4],[4,4],[5,4]]},{n:'ふつう 5×5',n0:'ふつう',z:5,a:[5,5],b:[3,4],g:[[5,5],[5,5],[6,5]]},{n:'むずかしい 6×6',n0:'むずかしい',z:6,a:[5,6],b:[4,5],g:[[6,6],[6,6],[7,6]]},{n:'とても 7×7',n0:'とても',z:7,a:[5,6],b:[4,5],g:[[7,7],[7,7],[8,7]]},{n:'ちょう 8×8',n0:'ちょう',z:8,a:[6,6],b:[5,6],g:[[8,8],[8,8],[8,7]]}];
-const NST=TI.length*ST, stageCfg=i=>{const t=(i/ST)|0,j=i%ST,T=TI[t],k=j/(ST-1),L=(x,y)=>Math.round(x+(y-x)*k),mn=L(T.a[0],T.b[0]),mx=Math.max(mn,L(T.a[1],T.b[1])); return {w:T.z,h:T.z,mn,mx,pc:Math.ceil(T.z*T.z/mn)+2,seed:1000+i*7919}};
+const RECTS=[[4, 3], [5, 3], [6, 3], [5, 4], [8, 3], [6, 4], [9, 3], [7, 4], [10, 3], [6, 5], [8, 4], [7, 5], [9, 4], [10, 4], [8, 5], [7, 6], [11, 4], [9, 5], [8, 6], [9, 6], [11, 5], [8, 7], [10, 6], [9, 7], [11, 6], [10, 7], [11, 7], [10, 8], [11, 8], [10, 9]], SHAPES=["#___/##__/###_/####", "_##_/####/####/_##_", "#__#/#__#/####/####", "####/#__#/#__#/####", "_###/####/####/###_", "#####/_###_/_###_/_###_", "###__/####_/_####/__###", "##___/##___/##___/#####/#####", "#####/#####/_###_/_###_", "###___/####__/_#####/__####", "#####/#___#/#___#/#___#/#####", "##____/##____/##____/######/######", "##_##/##_##/#####/#####", "#___#/#___#/#####/#####/#####", "####__/######/_#####/__####", "_###_/#####/#####/#####/_###_", "_####/#####/#####/####_/###__", "_###_/_###_/#####/#####/_###_/_###_", "_###__/#####_/######/_#####/__###_", "_####/#####/#####/#####/####_", "##_##/#####/#####/#####/##_##", "#######/#######/__###__/__###__/__###__", "__##__/_####_/######/######/_####_/__##__", "##__##/##__##/######/######/######", "###___/###___/###___/######/######/######", "_#####_/#######/#######/_#####_/__###__", "_####_/######/######/######/#####_/_###__", "###__##/#######/_######/#######/##_####", "_####_/######/######/######/######/_####_", "######/######/##__##/##__##/######/######"].map(r=>r.split('/'));
+TI.push({n:'長方形',n0:'長方形',cnt:30,type:'rect'},{n:'かわった形',n0:'かわった形',cnt:30,type:'shape'});
+const TS=[]; let _a=0; TI.forEach(T=>{T.cnt=T.cnt||ST; TS.push(_a); _a+=T.cnt}); const NST=_a, tierOf=i=>{let t=TS.length-1; while(TS[t]>i) t--; return t;};
+const mkMask=rows=>{ const w=rows[0].length,h=rows.length; return {w,h,dead:rows.join('').split('').map(c=>c!=='#'),n:rows.join('').split('#').length-1}; };
+const rectCfg=(w,h,seed)=>{ const a=w*h, mn=Math.min(6,Math.max(3,Math.round(Math.sqrt(a)/1.6))); return {w,h,mn,mx:mn+1,pc:Math.ceil(a/mn)+2,seed,lab:w+'×'+h}; };
+const shapeCfg=(rows,seed)=>{ const M=mkMask(rows), mn=Math.min(5,Math.max(3,Math.round(Math.sqrt(M.n)/1.4))); return {w:M.w,h:M.h,mask:M.dead,mn,mx:mn+1,pc:Math.ceil(M.n/mn)+2,seed,lab:'かわった形'}; };
+const stageCfg=i=>{const t=tierOf(i),j=i-TS[t],T=TI[t]; if(T.type==='rect'){ const r=RECTS[j]; return rectCfg(r[0],r[1],2000+i*7919); } if(T.type==='shape') return shapeCfg(SHAPES[j],3000+i*7919);
+  const k=j/(ST-1),L=(x,y)=>Math.round(x+(y-x)*k),mn=L(T.a[0],T.b[0]),mx=Math.max(mn,L(T.a[1],T.b[1])); return {w:T.z,h:T.z,mn,mx,pc:Math.ceil(T.z*T.z/mn)+2,seed:1000+i*7919,lab:T.z+'×'+T.z}};
 const mul=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 let endT=-1;
 const COL=[0,1,2,3,4,5,6,7,8,9].map(k=>`var(--t${k}) center/100% 100% no-repeat`);
 const _o=store.get('prog2',{}); const P=Object.assign({cur:0,done:{},endT:_o.endT||0,endN:_o.endN||0},store.get('prog3',{})); const svP=()=>store.set('prog3',P);
-let W,H,pieces,place,sel=-1,hover=-1,hist=[];
+let W,H,LAB,pieces,place,sel=-1,hover=-1,hist=[];
 const norm=c=>{const mx=Math.min(...c.map(p=>p[0])),my=Math.min(...c.map(p=>p[1]));return c.map(([x,y])=>[x-mx,y-my]).sort((a,b)=>a[1]-b[1]||a[0]-b[0])};
-function gen(w,h,mn,mx,pcMax,seed){ const R=seed?mul(seed):Math.random;
-  for(let t=0;t<3000;t++){ const own=new Array(w*h).fill(-1); const ps=[]; let ok=true;
-    for(let i=0;i<w*h;i++){ if(own[i]>=0) continue; const size=mn+((R()*(mx-mn+1))|0); const cells=[i]; own[i]=ps.length;
-      while(cells.length<size){ const fr=[]; for(const c of cells){ const x=c%w,y=(c/w)|0; [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{const X=x+dx,Y=y+dy; if(X>=0&&X<w&&Y>=0&&Y<h&&own[Y*w+X]<0) fr.push(Y*w+X)}); }
+function gen(w,h,mn,mx,pcMax,seed,mask){ const R=seed?mul(seed):Math.random;
+  for(let t=0;t<3000;t++){ const own=new Array(w*h).fill(-1); if(mask) mask.forEach((d,i)=>{ if(d) own[i]=-9; }); const ps=[]; let ok=true;
+    for(let i=0;i<w*h;i++){ if(own[i]!==-1) continue; const size=mn+((R()*(mx-mn+1))|0); const cells=[i]; own[i]=ps.length;
+      while(cells.length<size){ const fr=[]; for(const c of cells){ const x=c%w,y=(c/w)|0; [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{const X=x+dx,Y=y+dy; if(X>=0&&X<w&&Y>=0&&Y<h&&own[Y*w+X]===-1) fr.push(Y*w+X)}); }
         if(!fr.length) break; const n=fr[(R()*fr.length)|0]; own[n]=ps.length; cells.push(n); }
       if(cells.length<Math.min(mn,3)){ ok=false; break; } ps.push(cells); }
     if(ok&&ps.length<=pcMax) return ps.map(c=>norm(c.map(i=>[i%w,(i/w)|0]))); }
-  return gen(w,h,Math.max(3,mn-1),mx+1,pcMax+2,seed?seed+1:0); }
-function begin(c){ W=c.w;H=c.h;
-  pieces=gen(c.w,c.h,c.mn,c.mx,c.pc,c.seed).map((q,k)=>({c:randOrient(q),col:COL[k%COL.length],at:-1})); place=new Array(W*H).fill(-1); sel=0; hist=[];
+  return gen(w,h,Math.max(3,mn-1),mx+1,pcMax+2,seed?seed+1:0,mask); }
+function begin(c){ W=c.w;H=c.h; LAB=c.lab||(W+'×'+H);
+  pieces=gen(c.w,c.h,c.mn,c.mx,c.pc,c.seed,c.mask).map((q,k)=>({c:randOrient(q),col:COL[k%COL.length],at:-1})); place=new Array(W*H).fill(-1); if(c.mask) c.mask.forEach((d,i)=>{ if(d) place[i]=-2; }); sel=0; hist=[];
   drawNav(); draw(); setStatus('ブロックでわくをうめよう'); setTimeout(()=>sayText(1,'くみたてるワン！'),300); }
-function drawNav(){ const t=endT>=0?endT:((P.cur/ST)|0);
-  lvRow($('tiers'),TI.map(x=>x.n).concat(['♾️ 無限']),endT>=0?TI.length:t,k=>k<TI.length&&Array.from({length:ST},(_,j)=>j).every(j=>P.done[k*ST+j])?1:0,k=>{ if(k===TI.length){ loadEnd(P.endT||0); } else if(endT>=0&&k===t) loadEnd(k); else { const f=Array.from({length:ST},(_,j)=>k*ST+j).find(i=>!P.done[i]); load(f==null?k*ST:f); } });
+function drawNav(){ const t=endT>=0?endT:tierOf(P.cur);
+  lvRow($('tiers'),TI.map(x=>x.n).concat(['♾️ 無限']),endT>=0?TI.length:t,k=>k<TI.length&&Array.from({length:TI[k].cnt},(_,j)=>j).every(j=>P.done[TS[k]+j])?1:0,k=>{ if(k===TI.length){ loadEnd(P.endT||0); } else if(endT>=0&&k===t) loadEnd(k); else { const f=Array.from({length:TI[k].cnt},(_,j)=>TS[k]+j).find(i=>!P.done[i]); load(f==null?TS[k]:f); } });
   if(endT>=0){ lvRow($('lvs'),TI.map(x=>x.n0),endT,null,k=>{P.endT=k;svP();loadEnd(k)}); $('stN').textContent='♾️ '+(P.endN+1)+'問目'; }
-  else { lvRow($('lvs'),Array.from({length:ST},(_,j)=>(j+1)+''),P.cur%ST,j=>P.done[t*ST+j]?1:0,j=>load(t*ST+j)); $('stN').textContent=(P.cur+1)+'/'+NST; } }
+  else { lvRow($('lvs'),Array.from({length:TI[t].cnt},(_,j)=>(j+1)+''),P.cur-TS[t],j=>P.done[TS[t]+j]?1:0,j=>load(TS[t]+j)); $('stN').textContent=(P.cur+1)+'/'+NST; } }
 function load(i){ endT=-1; P.cur=i; svP(); begin(stageCfg(i)); }
-function loadEnd(t){ endT=t; P.endT=t; svP(); const T=TI[t],g=T.g[(Math.random()*T.g.length)|0],mn=Math.round((T.a[0]+T.b[0])/2),mx=Math.max(mn,Math.round((T.a[1]+T.b[1])/2)); begin({w:g[0],h:g[1],mn,mx,pc:Math.ceil(g[0]*g[1]/mn)+2,seed:0}); }
+function loadEnd(t){ endT=t; P.endT=t; svP(); const T=TI[t];
+  if(T.type==='rect'){ const r=RECTS[(Math.random()*RECTS.length)|0]; begin(rectCfg(r[0],r[1],0)); return; }
+  if(T.type==='shape'){ begin(shapeCfg(SHAPES[(Math.random()*SHAPES.length)|0],0)); return; }
+  const g=T.g[(Math.random()*T.g.length)|0],mn=Math.round((T.a[0]+T.b[0])/2),mx=Math.max(mn,Math.round((T.a[1]+T.b[1])/2)); begin({w:g[0],h:g[1],mn,mx,pc:Math.ceil(g[0]*g[1]/mn)+2,seed:0}); }
 function rot(c){return norm(c.map(([x,y])=>[-y,x]))} function flip(c){return norm(c.map(([x,y])=>[-x,y]))}
 function randOrient(c){ let r=c; for(let k=(Math.random()*4)|0;k>0;k--) r=rot(r); return r; }
 function cellsAt(p,at){ const ax=at%W,ay=(at/W)|0, a0=p.c[0]; return p.c.map(([x,y])=>{const X=ax+x-a0[0],Y=ay+y-a0[1]; return (X<0||X>=W||Y<0||Y>=H)?-1:Y*W+X}); }
 function resolve(k,i){ if(fits(k,i)) return i; const p=pieces[k],a0=p.c[0],tx=i%W,ty=(i/W)|0; const mx=p.c.reduce((a,q)=>a+q[0],0)/p.c.length,my=p.c.reduce((a,q)=>a+q[1],0)/p.c.length; let best=-1,bd=1e9;
   for(const q of p.c){ const X=tx+a0[0]-q[0],Y=ty+a0[1]-q[1]; if(X<0||X>=W||Y<0||Y>=H) continue; const at=Y*W+X; if(!fits(k,at)) continue; const d=Math.hypot(q[0]-mx,q[1]-my); if(d<bd){bd=d;best=at} }
   return best>=0?best:i; }
-function fits(k,at){ const cs=cellsAt(pieces[k],at); return cs.every(c=>c>=0&&place[c]<0); }
+function fits(k,at){ const cs=cellsAt(pieces[k],at); return cs.every(c=>c>=0&&place[c]===-1); }
 function draw(){ const bd=$('bd'); const cs=Math.max(24,Math.min(Math.floor((Math.min(innerWidth,480)-50)/W),48,Math.floor(innerHeight*(document.body.classList.contains('fs')?.5:.4)/H))); bd.style.gridTemplateColumns=`repeat(${W},${cs}px)`; bd.innerHTML='';
-  const pv=sel>=0&&hover>=0&&pieces[sel].at<0?cellsAt(pieces[sel],resolve(sel,hover)):[]; const pvOk=pv.length&&pv.every(c=>c>=0&&place[c]<0);
-  for(let i=0;i<W*H;i++){ const e=document.createElement('div'); e.className='bc'+(pv.includes(i)?' prev'+(pvOk?'':' bad'):''); if(place[i]>=0) e.style.background=pieces[place[i]].col;
+  const pv=sel>=0&&hover>=0&&pieces[sel].at<0?cellsAt(pieces[sel],resolve(sel,hover)):[]; const pvOk=pv.length&&pv.every(c=>c>=0&&place[c]===-1);
+  for(let i=0;i<W*H;i++){ const e=document.createElement('div'); if(place[i]===-2){ e.className='bc dead'; e.style.visibility='hidden'; bd.appendChild(e); continue; } e.className='bc'+(pv.includes(i)?' prev'+(pvOk?'':' bad'):''); if(place[i]>=0) e.style.background=pieces[place[i]].col;
     if(place[i]>=0) e.onpointerdown=ev=>{ ev.preventDefault(); actx(); try{$('bd').setPointerCapture(ev.pointerId)}catch(_){} pend={i,k:place[i],sx:ev.clientX,sy:ev.clientY}; }; else e.onclick=()=>tapCell(i); e.onmouseenter=()=>{ if(drag||pend) return; hover=i;draw()}; bd.appendChild(e); }
   const tr=$('tray'); tr.innerHTML=''; pieces.forEach((p,k)=>{ const mw=Math.max(...p.c.map(q=>q[0]))+1; const mh=Math.max(...p.c.map(q=>q[1]))+1; const e=document.createElement('div');
     e.className='pc'+(k===sel?' sel':'')+(p.at>=0?' used':''); const tcs=pieces.length>9?13:16; e.style.gridTemplateColumns=`repeat(${mw},${tcs}px)`; e.style.touchAction='none';
@@ -501,7 +511,7 @@ function win(){ report('clear',{stars:3}); SFX.win(); confetti(['🧩','🐾','�
   let msg=pieces.length+'個のブロックでぴったり！';
   if(endT>=0){ P.endN++; svP(); $('bAgain').textContent='つぎの問題'; }
   else { P.done[P.cur]=1; svP(); const last=P.cur>=NST-1; $('bAgain').textContent=last?'もう一回':'つぎのステージ'; if(last) msg='全'+NST+'ステージクリア！おめでとう🎉'; }
-  drawNav(); showResult({winner:0,title:endT>=0?'🎉 完成！':'🎉 ステージクリア！',score:W+'×'+H,msg}); }
+  drawNav(); showResult({winner:0,title:endT>=0?'🎉 完成！':'🎉 ステージクリア！',score:LAB,msg}); }
 $('bRot').onclick=()=>{ if(sel<0||pieces[sel].at>=0) return; actx(); pieces[sel].c=rot(pieces[sel].c); SFX.tap(); draw(); };
 $('bFlip').onclick=()=>{ if(sel<0||pieces[sel].at>=0) return; actx(); pieces[sel].c=flip(pieces[sel].c); SFX.tap(); draw(); };
 $('bUndo').onclick=()=>{ const h=hist.pop(); if(!h) return; if(h[0]==='add'){ const k=h[1]; for(let j=0;j<W*H;j++) if(place[j]===k) place[j]=-1; pieces[k].at=-1; sel=k; }
@@ -510,15 +520,15 @@ $('bReset').onclick=()=>{actx();SFX.tap();if(endT>=0) loadEnd(endT); else load(P
 addEventListener('resize',draw); if(P.cur>=NST) P.cur=0; load(P.cur);
 let mm='stage',mt=0;
 function menuRefresh(){ document.querySelectorAll('#mMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===mm));
-  $('mSize').innerHTML=TI.map((T,i)=>`<button data-t="${i}" class="${i===mt?'on':''}" style="flex:1 0 30%">${T.z}×${T.z}<small style="display:block;font-size:10px;opacity:.85">${T.n0}</small></button>`).join('');
+  $('mSize').innerHTML=TI.map((T,i)=>`<button data-t="${i}" class="${i===mt?'on':''}" style="flex:1 0 30%">${T.z?T.z+'×'+T.z:T.n0}<small style="display:block;font-size:10px;opacity:.85">${T.z?T.n0:'30面'}</small></button>`).join('');
   $('mSize').querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();mt=+b.dataset.t;menuRefresh()});
   $('mSelRow').style.display=mm==='stage'?'':'none'; $('mGo').textContent=mm==='stage'?'スタート！（つづきから）':'スタート！'; }
 document.querySelectorAll('#mMode button').forEach(b=>b.onclick=()=>{actx();SFX.tap();mm=b.dataset.m;menuRefresh()});
-function openMenu(){ mt=endT>=0?endT:((P.cur/ST)|0); mm=endT>=0?'random':'stage'; menuRefresh(); openM('mMenu'); }
+function openMenu(){ mt=endT>=0?endT:tierOf(P.cur); mm=endT>=0?'random':'stage'; menuRefresh(); openM('mMenu'); }
 $('bMenu').onclick=()=>{actx();SFX.tap();openMenu()};
-$('mGo').onclick=()=>{actx();SFX.tap();closeM('mMenu'); if(mm==='random') loadEnd(mt); else { const f=Array.from({length:ST},(_,j)=>mt*ST+j).find(i=>!P.done[i]); load(f==null?mt*ST:f); } };
+$('mGo').onclick=()=>{actx();SFX.tap();closeM('mMenu'); if(mm==='random') loadEnd(mt); else { const f=Array.from({length:TI[mt].cnt},(_,j)=>TS[mt]+j).find(i=>!P.done[i]); load(f==null?TS[mt]:f); } };
 $('mSelBtn').onclick=()=>{actx();SFX.tap();openSel()};
-function openSel(){ $('mSelT').textContent='🗺 '+TI[mt].n+' のステージ'; $('selGrid').innerHTML=Array.from({length:ST},(_,j)=>{const i=mt*ST+j;return `<button data-i="${i}" class="${i===P.cur&&endT<0?'on':''}">${j+1}<small>${P.done[i]?'★':'&nbsp;'}</small></button>`}).join('');
+function openSel(){ $('mSelT').textContent='🗺 '+TI[mt].n+' のステージ'; $('selGrid').innerHTML=Array.from({length:TI[mt].cnt},(_,j)=>{const i=TS[mt]+j;return `<button data-i="${i}" class="${i===P.cur&&endT<0?'on':''}">${j+1}<small>${P.done[i]?'★':'&nbsp;'}</small></button>`}).join('');
   $('selGrid').querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();closeM('mSel');closeM('mMenu');load(+b.dataset.i)}); openM('mSel'); }
 openMenu();
 
