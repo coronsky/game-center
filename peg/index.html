@@ -629,7 +629,7 @@ function finish(){
   else { SFX.lose(); sayText(1,'もう動けないワン…',true); }
   setStatus(good?(onT?'パーフェクト！🎉':'クリア！'):`のこり${c}匹で終了`);
   $('bNextSt').textContent=mode==='random'?'つぎのランダム ▶︎':'次へ ▶︎'; $('bNextSt').style.display=(mode==='random'&&good)||(mode==='stage'&&STG[lv+1]&&P.clear[lv])?'':'none';
-  showResult({winner:good?1:0,title:good?(onT?'🏆 パーフェクト！':'🎉 クリア！'):'😢 動けなくなった',score:`のこり${c}匹・${fmt(t)}`,
+  showResult({winner:good?1:0,title:good?(onT?'🏆 パーフェクト！':'🎉 クリア！'):'😢 ざんねん！動けなくなった',score:`のこり${c}匹・${fmt(t)}`,
     msg:usedDemo?'見本で解きました（★なし）':good?(onT?'まんなかの★マスにぴったり！':'★マスで終われたら★3つ！（ヒントなしで）'):(c===2?'おしい！あと1匹（★1つ）':'「戻す」で手前からやり直してみよう'),
     extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}`,rec:'★1：のこり2匹以内　★2：のこり1匹　★3：★マスで1匹（ヒントなし）',delay:700});
 }
