@@ -243,6 +243,10 @@ html body .app .vtBtn,html body .app .homeBtn{width:90px!important;height:30px!i
 html body[data-vt=natural] .app .vtBtn{background-image:url(../img/ui/natural_skin.webp?v=2)!important}html body[data-vt=natural] .app .homeBtn{background-image:url(../img/ui/natural_home.webp?v=2)!important}
 html body[data-vt=retro] .app .vtBtn{background-image:url(../img/ui/retro_skin.webp?v=2)!important}html body[data-vt=retro] .app .homeBtn{background-image:url(../img/ui/retro_home.webp?v=2)!important}
 html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../img/ui/neon_home.webp?v=2)!important}
+.selG{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin:4px 0 8px;max-height:132px;overflow-y:auto;padding:2px}.selG button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:10px;padding:5px 0 1px;font:inherit;font-weight:900;font-size:13px;color:var(--ink);cursor:pointer;line-height:1.1}
+.selG button i{display:block;font-style:normal;font-size:9px;color:#f0b429;min-height:10px}.selG button.on{background:linear-gradient(#6c8a60,var(--green-d));color:#fff;border-color:transparent}
+body[data-vt=retro] .selG button{background:#3a160a;color:#ffd36b;border-color:#a8651e}body[data-vt=retro] .selG button.on{background:linear-gradient(#d0452f,#8f2a1f);border-color:#f2b134;color:#ffe7b0}
+body[data-vt=neon] .selG button{background:rgba(20,8,55,.85);color:#fff;border-color:#5a3bb0}body[data-vt=neon] .selG button.on{border-color:#ff4fd8;box-shadow:0 0 10px #ff4fd8;background:rgba(255,79,216,.3)}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style><style id="stickCss">#stickZone{margin:8px 12px 0;height:120px;border:2.5px dashed rgba(120,90,60,.35);border-radius:22px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:700;color:rgba(90,61,43,.6);touch-action:none;user-select:none;-webkit-user-select:none;padding:0 14px}
 body[data-vt=retro] #stickZone{border-color:rgba(242,177,52,.5);color:rgba(242,177,52,.8)}body[data-vt=neon] #stickZone{border-color:rgba(63,240,255,.5);color:rgba(63,240,255,.8)}
 #stBase{position:fixed;z-index:60;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;background:rgba(255,255,255,.28);border:3px solid rgba(255,255,255,.75);box-shadow:0 0 0 2px rgba(90,61,43,.25),0 4px 14px rgba(0,0,0,.25);pointer-events:none;display:none}
@@ -264,7 +268,7 @@ body[data-vt=retro] #mMode .card{color:#ffe9b0}body[data-vt=neon] #mMode .card{c
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">ドキドキ鬼ごっこ</div></div>
 
   <div class="hud"><div class="box"><small>ステージ</small><b id="stN"></b></div><div class="box"><small>ポイント</small><b id="sc">0</b></div><div class="box"><small>おやつ🦴</small><b id="sn">0/0</b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
-  <div class="lvRow" id="lvs"></div>
+  <div class="lvRow" id="lvs" style="display:none"></div>
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv" width="600" height="600"></canvas></div></div>
   <div id="stickZone"><span>👆 ここをなぞると、スティックが出てくるよ（画面のワクの中ならどこでもOK）</span><button id="bNext" style="display:none"></button></div>
 
@@ -275,6 +279,7 @@ body[data-vt=retro] #mMode .card{color:#ffe9b0}body[data-vt=neon] #mMode .card{c
 <div class="modal" id="mMode"><div class="card pick"><h2>🐾 キャラとモードをえらぼう</h2><div class="lb">あなたのワンコ</div>
 <div class="pkRow" data-k="me"><button data-v="colon"><span class="pa" style="background-image:var(--colon)"></span>コロン<small>ムーンがおってくる</small></button><button data-v="moon"><span class="pa" style="background-image:var(--moon)"></span>ムーン<small>コロンがおってくる</small></button></div>
 <div class="lb">モード</div><div class="pkRow" data-k="mode" style="grid-template-columns:1fr 1fr 1fr"><button data-v="stage"><img class="mi" data-n="stage" alt=""><small>ステージ</small></button><button data-v="endless"><img class="mi" data-n="endless" alt=""><small>ずっとにげる</small></button><button data-v="mission"><img class="mi" data-n="mission" alt=""><small>ミッション</small></button></div>
+<div id="selBox"><div class="lb" id="selLb"></div><div class="selG" id="selG"></div></div>
 <div class="pkNote" id="modeNote"></div><div class="acts"><button class="btn g" id="bModeGo">この設定ではじめる！</button></div></div></div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 ドキドキ鬼ごっこ</h2><p>コロンを動かして、ゴールの🏠まで走ろう！ムーンが<b>おじゃましに追いかけてくる</b>から、つかまったらアウトだよ。</p>
 <p>👆 画面をなぞるとスティックが出て、倒した向きに走ります（倒すほど速い）。矢印キーや「かたむけ」でも動かせます。</p>
@@ -381,7 +386,7 @@ function swipe(el,cb){ let sx=0,sy=0,on=false; el.addEventListener('touchstart',
 function keys(cb){ addEventListener('keydown',e=>{const k={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'}[e.key]; if(k){e.preventDefault();cb(k)}}); }
 function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<button data-i="${i}" class="${i===cur?'on':''}">${n}${starsOf&&starsOf(i)?'<i>'+'★'.repeat(starsOf(i))+'</i>':''}</button>`).join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
-setTimeout(()=>{ try{modeSync()}catch(e){} openM('mMode') },400);
+setTimeout(()=>{ try{selI=lv();modeSync()}catch(e){} openM('mMode') },400);
 
 const LVN=40;
 const CFG=i=>({n:9+2*Math.floor(i/10),obs:Math.min(.24,.10+i*.0036),moons:1+(i>=6)+(i>=16)+(i>=28),mv:Math.min(.78,.52+i*.0067),sn:Math.min(14,5+Math.floor(i/4.5))});
@@ -417,9 +422,8 @@ function modeName(){ return ST.mode==='endless'?'ずっとにげる':ST.mode==='
 function names(){ return Array.from({length:LVN},(_,k)=>(ST.mode==='mission'?'ミッション':'ステージ')+(k+1)); }
 function load(i){ clearInterval(tick); cancelAnimationFrame(raf); if(ST.mode==='mission') P.curM=i; else if(ST.mode==='stage') P.cur=i; store.set('prog',P);
   build(); t0=0; done=false; lost=false; score=0; wait=0; cd=3.6; cdn=0; ROLL.calib=true; S2={dash:0,bar:0,ice:0,hide:0,gold:0,sn:0}; fx={dash:0,ice:0}; E={add:25,item:9,el:0,mvx:0};
-  const en=ST.mode==='endless'; $('lvs').style.display=en?'none':''; $('stN').previousElementSibling.textContent=modeName();
+  const en=ST.mode==='endless'; $('stN').previousElementSibling.textContent=modeName();
   $('stN').textContent=en?'∞':(lv()+1)+'/'+LVN; $('tm').textContent='0:00'; $('bNext').style.visibility='hidden'; $('bAgain').textContent='つぎへ';
-  if(!en) lvRow($('lvs'),names(),lv(),k=>(ST.mode==='mission'?P.bestM:P.best)[k]?1:0,load);
   snUpd(); setStatus(statusMsg()); draw(); setTimeout(()=>sayText(chP(),'まてまて〜♪'),300); last=0; raf=requestAnimationFrame(loop); }
 function mInfo(){ const m=MIS[P.curM],el=t0?(Date.now()-t0)/1000:0; const ck=[]; if(m.sn) ck.push([S2.sn>=m.sn,'おやつ '+Math.min(S2.sn,m.sn)+'/'+m.sn]);
   if(m.all) ck.push([!snacks.size,'おやつ '+(snTot-snacks.size)+'/'+snTot]); if(m.dash) ck.push([S2.dash>=m.dash,'ダッシュ '+S2.dash+'/'+m.dash]); if(m.bar) ck.push([S2.bar>=m.bar,'バリア '+S2.bar+'/'+m.bar]);
@@ -452,11 +456,16 @@ async function rollOn(){ actx(); try{ if(window.DeviceOrientationEvent&&typeof D
 function rollOff(){ ROLL.on=false; removeEventListener('deviceorientation',onOri); $('bRoll').textContent='📱 かたむけ：OFF'; $('bRoll').classList.remove('on'); }
 $('bRoll').onclick=()=>{ SFX.tap(); ROLL.on?rollOff():rollOn(); };
 // ---- キャラ・モード選択
+let selI=0;
+function selRefresh(){ const en=ST.mode==='endless',ms=ST.mode==='mission'; $('selBox').style.display=en?'none':''; if(en) return; $('selLb').textContent=(ms?'ミッション':'ステージ')+'をえらぶ（全'+LVN+'）'; const bs=(ms?P.bestM:P.best);
+  $('selG').innerHTML=Array.from({length:LVN},(_,i)=>`<button data-i="${i}" class="${i===selI?'on':''}">${i+1}<i>${bs[i]?'★':''}</i></button>`).join('');
+  $('selG').querySelectorAll('button').forEach(b=>b.onclick=()=>{ SFX.tap(); selI=+b.dataset.i; selRefresh(); }); }
 function modeSync(){ const m=$('mMode'),vt=document.body.dataset.vt||'natural'; m.querySelectorAll('.mi').forEach(i=>{ const u='../img/chase/'+vt+'/mode_'+i.dataset.n+'.webp'; if(i.getAttribute('src')!==u) i.src=u; }); m.querySelectorAll('.pkRow').forEach(r=>r.querySelectorAll('button').forEach(b=>b.classList.toggle('on',ST[r.dataset.k]===b.dataset.v)));
+  selRefresh();
   $('modeNote').textContent=(ST.me==='colon'?'コロン':'ムーン')+'でにげるよ。おいかけ役は'+CN()+'！'; }
-$('mMode').querySelectorAll('.pkRow button').forEach(b=>b.onclick=()=>{ SFX.tap(); ST[b.parentElement.dataset.k]=b.dataset.v; modeSync(); });
-$('bMode').onclick=()=>{ actx(); SFX.tap(); modeSync(); openM('mMode'); };
-$('bModeGo').onclick=()=>{ SFX.tap(); store.set('cfg',ST); closeM('mMode'); load(lv()); };
+$('mMode').querySelectorAll('.pkRow button').forEach(b=>b.onclick=()=>{ SFX.tap(); ST[b.parentElement.dataset.k]=b.dataset.v; if(b.parentElement.dataset.k==='mode') selI=ST.mode==='mission'?P.curM:P.cur; modeSync(); });
+$('bMode').onclick=()=>{ actx(); SFX.tap(); selI=lv(); modeSync(); openM('mMode'); };
+$('bModeGo').onclick=()=>{ SFX.tap(); store.set('cfg',ST); closeM('mMode'); load(ST.mode==='endless'?lv():selI); };
 // ---- 動き
 function resolve(){ pl.x=Math.max(R,Math.min(N-R,pl.x)); pl.y=Math.max(R,Math.min(N-R,pl.y));
   const x0=Math.floor(pl.x)-1,y0=Math.floor(pl.y)-1; for(let cy=y0;cy<=y0+2;cy++) for(let cxx=x0;cxx<=x0+2;cxx++){ if(cxx<0||cy<0||cxx>=N||cy>=N||!obs[cy*N+cxx]) continue;
