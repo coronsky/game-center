@@ -345,7 +345,7 @@ const GAMES=[
 ];
 const BADGE={pop:'人気',rec:'おすすめ',new:'新作'};
 const TABS=[['all','すべて','tab_all','tb_all','🎮'],['pop','人気','tab_popular','tb_popular','👑'],['new','新作','tab_new','tb_new','⭐'],['fav','お気に入り','tab_fav','tb_fav','❤️'],['puzzle','パズル',null,'tb_puzzle','🧩'],['battle','対戦',null,'tb_battle','⚔️'],['action','アクション',null,'tb_action','🕹️']];
-const RANKS=[{n:'ルーキー',k:'rookie',c:0,e:'🐾',im:1},{n:'ブロンズ',k:'bronze',c:100,e:'🥉',im:1},{n:'シルバー',k:'silver',c:500,e:'🥈',im:1},{n:'ゴールド',k:'gold',c:1500,e:'🥇',im:1},{n:'プラチナ',k:'platinum',c:4000,e:'💎',im:1},{n:'ダイヤ',k:'diamond',c:8000,e:'💠',im:1},{n:'マスター',k:'master',c:15000,e:'👑',im:1}];
+const RANKS=[{n:'ルーキー',k:'rookie',c:0,e:'🐾',im:1},{n:'ブロンズ',k:'bronze',c:120,e:'🥉',im:1},{n:'シルバー',k:'silver',c:600,e:'🥈',im:1},{n:'ゴールド',k:'gold',c:1800,e:'🥇',im:1},{n:'プラチナ',k:'platinum',c:4800,e:'💎',im:1},{n:'ダイヤ',k:'diamond',c:9600,e:'💠',im:1},{n:'マスター',k:'master',c:18000,e:'👑',im:1}];
 const HEADERS={natural:['img/natural/header3.webp'],retro:['img/retro/header3.webp'],neon:['img/neon/header3.webp']};
 const CARDS={retro:7,neon:7,natural:5}, SQ={neon:16,natural:8};
 const EMO={coin:'🪙',avatar_default:'🐾',icon_settings:'⚙️',icon_home:'🏠',icon_search:'🔍',icon_trophy:'🏆',icon_gift:'🎁',btn_play:'▶'};
@@ -459,7 +459,7 @@ function openRank(){
   $('rkNow').innerHTML=`いま：<b>${r.n}</b>（${P.coins}コイン）`;
   $('rkBar').style.width=nx?((P.coins-r.c)/(nx.c-r.c)*100)+'%':'100%';
   $('rkNext').textContent=nx?`${nx.n}まで あと${nx.c-P.coins}コイン`:'最高ランク！';
-  $('rkList').innerHTML=RANKS.map(x=>`<div class="rkRow ${x===r?'cur':''}"><span class="rm">${rankIc(x)}</span><b>${x.n}</b><span>${x.c}コイン〜</span></div>`).join('');
+  $('rkList').innerHTML=[...RANKS].reverse().map(x=>`<div class="rkRow ${x===r?'cur':''}"><span class="rm">${rankIc(x)}</span><b>${x.n}</b><span>${x.c}コイン〜</span></div>`).join('');
   $('mRank').classList.add('show');
 }
 // --- 設定 ---
