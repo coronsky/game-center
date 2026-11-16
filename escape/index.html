@@ -308,6 +308,11 @@ html body .app .vtBtn,html body .app .homeBtn{width:90px!important;height:30px!i
 html body[data-vt=natural] .app .vtBtn{background-image:url(../img/ui/natural_skin.webp?v=2)!important}html body[data-vt=natural] .app .homeBtn{background-image:url(../img/ui/natural_home.webp?v=2)!important}
 html body[data-vt=retro] .app .vtBtn{background-image:url(../img/ui/retro_skin.webp?v=2)!important}html body[data-vt=retro] .app .homeBtn{background-image:url(../img/ui/retro_home.webp?v=2)!important}
 html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../img/ui/neon_home.webp?v=2)!important}
+.btns2{grid-template-columns:repeat(3,1fr)!important}.btns2 .btn{font-size:clamp(11px,3.3vw,14px);padding:11px 2px}
+#mMenu .card,#mRand .card{max-width:360px}
+.mb{display:flex;flex-direction:column;gap:2px;margin-top:6px}
+.mbtn{width:100%;margin:6px 0;padding:12px 8px!important;font-size:clamp(15px,4.4vw,18px)!important;flex-direction:column;text-decoration:none;gap:2px!important;white-space:normal!important}
+.mbtn small{font-size:11px;font-weight:700;opacity:.85}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -324,15 +329,37 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="exitLbl">出口</div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns"><button class="btn g" id="bHint">💡ヒント</button><button class="btn c" id="bUndo">↩︎戻す</button><button class="btn c" id="bReset">⟳やり直し</button><button class="btn g" id="bSet">⚙︎設定</button></div>
-  <div class="btns2"><button class="btn c" id="bStages">📋 ステージ一覧</button><button class="btn c" id="bDemo">🎬 見本</button></div>
+  <div class="btns2"><button class="btn c" id="bStages">📋 ステージ一覧</button><button class="btn c" id="bDemo">🎬 見本</button><button class="btn c" id="bMenu">☰ メニュー</button></div>
   <div class="foot"><span>最短 <b id="stMin"></b> 手</span><span>ベスト：<b id="stBest"></b></span></div>
 </div>
 <script>(function(){var a=document.querySelector(".app")||document.body,r=document.createElement("div");r.className="btns";r.id="bHomeRow";r.style.cssText="grid-template-columns:1fr;margin:10px 12px 0;display:grid";r.innerHTML='<button class="btn g" id="bHome2" type="button">🏠ホームへ戻る</button>';a.appendChild(r);r.firstChild.onclick=function(){var h=document.getElementById("homeBtn");location.href=h?h.href:"../"}})()</script>
+<div class="modal" id="mMenu"><div class="card">
+  <h2>🐾 箱入りワンコ</h2>
+  <div class="subTitle"><span>あそびかたをえらんでね</span><span id="menuStars"></span></div>
+  <div class="mb">
+    <button class="btn g mbtn" id="bMenuCont">▶ つづきから<small id="menuCont"></small></button>
+    <button class="btn c mbtn" id="bMenuStage">🗝️ ステージでえらぶ<small id="menuStg"></small></button>
+    <button class="btn c mbtn" id="bMenuRand">🎲 ランダムで遊ぶ<small id="menuRnd"></small></button>
+    <button class="btn c mbtn" id="bMenuHelp">📖 あそびかた</button>
+    <a class="btn c mbtn" href="../" id="bMenuHome">🏠 ホームへ</a>
+  </div>
+</div></div>
+<div class="modal" id="mRand"><div class="card">
+  <h2>🎲 ランダム</h2>
+  <div class="subTitle"><span>毎回ちがうパズル！</span><span id="randInfo"></span></div>
+  <div class="mb">
+    <button class="btn c mbtn" data-lv="easy">🌱 かんたん<small>最短 6〜20手</small></button>
+    <button class="btn c mbtn" data-lv="normal">🌿 ふつう<small>最短 24〜55手</small></button>
+    <button class="btn c mbtn" data-lv="hard">🔥 むずかしい<small>最短 60手〜</small></button>
+    <button class="btn c mbtn" data-lv="any">🎁 おまかせ<small>むずかしさはおたのしみ</small></button>
+  </div>
+  <div class="acts"><button class="btn g" id="bRandBack">もどる</button></div>
+</div></div>
 <div class="modal" id="mStage"><div class="card">
   <h2>ステージ</h2>
   <div class="subTitle"><span>旅館の部屋から脱出！</span><span id="totStars"></span></div>
   <div class="sgrid" id="stGrid"></div>
-  <div class="rec">赤い番号は上級ステージ。17〜21は本家よりむずかしい！クリアすると次のステージが開くよ</div>
+  <div class="rec">赤い番号は本家「箱入り娘」より手ごわい上級ステージ！クリアすると次のステージが開くよ</div>
   <div class="acts"><button class="btn g" data-close="mStage">とじる</button></div>
 </div></div>
 <div class="modal" id="mSet"><div class="card">
@@ -347,7 +374,8 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <p>👆 駒を<b>指でスライド</b>して動かします。動ける方向が1つだけなら、タップでも動きます。</p>
   <p>🔢 同じ駒を続けて動かすのは何マスでも<b>1手</b>。最短手数で解けたら★3つ！</p>
   <p>💡 ヒント：次に動かす駒が光って、行き先が点線で出ます（★は最大2つ）。<br>🎬 見本：最後まで自動で解いてくれます（★なし）。</p>
-  <p>🗝️ 全21ステージ。やさしい順にならんでいて、クリアすると次のステージが開きます（記録は自動で保存）。16番が本家「箱入り娘」（最短81手）、20番「星の間」は135手、21番「月の間」は最短138手の最難関！</p>
+  <p>🗝️ 全50ステージ。やさしい順にならび、クリアすると次のステージが開きます（記録は自動で保存）。「箱入り娘（本家）」は最短81手、赤い番号はそれよりむずかしい上級ステージ！</p>
+  <p>🎲 <b>ランダム</b>は毎回ちがうパズル。むずかしさをえらべて、★はあつめた数にたされます。</p>
   <div class="acts"><button class="btn g" data-close="mHelp">はじめる！</button></div>
 </div></div>
 <div style="display:none">
@@ -467,7 +495,8 @@ function kParse(rows){ // 文字列レイアウト → 駒
   return ps; }
 if(typeof module!=='undefined') module.exports={kSolve,kParse,kKey,kMoves,kApply,kSolved};
 
-const STAGES=[{"name": "げんかん", "rows": ["..BB", "..XX", "..XX", ".CCA", ".D.A"], "min": 3}, {"name": "げた箱", "rows": ["ADE.", "ABXX", ".BXX", "..CC", "...."], "min": 5}, {"name": "ろうか", "rows": [".XX.", "BXX.", "BACC", ".ADD", "...."], "min": 7}, {"name": "ちゃの間", "rows": ["....", "A.XX", "AEXX", "FBDD", ".BCC"], "min": 9}, {"name": "えんがわ", "rows": ["ABGE", "ABXX", "DCXX", "DCH.", "J.IF"], "min": 11}, {"name": "なかにわ", "rows": ["CCDH", "BAXX", "BAXX", "J.FI", "GE.K"], "min": 14}, {"name": "だいどころ", "rows": ["GXXA", "JXXA", "EIHC", "D.BC", "D.BF"], "min": 18}, {"name": "おふろ", "rows": ["DDBB", ".EXX", "HIXX", "FJAA", "GCC."], "min": 23}, {"name": "ゆかた部屋", "rows": ["ACCG", "AXXH", "JXX.", "BBE.", "DDFI"], "min": 28}, {"name": "卓球台", "rows": ["DFGC", "DXXC", "HXX.", "AI.B", "AEEB"], "min": 34}, {"name": "売店", "rows": ["CCXX", "AHXX", "ADD.", ".BIF", "GBEE"], "min": 40}, {"name": "まくら投げの間", "rows": ["FXXI", "AXXJ", "ACCB", ".H.B", "GEDD"], "min": 47}, {"name": "竹の間", "rows": ["FHAI", "XXAG", "XXEE", ".BB.", "DDCC"], "min": 55}, {"name": "梅の間", "rows": ["..XX", "ABXX", "ABFG", "CCDD", "HIEE"], "min": 63}, {"name": "松の間", "rows": ["I.CC", "BXXH", "BXX.", "DDFA", "GEEA"], "min": 72}, {"name": "箱入り娘（本家）", "rows": ["ABBC", "ABBC", "DEEF", "DGHF", "I..J"], "min": 81}, {"name": "鶴の間", "rows": ["XXF.", "XXAG", "EEA.", "IBCC", "HBDD"], "min": 95}, {"name": "亀の間", "rows": ["IXXF", ".XXG", "BDD.", "BEEA", "CCHA"], "min": 108}, {"name": "天の間", "rows": ["GXXI", "BXXH", "BCCF", ".EEA", ".DDA"], "min": 121}, {"name": "星の間", "rows": ["XXBC", "XX.C", ".GEE", "IGHH", "FDJJ"], "min": 135}, {"name": "月の間", "rows": ["BJHI", "BDXX", "CDXX", "CFFG", "..EE"], "min": 138}];
+const STAGES=[{"name": "げんかん", "rows": ["..BB", "..XX", "..XX", ".CCA", ".D.A"], "min": 3}, {"name": "桜の間", "rows": ["..EE", "FFAB", ".CAB", "DCXX", "DGXX"], "min": 4}, {"name": "げた箱", "rows": ["ADE.", "ABXX", ".BXX", "..CC", "...."], "min": 5}, {"name": "紅葉の間", "rows": [".CC.", "A..B", "ADDB", "EEXX", "FFXX"], "min": 6}, {"name": "ろうか", "rows": [".XX.", "BXX.", "BACC", ".ADD", "...."], "min": 7}, {"name": "雪見の間", "rows": ["AEEG", "AFFB", "C..B", "CDXX", ".DXX"], "min": 8}, {"name": "ちゃの間", "rows": ["....", "A.XX", "AEXX", "FBDD", ".BCC"], "min": 9}, {"name": "露天風呂", "rows": ["EEAB", "CDAB", "CDXX", "..XX", "FFG."], "min": 10}, {"name": "えんがわ", "rows": ["ABGE", "ABXX", "DCXX", "DCH.", "J.IF"], "min": 11}, {"name": "離れ", "rows": ["EFAB", ".GAB", "CHXX", "CDXX", "ID.J"], "min": 12}, {"name": "中庭の池", "rows": ["CCDD", "ABXX", "ABXX", ".EE.", ".FFG"], "min": 13}, {"name": "なかにわ", "rows": ["CCDH", "BAXX", "BAXX", "J.FI", "GE.K"], "min": 14}, {"name": "茶室", "rows": ["EFGA", "XXHA", "XXIB", "C.DB", "C.DJ"], "min": 15}, {"name": "縁側の午後", "rows": ["AABB", "XXEF", "XXCC", ".G.H", "IJDD"], "min": 16}, {"name": "囲炉裏", "rows": ["E.F.", "XXGH", "XXAB", "CDAB", "CDIJ"], "min": 17}, {"name": "だいどころ", "rows": ["GXXA", "JXXA", "EIHC", "D.BC", "D.BF"], "min": 18}, {"name": "蔵の間", "rows": ["FGAA", "BBXX", "..XX", "CCDD", "HIEE"], "min": 19}, {"name": "渡り廊下", "rows": ["EXXA", "FXXA", ".BGH", ".BCD", "IJCD"], "min": 20}, {"name": "月見台", "rows": ["AAXX", "BBXX", ".CC.", "FDDG", "H.EE"], "min": 21}, {"name": "夕涼みの間", "rows": ["BBCC", "FAXX", "GAXX", "H.DD", ".IEE"], "min": 22}, {"name": "おふろ", "rows": ["DDBB", ".EXX", "HIXX", "FJAA", "GCC."], "min": 23}, {"name": "朝霧の間", "rows": ["BBA.", "CCAF", "XX.G", "XXDD", "EEHI"], "min": 24}, {"name": "しだれ桜", "rows": ["XXAA", "XXBB", "CCF.", "GHI.", "DDEE"], "min": 25}, {"name": "湯けむり", "rows": ["..XX", "EFXX", "GHAI", "BCAD", "BCJD"], "min": 26}, {"name": "ゆかた部屋", "rows": ["ACCG", "AXXH", "JXX.", "BBE.", "DDFI"], "min": 28}, {"name": "からくり部屋", "rows": ["FGAA", "BB..", "HICC", "XXDD", "XXEE"], "min": 29}, {"name": "屋根裏", "rows": [".BB.", "CCXX", "FGXX", "DDHA", "EEIA"], "min": 31}, {"name": "石畳の庭", "rows": ["CC.G", "ADD.", "ABEE", ".BXX", "FFXX"], "min": 32}, {"name": "卓球台", "rows": ["DFGC", "DXXC", "HXX.", "AI.B", "AEEB"], "min": 34}, {"name": "灯ろうの間", "rows": ["EXXF", "AXXB", "ACGB", ".CDH", "IJD."], "min": 35}, {"name": "滝見の間", "rows": ["EEF.", "XXAG", "XXAB", "CHDB", "C.DI"], "min": 37}, {"name": "売店", "rows": ["CCXX", "AHXX", "ADD.", ".BIF", "GBEE"], "min": 40}, {"name": "星見台", "rows": ["AEFB", "AXXB", "GXXH", ".CDI", "JCD."], "min": 43}, {"name": "天守の間", "rows": [".AFG", ".ABB", "HIXX", "CCXX", "DDEE"], "min": 45}, {"name": "まくら投げの間", "rows": ["FXXI", "AXXJ", "ACCB", ".H.B", "GEDD"], "min": 47}, {"name": "雲海の間", "rows": ["BBFG", "XXHI", "XX.A", ".CCA", "DDEE"], "min": 51}, {"name": "竹の間", "rows": ["FHAI", "XXAG", "XXEE", ".BB.", "DDCC"], "min": 55}, {"name": "秘密の抜け道", "rows": ["FXXA", "GXXA", ".HEE", "IBCD", ".BCD"], "min": 59}, {"name": "梅の間", "rows": ["..XX", "ABXX", "ABFG", "CCDD", "HIEE"], "min": 63}, {"name": "奥座敷", "rows": ["XXAB", "XXAB", "FG.H", "CDEE", "CD.I"], "min": 67}, {"name": "松の間", "rows": ["I.CC", "BXXH", "BXX.", "DDFA", "GEEA"], "min": 72}, {"name": "宝物の蔵", "rows": ["AXX.", "AXXB", "EEFB", "CGDH", "CID."], "min": 76}, {"name": "箱入り娘（本家）", "rows": ["ABBC", "ABBC", "DEEF", "DGHF", "I..J"], "min": 81}, {"name": "特別室", "rows": ["FXXA", ".XXA", "B.EE", "BCGD", "HCID"], "min": 88}, {"name": "鶴の間", "rows": ["XXF.", "XXAG", "EEA.", "IBCC", "HBDD"], "min": 95}, {"name": "総支配人室", "rows": ["XXFG", "XXBB", "CCH.", ".ADD", "IAEE"], "min": 97}, {"name": "亀の間", "rows": ["IXXF", ".XXG", "BDD.", "BEEA", "CCHA"], "min": 108}, {"name": "天の間", "rows": ["GXXI", "BXXH", "BCCF", ".EEA", ".DDA"], "min": 121}, {"name": "星の間", "rows": ["XXBC", "XX.C", ".GEE", "IGHH", "FDJJ"], "min": 135}, {"name": "月の間", "rows": ["BJHI", "BDXX", "CDXX", "CFFG", "..EE"], "min": 138}];
+const OLDN=["げんかん", "げた箱", "ろうか", "ちゃの間", "えんがわ", "なかにわ", "だいどころ", "おふろ", "ゆかた部屋", "卓球台", "売店", "まくら投げの間", "竹の間", "梅の間", "松の間", "箱入り娘（本家）", "鶴の間", "亀の間", "天の間", "星の間", "月の間"];
 // ===== 箱入りワンコ（スライド脱出パズル） =====
 $('mRes').querySelector('.card').insertAdjacentHTML('beforeend','<div class="acts"><button class="btn g" id="bNextSt">次のステージへ ▶︎</button></div>');
 const store=mkStore('mcbx_');
@@ -475,26 +504,49 @@ const S=Object.assign({hero:'colon',talk:true,sound:true},store.get('settings',{
 SND.on=S.sound; TALK.on=S.talk;
 const P=Object.assign({stars:{},best:{},clear:{},cur:0},store.get('prog',{}));
 const saveP=()=>store.set('prog',P);
+if(P.ver!==2){ const mp=OLDN.map(n=>STAGES.findIndex(x=>x.name===n)); const ns={},nb={},nc={};
+  OLDN.forEach((_,j)=>{ const k=mp[j]; if(k<0) return; if(P.stars[j]!=null) ns[k]=P.stars[j]; if(P.best[j]) nb[k]=P.best[j]; if(P.clear&&P.clear[j]) nc[k]=P.clear[j]; });
+  const cj=Math.min(P.cur||0,OLDN.length-1); P.stars=ns; P.best=nb; P.clear=nc; P.cur=mp[cj]>=0?mp[cj]:0; P.ver=2; saveP(); }
 const EMO={V:['🦴','🧸','🎋','🏮','🪵','🌂'],H:['🛋️','🍵','🎴','🧺'],S:['🍪','🎾','🧶','🐾','🍡','🍙','🌸','🍊']};
 const HNAME={colon:'コロン',moon:'ムーン'};
 let stage=0, ps=[], start=[], hist=[], moves=0, lastPiece=-1, t0=0, tick=null, cleared=false, hints=0, demo=false, demoT=null, hintMv=null, gen0=0;
 const boardEl=$('kb');
 function heroP(){ return 1; }
 function otherP(){ return 3-heroP(); }
-function loadStage(i){
+let mode='stage', curSt=null, rlv='easy';
+function startLayout(st,label){
   gen0++; clearTimeout(demoT); clearInterval(tick); demo=false;
-  stage=i; P.cur=i; saveP();
-  bvar='cmb'[Math.floor(Math.random()*3)];
-  const st=STAGES[i]; start=kParse(st.rows);
+  curSt=st; start=kParse(st.rows); bvar='cmb'[Math.floor(Math.random()*3)];
   const cnt={V:0,H:0,S:0};
-  start.forEach(p=>{ if(p.t!=='B'){ p.em=EMO[p.t][(cnt[p.t]++ + i)%EMO[p.t].length]; } });
+  start.forEach(p=>{ if(p.t!=='B'){ p.em=EMO[p.t][(cnt[p.t]++ + (stage||0))%EMO[p.t].length]; } });
   ps=start.map(p=>Object.assign({},p)); hist=[]; moves=0; lastPiece=-1; t0=0; cleared=false; hints=0; hintMv=null;
-  $('stName').textContent=`${i+1}．${st.name}`; $('stMin').textContent=st.min;
-  const bs=P.best[i]; $('stBest').textContent=bs?`${bs.m}手・${fmt(bs.t)}`:'—';
+  $('stName').textContent=label; $('stMin').textContent=st.min;
+  const bs=mode==='stage'?P.best[stage]:null; $('stBest').textContent=bs?`${bs.m}手・${fmt(bs.t)}`:'—';
   draw(true); updateHUD();
   setStatus('コロンとムーンを出口から出そう！');
   setTimeout(()=>{ sayText(heroP(),pick(['出して〜！','ここから出たいワン','がんばって〜'])); setTimeout(()=>sayText(otherP(),'こっちだよ〜！'),600); },300);
 }
+function loadStage(i){ mode='stage'; stage=i; P.cur=i; saveP(); startLayout(STAGES[i],`${i+1}．${STAGES[i].name}`); }
+function rowsOfPs(a){ const g=Array(KW*KH).fill('.'); const L='ABCDEFGHIJKLMNOPQRSTUVWYZ'; let k=0;
+  a.forEach(p=>{ const ch=p.t==='B'?'X':L[k++]; const [w,h]=DIM[p.t]; for(let y=0;y<h;y++)for(let x=0;x<w;x++) g[(p.r+y)*KW+p.c+x]=ch; });
+  const rows=[]; for(let r=0;r<KH;r++) rows.push(g.slice(r*KW,r*KW+KW).join('')); return rows; }
+const RLV={easy:[6,20,'かんたん'],normal:[24,55,'ふつう'],hard:[60,140,'むずかしい'],any:[6,140,'おまかせ']};
+function genRandom(lv){ // 解ける配置から逆にたどって、ちょうどよい難しさの配置をえらぶ
+  const [lo,hi]=RLV[lv]; const pool=STAGES.filter(s=>lv==='hard'?s.min>=50:lv==='easy'?s.min<=60:true); let best=null;
+  for(let tr=0;tr<6;tr++){
+    const seed=pick(pool); let rows=seed.rows.slice(); if(Math.random()<.5) rows=rows.map(r=>[...r].reverse().join(''));
+    let a=kParse(rows); const path=kSolve(a,400000); if(!path) continue; for(const m of path) a=kApply(a,m);
+    const seen=new Set([kKey(a)]); let layer=[a], total=1; const layers=[layer];
+    for(let d=1;d<=hi&&layer.length&&total<20000;d++){ const nl=[]; for(const q of layer){ for(const m of kMoves(q)){ const n=kApply(q,m), k=kKey(n); if(seen.has(k)) continue; seen.add(k); nl.push(n); } } layers.push(nl); layer=nl; total+=nl.length; }
+    const ds=[]; for(let d=lo;d<layers.length&&d<=hi;d++) if(layers[d].length) ds.push(d);
+    if(!ds.length){ const d=layers.length-1; if(d>=3&&(!best||d>best.min)){ const q=pick(layers[d]); best={rows:rowsOfPs(q),min:d}; } continue; }
+    const d=ds[Math.floor(Math.random()*ds.length)], q=pick(layers[d]); const sv=kSolve(q,400000); const mn=sv?sv.length:d;
+    const res={rows:rowsOfPs(q),min:mn}; if(mn>=lo&&mn<=hi) return res; if(!best||Math.abs(mn-(lo+hi)/2)<Math.abs(best.min-(lo+hi)/2)) best=res;
+  }
+  return best||{rows:STAGES[0].rows,min:STAGES[0].min};
+}
+function playRandom(lv){ rlv=lv; ['mMenu','mRand','mStage','mRes'].forEach(closeM); setStatus('パズルを作っているよ…',true);
+  setTimeout(()=>{ const g=genRandom(lv); mode='random'; usedDemo=false; startLayout({name:'ランダム',rows:g.rows,min:g.min},'🎲 '+RLV[lv][2]); },40); }
 const fmt=ms=>{const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
 function updateHUD(){ $('mv').textContent=moves; $('tm').textContent=t0?fmt(Date.now()-t0):'0:00'; $('bUndo').disabled=!hist.length||demo||cleared; $('bHint').disabled=demo||cleared; $('bDemo').disabled=cleared; $('bDemo').textContent=demo?'⏹ とめる':'🎬 見本'; }
 let bvar='b';
@@ -537,20 +589,20 @@ function bump(e){ e.animate([{transform:'translateX(0)'},{transform:'translateX(
 function checkWin(){
   if(!kSolved(ps)) return;
   cleared=true; clearInterval(tick); demo=false; clearTimeout(demoT);
-  const t=Date.now()-(t0||Date.now()), st=STAGES[stage];
+  const t=Date.now()-(t0||Date.now()), st=curSt;
   const bi=ps.findIndex(p=>p.t==='B'); const be=els[bi];
   setTimeout(()=>{ be.classList.add('escape'); bark(heroP()); },250);
   let stars=0;
   if(!usedDemo){ stars = moves<=st.min?3:moves<=Math.ceil(st.min*1.5)?2:1; if(hints) stars=Math.min(stars,2); }
-  P.clear=P.clear||{}; P.clear[stage]=1; const prev=P.stars[stage]||0; if(stars>prev) P.stars[stage]=stars;
-  let nb=false; if(!usedDemo){ const b=P.best[stage]; if(!b||moves<b.m||(moves===b.m&&t<b.t)){ P.best[stage]={m:moves,t}; nb=true; } }
+  if(mode==='stage'){ P.clear=P.clear||{}; P.clear[stage]=1; const prev=P.stars[stage]||0; if(stars>prev) P.stars[stage]=stars; } else { P.rc=(P.rc||0)+1; P.rs=(P.rs||0)+stars; }
+  let nb=false; if(mode==='stage'&&!usedDemo){ const b=P.best[stage]; if(!b||moves<b.m||(moves===b.m&&t<b.t)){ P.best[stage]={m:moves,t}; nb=true; } }
   saveP(); updateHUD();
   setStatus('脱出成功！🎉');
-  try{window.MC&&MC.report('escape',usedDemo?'play':'clear',{stars})}catch(e){}
+  try{window.MC&&MC.report('escape',(usedDemo||mode!=='stage')?'play':'clear',{stars})}catch(e){}
 
   setTimeout(()=>{ SFX.win(); confetti(['🐾','🌸','✨','🎉','🍡']); sayText(heroP(),'出られたワン！ありがとう！',true); sayText(otherP(),'おかえり〜♪',true); },700);
   const next=STAGES[stage+1];
-  $('bNextSt').style.display=next?'':'none';
+  $('bNextSt').textContent=mode==='random'?'つぎのランダム ▶︎':'次のステージへ ▶︎'; $('bNextSt').style.display=(mode==='random'||next)?'':'none';
   showResult({winner:heroP(),title:'🎉 脱出成功！',score:`${moves}手・${fmt(t)}`,
     msg: usedDemo?'見本で解きました（★はつきません）':(moves<=st.min?'最短手数！天才ワン！🏅':`最短は${st.min}手。もっと少なくできるかな？`),
     extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}${hints?`<div class="rec">ヒント${hints}回使用（★は最大2つ）</div>`:''}`,
@@ -558,7 +610,7 @@ function checkWin(){
 }
 let usedDemo=false;
 function undo(){ if(!hist.length||demo||cleared) return; const h=hist.pop(); ps=h.ps; moves=h.moves; lastPiece=h.lastPiece; hintMv=null; SFX.tap(); draw(); updateHUD(); }
-function reset(){ loadStage(stage); usedDemo=false; }
+function reset(){ usedDemo=false; if(mode==='random') startLayout(curSt,'🎲 '+RLV[rlv][2]); else loadStage(stage); }
 function solveAsync(cb){ setStatus('考え中',true); setTimeout(()=>{ const s=kSolve(ps,400000); setStatus(s?'':'…'); cb(s); },40); }
 function hint(){ if(demo||cleared) return; actx();
   solveAsync(s=>{ if(!s||!s.length){ setStatus('うまく見つからなかった…'); return; } hints++; hintMv=s[0]; draw();
@@ -573,28 +625,44 @@ function demoPlay(){
       ps[m.i].r=m.r; ps[m.i].c=m.c; tone(270,0,.07,'triangle',.2); draw(); updateHUD(); setStatus(`見本：あと${s.length-k}手`);
       if(kSolved(ps)){ demo=false; checkWin(); return; } demoT=setTimeout(go,550); };
     go(); }); }
+const isClr=i=>(P.stars[i]||0)>0||!!P.best[i]||!!(P.clear&&P.clear[i]);
+const maxClear=()=>{ let m=-1; STAGES.forEach((_,i)=>{ if(isClr(i)) m=i; }); return m; };
 function renderStages(){
   const tot=STAGES.reduce((a,_,i)=>a+(P.stars[i]||0),0); $('totStars').textContent=`★ ${tot} / ${STAGES.length*3}`;
   const g=$('stGrid'); g.innerHTML='';
-  STAGES.forEach((st,i)=>{ const ok=i===0||(P.stars[i-1]||0)>0||!!P.best[i-1]||!!(P.clear&&P.clear[i-1]); const sv=P.stars[i]||0;
-    const b=document.createElement('button'); b.className='stb'+(ok?'':' lock')+(i===stage?' cur':'')+(i>=16?' ex':'');
+  STAGES.forEach((st,i)=>{ const ok=i<=maxClear()+1; const sv=P.stars[i]||0;
+    const b=document.createElement('button'); b.className='stb'+(ok?'':' lock')+(mode==='stage'&&i===stage?' cur':'')+(st.min>81?' ex':'');
     b.innerHTML=`<span class="no">${ok?i+1:'🔒'}</span><b>${ok?st.name:'？？？'}</b><small>${ok?'最短'+st.min+'手':''}</small><span class="sr">${[1,2,3].map(k=>`<i class="${k<=sv?'on':''}">★</i>`).join('')}</span>`;
     if(ok) b.onclick=()=>{ closeM('mStage'); usedDemo=false; loadStage(i); };
     g.appendChild(b); }); }
 const pend=Object.assign({},S);
 const syncSet=bindSettings($('mSet'),pend,k=>{ if(['talk','sound'].includes(k)){S[k]=pend[k];SND.on=S.sound;TALK.on=S.talk;store.set('settings',S)} });
 $('bSet').onclick=()=>{actx();Object.assign(pend,S);syncSet();openM('mSet')};
-$('bStart').onclick=()=>{Object.assign(S,pend);store.set('settings',S);closeM('mSet');usedDemo=false;loadStage(stage)};
+$('bStart').onclick=()=>{Object.assign(S,pend);store.set('settings',S);closeM('mSet');reset()};
 $('bHelp').onclick=()=>openM('mHelp');
 $('bUndo').onclick=()=>{actx();undo()};
 $('bReset').onclick=()=>{actx();SFX.tap();reset()};
 $('bHint').onclick=hint;
 $('bDemo').onclick=demoPlay;
 $('bStages').onclick=()=>{actx();SFX.tap();renderStages();openM('mStage')};
-$('bAgain').onclick=()=>{closeM('mRes');usedDemo=false;loadStage(stage)};
-$('bNextSt').onclick=()=>{closeM('mRes');usedDemo=false;loadStage(stage+1)};
+$('bAgain').onclick=()=>{closeM('mRes');reset()};
+$('bNextSt').onclick=()=>{closeM('mRes'); if(mode==='random') playRandom(rlv); else { usedDemo=false; loadStage(stage+1); } };
+function menuRefresh(){ const tot=STAGES.reduce((a,_,i)=>a+(P.stars[i]||0),0), cl=STAGES.filter((_,i)=>isClr(i)).length;
+  $('menuStars').textContent=`★ ${tot+(P.rs||0)}`; $('menuCont').textContent=mode==='random'?'ランダム：いまのパズル':`${stage+1}．${STAGES[stage].name}`;
+  $('menuStg').textContent=`全${STAGES.length}ステージ・クリア ${cl} / ${STAGES.length}（★ ${tot} / ${STAGES.length*3}）`;
+  $('menuRnd').textContent=P.rc?`クリア ${P.rc} 回・ランダム★ ${P.rs||0}`:'毎回ちがうパズル'; $('randInfo').textContent=P.rc?`★ ${P.rs||0}`:''; }
+function openMenu(){ actx(); menuRefresh(); openM('mMenu'); }
+$('bMenu').onclick=()=>{SFX.tap();openMenu()};
+$('bMenuCont').onclick=()=>{SFX.tap();closeM('mMenu')};
+$('bMenuStage').onclick=()=>{SFX.tap();closeM('mMenu');renderStages();openM('mStage')};
+$('bMenuRand').onclick=()=>{SFX.tap();closeM('mMenu');menuRefresh();openM('mRand')};
+$('bMenuHelp').onclick=()=>{SFX.tap();openM('mHelp')};
+$('bRandBack').onclick=()=>{SFX.tap();closeM('mRand');openMenu()};
+document.querySelectorAll('#mRand [data-lv]').forEach(b=>b.onclick=()=>{SFX.tap();playRandom(b.dataset.lv)});
+$('mMenu').addEventListener('click',e=>{ if(e.target.id==='mMenu') closeM('mMenu'); });
 loadStage(Math.min(P.cur||0,STAGES.length-1));
-if(!store.get('seenHelp',false)){ store.set('seenHelp',true); setTimeout(()=>openM('mHelp'),600); }
+setTimeout(openMenu,120);
+if(!store.get('seenHelp',false)){ store.set('seenHelp',true); setTimeout(()=>openM('mHelp'),700); }
 
 
 ;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();
