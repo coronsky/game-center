@@ -117,7 +117,7 @@ body:not([data-theme=natural]) .list{display:grid;grid-template-columns:1fr 1fr;
 .gtx{flex:1;min-width:0}
 .gtx small{display:block;font-size:12px;color:var(--sub);font-weight:700}
 .gtx b{display:block;font-size:20px;line-height:1.25}
-.gtx p{margin:2px 0 0;font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gtx p{margin:2px 0 0;font-size:12px;color:var(--sub);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .gtx .who{display:inline-block;margin-top:4px;font-size:10.5px;font-weight:900;padding:1px 7px;border-radius:8px;background:var(--accent);color:var(--main-d)}
 .badge{position:absolute;right:62px;top:10px;font-size:11px;font-weight:900;color:#fff;border-radius:11px;padding:2px 9px}
 .badge.pop{background:var(--pop)}.badge.rec{background:var(--rec)}.badge.new{background:var(--new)}
@@ -145,7 +145,7 @@ body[data-theme=neon] .tile .frame{filter:drop-shadow(0 0 6px rgba(63,240,255,.4
 .tile .tb{position:absolute;left:13%;right:13%;top:61%;bottom:12.5%;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center}
 .tile .tt{width:100%;min-width:0}
 .tile .tt b{display:block;font-size:clamp(13.5px,4.2vw,17px);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tile .tt p{margin:2px 0 0;font-size:10.5px;color:var(--sub);line-height:1.35;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.tile .tt p{margin:2px 0 0;font-size:10.5px;color:var(--sub);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 body[data-theme=retro] .tile .tt b{font-family:"Mochiy Pop One",sans-serif;font-weight:400;color:#ffd36b;text-shadow:0 2px 0 #6a200e}
 body[data-theme=neon] .tile .tt b{font-family:"DotGothic16",monospace;font-weight:400;text-shadow:0 0 8px #ff4fd8}
 .tile .play{position:static;flex:none;white-space:nowrap;width:auto;height:26px;border-radius:13px;padding:0 12px;font-size:11.5px;font-weight:900;gap:4px;background:var(--main)}
@@ -322,26 +322,26 @@ body[data-theme=natural] #hdrChip{background-image:url(img/ui/natural_skin.webp?
 (()=>{
 const $=id=>document.getElementById(id);
 const GAMES=[
- {id:'osanpo',name:'お散歩ラン',desc:'とんで おやつを あつめよう',cat:'action',badge:'pop',who:'ひとり',emo:'🏃',col:['#5fa8d3','#3f7aa8'],dog:'colon',url:'./osanpo/'},
- {id:'ponpon',name:'ポンポンパズル',desc:'おなじ えを 3つ そろえよう',cat:'puzzle',badge:'pop',who:'ひとり',emo:'🔮',col:['#f28bb3','#c0587e'],dog:'moon',url:'./ponpon/'},
- {id:'wanwan',name:'わんわんトレイン',desc:'せんろを つなげて ゴールへ',cat:'puzzle',badge:'new',who:'ひとり',emo:'🚂',col:['#e8564a','#b03a30'],dog:'colon',url:'./wanwan-train/'},
- {id:'reversi',name:'リバーシ',desc:'いしを はさんで ひっくりかえそう',cat:'battle',badge:'pop',who:'CPU・2人',emo:'⚪',col:['#5c8858','#3f6a3c'],dog:'colon',url:'./reversi/'},
- {id:'shogi',name:'将棋',desc:'ほんかくの しょうぎで しょうぶ',cat:'battle',badge:'rec',who:'CPU',emo:'☗',col:['#e9c06e','#c99a4f'],dog:'moon',url:'./shogi/'},
- {id:'wanko',name:'ワンコしょうぎ',desc:'ちいさな しょうぎで しょうぶ',cat:'battle',badge:'',who:'CPU・2人',emo:'🐶',col:['#83b26f','#5f8c5b'],dog:'colon',url:'./wanko/'},
- {id:'gomoku',name:'五目ならべ',desc:'5つ ならべたら かち',cat:'battle',badge:'',who:'CPU・2人',emo:'🐾',col:['#f3d48e','#e2b45f'],dog:'moon',url:'./gomoku/'},
- {id:'memory',name:'神経衰弱',desc:'おなじ カードを みつけよう',cat:'battle',badge:'pop',who:'ひとり・CPU・2人',emo:'🃏',col:['#d08a52','#a9622f'],dog:'colon',url:'./memory/'},
- {id:'escape',name:'箱入りワンコ',desc:'パネルを うごかして でよう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🚪',col:['#c79563','#9a6338'],dog:'colon',url:'./escape/'},
- {id:'peg',name:'ペグソリティア',desc:'とびこえて 1ぴきを のこそう',cat:'puzzle',badge:'',who:'ひとり',emo:'🎯',col:['#c79563','#8a5a2c'],dog:'colon',url:'./peg/'},
- {id:'slide',name:'スライドパズル',desc:'ピースを うごかして えを なおそう',cat:'puzzle',badge:'rec',who:'ひとり',emo:'🧩',col:['#8ec5e8','#5fa8d3'],dog:'moon',url:'./slide/'},
- {id:'hanoi',name:'ざぶとんタワー',desc:'ざぶとんを みぎへ はこぼう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🍡',col:['#f6c97a','#f2b134'],dog:'colon',url:'./hanoi/'},
- {id:'binary',name:'なかよしミラー',desc:'ぎゃくに うごく 2ひきを ゴールへ',cat:'action',badge:'new',who:'ひとり',emo:'💕',col:['#c79563','#8a5a2c'],dog:'colon',url:'./binary/'},
- {id:'sokoban',name:'倉庫番',desc:'ホネの はこを おして はこぼう',cat:'puzzle',badge:'new',who:'ひとり',emo:'📦',col:['#c79563','#8a5a2c'],dog:'moon',url:'./sokoban/'},
- {id:'chase',name:'ドキドキ鬼ごっこ',desc:'ムーンから にげて ゴールへ',cat:'action',badge:'new',who:'ひとり',emo:'🐕',col:['#c79563','#8a5a2c'],dog:'moon',url:'./chase/'},
- {id:'airhockey',name:'エアホッケー',desc:'パックを うって 7てん とろう',cat:'action',badge:'new',who:'ひとり・CPU・2人',emo:'🏒',col:['#c79563','#8a5a2c'],dog:'colon',url:'./airhockey/'},
- {id:'sudoku',name:'数独',desc:'すうじを いれて うめよう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🔢',col:['#c79563','#8a5a2c'],dog:'colon',url:'./sudoku/'},
- {id:'match',name:'マッチ棒パズル',desc:'ぼうを 1ぽん うごかして しきを なおそう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🔥',col:['#c79563','#8a5a2c'],dog:'colon',url:'./match/'},
- {id:'blocks',name:'ピタッとパズル',desc:'ブロックを わくに ぴったり いれよう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🧩',col:['#c79563','#8a5a2c'],dog:'moon',url:'./blocks/'},
- {id:'lights',name:'ライツアウト',desc:'ライトを ぜんぶ けそう',cat:'puzzle',badge:'new',who:'ひとり',emo:'💡',col:['#c79563','#8a5a2c'],dog:'colon',url:'./lights/'},
+ {id:'osanpo',name:'お散歩ラン',desc:'とんで おやつを 集めよう',cat:'action',badge:'pop',who:'ひとり',emo:'🏃',col:['#5fa8d3','#3f7aa8'],dog:'colon',url:'./osanpo/'},
+ {id:'ponpon',name:'ポンポンパズル',desc:'玉を飛ばして 同じ絵を3つ',cat:'puzzle',badge:'pop',who:'ひとり',emo:'🔮',col:['#f28bb3','#c0587e'],dog:'moon',url:'./ponpon/'},
+ {id:'wanwan',name:'わんわんトレイン',desc:'線路をつないで ゴールへ',cat:'puzzle',badge:'new',who:'ひとり',emo:'🚂',col:['#e8564a','#b03a30'],dog:'colon',url:'./wanwan-train/'},
+ {id:'reversi',name:'リバーシ',desc:'石をはさんで ひっくり返そう',cat:'battle',badge:'pop',who:'CPU・2人',emo:'⚪',col:['#5c8858','#3f6a3c'],dog:'colon',url:'./reversi/'},
+ {id:'shogi',name:'将棋',desc:'本格ルールの 将棋',cat:'battle',badge:'rec',who:'CPU',emo:'☗',col:['#e9c06e','#c99a4f'],dog:'moon',url:'./shogi/'},
+ {id:'wanko',name:'ワンコしょうぎ',desc:'3×4マスの ミニ将棋',cat:'battle',badge:'',who:'CPU・2人',emo:'🐶',col:['#83b26f','#5f8c5b'],dog:'colon',url:'./wanko/'},
+ {id:'gomoku',name:'五目ならべ',desc:'5つ ならべたら 勝ち',cat:'battle',badge:'',who:'CPU・2人',emo:'🐾',col:['#f3d48e','#e2b45f'],dog:'moon',url:'./gomoku/'},
+ {id:'memory',name:'神経衰弱',desc:'同じカードを 見つけよう',cat:'battle',badge:'pop',who:'ひとり・CPU・2人',emo:'🃏',col:['#d08a52','#a9622f'],dog:'colon',url:'./memory/'},
+ {id:'escape',name:'箱入りワンコ',desc:'パネルを動かして 脱出',cat:'puzzle',badge:'new',who:'ひとり',emo:'🚪',col:['#c79563','#9a6338'],dog:'colon',url:'./escape/'},
+ {id:'peg',name:'ペグソリティア',desc:'飛びこえて 1匹を残そう',cat:'puzzle',badge:'',who:'ひとり',emo:'🎯',col:['#c79563','#8a5a2c'],dog:'colon',url:'./peg/'},
+ {id:'slide',name:'スライドパズル',desc:'ピースを動かして 絵を直そう',cat:'puzzle',badge:'rec',who:'ひとり',emo:'🧩',col:['#8ec5e8','#5fa8d3'],dog:'moon',url:'./slide/'},
+ {id:'hanoi',name:'ざぶとんタワー',desc:'ざぶとんを 右へ運ぼう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🍡',col:['#f6c97a','#f2b134'],dog:'colon',url:'./hanoi/'},
+ {id:'binary',name:'なかよしミラー',desc:'逆に動く2匹を ゴールへ',cat:'action',badge:'new',who:'ひとり',emo:'💕',col:['#c79563','#8a5a2c'],dog:'colon',url:'./binary/'},
+ {id:'sokoban',name:'倉庫番',desc:'ホネの箱を 押して運ぼう',cat:'puzzle',badge:'new',who:'ひとり',emo:'📦',col:['#c79563','#8a5a2c'],dog:'moon',url:'./sokoban/'},
+ {id:'chase',name:'ドキドキ鬼ごっこ',desc:'ムーンから 逃げてゴールへ',cat:'action',badge:'new',who:'ひとり',emo:'🐕',col:['#c79563','#8a5a2c'],dog:'moon',url:'./chase/'},
+ {id:'airhockey',name:'エアホッケー',desc:'パックを打って 7点先取',cat:'action',badge:'new',who:'ひとり・CPU・2人',emo:'🏒',col:['#c79563','#8a5a2c'],dog:'colon',url:'./airhockey/'},
+ {id:'sudoku',name:'数独',desc:'数字を入れて 全部うめよう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🔢',col:['#c79563','#8a5a2c'],dog:'colon',url:'./sudoku/'},
+ {id:'match',name:'マッチ棒パズル',desc:'棒を1本動かして 式を直そう',cat:'puzzle',badge:'new',who:'ひとり',emo:'🔥',col:['#c79563','#8a5a2c'],dog:'colon',url:'./match/'},
+ {id:'blocks',name:'ピタッとパズル',desc:'ブロックを わくにぴったり',cat:'puzzle',badge:'new',who:'ひとり',emo:'🧩',col:['#c79563','#8a5a2c'],dog:'moon',url:'./blocks/'},
+ {id:'lights',name:'ライツアウト',desc:'ライトを 全部消そう',cat:'puzzle',badge:'new',who:'ひとり',emo:'💡',col:['#c79563','#8a5a2c'],dog:'colon',url:'./lights/'},
 ];
 const BADGE={pop:'人気',rec:'おすすめ',new:'新作'};
 const TABS=[['all','すべて','tab_all','tb_all','🎮'],['pop','人気','tab_popular','tb_popular','👑'],['new','新作','tab_new','tb_new','⭐'],['fav','お気に入り','tab_fav','tb_fav','❤️'],['puzzle','パズル',null,'tb_puzzle','🧩'],['battle','対戦',null,'tb_battle','⚔️'],['action','アクション',null,'tb_action','🕹️']];
