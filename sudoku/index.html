@@ -488,7 +488,7 @@ function win(){ done=true; clearInterval(tick); const t=Date.now()-t0; const s=m
   report('clear',{stars:s}); SFX.win(); confetti(['🔢','🐾','✨']); sayText(1,'ぜんぶうまった！',true); setStatus('クリア！');
   const last=mode==='stage'&&P.idx>=ST-1; $('bAgain').textContent=mode==='stage'?(last?'メニューへ':'つぎのステージ'):'新しい問題';
   const lab=mode==='stage'?L.name+' ステージ'+(P.idx+1):L.name;
-  showResult({winner:0,title:'🎉 '+lab+' クリア！',score:fmt(t)+'・ミス'+miss,msg:'★'.repeat(s)+'☆'.repeat(3-s)+(s<3?'　★3はミスなしでクリア！':'')}); }
+  showResult({winner:0,title:'🎉 '+lab+' クリア！',score:fmt(t)+'・まちがい'+miss+'回',msg:'★'.repeat(s)+'☆'.repeat(3-s)+(s<3?'　★3はまちがいなしでクリア！':'')}); }
 $('bUndo').onclick=()=>{ if(!hist.length) return; const [i,v]=hist.pop(); cur[i]=v; sel=i; SFX.tap(); draw(); };
 function retrySame(){ actx(); SFX.tap(); clearInterval(tick); closeM('mRes'); cur=orig.slice(); sel=-1; miss=0; hist=[]; t0=0; done=false; $('miss').textContent=0; $('tm').textContent='0:00'; draw(); setStatus('同じ問題をもう一度！'); toast('同じ問題をやり直し'); }
 $('bReset').onclick=retrySame; $('bNew').onclick=()=>{actx();SFX.tap();load()}; $('bRetryR').onclick=retrySame;
