@@ -113,6 +113,8 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 #bd{position:absolute;display:grid;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(8,1fr);gap:1px;touch-action:none}
 .ce{position:relative;background:center/100% 100% no-repeat;border-radius:4px}
 .ce.mcol{grid-column:5;grid-row:2 / span 7;background-size:100% 100%}
+.ce .dog.joy{animation:joy .55s ease-in-out infinite}
+@keyframes joy{0%,100%{transform:translateY(0) scale(1,1)}20%{transform:translateY(2%) scale(1.06,.92)}50%{transform:translateY(-28%) scale(.96,1.05) rotate(-4deg)}75%{transform:translateY(-10%) rotate(4deg)}}
 .ce .dog{position:absolute;inset:-4%;z-index:2;background:center/contain no-repeat!important;border:0!important;box-shadow:none!important;border-radius:0!important;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
 .legend{display:flex;justify-content:center;gap:14px;font-size:12px;font-weight:900;margin-top:6px}
 .legend span{display:flex;align-items:center;gap:4px}.legend .dog{width:24px;height:24px;background:center/contain no-repeat!important;border:0!important;box-shadow:none!important}
@@ -399,22 +401,22 @@ const P=Object.assign({cur:0,stars:{}},store.get('prog30',{}));
 let g,c,m,gc=3,gm=5,mv=0,hist=[],done=false,FC='d',FM='d',FR=0;
 const SK=(h,f)=>`style="background-image:url(../img/sk/${h}_${f}${FR}.webp)!important"`;
 ['colon','moon'].forEach(h=>['d','l','r','u'].forEach(f=>[0,1,2,3].forEach(n=>{const im=new Image();im.src=`../img/sk/${h}_${f}${n}.webp`})));
-setInterval(()=>{ if(done) return; FR=(FR+1)%4; const a=document.querySelector('#bd .dog.c'),b=document.querySelector('#bd .dog.m'); if(a) a.style.setProperty('background-image',`url(../img/sk/colon_${FC}${FR}.webp)`,'important'); if(b) b.style.setProperty('background-image',`url(../img/sk/moon_${FM}${FR}.webp)`,'important'); },300);
+setInterval(()=>{ FR=(FR+1)%4; const a=document.querySelector('#bd .dog.c'),b=document.querySelector('#bd .dog.m'); if(a) a.style.setProperty('background-image',`url(../img/sk/colon_${done?'d':FC}${FR}.webp)`,'important'); if(b) b.style.setProperty('background-image',`url(../img/sk/moon_${done?'d':FM}${FR}.webp)`,'important'); },300);
 function load(i){ P.cur=i; store.set('prog30',P); const L=LV[i]; g=L.g.split('').map(Number); c=L.c; m=L.m; FC=FM='d'; FR=0; mv=0; hist=[]; done=false;
   $('stN').textContent=(i+1)+'/'+LV.length; $('best').textContent=L.d; 
   draw(); setStatus('ふたりを💕へ連れていこう'); setTimeout(()=>{sayText(1,'いっしょに行こう！');setTimeout(()=>sayText(2,'ムーンは反対に動くよ♪'),500)},300); }
 function draw(){ const bd=$('bd'); bd.innerHTML=''; const mc=document.createElement('div'); mc.className='ce mcol'; bd.appendChild(mc);
   for(let k=0;k<W*H;k++){ const x=k%W; if(x===4&&k!==4) continue; const e=document.createElement('div');
   e.className='ce'+(k===4?' heart':g[k]?' w v'+((k*7+(k>>2))%4):'')+(k===gc?' gc':'')+(k===gm?' gm':'');
-  if(k===c) e.innerHTML=`<i class="dog c" ${SK('colon',done?'d':FC)}></i>`; if(k===m) e.innerHTML=`<i class="dog m" ${SK('moon',done?'d':FM)}></i>`; bd.appendChild(e); }
+  if(k===c) e.innerHTML=`<i class="dog c${done?' joy':''}" ${SK('colon',done?'d':FC)}></i>`; if(k===m) e.innerHTML=`<i class="dog m${done?' joy':''}" ${SK('moon',done?'d':FM)}></i>`; bd.appendChild(e); }
   $('mv').textContent=mv; $('bUndo').disabled=!hist.length; $('bNext').style.visibility=done&&P.cur<LV.length-1?'visible':'hidden'; $('bNext').textContent='つぎ ▶'; }
 function mvp(p,dx,dy){ const x=p%W+dx,y=((p/W)|0)+dy; if(x<0||x>=W||y<0||y>=H) return p; const n=y*W+x; return (g[n]||x===4)?p:n; }
 function step(d){ if(done) return; actx(); const [dx,dy]={l:[-1,0],r:[1,0],u:[0,-1],d:[0,1]}[d];
   const nc=mvp(c,dx,dy), nm=mvp(m,-dx,dy); FC=d; FM=({l:'r',r:'l',u:'u',d:'d'})[d]; FR=(FR+1)%4; if(nc===c&&nm===m){SFX.ng();draw();return;}
   hist.push([c,m]); c=nc; m=nm; mv++; SFX.tap(); draw();
   if(c===gc&&m===gm){ done=true; const L=LV[P.cur]; const s=mv<=L.d?3:mv<=L.d*1.5?2:1; P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog30',P);
-    report('clear',{stars:s}); SFX.win(); confetti(['💕','🐾','✨']); sayText(1,'やったね！',true); sayText(2,'なかよし〜♪',true); setStatus('クリア！'); draw();
-    showResult({winner:0,title:'💕 ステージ'+(P.cur+1)+' クリア！',score:mv+'手',msg:'★'.repeat(s)+'☆'.repeat(3-s),rec:'最短：'+L.d+'手'}); } }
+    report('clear',{stars:s}); SFX.win(); confetti(['💕','🐾','✨']); sayText(1,'やったね！',true); sayText(2,'なかよし〜♪',true); setStatus('クリア！'); draw(); const _st=P.cur;
+    setTimeout(()=>{ if(P.cur!==_st||!done) return; showResult({winner:0,title:'💕 ステージ'+(P.cur+1)+' クリア！',score:mv+'手',msg:'★'.repeat(s)+'☆'.repeat(3-s),rec:'最短：'+L.d+'手'}); },2600); } }
 $('bUndo').onclick=()=>{ if(!hist.length) return; [c,m]=hist.pop(); mv--; done=false; SFX.tap(); draw(); };
 $('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)}; $('bNext').onclick=()=>load(P.cur+1);
 $('bAgain').textContent='つぎのステージ'; $('bAgain').onclick=()=>{closeM('mRes');load(Math.min(P.cur+1,LV.length-1))};
