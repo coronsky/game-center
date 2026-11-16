@@ -260,7 +260,13 @@ body[data-vt=natural] #mMode{background-image:url(../img/chase/natural/bg.webp)}
 body[data-vt=retro] #mMode .card{color:#ffe9b0}body[data-vt=neon] #mMode .card{color:#cffaff}
 #mMode .pkRow button{background:rgba(255,250,240,.88)}body[data-vt=retro] #mMode .pkRow button{background:rgba(70,18,12,.82);color:#ffe9b0;border-color:#c98a2b}body[data-vt=neon] #mMode .pkRow button{background:rgba(18,10,60,.82);color:#cffaff;border-color:#3ff0ff}
 #mMode .pkRow button.on{box-shadow:0 0 0 3px #f2b134}body[data-vt=neon] #mMode .pkRow button.on{box-shadow:0 0 12px 3px #ff4fd8}
-#mMode .mi{width:68px;height:68px;object-fit:contain}#mMode .pkNote{font-weight:900}</style>
+#mMode .mi{width:68px;height:68px;object-fit:contain}#mMode .pkNote{font-weight:900}#selG{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0;max-height:52vh;overflow-y:auto;padding:2px}.selNote{font-size:12px;font-weight:700;text-align:center;opacity:.8}
+.tile{background-color:transparent;aspect-ratio:1;border:0;background-size:100% 100%;background-repeat:no-repeat;font:inherit;font-weight:900;font-size:17px;padding:0 0 20% 0;cursor:pointer;color:#5a3d2b;display:flex;flex-direction:column;align-items:center;justify-content:center}.tile.lk{font-size:0;opacity:.85}
+.tile .ts{display:block;font-style:normal;font-size:10px;line-height:1;margin-top:2px;color:#e8a317;text-shadow:0 1px 0 rgba(0,0,0,.35)}
+body[data-vt=natural] .tile{background-image:url(img/ui/natural_t0.webp);color:#5a3d2b}body[data-vt=natural] .tile.ck{background-image:url(img/ui/natural_t1.webp)}body[data-vt=natural] .tile.cur{background-image:url(img/ui/natural_t2.webp)}body[data-vt=natural] .tile.lk{background-image:url(img/ui/natural_t3.webp)}body[data-vt=natural] .tile.pf{background-image:url(img/ui/natural_t4.webp);padding-bottom:12%}
+body[data-vt=retro] .tile{background-image:url(img/ui/retro_t0.webp);color:#5a2a12}body[data-vt=retro] .tile.ck{background-image:url(img/ui/retro_t1.webp)}body[data-vt=retro] .tile.cur{background-image:url(img/ui/retro_t2.webp)}body[data-vt=retro] .tile.lk{background-image:url(img/ui/retro_t3.webp)}body[data-vt=retro] .tile.pf{background-image:url(img/ui/retro_t4.webp);padding-bottom:12%}
+body[data-vt=neon] .tile{background-image:url(img/ui/neon_t0.webp);color:#ffffff}body[data-vt=neon] .tile.ck{background-image:url(img/ui/neon_t1.webp)}body[data-vt=neon] .tile.cur{background-image:url(img/ui/neon_t2.webp)}body[data-vt=neon] .tile.lk{background-image:url(img/ui/neon_t3.webp)}body[data-vt=neon] .tile.pf{background-image:url(img/ui/neon_t4.webp);padding-bottom:12%}
+</style>
 </head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -272,14 +278,13 @@ body[data-vt=retro] #mMode .card{color:#ffe9b0}body[data-vt=neon] #mMode .card{c
   <div class="panel"><div class="in" style="padding:6px"><canvas id="cv" width="600" height="600"></canvas></div></div>
   <div id="stickZone"><span>👆 ここをなぞると、スティックが出てくるよ（画面のワクの中ならどこでもOK）</span><button id="bNext" style="display:none"></button></div>
 
-  <div class="btns" style="grid-template-columns:1fr 1fr;margin:6px 0 2px"><button class="btn c" id="bMode">🎮 キャラ・モード</button><button class="btn c" id="bRoll">📱 かたむけ：OFF</button></div>
+  <div class="btns" style="grid-template-columns:1fr 1fr 1fr;margin:6px 0 2px"><button class="btn c" id="bMode">🎮 キャラ</button><button class="btn c" id="bSel">🗺 ステージ</button><button class="btn c" id="bRoll">📱 かたむけ：OFF</button></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns gbtns" style="grid-template-columns:repeat(3,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
 </div>
 <div class="modal" id="mMode"><div class="card pick"><h2>🐾 キャラとモードをえらぼう</h2><div class="lb">あなたのワンコ</div>
 <div class="pkRow" data-k="me"><button data-v="colon"><span class="pa" style="background-image:var(--colon)"></span>コロン<small>ムーンがおってくる</small></button><button data-v="moon"><span class="pa" style="background-image:var(--moon)"></span>ムーン<small>コロンがおってくる</small></button></div>
 <div class="lb">モード</div><div class="pkRow" data-k="mode" style="grid-template-columns:1fr 1fr 1fr"><button data-v="stage"><img class="mi" data-n="stage" alt=""><small>ステージ</small></button><button data-v="endless"><img class="mi" data-n="endless" alt=""><small>ずっとにげる</small></button><button data-v="mission"><img class="mi" data-n="mission" alt=""><small>ミッション</small></button></div>
-<div id="selBox"><div class="lb" id="selLb"></div><div class="selG" id="selG"></div></div>
 <div class="pkNote" id="modeNote"></div><div class="acts"><button class="btn g" id="bModeGo">この設定ではじめる！</button></div></div></div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 ドキドキ鬼ごっこ</h2><p>コロンを動かして、ゴールの🏠まで走ろう！ムーンが<b>おじゃましに追いかけてくる</b>から、つかまったらアウトだよ。</p>
 <p>👆 画面をなぞるとスティックが出て、倒した向きに走ります（倒すほど速い）。矢印キーや「かたむけ」でも動かせます。</p>
@@ -293,6 +298,7 @@ body[data-vt=retro] #mMode .card{color:#ffe9b0}body[data-vt=neon] #mMode .card{c
 <div style="display:none">
 
 </div>
+<div class="modal" id="mSel"><div class="card result"><h2 id="selTt"></h2><div id="selG"></div><div class="selNote" id="selNote"></div><div class="acts"><button class="btn c" id="selX">とじる</button></div></div></div>
 <div class="modal" id="mRes"><div class="card result">
   <h2 id="resTitle"></h2>
   <div class="avs"><div id="avB"><div class="crown"></div><div class="ph" style="background-image:var(--colon)"></div>コロン</div>
@@ -386,13 +392,13 @@ function swipe(el,cb){ let sx=0,sy=0,on=false; el.addEventListener('touchstart',
 function keys(cb){ addEventListener('keydown',e=>{const k={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'}[e.key]; if(k){e.preventDefault();cb(k)}}); }
 function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<button data-i="${i}" class="${i===cur?'on':''}">${n}${starsOf&&starsOf(i)?'<i>'+'★'.repeat(starsOf(i))+'</i>':''}</button>`).join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
-setTimeout(()=>{ try{selI=lv();modeSync()}catch(e){} openM('mMode') },400);
+setTimeout(()=>{ try{modeSync()}catch(e){} openM('mMode') },400);
 
 const LVN=40;
 const CFG=i=>({n:9+2*Math.floor(i/10),obs:Math.min(.24,.10+i*.0036),moons:1+(i>=6)+(i>=16)+(i>=28),mv:Math.min(.78,.52+i*.0067),sn:Math.min(14,5+Math.floor(i/4.5))});
 const MIS=[{t:'おやつを3こ とってゴール',sn:3},{t:'⚡ダッシュを1回つかってゴール',dash:1},{t:'おやつを4こ とってゴール',sn:4},{t:'🛡️バリアで1回まもられてゴール',bar:1},{t:'45びょう いないにゴール',time:45},{t:'❄️こおりで おいかけ役を1回とめてゴール',ice:1},{t:'おやつを5こ とってゴール',sn:5},{t:'🌿くさむらに 3びょう かくれてゴール',hide:3},{t:'40びょう いないにゴール',time:40},{t:'おやつをぜんぶ とってゴール',all:1},{t:'⭐金のおやつを とってゴール',gold:1},{t:'⚡ダッシュ＋おやつ4こで ゴール',dash:1,sn:4},{t:'🛡️バリア＋おやつ5こで ゴール',bar:1,sn:5},{t:'❄️こおり＋おやつ4こで ゴール',ice:1,sn:4},{t:'🌿くさむらに 4びょう かくれてゴール',hide:4},{t:'おやつ4こ＋55びょう いないにゴール',sn:4,time:55},{t:'おやつを7こ とってゴール',sn:7},{t:'⭐金のおやつ＋おやつ5こで ゴール',gold:1,sn:5},{t:'⚡ダッシュ＋🛡️バリアでゴール',dash:1,bar:1},{t:'❄️こおり＋🛡️バリアでゴール',ice:1,bar:1},{t:'おやつをぜんぶ とってゴール',all:1},{t:'⚡ダッシュ＋❄️こおりでゴール',dash:1,ice:1},{t:'🌿5びょう かくれ＋おやつ4こで ゴール',hide:5,sn:4},{t:'おやつ6こ＋60びょう いないにゴール',sn:6,time:60},{t:'⭐金のおやつ＋⚡ダッシュでゴール',gold:1,dash:1},{t:'⭐金のおやつ＋🛡️バリアでゴール',gold:1,bar:1},{t:'⭐金のおやつ＋おやつ8こで ゴール',gold:1,sn:8},{t:'❄️こおり＋🌿3びょう かくれてゴール',ice:1,hide:3},{t:'⚡ダッシュ＋おやつぜんぶで ゴール',dash:1,all:1},{t:'🛡️バリア＋おやつぜんぶで ゴール',bar:1,all:1},{t:'🌿くさむらに 6びょう かくれてゴール',hide:6},{t:'⚡🛡️❄️ 3つぜんぶ つかってゴール',dash:1,bar:1,ice:1},{t:'⭐金のおやつ＋⚡ダッシュ＋🛡️バリアでゴール',gold:1,dash:1,bar:1},{t:'おやつ9こ＋80びょう いないにゴール',sn:9,time:80},{t:'おやつぜんぶ＋100びょう いないにゴール',all:1,time:100},{t:'⭐金のおやつ＋❄️こおり＋🌿3びょうでゴール',gold:1,ice:1,hide:3},{t:'⚡🛡️❄️⭐ 4つぜんぶ つかってゴール',dash:1,bar:1,ice:1,gold:1},{t:'おやつぜんぶ＋⭐金のおやつでゴール',all:1,gold:1},{t:'ぜんぶのアイテム＋おやつぜんぶで ゴール',dash:1,bar:1,ice:1,gold:1,all:1},{t:'ラスボス！ 4つぜんぶ＋おやつぜんぶで ゴール',dash:1,bar:1,ice:1,gold:1,all:1,hide:3}];
 const ST=Object.assign({me:'colon',mode:'stage'},store.get('cfg',{}));
-const P=Object.assign({cur:0,curM:0,best:{},bestM:{},bestE:0},store.get('prog',{}));
+const P=Object.assign({cur:0,curM:0,best:{},bestM:{},bestE:0,st:{},sm:{}},store.get('prog',{}));
 const VP=4, R=.27;
 const ITM={dash:{e:'⚡',c:'rgba(80,160,255,.6)'},bar:{e:'🛡️',c:'rgba(120,220,140,.65)'},ice:{e:'❄️',c:'rgba(150,220,255,.75)'},gold:{e:'⭐',c:'rgba(255,215,60,.8)'}};
 let N,obs,bush,snacks=new Set(),items=new Map(),snTot=0,RC=[],pl,moons=[],t0=0,tick=null,done=false,lost=false,last=0,raf=0,near=0,score=0,wait=0,S2,fx,E={},cd=0,cdn=0;
@@ -421,8 +427,8 @@ function build(){ const e=ST.mode==='endless',c=e?{n:13,obs:.14,moons:1,mv:.55,s
 function modeName(){ return ST.mode==='endless'?'ずっとにげる':ST.mode==='mission'?'ミッション':'ステージ'; }
 function names(){ return Array.from({length:LVN},(_,k)=>(ST.mode==='mission'?'ミッション':'ステージ')+(k+1)); }
 function load(i){ clearInterval(tick); cancelAnimationFrame(raf); if(ST.mode==='mission') P.curM=i; else if(ST.mode==='stage') P.cur=i; store.set('prog',P);
-  build(); t0=0; done=false; lost=false; score=0; wait=0; cd=3.6; cdn=0; ROLL.calib=true; S2={dash:0,bar:0,ice:0,hide:0,gold:0,sn:0}; fx={dash:0,ice:0}; E={add:25,item:9,el:0,mvx:0};
-  const en=ST.mode==='endless'; $('stN').previousElementSibling.textContent=modeName();
+  build(); calcTT(); t0=0; done=false; lost=false; score=0; wait=0; cd=3.6; cdn=0; ROLL.calib=true; S2={dash:0,bar:0,ice:0,hide:0,gold:0,sn:0}; fx={dash:0,ice:0}; E={add:25,item:9,el:0,mvx:0};
+  const en=ST.mode==='endless'; $('bSel').style.visibility=en?'hidden':''; $('stN').previousElementSibling.textContent=modeName();
   $('stN').textContent=en?'∞':(lv()+1)+'/'+LVN; $('tm').textContent='0:00'; $('bNext').style.visibility='hidden'; $('bAgain').textContent='つぎへ';
   snUpd(); setStatus(statusMsg()); draw(); setTimeout(()=>sayText(chP(),'まてまて〜♪'),300); last=0; raf=requestAnimationFrame(loop); }
 function mInfo(){ const m=MIS[P.curM],el=t0?(Date.now()-t0)/1000:0; const ck=[]; if(m.sn) ck.push([S2.sn>=m.sn,'おやつ '+Math.min(S2.sn,m.sn)+'/'+m.sn]);
@@ -430,7 +436,7 @@ function mInfo(){ const m=MIS[P.curM],el=t0?(Date.now()-t0)/1000:0; const ck=[];
   if(m.ice) ck.push([S2.ice>=m.ice,'こおり '+S2.ice+'/'+m.ice]); if(m.hide) ck.push([S2.hide>=m.hide,'かくれ '+Math.floor(Math.min(S2.hide,m.hide))+'/'+m.hide+'びょう']); if(m.gold) ck.push([S2.gold>=m.gold,'⭐ '+S2.gold+'/'+m.gold]);
   if(m.time) ck.push([el<=m.time,'のこり '+Math.max(0,Math.ceil(m.time-el))+'びょう']);
   return {m,ok:ck.every(c=>c[0]),text:m.t+'（'+ck.map(c=>c[1]).join('・')+'）'}; }
-function statusMsg(){ return ST.mode==='mission'?'🎯 '+mInfo().text:ST.mode==='endless'?'つかまらずに どこまでにげられるかな？':CN()+'からにげて、🏠へ！おやつをとるほど高得点'; }
+function statusMsg(){ return ST.mode==='mission'?'🎯 '+mInfo().text:ST.mode==='endless'?'つかまらずに どこまでにげられるかな？':CN()+'からにげて、🏠へ！★3は おやつぜんぶ＋'+TT+'びょういない'; }
 function snUpd(){ const e=ST.mode==='endless'; $('sn').textContent=e?String(S2.sn):(snTot-snacks.size)+'/'+snTot; $('sc').textContent=score+(e&&t0?Math.floor((Date.now()-t0)/1000)*5:0); }
 // ---- 入力
 const IN={k:{u:0,d:0,l:0,r:0},t:null,g:null,b0:0};
@@ -456,16 +462,21 @@ async function rollOn(){ actx(); try{ if(window.DeviceOrientationEvent&&typeof D
 function rollOff(){ ROLL.on=false; removeEventListener('deviceorientation',onOri); $('bRoll').textContent='📱 かたむけ：OFF'; $('bRoll').classList.remove('on'); }
 $('bRoll').onclick=()=>{ SFX.tap(); ROLL.on?rollOff():rollOn(); };
 // ---- キャラ・モード選択
-let selI=0;
-function selRefresh(){ const en=ST.mode==='endless',ms=ST.mode==='mission'; $('selBox').style.display=en?'none':''; if(en) return; $('selLb').textContent=(ms?'ミッション':'ステージ')+'をえらぶ（全'+LVN+'）'; const bs=(ms?P.bestM:P.best);
-  $('selG').innerHTML=Array.from({length:LVN},(_,i)=>`<button data-i="${i}" class="${i===selI?'on':''}">${i+1}<i>${bs[i]?'★':''}</i></button>`).join('');
-  $('selG').querySelectorAll('button').forEach(b=>b.onclick=()=>{ SFX.tap(); selI=+b.dataset.i; selRefresh(); }); }
+const starsOf=(i,ms)=>Math.max((ms?P.sm:P.st)[i]||0,(ms?P.bestM:P.best)[i]?1:0);
+let TT=60,selFM=false;
+function calcTT(){ const goal=N*N-1,pts=[...snacks]; let cur=0,tot=0; const left=new Set(pts); while(left.size){ const d=bfs(cur); let b=-1,bd=1e9; for(const k of left){ if(d[k]>=0&&d[k]<bd){bd=d[k];b=k} } if(b<0) break; tot+=bd; cur=b; left.delete(b); } const d=bfs(cur); tot+=Math.max(0,d[goal]); TT=Math.max(25,Math.ceil(tot/2.7*1.6+4)); }
+function openSel(fm){ selFM=fm; const ms=ST.mode==='mission'; $('selTt').textContent=(ms?'ミッション':'ステージ')+'せんたく'; $('selNote').textContent=ms?'ミッションをクリアしてゴールすると ★1つ！':'ゴール★1 ／ おやつぜんぶ★2 ／ おやつぜんぶ＋じかんいない★3';
+  const g=$('selG'); g.innerHTML=''; for(let i=0;i<LVN;i++){ const st=starsOf(i,ms),lock=i>0&&!starsOf(i-1,ms); const b=document.createElement('button');
+    b.className='tile '+(lock?'lk':st>=(ms?1:3)&&!ms?'pf':i===lv()?'cur':st?'ck':''); b.innerHTML=lock?'':'<span>'+(i+1)+'</span><i class="ts">'+(st?'★'.repeat(st)+(ms?'':'☆'.repeat(3-st)):'')+'</i>';
+    if(!lock) b.onclick=()=>{ SFX.tap(); selFM=false; closeM('mSel'); load(i); }; g.appendChild(b); }
+  openM('mSel'); const c=g.querySelector('.cur')||g.querySelector('.tile:not(.lk):last-of-type'); if(c) c.scrollIntoView({block:'center'}); }
+$('selX').onclick=()=>{ SFX.tap(); closeM('mSel'); if(selFM){ selFM=false; load(lv()); } };
+$('bSel').onclick=()=>{ actx(); SFX.tap(); if(ST.mode!=='endless') openSel(false); };
 function modeSync(){ const m=$('mMode'),vt=document.body.dataset.vt||'natural'; m.querySelectorAll('.mi').forEach(i=>{ const u='../img/chase/'+vt+'/mode_'+i.dataset.n+'.webp'; if(i.getAttribute('src')!==u) i.src=u; }); m.querySelectorAll('.pkRow').forEach(r=>r.querySelectorAll('button').forEach(b=>b.classList.toggle('on',ST[r.dataset.k]===b.dataset.v)));
-  selRefresh();
   $('modeNote').textContent=(ST.me==='colon'?'コロン':'ムーン')+'でにげるよ。おいかけ役は'+CN()+'！'; }
-$('mMode').querySelectorAll('.pkRow button').forEach(b=>b.onclick=()=>{ SFX.tap(); ST[b.parentElement.dataset.k]=b.dataset.v; if(b.parentElement.dataset.k==='mode') selI=ST.mode==='mission'?P.curM:P.cur; modeSync(); });
-$('bMode').onclick=()=>{ actx(); SFX.tap(); selI=lv(); modeSync(); openM('mMode'); };
-$('bModeGo').onclick=()=>{ SFX.tap(); store.set('cfg',ST); closeM('mMode'); load(ST.mode==='endless'?lv():selI); };
+$('mMode').querySelectorAll('.pkRow button').forEach(b=>b.onclick=()=>{ SFX.tap(); ST[b.parentElement.dataset.k]=b.dataset.v; modeSync(); });
+$('bMode').onclick=()=>{ actx(); SFX.tap(); modeSync(); openM('mMode'); };
+$('bModeGo').onclick=()=>{ SFX.tap(); store.set('cfg',ST); closeM('mMode'); if(ST.mode==='endless') load(lv()); else openSel(true); };
 // ---- 動き
 function resolve(){ pl.x=Math.max(R,Math.min(N-R,pl.x)); pl.y=Math.max(R,Math.min(N-R,pl.y));
   const x0=Math.floor(pl.x)-1,y0=Math.floor(pl.y)-1; for(let cy=y0;cy<=y0+2;cy++) for(let cxx=x0;cxx<=x0+2;cxx++){ if(cxx<0||cy<0||cxx>=N||cy>=N||!obs[cy*N+cxx]) continue;
@@ -501,9 +512,8 @@ function loop(ts){ raf=requestAnimationFrame(loop); const dt=Math.min(.05,(ts-(l
   draw(); }
 function finish(kind){ done=true; clearInterval(tick); const el=t0?(Date.now()-t0)/1000:0,en=ST.mode==='endless',ms=ST.mode==='mission';
   if(kind==='goal'){ const par=N*2.5,bonus=Math.max(0,Math.round(par-el))*10,gain=300+bonus+(ms?200:0),pts=score+gain; score=pts; snUpd(); const bk=ms?P.bestM:P.best; if(!bk[lv()]||pts>bk[lv()]) bk[lv()]=pts; store.set('prog',P);
-    report('clear',{stars:3}); SFX.win(); confetti(['🦴','💕','✨']); sayText(meP(),'にげきった！',true); setStatus('ゴール！'); lost=false; const has=lv()<LVN-1; $('bNext').style.visibility=has?'visible':'hidden'; $('bAgain').textContent=has?'つぎへ':'もう一回'; if(!has) lost=true;
-    lvRow($('lvs'),names(),lv(),k=>(ms?P.bestM:P.best)[k]?1:0,load);
-    showResult({winner:1,title:ms?'🎯 ミッションクリア！':'🏆 ゴール！',score:pts+'点',msg:'おやつ'+S2.sn+'こ＋ボーナス'+gain+'点！',rec:'ハイスコア：'+bk[lv()]+'点'}); return; }
+    let stN=1; if(ms){ P.sm[lv()]=Math.max(P.sm[lv()]||0,1); } else { if(!snacks.size) stN=2; if(!snacks.size&&el<=TT) stN=3; P.st[lv()]=Math.max(P.st[lv()]||0,stN); } store.set('prog',P); report('clear',{stars:ms?1:stN}); SFX.win(); confetti(['🦴','💕','✨']); sayText(meP(),'にげきった！',true); setStatus('ゴール！'); lost=false; const has=lv()<LVN-1; $('bNext').style.visibility=has?'visible':'hidden'; $('bAgain').textContent=has?'つぎへ':'もう一回'; if(!has) lost=true;
+    showResult({winner:1,title:ms?'🎯 ミッションクリア！':'🏆 ゴール！',score:pts+'点',msg:'おやつ'+S2.sn+'こ＋ボーナス'+gain+'点！'+(ms||stN===3?'':'（★3は おやつぜんぶ＋'+TT+'びょういない／'+Math.ceil(el)+'びょう）'),extra:'<div style="font-size:30px;letter-spacing:4px;color:#f0b429;text-shadow:0 1px 0 rgba(0,0,0,.25)">'+(ms?'★':'★'.repeat(stN)+'☆'.repeat(3-stN))+'</div>',rec:'ハイスコア：'+bk[lv()]+'点'}); return; }
   lost=true; SFX.lose(); sayText(chP(),'つかまえた〜！',true); draw(); $('bAgain').textContent='もう一回';
   if(en){ const pts=score+Math.floor(el)*5; if(pts>P.bestE){P.bestE=pts;store.set('prog',P)} showResult({winner:2,title:'😱 つかまっちゃった…',score:pts+'点',msg:fmt(el*1000)+'にげたよ！おやつ'+S2.sn+'こ',rec:'ハイスコア：'+P.bestE+'点',delay:500}); return; }
   const bk=(ms?P.bestM:P.best)[lv()]||0; showResult({winner:2,title:kind==='timeup'?'⏰ じかんぎれ…':'😱 つかまっちゃった…',score:score+'点',msg:kind==='timeup'?'ミッションの じかんが すぎちゃった':'おやつ'+S2.sn+'こ。つぎはにげきろう！',rec:'ハイスコア：'+bk+'点',delay:500}); }
