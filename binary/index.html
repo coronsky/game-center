@@ -306,7 +306,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="avs"><div id="avB"><div class="crown"></div><div class="ph" style="background-image:var(--colon)"></div>コロン</div>
     <div id="avW"><div class="crown"></div><div class="ph" style="background-image:var(--moon)"></div>ムーン</div></div>
   <div class="big" id="resScore"></div><div class="msg" id="resMsg"></div><div id="resExtra"></div><div class="rec" id="resRec"></div>
-  <div class="acts"><button class="btn c" data-close="mRes">盤面を見る</button><button class="btn g" id="bAgain">もう一回！</button></div>
+  <div class="acts" style="flex-wrap:wrap"><button class="btn g" id="bRetry" style="flex:1 1 100%">🔁 もう一度チャレンジ（最短にちょうせん）</button><button class="btn c" data-close="mRes">盤面を見る</button><button class="btn g" id="bAgain">もう一回！</button></div>
 </div></div>
 <div class="toast" id="toast"></div>
 <script>(()=>{
@@ -419,6 +419,7 @@ function step(d){ if(done) return; actx(); const [dx,dy]={l:[-1,0],r:[1,0],u:[0,
     setTimeout(()=>{ if(P.cur!==_st||!done) return; showResult({winner:0,title:'💕 ステージ'+(P.cur+1)+' クリア！',score:mv+'手',msg:'★'.repeat(s)+'☆'.repeat(3-s),rec:'最短：'+L.d+'手'}); },2600); } }
 $('bUndo').onclick=()=>{ if(!hist.length) return; [c,m]=hist.pop(); mv--; done=false; SFX.tap(); draw(); };
 $('bReset').onclick=()=>{actx();SFX.tap();load(P.cur)}; $('bNext').onclick=()=>load(P.cur+1);
+$('bRetry').onclick=()=>{closeM('mRes');load(P.cur)};
 $('bAgain').textContent='つぎのステージ'; $('bAgain').onclick=()=>{closeM('mRes');load(Math.min(P.cur+1,LV.length-1))};
 const isDone=i=>!!P.stars[i], unlocked=i=>i===0||isDone(i-1)||isDone(i);
 function listM(){ const tot=LV.reduce((a,_,i)=>a+(P.stars[i]||0),0); $('lsSum').textContent='★ '+tot+' / '+LV.length*3;
