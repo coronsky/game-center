@@ -444,7 +444,7 @@ function win(){
   SFX.win(); confetti(['🐾','⭕','✨','🎉']); sayText(1,'はずれたワン！',true); sayText(2,'すごーい♪',true); bark(1);
   $('bNextSt').style.display=LEVELS[lv+1]?'':'none';
   showResult({winner:1,title:'🎉 知恵の輪クリア！',score:`${moves}手・${fmt(t)}`,msg:usedDemo?'見本で解きました（★なし）':moves<=mn?'最短手数！名人ワン！🏅':`最短は${mn}手。もっと少なくできるかな？`,
-    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}`,rec:`★3：${mn}手　★2：${Math.ceil(mn*1.5)}手以内`,delay:900});
+    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">${k<=stars?'★':'☆'}</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}`,rec:`★3：${mn}手　★2：${Math.ceil(mn*1.5)}手以内`,delay:900});
 }
 function undo(){ if(!hist.length||demo||done) return; st=hist.pop(); moves++; hintK=-1; SFX.tap(); draw(); hud(); toast('もどした（+1手）'); }
 function hint(){ if(done||demo) return; actx(); hints++; hintK=bestMove(); draw(); setStatus(`光っている${hintK+1}の輪を動かそう（あと最短${dist[enc(st)]}手）`); SFX.tap(); }
@@ -452,7 +452,7 @@ function demoPlay(){ if(done) return; actx(); if(demo){demo=false;clearTimeout(d
   demo=true; usedDemo=true; hud(); const go=()=>{ if(!demo) return; const k=bestMove(); if(k<0) return; demo=false; doToggle(k); if(!done){demo=true; hud(); setStatus(`見本：あと${dist[enc(st)]}手`); demoT=setTimeout(go,n>=8?160:350);} }; go(); }
 function renderStages(){ const g=$('stGrid'); g.innerHTML='';
   LEVELS.forEach((L,i)=>{ const ok=i===0||P.clear[i-1]; const sv=P.stars[i]||0; const b=document.createElement('button'); b.className='stb'+(ok?'':' lock')+(i===lv?' cur':'');
-    b.innerHTML=`<span class="no">${ok?L.n:'🔒'}</span><b>${ok?L.name:'？？？'}</b><small>${ok?'最短'+minMoves(L.n)+'手':''}</small><span class="sr">${[1,2,3].map(k=>`<i class="${k<=sv?'on':''}">★</i>`).join('')}</span>`;
+    b.innerHTML=`<span class="no">${ok?L.n:'🔒'}</span><b>${ok?L.name:'？？？'}</b><small>${ok?'最短'+minMoves(L.n)+'手':''}</small><span class="sr">${[1,2,3].map(k=>`<i class="${k<=sv?'on':''}">${k<=sv?'★':'☆'}</i>`).join('')}</span>`;
     if(ok) b.onclick=()=>{closeM('mStage');load(i)}; g.appendChild(b); }); }
 $('mRes').querySelector('.card').insertAdjacentHTML('beforeend','<div class="acts"><button class="btn g" id="bNextSt">次のステージへ ▶︎</button></div>');
 const pend=Object.assign({},S);

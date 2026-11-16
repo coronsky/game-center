@@ -551,7 +551,7 @@ function win(){ done=true; clearInterval(tick); const cb=$('clearBan'); cb.class
   setTimeout(()=>{ SFX.win(); confetti(['🐾','✨','🎉','🍡']); bark(1); sayText(1,'ふかふかで最高だワン！',true); sayText(2,'ずるーい、ムーンも〜',true); },500);
   $('bNextSt').style.display=LV[lv+1]?'':'none';
   showResult({winner:1,title:'🎉 タワー完成！',score:`${moves}手・${fmt(t)}`,msg:usedDemo?'見本で解きました（★なし）':moves<=mn?'最短手数！名人ワン！🏅':`最短は${mn}手。もっと少なくできるかな？`,
-    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}`,delay:2600,rec:course==='lim'?`${mn}手以内でクリア！`:`★3：${mn}手　★2：${Math.ceil(mn*1.5)}手以内`}); }
+    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">${k<=stars?'★':'☆'}</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}`,delay:2600,rec:course==='lim'?`${mn}手以内でクリア！`:`★3：${mn}手　★2：${Math.ceil(mn*1.5)}手以内`}); }
 function fail(){ done=true; clearInterval(tick); draw(); hud(); setStatus('手数オーバー…もう一回！'); SFX.ng(); sayText(2,'おしい〜！もう一回やってみよう',true);
   $('bNextSt').style.display='none'; showResult({winner:0,title:'⏱️ 手数オーバー',score:`${moves}手`,msg:`${stMin()}手以内で全部つめなかったよ。ヒントや見本で道すじを確認してみよう！`,rec:`目標：${stMin()}手以内`,delay:500}); }
 function renderCourses(){ const g=$('coGrid'); g.innerHTML=''; Object.keys(CINFO).forEach(k=>{ const I=CINFO[k], L=COURSES[k], Q=CO[k]; const st=L.reduce((a,_,i)=>a+(Q.stars[i]||0),0), cl=L.filter((_,i)=>Q.clear[i]).length;
@@ -559,7 +559,7 @@ function renderCourses(){ const g=$('coGrid'); g.innerHTML=''; Object.keys(CINFO
   b.onclick=()=>{ actx(); SFX.tap(); course=k; P=CO[k]; LV=COURSES[k]; closeM('mCourse'); load(Math.min(P.cur||0,LV.length-1)); }; g.appendChild(b); }); }
 function renderStages(){ const g=$('stGrid'); g.innerHTML='';
   LV.forEach((k,i)=>{ const ok=i===0||P.clear[i-1]; const sv=P.stars[i]||0; const b=document.createElement('button'); b.className='stb'+(ok?'':' lock')+(i===lv?' cur':'');
-    b.innerHTML=`<span class="no">${ok?i+1:'🔒'}</span><b>${ok?k.n+'まい':'？？？'}</b><small>${ok?(course==='lim'?k.m+'手以内':'最短'+k.m+'手'):''}</small><span class="sr">${[1,2,3].map(x=>`<i class="${x<=sv?'on':''}">★</i>`).join('')}</span>`;
+    b.innerHTML=`<span class="no">${ok?i+1:'🔒'}</span><b>${ok?k.n+'まい':'？？？'}</b><small>${ok?(course==='lim'?k.m+'手以内':'最短'+k.m+'手'):''}</small><span class="sr">${[1,2,3].map(x=>`<i class="${x<=sv?'on':''}">${x<=sv?'★':'☆'}</i>`).join('')}</span>`;
     if(ok) b.onclick=()=>{closeM('mStage');load(i)}; g.appendChild(b); }); }
 $('mRes').querySelector('.card').insertAdjacentHTML('beforeend','<div class="acts"><button class="btn g" id="bNextSt">次のステージへ ▶︎</button></div>');
 document.querySelectorAll('.pole').forEach((e,i)=>e.addEventListener('click',()=>tapPole(i)));

@@ -950,7 +950,7 @@ function renderChal(){
     const st=stageStars(s.id), ok=unlocked(s.id);
     const li=document.createElement('button'); li.className='stg'+(ok?'':' lock');
     li.innerHTML=`<span class="no">${s.id+1}</span><span class="tx"><b>${ok?s.name:'？？？'}</b><small>${ok?('CPU '+LV[s.lv]+'・'+RULES[s.rule].n+'ルール'):'前のステージをクリアで解放'}</small>
-      ${ok?`<small class="cond">★2 ${s.s2.t}<br>★3 ${s.s3.t}</small>`:''}</span><span class="sr">${ok?[1,2,3].map(k=>`<i class="${k<=st?'on':''}">★</i>`).join(''):'🔒'}</span>`;
+      ${ok?`<small class="cond">★2 ${s.s2.t}<br>★3 ${s.s3.t}</small>`:''}</span><span class="sr">${ok?[1,2,3].map(k=>`<i class="${k<=st?'on':''}">${k<=st?'★':'☆'}</i>`).join(''):'🔒'}</span>`;
     if(ok) li.onclick=()=>{ sfx.tap(); $('mChal').classList.remove('show'); askStart(s); toast('🏁 '+s.name); };
     ul.appendChild(li);
   });
@@ -1120,7 +1120,7 @@ function finish(){
     const got=win?1+(chal.s2.f(ctxG)?1:0)+(chal.s3.f(ctxG)?1:0):0;
     const prev=stageStars(chal.id);
     if(got>prev){ coins+=(got-prev)*10; lines.push('新しい★ +'+(got-prev)*10); P.stars[chal.id]=got; }
-    stageHtml=`<div class="stres"><div class="nm">🏁 ${chal.name}</div><div class="sr big3">${[1,2,3].map(k=>`<i class="${k<=got?'on':''}">★</i>`).join('')}</div>
+    stageHtml=`<div class="stres"><div class="nm">🏁 ${chal.name}</div><div class="sr big3">${[1,2,3].map(k=>`<i class="${k<=got?'on':''}">${k<=got?'★':'☆'}</i>`).join('')}</div>
       <small>${win?'✔︎':'✖︎'} 勝つ　${chal.s2.f(ctxG)?'✔︎':'✖︎'} ${chal.s2.t}　${chal.s3.f(ctxG)?'✔︎':'✖︎'} ${chal.s3.t}</small></div>`;
   }
   P.coins+=coins; P.stats.earned+=coins; saveP();

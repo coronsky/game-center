@@ -608,7 +608,7 @@ function checkWin(){
   $('bNextSt').textContent=mode==='random'?'つぎのランダム ▶︎':'次のステージへ ▶︎'; $('bNextSt').style.display=(mode==='random'||next)?'':'none';
   showResult({winner:heroP(),title:'🎉 脱出成功！',score:`${moves}手・${fmt(t)}`,
     msg: usedDemo?'見本で解きました（★はつきません）':(moves<=st.min?'最短手数！天才ワン！🏅':`最短は${st.min}手。もっと少なくできるかな？`),
-    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}${hints?`<div class="rec">ヒント${hints}回使用（★は最大2つ）</div>`:''}`,
+    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">${k<=stars?'★':'☆'}</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}${hints?`<div class="rec">ヒント${hints}回使用（★は最大2つ）</div>`:''}`,
     rec:`★3：${st.min}手以内　★2：${Math.ceil(st.min*1.5)}手以内`,delay:1500});
 }
 let usedDemo=false;
@@ -635,7 +635,7 @@ function renderStages(){
   const g=$('stGrid'); g.innerHTML='';
   STAGES.forEach((st,i)=>{ const ok=i<=maxClear()+1; const sv=P.stars[i]||0;
     const b=document.createElement('button'); b.className='stb'+(ok?'':' lock')+(mode==='stage'&&i===stage?' cur':'')+(st.min>81?' ex':'');
-    b.innerHTML=`<span class="no">${ok?i+1:'🔒'}</span><b>${ok?st.name:'？？？'}</b><small>${ok?'最短'+st.min+'手':''}</small><span class="sr">${[1,2,3].map(k=>`<i class="${k<=sv?'on':''}">★</i>`).join('')}</span>`;
+    b.innerHTML=`<span class="no">${ok?i+1:'🔒'}</span><b>${ok?st.name:'？？？'}</b><small>${ok?'最短'+st.min+'手':''}</small><span class="sr">${[1,2,3].map(k=>`<i class="${k<=sv?'on':''}">${k<=sv?'★':'☆'}</i>`).join('')}</span>`;
     if(ok) b.onclick=()=>{ closeM('mStage'); usedDemo=false; loadStage(i); };
     g.appendChild(b); }); }
 const pend=Object.assign({},S);

@@ -314,7 +314,7 @@ body[data-vt=retro] .rule{color:#e0b98a}body[data-vt=neon] .rule{color:#c9b8ff}
   <div class="panel"><div class="in"><div id="pb" class="pb"></div></div></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns"><button class="btn g" id="bHint">💡ヒント</button><button class="btn c" id="bUndo">↩︎戻す</button><button class="btn c" id="bReset">⟳やり直し</button><button class="btn g" id="bSet">⚙︎設定</button></div>
-  <div class="btns2"><button class="btn c" id="bStages">🗝️ ステージをえらぶ</button><button class="btn c" id="bDemo">🎬 見本</button><button class="btn c" id="bMenu">☰ メニュー</button></div>
+  <div class="btns2"><button class="btn c" id="bStages">🗝️ ステージをえらぶ</button><button class="btn c" id="bMenu">☰ メニュー</button></div>
   <div class="foot"><span><b id="mv">0</b>手目</span><span>ベスト：<b id="stBest"></b></span></div>
   <div class="rule">★1：のこり2匹以内　★2：のこり1匹<br>★3：<b>★マス</b>で1匹（ヒントなし）</div>
 </div>
@@ -352,7 +352,7 @@ body[data-vt=retro] .rule{color:#e0b98a}body[data-vt=neon] .rule{color:#c9b8ff}
   <p>ワンコをタップして、となりのワンコを<b>飛びこえて</b>空いている穴へ。飛びこえられたワンコは盤から出ます。</p>
   <p>➡️ 飛べるのはたて・よこ（三角盤はななめも）。1つ飛びこえて、その先が空いているときだけ。</p>
   <p>🎯 最後に<b>1匹だけ</b>残せたらクリア！<br>★1：のこり2匹以内　★2：のこり1匹<br>★3：<b>★マス</b>で1匹（ヒントなし）</p>
-  <p>💡 ヒントは次の一手、🎬 見本は最後まで解いてくれます。「この形からは1匹にできない」と出たら、戻してやり直そう。</p>
+  <p>💡 ヒントは次の一手を教えてくれます。「この形からは1匹にできない」と出たら、戻してやり直そう。</p>
   <p>🗝️ 全50ステージ。ワンコの数が少ないやさしい盤から、最後は32匹の本格版「英国式」まで。クリアすると次が開きます。</p>
   <p>🎲 <b>ランダム</b>は毎回ちがうパズル（かならず解けます）。★はあつめた数にたされます。</p>
   <div class="acts"><button class="btn g" data-close="mHelp">はじめる！</button></div></div></div>
@@ -588,7 +588,7 @@ function draw(){
   document.body.classList.toggle('look-bone',S.look==='bone'); document.body.classList.toggle('look-marble',S.look==='marble');
 }
 function hud(){ $('left').textContent=count(); $('mv').textContent=hist.length; $('tm').textContent=t0?fmt(Date.now()-t0):'0:00';
-  $('bUndo').disabled=!hist.length||demo; $('bHint').disabled=demo||done; $('bDemo').textContent=demo?'⏹ とめる':'🎬 見本'; $('bDemo').disabled=done; }
+  $('bUndo').disabled=!hist.length||demo; $('bHint').disabled=demo||done; }
 function tap(k){
   if(done||demo) return; actx(); hintJ=null;
   if(st[k]){ const ms=movesFrom(k); if(!ms.length){ sel=-1; SFX.ng(); els[k].animate([{transform:'translate(-50%,-50%)'},{transform:'translate(-56%,-50%)'},{transform:'translate(-44%,-50%)'},{transform:'translate(-50%,-50%)'}],{duration:180}); draw(); return; }
@@ -631,7 +631,7 @@ function finish(){
   $('bNextSt').textContent=mode==='random'?'つぎのランダム ▶︎':'次へ ▶︎'; $('bNextSt').style.display=(mode==='random'&&good)||(mode==='stage'&&STG[lv+1]&&P.clear[lv])?'':'none';
   showResult({winner:good?1:0,title:good?(onT?'🏆 パーフェクト！':'🎉 クリア！'):'😢 ざんねん！動けなくなった',score:`のこり${c}匹・${fmt(t)}`,
     msg:usedDemo?'見本で解きました（★なし）':good?(onT?'まんなかの★マスにぴったり！':'★マスで終われたら★3つ！（ヒントなしで）'):(c===2?'おしい！あと1匹（★1つ）':'「戻す」で手前からやり直してみよう'),
-    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">★</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}`,rec:'★1：のこり2匹以内　★2：のこり1匹　★3：★マスで1匹（ヒントなし）',delay:700});
+    extra:`<div class="bigStars">${[1,2,3].map(k=>`<i class="${k<=stars?'on':''}">${k<=stars?'★':'☆'}</i>`).join('')}</div>${nb?'<div class="nb">🏅 ベスト記録更新！</div>':''}`,rec:'★1：のこり2匹以内　★2：のこり1匹　★3：★マスで1匹（ヒントなし）',delay:700});
 }
 function undo(){ if(!hist.length||demo) return; st=hist.pop(); done=false; sel=-1; hintJ=null; SFX.tap(); draw(); hud(); closeM('mRes'); }
 function solveNow(cb){ const sf=solFrom(); if(sf){ cb({ok:true,path:sf,timeout:false}); return; } setStatus('考え中',true); setTimeout(()=>{ let r=pegSolve(B,st,2500,true); if(!r.ok&&!r.timeout){ const r2=pegSolve(B,st,1500,false); if(r2.ok) r={...r2,anyEnd:true}; } setStatus(''); cb(r); },40); }
@@ -639,13 +639,9 @@ function hint(){ if(done||demo) return; actx();
   solveNow(r=>{ if(r.ok&&r.path.length){ hints++; hintJ=r.path[0]; sel=hintJ[0]; draw(); setStatus(r.anyEnd?'光るワンコを動かそう（★マスでは終われない形）':'光るワンコを点線のマスへ'); SFX.tap(); }
     else if(r.timeout) setStatus('むずかしすぎて考えきれなかった…');
     else setStatus('この形からは1匹にできないよ。「戻す」で戻ってみよう'); }); }
-function demoPlay(){ if(done) return; actx(); if(demo){demo=false;clearTimeout(demoT);hud();return}
-  solveNow(r=>{ if(!r.ok){ setStatus(r.timeout?'考えきれなかった…':'この形からは解けないよ。戻してみよう'); return; }
-    demo=true; usedDemo=true; hud(); let k=0; const go=()=>{ if(!demo) return; const j=r.path[k++]; if(!j){demo=false;return}
-      demo=false; jump(j); demo=!done; hud(); if(!done){ setStatus(`見本：のこり${count()}匹`); demoT=setTimeout(go,550);} }; go(); }); }
 function renderStages(){ const g=$('stGrid'); g.innerHTML=''; $('totStars').textContent='★ '+STG.reduce((a,_,i)=>a+(P.stars[i]||0),0)+' / '+STG.length*3;
   STG.forEach((L,i)=>{ const ok=i<=maxClear()+1; const sv=P.stars[i]||0; const Bx=pegBoard(L); const b=document.createElement('button'); b.className='stb'+(ok?'':' lock')+(mode==='stage'&&i===lv?' cur':'');
-    b.innerHTML=`<span class="no">${ok?i+1:'🔒'}</span><b>${ok?L.name:'？？？'}</b><small>${ok?Bx.start.filter(x=>x).length+'匹':''}</small><span class="sr">${[1,2,3].map(k=>`<i class="${k<=sv?'on':''}">★</i>`).join('')}</span>`;
+    b.innerHTML=`<span class="no">${ok?i+1:'🔒'}</span><b>${ok?L.name:'？？？'}</b><small>${ok?Bx.start.filter(x=>x).length+'匹':''}</small><span class="sr">${[1,2,3].map(k=>`<i class="${k<=sv?'on':''}">${k<=sv?'★':'☆'}</i>`).join('')}</span>`;
     if(ok) b.onclick=()=>{closeM('mStage');load(i)}; g.appendChild(b); }); }
 $('mRes').querySelector('.card').insertAdjacentHTML('beforeend','<div class="acts"><button class="btn c" id="bBack">↩︎ 1手戻す</button><button class="btn g" id="bNextSt">次へ ▶︎</button></div>');
 const pend=Object.assign({},S);
@@ -653,7 +649,7 @@ const syncSet=bindSettings($('mSet'),pend,k=>{S[k]=pend[k];SND.on=S.sound;TALK.o
 $('bSet').onclick=()=>{actx();Object.assign(pend,S);syncSet();openM('mSet')};
 $('bHelp').onclick=()=>openM('mHelp');
 $('bUndo').onclick=()=>{actx();undo()}; $('bBack').onclick=()=>{undo()}; $('bReset').onclick=()=>{actx();SFX.tap();resetGame()};
-$('bHint').onclick=hint; $('bDemo').onclick=demoPlay;
+$('bHint').onclick=hint;
 $('bStages').onclick=()=>{actx();renderStages();openM('mStage')};
 $('bAgain').onclick=()=>{closeM('mRes');resetGame()}; $('bNextSt').onclick=()=>{closeM('mRes'); if(mode==='random') playRandom(rlv); else load(lv+1)};
 function menuRefresh(){ const tot=STG.reduce((a,_,i)=>a+(P.stars[i]||0),0), cl=STG.filter((_,i)=>isClr(i)).length;
