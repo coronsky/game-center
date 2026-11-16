@@ -433,6 +433,7 @@ html body[data-vt] .pc b{text-shadow:0 1px 0 rgba(255,255,255,.35)}
 html body[data-vt=neon] .pc b{color:#fff;text-shadow:0 0 6px #3ff0ff,0 0 2px #3ff0ff}
 html body[data-vt=neon] .pc.pr b{color:#ff9aea;text-shadow:0 0 7px #ff4fd8,0 0 2px #ff4fd8}
 html body[data-vt=neon] .pc{filter:drop-shadow(0 0 3px rgba(255,79,216,.55))}
+.pc.king:not(.kfc) b{font-size:clamp(15px,5vw,24px);margin-top:12%}.pc.king.sm:not(.kfc) b{font-size:17px;margin-top:5px}
 </style>
 <script>(function(){var a=document.querySelector(".app")||document.body,r=document.createElement("div");r.className="btns";r.id="bHomeRow";r.style.cssText="grid-template-columns:1fr;margin:10px 12px 0;display:grid";r.innerHTML='<button class="btn g" id="bHome2" type="button">🏠ホームへ戻る</button>';a.appendChild(r);r.firstChild.onclick=function(){var h=document.getElementById("homeBtn");location.href=h?h.href:"../"}})()</script>
 <div class="modal" id="mPro"><div class="card"><h2>成りますか？</h2><div class="prs"><button id="prA"></button><button id="prB"></button></div></div></div>
@@ -441,6 +442,7 @@ html body[data-vt=neon] .pc{filter:drop-shadow(0 0 3px rgba(255,79,216,.55))}
   <div class="row"><div class="lb">CPUのつよさ</div><div class="seg" data-k="level"><button data-v="1">やさしい</button><button data-v="2">ふつう</button><button data-v="3">つよい</button></div></div>
   <div class="row"><div class="lb">ハンデ（CPUの駒を減らす）</div><div class="seg" data-k="handi"><button data-v="0">なし</button><button data-v="ka">角落ち</button><button data-v="hi">飛車落ち</button><button data-v="2">二枚落ち</button></div></div>
   <div class="tg"><span>動かせる場所を表示</span><div class="sw" data-k="showLegal"></div></div>
+  <div class="tg"><span>王・玉にコロンとムーンの顔</span><div class="sw" data-k="kface"></div></div>
   <div class="tg"><span>盤のコロンとムーン</span><div class="sw" data-k="dogs"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
@@ -540,7 +542,7 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
 
 // ===== 将棋 =====
 const store=mkStore('mcsg_');
-const S=Object.assign({side:'1',level:'2',handi:'0',showLegal:true,dogs:true,talk:true,sound:true},store.get('settings',{}));
+const S=Object.assign({side:'1',level:'2',handi:'0',showLegal:true,dogs:true,talk:true,sound:true,kface:false},store.get('settings',{}));
 SND.on=S.sound; TALK.on=S.talk;
 let rec=store.get('rec',{});
 
@@ -749,8 +751,8 @@ function pieceHTML(p,small){
   const o=p>0?1:-1, t=Math.abs(p);
   const prom=t>=9, king=t===OU;
   let ch=KANJI[t]; if(king) ch=o===1?'王':'玉';
-  const face = king?`<span class="kf" style="background-image:var(${o===1?'--colon':'--moon'})"></span>`:'';
-  return `<span class="pc ${o===1?'s':'g'} ${prom?'pr':''} ${king?'king':''} ${small?'sm':''}" data-k="${t}">${face}<b>${ch}</b></span>`;
+  const face = (king&&S.kface)?`<span class="kf" style="background-image:var(${o===1?'--colon':'--moon'})"></span>`:'';
+  return `<span class="pc ${o===1?'s':'g'} ${prom?'pr':''} ${king?'king':''} ${king&&S.kface?'kfc':''} ${small?'sm':''}" data-k="${t}">${face}<b>${ch}</b></span>`;
 }
 let legalCache=null;
 function legalNow(){ if(!legalCache) legalCache=legalMoves(side); return legalCache; }
@@ -901,7 +903,7 @@ function hint(){
 }
 // settings
 const pend=Object.assign({},S);
-const syncSet=bindSettings($('mSet'),pend,k=>{ if(['showLegal','dogs','talk','sound'].includes(k)){S[k]=pend[k];SND.on=S.sound;TALK.on=S.talk;store.set('settings',S);render();document.body.classList.toggle('nodog',S.dogs===false)} });
+const syncSet=bindSettings($('mSet'),pend,k=>{ if(['showLegal','dogs','talk','sound','kface'].includes(k)){S[k]=pend[k];SND.on=S.sound;TALK.on=S.talk;store.set('settings',S);render();document.body.classList.toggle('nodog',S.dogs===false)} });
 $('bSet').onclick=()=>{actx();Object.assign(pend,S);syncSet();openM('mSet')};
 const PICK=()=>{gen++;clearTimeout(cpuTimer);askPick((d,o)=>{S.dog=d;S.order=o;S.side=d==='colon'?'1':'-1';store.set('settings',S);newGame()},{dog:S.dog||(S.side==='-1'?'moon':'colon'),order:S.order})};
 $('bStart').onclick=()=>{Object.assign(S,pend);store.set('settings',S);closeM('mSet');PICK()};
