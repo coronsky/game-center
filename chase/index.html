@@ -299,6 +299,7 @@ body[data-vt=neon] .tile{background-image:url(img/ui/neon_t0.webp);color:#ffffff
 
 </div>
 <div class="modal" id="mSel"><div class="card result"><h2 id="selTt"></h2><div id="selG"></div><div class="selNote" id="selNote"></div><div class="acts"><button class="btn c" id="selX">とじる</button></div></div></div>
+<div class="modal" id="mOver"><div class="card result"><h2>😱 ゲームオーバー</h2><div class="selNote" id="ovMsg"></div><div class="acts" style="flex-direction:column;gap:8px;margin-top:10px"><button class="btn g" id="ovCont">▶ コンティニュー</button><button class="btn c" id="ovSel">🗺 ステージせんたく</button><button class="btn c" id="ovMenu">🎮 メニューにもどる</button><button class="btn c" id="ovHome">🏠 ホームへもどる</button></div></div></div>
 <div class="modal" id="mRes"><div class="card result">
   <h2 id="resTitle"></h2>
   <div class="avs"><div id="avB"><div class="crown"></div><div class="ph" style="background-image:var(--colon)"></div>コロン</div>
@@ -401,7 +402,7 @@ const ST=Object.assign({me:'colon',mode:'stage'},store.get('cfg',{}));
 const P=Object.assign({cur:0,curM:0,best:{},bestM:{},bestE:0,st:{},sm:{}},store.get('prog',{}));
 const VP=4, R=.27;
 const ITM={dash:{e:'⚡',c:'rgba(80,160,255,.6)'},bar:{e:'🛡️',c:'rgba(120,220,140,.65)'},ice:{e:'❄️',c:'rgba(150,220,255,.75)'},gold:{e:'⭐',c:'rgba(255,215,60,.8)'}};
-let N,obs,bush,snacks=new Set(),items=new Map(),snTot=0,RC=[],pl,moons=[],t0=0,tick=null,done=false,lost=false,last=0,raf=0,near=0,score=0,wait=0,S2,fx,E={},cd=0,cdn=0;
+let lives=3,N,obs,bush,snacks=new Set(),items=new Map(),snTot=0,RC=[],pl,moons=[],t0=0,tick=null,done=false,lost=false,last=0,raf=0,near=0,score=0,wait=0,S2,fx,E={},cd=0,cdn=0;
 const cv=$('cv'),cx=cv.getContext('2d'); cv.width=cv.height=900;
 const SPR={colon:new Image(),moon:new Image()}; SPR.colon.src='../img/chase/colon.webp'; SPR.moon.src='../img/chase/moon.webp';
 SPR.colon.onload=SPR.moon.onload=()=>draw();
@@ -413,7 +414,7 @@ function okDir(k,d){ const x=k%N,y=(k/N)|0; if(d==='u'&&y===0||d==='d'&&y===N-1|
 function bfs(from){ const dist=new Array(N*N).fill(-1),q=[from]; dist[from]=0; for(let h=0;h<q.length;h++){ const k=q[h]; for(const d of ['u','r','d','l']) if(okDir(k,d)){ const n=nb(k,d); if(dist[n]<0){dist[n]=dist[k]+1;q.push(n)} } } return dist; }
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const used=()=>new Set([...snacks,...items.keys()]);
-function mkMoon(k){ return {x:(k%N)+.5,y:((k/N)|0)+.5,tx:(k%N)+.5,ty:((k/N)|0)+.5,dir:'d',an:Math.random()}; }
+function mkMoon(k){ return {sx:(k%N)+.5,sy:((k/N)|0)+.5,x:(k%N)+.5,y:((k/N)|0)+.5,tx:(k%N)+.5,ty:((k/N)|0)+.5,dir:'d',an:Math.random()}; }
 function build(){ const e=ST.mode==='endless',c=e?{n:13,obs:.14,moons:1,mv:.55,sn:6}:CFG(lv()); N=c.n; const goal=N*N-1; let dist;
   for(let t=0;t<60;t++){ obs=new Uint8Array(N*N); for(let k=0;k<N*N;k++){ const x=k%N,y=(k/N)|0; obs[k]=((x<2&&y<2)||(x>=N-2&&y>=N-2)||Math.random()>=c.obs)?0:1; }
     dist=bfs(0); if((e||dist[goal]>=0)&&dist.filter(v=>v>=0).length>N*N*.7) break; if(t===59){obs.fill(0);dist=bfs(0)} }
@@ -427,7 +428,7 @@ function build(){ const e=ST.mode==='endless',c=e?{n:13,obs:.14,moons:1,mv:.55,s
 function modeName(){ return ST.mode==='endless'?'ずっとにげる':ST.mode==='mission'?'ミッション':'ステージ'; }
 function names(){ return Array.from({length:LVN},(_,k)=>(ST.mode==='mission'?'ミッション':'ステージ')+(k+1)); }
 function load(i){ clearInterval(tick); cancelAnimationFrame(raf); if(ST.mode==='mission') P.curM=i; else if(ST.mode==='stage') P.cur=i; store.set('prog',P);
-  build(); calcTT(); t0=0; done=false; lost=false; score=0; wait=0; cd=3.6; cdn=0; ROLL.calib=true; S2={dash:0,bar:0,ice:0,hide:0,gold:0,sn:0}; fx={dash:0,ice:0}; E={add:25,item:9,el:0,mvx:0};
+  lives=3; build(); calcTT(); t0=0; done=false; lost=false; score=0; wait=0; cd=3.6; cdn=0; ROLL.calib=true; S2={dash:0,bar:0,ice:0,hide:0,gold:0,sn:0}; fx={dash:0,ice:0}; E={add:25,item:9,el:0,mvx:0};
   const en=ST.mode==='endless'; $('bSel').style.visibility=en?'hidden':''; $('stN').previousElementSibling.textContent=modeName();
   $('stN').textContent=en?'∞':(lv()+1)+'/'+LVN; $('tm').textContent='0:00'; $('bNext').style.visibility='hidden'; $('bAgain').textContent='つぎへ';
   snUpd(); setStatus(statusMsg()); draw(); setTimeout(()=>sayText(chP(),'まてまて〜♪'),300); last=0; raf=requestAnimationFrame(loop); }
@@ -471,6 +472,10 @@ function openSel(fm){ selFM=fm; const ms=ST.mode==='mission'; $('selTt').textCon
     if(!lock) b.onclick=()=>{ SFX.tap(); selFM=false; closeM('mSel'); load(i); }; g.appendChild(b); }
   openM('mSel'); const c=g.querySelector('.cur')||g.querySelector('.tile:not(.lk):last-of-type'); if(c) c.scrollIntoView({block:'center'}); }
 $('selX').onclick=()=>{ SFX.tap(); closeM('mSel'); if(selFM){ selFM=false; load(lv()); } };
+$('ovCont').onclick=()=>{ actx(); SFX.tap(); closeM('mOver'); lives=3; respawn(); done=false; lost=false; if(t0){ clearInterval(tick); tick=setInterval(()=>{$('tm').textContent=fmt(Date.now()-t0);snUpd();if(ST.mode==='mission')setStatus(statusMsg())},500); } setStatus(statusMsg()); draw(); };
+$('ovSel').onclick=()=>{ SFX.tap(); closeM('mOver'); openSel(true); };
+$('ovMenu').onclick=()=>{ SFX.tap(); closeM('mOver'); modeSync(); openM('mMode'); };
+$('ovHome').onclick=()=>{ location.href=$('homeBtn').href; };
 $('bSel').onclick=()=>{ actx(); SFX.tap(); if(ST.mode!=='endless') openSel(false); };
 function modeSync(){ const m=$('mMode'),vt=document.body.dataset.vt||'natural'; m.querySelectorAll('.mi').forEach(i=>{ const u='../img/chase/'+vt+'/mode_'+i.dataset.n+'.webp'; if(i.getAttribute('src')!==u) i.src=u; }); m.querySelectorAll('.pkRow').forEach(r=>r.querySelectorAll('button').forEach(b=>b.classList.toggle('on',ST[r.dataset.k]===b.dataset.v)));
   $('modeNote').textContent=(ST.me==='colon'?'コロン':'ムーン')+'でにげるよ。おいかけ役は'+CN()+'！'; }
@@ -510,7 +515,10 @@ function loop(ts){ raf=requestAnimationFrame(loop); const dt=Math.min(.05,(ts-(l
       const n=Date.now(); if(dmin<2.2&&n-near>2500&&fx.ice<=0){ near=n; bark(chP()); sayText(chP(),'つかまえるよ〜！',true); } } }
   if(!en&&Math.hypot(pl.x-(N-.5),pl.y-(N-.5))<.5){ if(ST.mode==='mission'&&!mInfo().ok){ const n=Date.now(); if(n-near>1500){near=n; toast('ミッションがまだだよ！',true); SFX.ng()} } else return finish('goal'); }
   draw(); }
-function finish(kind){ done=true; clearInterval(tick); const el=t0?(Date.now()-t0)/1000:0,en=ST.mode==='endless',ms=ST.mode==='mission';
+function respawn(){ pl.x=.5; pl.y=.5; pl.dir='d'; pl.inv=2.5; for(const m of moons){ m.x=m.tx=m.sx; m.y=m.ty=m.sy; } wait=1.5; fx.ice=0; }
+function finish(kind){ if(kind==='caught'&&ST.mode!=='endless'){ lives--; if(lives>0){ SFX.lose(); sayText(chP(),'つかまえた〜！',true); toast('💥 つかまった！ のこり'+lives+'かい',true); respawn(); draw(); return; }
+    done=true; clearInterval(tick); lost=true; SFX.lose(); sayText(chP(),'つかまえた〜！',true); draw(); $('ovMsg').textContent='3かいつかまっちゃった… おやつ'+S2.sn+'こ。'; setTimeout(()=>openM('mOver'),600); return; }
+  done=true; clearInterval(tick); const el=t0?(Date.now()-t0)/1000:0,en=ST.mode==='endless',ms=ST.mode==='mission';
   if(kind==='goal'){ const par=N*2.5,bonus=Math.max(0,Math.round(par-el))*10,gain=300+bonus+(ms?200:0),pts=score+gain; score=pts; snUpd(); const bk=ms?P.bestM:P.best; if(!bk[lv()]||pts>bk[lv()]) bk[lv()]=pts; store.set('prog',P);
     let stN=1; if(ms){ P.sm[lv()]=Math.max(P.sm[lv()]||0,1); } else { if(!snacks.size) stN=2; if(!snacks.size&&el<=TT) stN=3; P.st[lv()]=Math.max(P.st[lv()]||0,stN); } store.set('prog',P); report('clear',{stars:ms?1:stN}); SFX.win(); confetti(['🦴','💕','✨']); sayText(meP(),'にげきった！',true); setStatus('ゴール！'); lost=false; const has=lv()<LVN-1; $('bNext').style.visibility=has?'visible':'hidden'; $('bAgain').textContent=has?'つぎへ':'もう一回'; if(!has) lost=true;
     showResult({winner:1,title:ms?'🎯 ミッションクリア！':'🏆 ゴール！',score:pts+'点',msg:'おやつ'+S2.sn+'こ＋ボーナス'+gain+'点！'+(ms||stN===3?'':'（★3は おやつぜんぶ＋'+TT+'びょういない／'+Math.ceil(el)+'びょう）'),extra:'<div style="font-size:30px;letter-spacing:4px;color:#f0b429;text-shadow:0 1px 0 rgba(0,0,0,.25)">'+(ms?'★':'★'.repeat(stN)+'☆'.repeat(3-stN))+'</div>',rec:'ハイスコア：'+bk[lv()]+'点'}); return; }
@@ -550,6 +558,7 @@ function draw(){ const W=cv.width,vt=document.body.dataset.vt||'natural',S=skin(
         cx.fillStyle='rgba(40,25,12,.82)'; cx.strokeStyle='#ffd36b'; cx.lineWidth=W*.006; cx.beginPath(); cx.roundRect(W/2-bw/2,by,bw,bh,fs*.6); cx.fill(); cx.stroke();
         cx.lineWidth=0; cx.fillStyle='#ffd36b'; cx.font='900 '+Math.round(fs*.8)+'px "Zen Maru Gothic",sans-serif'; cx.fillText('🎯 ミッション',W/2,by+lh*.75);
         cx.fillStyle='#fff'; cx.font='900 '+fs+'px "Zen Maru Gothic",sans-serif'; lines.forEach((l,i)=>cx.fillText(l,W/2,by+lh*(i+1.75))); } } }
+  if(ST.mode!=='endless'){ cx.font=Math.round(W*.045)+'px sans-serif'; cx.textAlign='right'; cx.textBaseline='middle'; cx.fillText('❤️'.repeat(Math.max(0,lives))+'🤍'.repeat(Math.max(0,3-lives)),W-W*.03,W*.05); cx.textAlign='center'; }
   const tags=[]; if(fx.dash>0) tags.push('⚡'+Math.ceil(fx.dash)); if(pl.bar) tags.push('🛡️'); if(fx.ice>0) tags.push('❄️'+Math.ceil(fx.ice)); if(hid) tags.push('🌿かくれ中');
   if(tags.length){ cx.font='bold '+Math.round(W*.04)+'px sans-serif'; cx.textAlign='left'; const w=cx.measureText(tags.join(' ')).width+W*.04; cx.fillStyle='rgba(255,255,255,.8)'; cx.beginPath(); cx.roundRect(W*.015,W*.015,w,W*.065,W*.03); cx.fill(); cx.fillStyle='#5a3d2b'; cx.fillText(tags.join(' '),W*.03,W*.048); cx.textAlign='center'; } }
 new MutationObserver(()=>{draw();modeSync()}).observe(document.body,{attributes:true,attributeFilter:['data-vt']});
