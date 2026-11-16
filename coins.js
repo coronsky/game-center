@@ -3,7 +3,7 @@
 const PK='mcgc_p', MK='mcgc_m', CAP=300;
 const GN={reversi:'リバーシ',shogi:'将棋',wanko:'ワンコしょうぎ',gomoku:'五目ならべ',memory:'神経衰弱',escape:'箱入りワンコ',rings:'知恵の輪',peg:'ペグソリティア',slide:'15パズル',hanoi:'ハノイの塔'};
 const BATTLE=['reversi','shogi','wanko','gomoku','memory'], PUZZLE=['escape','peg','slide','hanoi'];
-const RANKS=[{n:'ルーキー',c:0},{n:'ブロンズ',c:50},{n:'シルバー',c:200},{n:'ゴールド',c:600},{n:'プラチナ',c:1500},{n:'ダイヤ',c:3500},{n:'マスター',c:8000}];
+const RANKS=[{n:'ルーキー',c:0},{n:'ブロンズ',c:100},{n:'シルバー',c:500},{n:'ゴールド',c:1500},{n:'プラチナ',c:4000},{n:'ダイヤ',c:8000},{n:'マスター',c:15000}];
 const rankOf=c=>{let r=RANKS[0]; for(const x of RANKS) if(c>=x.c) r=x; return r};
 const get=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}};
 const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
