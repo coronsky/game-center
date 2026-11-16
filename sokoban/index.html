@@ -298,6 +298,7 @@ html body #bd .pl{inset:-8% -8% -8%;background-position:center!important}
   <div class="dogPick" id="dogPick"><button data-v="colon"><i style="background-image:url(../img/sk/colon_d0.webp)"></i>コロン</button><button data-v="moon"><i style="background-image:url(../img/sk/moon_d0.webp)"></i>ムーン</button></div>
   <button class="lsBtn" id="bList">📋 ステージ一覧（全30）</button>
   <div class="panel"><div class="in"><div id="bd"></div></div></div>
+  <div id="clrBar" style="display:none;gap:8px;width:100%;max-width:400px;margin:8px auto 0"><button class="btn c" id="cRetry" style="flex:1">🔁 もう一度やり直す</button><button class="btn g" id="cNext" style="flex:1">つぎのステージ ▶</button></div>
   <div class="pad"><button class="u" data-d="u">▲</button><button class="l" data-d="l">◀</button><button class="c" id="bNext">つぎ ▶</button><button class="r" data-d="r">▶</button><button class="d" data-d="d">▼</button></div>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
@@ -446,7 +447,7 @@ function draw(){ const bd=$('bd'); const cs=Math.min(Math.floor((Math.min(innerW
   bd.innerHTML=''; for(let k=0;k<W*H;k++){ const e=document.createElement('div'); e.className='ce '+(g[k]==='w'?'w v'+((k*7+(k>>3))%3):g[k]==='f'?'f':'')+(goals.includes(k)?' g':'');
     if(bx.includes(k)) e.innerHTML=`<div class="ob bx ${goals.includes(k)?'ok':''}">🦴</div>`;
     if(k===pl) e.innerHTML=`<div class="ob pl${done?' joy':''}" style="background-image:url(${HI()})"></div>`;
-    bd.appendChild(e);} $('mv').textContent=mv; $('bUndo').disabled=!hist.length; $('bNext').style.visibility=done&&!gaveUp&&P.cur<SOKO.length-1?'visible':'hidden'; }
+    bd.appendChild(e);} $('mv').textContent=mv; $('bUndo').disabled=!hist.length; $('bNext').style.visibility=done&&!gaveUp&&P.cur<SOKO.length-1?'visible':'hidden'; try{clrBar()}catch(e){} }
 function step(d,auto){ if(done||(giveT&&!auto)) return; actx(); FACE=d; const dd={l:-1,r:1,u:-W,d:W}[d]; const n=pl+dd;
   if(g[n]!=='f') {SFX.ng();return;} const bi=bx.indexOf(n);
   if(bi>=0){ const n2=n+dd; if(g[n2]!=='f'||bx.includes(n2)){SFX.ng();return;} hist.push([pl,bx.slice()]); bx[bi]=n2; SFX.put(); }
@@ -456,6 +457,8 @@ function check(){ if(!bx.every(b=>goals.includes(b))) return; done=true; const s
   if(!gaveUp){ P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog30',P); report('clear',{stars:s}); } SFX.win(); confetti(['🦴','🐾','✨']);
   FACE='d'; FR=0; sayText(HERO==='colon'?1:2,'できたワン！',true); setTimeout(()=>sayText(HERO==='colon'?2:1,'すごーい♪',true),500); setStatus('クリア！'); draw();
   setStatus(gaveUp?'🏳️ これが答えだよ。つぎはがんばろう！':'🎉 ステージ'+(P.cur+1)+' クリア！ '+'★'.repeat(s)+'☆'.repeat(3-s)+'（'+mv+'手）'); clearInterval(joyT); joyT=setInterval(()=>{ FR=(FR+1)%4; const e=document.querySelector('#bd .pl'); if(e) e.style.backgroundImage=`url(${HI()})`; },180); }
+const clrBar=()=>{ const b=$('clrBar'); b.style.display=done?'flex':'none'; $('cNext').style.display=P.cur<SOKO.length-1?'':'none'; };
+$('cRetry').onclick=()=>{load(P.cur)}; $('cNext').onclick=()=>load(Math.min(P.cur+1,SOKO.length-1));
 $('bRetry').onclick=()=>{closeM('mRes');load(P.cur)};
 $('bAgain').onclick=()=>{closeM('mRes'); load(Math.min(P.cur+1,SOKO.length-1))};
 $('bAgain').textContent='つぎのステージ';
