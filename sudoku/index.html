@@ -127,6 +127,17 @@ body[data-vt=neon] .sc.sel{background:#6a1a78!important}
 body[data-vt=retro] .pkRow button{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25);color:#fbe9c8}body[data-vt=retro] .pkRow button.on{border-color:#f2b134;background:rgba(192,57,43,.45);box-shadow:0 0 10px rgba(255,154,46,.6)}
 body[data-vt=neon] .pkRow button{background:rgba(255,255,255,.06);border-color:#5a3bb0;color:#fff}body[data-vt=neon] .pkRow button.on{border-color:#ff4fd8;background:rgba(255,79,216,.25);box-shadow:0 0 12px #ff4fd8}
 
+/* start menu */
+.mseg{display:flex;gap:6px;flex-wrap:wrap}.mseg button{flex:1;min-width:0;border:2px solid #e2cfb2;background:#fff;border-radius:14px;padding:9px 4px;font:inherit;font-weight:700;font-size:14px;color:var(--ink);cursor:pointer;line-height:1.4}.mseg button.on{background:var(--green);border-color:var(--green-d);color:#fff}
+.mseg button small{display:block;font-size:10px;font-weight:700;opacity:.85}
+body[data-vt=retro] .mseg button,body[data-vt=neon] .mseg button{background:rgba(255,255,255,.08);color:inherit;border-color:rgba(255,255,255,.25)}
+body[data-vt=retro] .mseg button.on{background:#c0392b;border-color:#f2b134;color:#fff}body[data-vt=neon] .mseg button.on{background:#ff4fd8;border-color:#fff;color:#fff;box-shadow:0 0 10px #ff4fd8}
+.mmLb{font-weight:900;font-size:13px;margin:12px 0 6px}
+.selGridB{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.selGridB button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:12px;padding:7px 0;font:inherit;font-weight:900;font-size:15px;line-height:1.25;color:var(--ink);cursor:pointer}.selGridB button small{display:block;font-size:10px;font-weight:700;min-height:12px;color:#f0b429}
+.selGridB button.on{background:linear-gradient(#6c8a60,var(--green-d));color:#fff;border-color:transparent}.selGridB button.lk{opacity:.45}
+body[data-vt=retro] .selGridB button{background:#3a160a;color:#ffd36b;border-color:#a8651e}body[data-vt=retro] .selGridB button.on{background:linear-gradient(#d0452f,#8f2a1f);color:#ffe7b0;border-color:#f2b134}
+body[data-vt=neon] .selGridB button{background:rgba(20,8,55,.85);color:#fff;border-color:#5a3bb0}body[data-vt=neon] .selGridB button.on{border-color:#ff4fd8;box-shadow:0 0 10px #ff4fd8;background:rgba(255,79,216,.3)}
+.rule{margin:6px 12px 0;text-align:center;font-size:11.5px;font-weight:700;color:var(--sub,#9a8068)}
 /* header chips (same as hub) */
 .app .vtBtn,.app .homeBtn{position:absolute;top:8px;bottom:auto;width:auto;height:auto;flex-direction:row;gap:3px;border:2px solid rgba(255,255,255,.75)!important;border-radius:16px;padding:5px 10px;font-size:12px!important;font-weight:900;background:rgba(0,0,0,.45)!important;color:#fff!important;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,.3);line-height:1.2;text-decoration:none;white-space:nowrap;z-index:6}
 .app .vtBtn{right:8px;left:auto}.header .homeBtn{left:8px;right:auto}
@@ -299,19 +310,27 @@ html body .num button.ib:active{transform:scale(.9)}
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">数独</div></div>
   <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">数独</div></div>
 
-  <div class="hud"><div class="box"><small>サイズ</small><b id="szN"></b></div><div class="box"><small>ミス</small><b id="miss">0</b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
-  <div class="lvRow" id="lvs"></div>
+  <div class="hud"><div class="box"><small id="szL">サイズ</small><b id="szN"></b></div><div class="box"><small>ミス</small><b id="miss">0</b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
+  <div class="lvRow" id="lvs" style="display:none"></div>
   <div class="panel"><div class="in"><div id="bdWrap"><div id="bd"></div></div></div></div>
   <div class="modeRow"><button class="btn c" id="bMode"></button></div>
   <div class="num" id="num"></div>
 
+  <div class="rule" id="ruleL">★3＝ミスなし ／ ★2＝ミス1〜2回 ／ ★1＝クリア</div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
-  <div class="btns gbtns" style="grid-template-columns:repeat(3,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">🔁同じ問題でやり直す</button><button class="btn c" id="bNew">🆕新しい問題</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
+  <div class="btns gbtns" style="grid-template-columns:repeat(3,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">🔁同じ問題でやり直す</button><button class="btn c" id="bNew">🆕新しい問題</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn c" id="bMenu">🎮メニュー</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
 </div>
+<div class="modal" id="mMenu"><div class="card" style="text-align:center"><h2>🔢 数独</h2>
+  <div class="mmLb">あそびかたをえらぼう</div><div class="mseg" id="mMode"><button data-m="stage">ステージ</button><button data-m="random">ランダム</button></div>
+  <div class="mmLb">むずかしさ</div><div class="mseg" id="mLv" style="flex-wrap:wrap"></div>
+  <div class="acts" style="margin-top:14px"><button class="btn g" id="mGo">スタート！</button></div>
+  <div class="acts" style="margin-top:8px" id="mSelRow"><button class="btn c" id="mSelBtn">🗺 ステージセレクト</button></div>
+  <div class="rule" style="margin-top:10px">★3＝ミスなし ／ ★2＝ミス1〜2回 ／ ★1＝クリア</div></div></div>
+<div class="modal" id="mSel"><div class="card"><h2 id="mSelT">🗺 ステージをえらぶ</h2><div class="selGridB" id="selGrid"></div><div class="acts"><button class="btn g" data-close="mSel">とじる</button></div></div></div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 数独</h2><p>たて・よこ・太いわくの中に、<b>同じ数字が1回ずつ</b>入るように空いているマスをうめよう。</p>
 <p>👆 マスをタップしてから、下の数字ボタンを押します。「けす」で消せます。</p>
 <p>📏 入門4×4（1〜4）・初級6×6（1〜6）・通常9×9（1〜9）。まちがった数字は赤くなるよ。</p>
-<p>全部うまったらクリア！ミスが少ないほど★が増えます。</p>
+<p>全部うまったらクリア！★3＝ミスなし、★2＝ミス1〜2回、★1＝クリア。メニューから「ステージ（各レベル20問）」と「ランダム」をえらべます。</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>数字を先に選ぶ</span><div class="sw" data-k="numfirst"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
@@ -415,25 +434,34 @@ function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<but
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
 if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
 
-const LVS=[{n:4,bw:2,bh:2,name:'入門 4×4',holes:9},{n:6,bw:3,bh:2,name:'初級 6×6',holes:20},{n:9,bw:3,bh:3,name:'通常 9×9 やさしい',holes:40},{n:9,bw:3,bh:3,name:'通常 9×9 ふつう',holes:48}];
-const P=Object.assign({cur:0,stars:{}},store.get('prog',{}));
-let orig=[],L,N,sol,cur,giv,sel=-1,miss=0,hist=[],t0=0,tick=null,done=false;
+const LVS=[{n:4,bw:2,bh:2,name:'入門 4×4',h:[5,10]},{n:6,bw:3,bh:2,name:'初級 6×6',h:[14,24]},{n:9,bw:3,bh:3,name:'通常 9×9 やさしい',h:[36,44]},{n:9,bw:3,bh:3,name:'通常 9×9 ふつう',h:[44,54]}], ST=20;
+const P=Object.assign({mode:'stage',lv:0,idx:0,rlv:0,sst:{}},store.get('prog2',{}));
+const sv=()=>store.set('prog2',P);
+const mulS=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const shuf=(arr,R)=>{ for(let i=arr.length-1;i>0;i--){ const j=(R()*(i+1))|0; [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; };
+let orig=[],L,N,sol,cur,giv,sel=-1,miss=0,hist=[],t0=0,tick=null,done=false,mode='stage';
 function box(i){const r=(i/N)|0,c=i%N;return ((r/L.bh)|0)*L.bh*0+((r/L.bh)|0)*(N/L.bw)+((c/L.bw)|0)}
 function okAt(a,i,v){ const r=(i/N)|0,c=i%N; for(let k=0;k<N;k++){ if(a[r*N+k]===v||a[k*N+c]===v) return false; }
   const br=r-r%L.bh, bc=c-c%L.bw; for(let y=br;y<br+L.bh;y++)for(let x=bc;x<bc+L.bw;x++) if(a[y*N+x]===v) return false; return true; }
-function fill(a,i=0){ if(i===N*N) return true; if(a[i]) return fill(a,i+1); const vs=[...Array(N)].map((_,k)=>k+1).sort(()=>Math.random()-.5);
-  for(const v of vs) if(okAt(a,i,v)){ a[i]=v; if(fill(a,i+1)) return true; a[i]=0; } return false; }
+function fill(a,R,i=0){ if(i===N*N) return true; if(a[i]) return fill(a,R,i+1); const vs=shuf([...Array(N)].map((_,k)=>k+1),R);
+  for(const v of vs) if(okAt(a,i,v)){ a[i]=v; if(fill(a,R,i+1)) return true; a[i]=0; } return false; }
 function count(a,lim){ let i=a.indexOf(0); if(i<0) return 1; let n=0; for(let v=1;v<=N;v++) if(okAt(a,i,v)){ a[i]=v; n+=count(a,lim-n); a[i]=0; if(n>=lim) break; } return n; }
-function load(i){ clearInterval(tick); P.cur=i; store.set('prog',P); L=LVS[i]; N=L.n;
-  sol=new Array(N*N).fill(0); fill(sol); const a=sol.slice(); const idx=[...Array(N*N).keys()].sort(()=>Math.random()-.5); let removed=0;
-  for(const k of idx){ if(removed>=L.holes) break; const v=a[k]; a[k]=0; if(count(a.slice(),2)!==1) a[k]=v; else removed++; }
+const stHoles=(lv,j)=>Math.round(LVS[lv].h[0]+(LVS[lv].h[1]-LVS[lv].h[0])*j/(ST-1));
+const sKey=(lv,j)=>lv*ST+j, sStars=(lv,j)=>P.sst[sKey(lv,j)]||0, sDone=(lv,j)=>sStars(lv,j)>0;
+const sOpen=(lv,j)=>j===0||sDone(lv,j-1)||sDone(lv,j);
+function start(lv,holes,seed){ clearInterval(tick); L=LVS[lv]; N=L.n; const R=seed?mulS(seed):Math.random;
+  sol=new Array(N*N).fill(0); fill(sol,R); const a=sol.slice(); const idx=shuf([...Array(N*N).keys()],R); let removed=0;
+  for(const k of idx){ if(removed>=holes) break; const v=a[k]; a[k]=0; if(count(a.slice(),2)!==1) a[k]=v; else removed++; }
   cur=a.slice(); orig=a.slice(); giv=a.map(v=>v>0); sel=-1; miss=0; hist=[]; t0=0; done=false;
-  $('szN').textContent=N+'×'+N; $('miss').textContent=0; $('tm').textContent='0:00';
-  lvRow($('lvs'),LVS.map(l=>l.name),i,k=>P.stars[k]||0,load);
+  $('szN').textContent=N+'×'+N; $('szL').textContent=mode==='stage'?'ステージ '+(P.idx+1)+'/'+ST:'ランダム'; $('miss').textContent=0; $('tm').textContent='0:00';
+  $('bNew').style.display=mode==='stage'?'none':'';
   $('num').style.gridTemplateColumns=`repeat(${N<=6?N+1:5},1fr)`;
   $('num').innerHTML=[...Array(N)].map((_,k)=>`<button data-v="${k+1}">${k+1}</button>`).join('')+'<button data-v="0">けす</button>';
   $('num').querySelectorAll('button').forEach(b=>b.onclick=()=>numTap(+b.dataset.v)); numSkin(); armed=null;
   draw(); setStatus('マスをえらんで数字を入れてね'); setTimeout(()=>sayText(2,'じっくり考えよう♪'),300); }
+function loadStage(lv,j){ mode='stage'; P.mode='stage'; P.lv=lv; P.idx=j; sv(); start(lv,stHoles(lv,j),7000+lv*100+j); }
+function loadRandom(lv){ mode='random'; P.mode='random'; P.rlv=lv; sv(); start(lv,Math.round(LVS[lv].h[0]+(LVS[lv].h[1]-LVS[lv].h[0])*Math.random()),0); }
+function load(){ if(mode==='stage') loadStage(P.lv,P.idx); else loadRandom(P.rlv); }
 let armed=null;
 function modeSync(){ const b=$('bMode'); if(b) b.textContent=S.numfirst?'🔢 数字を先に選ぶ（ON）':'👆 マスを先に選ぶ（ふつう）'; }
 function numTap(v){ actx(); if(S.numfirst){ SFX.tap(); armed=(armed===v)?null:v; if(armed!=null){ sayText(1,v?'数字をタップで入れるよ':'マスをタップで消すよ'); } draw(); } else put(v); }
@@ -455,17 +483,32 @@ function put(v){ if(done) return; actx(); if(sel<0){toast('先にマスをえら
   hist.push([sel,cur[sel]]); cur[sel]=v;
   if(v&&v!==sol[sel]){ miss++; $('miss').textContent=miss; SFX.ng(); } else SFX.put();
   draw(); if(cur.every((x,i)=>x===sol[i])) win(); }
-function win(){ done=true; clearInterval(tick); const t=Date.now()-t0; const s=miss===0?3:miss<=2?2:1; P.stars[P.cur]=Math.max(P.stars[P.cur]||0,s); store.set('prog',P);
+function win(){ done=true; clearInterval(tick); const t=Date.now()-t0; const s=miss===0?3:miss<=2?2:1;
+  if(mode==='stage'){ P.sst[sKey(P.lv,P.idx)]=Math.max(sStars(P.lv,P.idx),s); sv(); }
   report('clear',{stars:s}); SFX.win(); confetti(['🔢','🐾','✨']); sayText(1,'ぜんぶうまった！',true); setStatus('クリア！');
-  lvRow($('lvs'),LVS.map(l=>l.name),P.cur,k=>P.stars[k]||0,load);
-  showResult({winner:0,title:'🎉 '+L.name+' クリア！',score:fmt(t)+'・ミス'+miss,msg:'★'.repeat(s)+'☆'.repeat(3-s)}); }
+  const last=mode==='stage'&&P.idx>=ST-1; $('bAgain').textContent=mode==='stage'?(last?'メニューへ':'つぎのステージ'):'新しい問題';
+  const lab=mode==='stage'?L.name+' ステージ'+(P.idx+1):L.name;
+  showResult({winner:0,title:'🎉 '+lab+' クリア！',score:fmt(t)+'・ミス'+miss,msg:'★'.repeat(s)+'☆'.repeat(3-s)+(s<3?'　★3はミスなしでクリア！':'')}); }
 $('bUndo').onclick=()=>{ if(!hist.length) return; const [i,v]=hist.pop(); cur[i]=v; sel=i; SFX.tap(); draw(); };
 function retrySame(){ actx(); SFX.tap(); clearInterval(tick); closeM('mRes'); cur=orig.slice(); sel=-1; miss=0; hist=[]; t0=0; done=false; $('miss').textContent=0; $('tm').textContent='0:00'; draw(); setStatus('同じ問題をもう一度！'); toast('同じ問題をやり直し'); }
-$('bReset').onclick=retrySame; $('bNew').onclick=()=>{actx();SFX.tap();load(P.cur)}; $('bRetryR').onclick=retrySame;
-$('bAgain').textContent='新しい問題'; $('bAgain').onclick=()=>{closeM('mRes');load(P.cur)};
+$('bReset').onclick=retrySame; $('bNew').onclick=()=>{actx();SFX.tap();load()}; $('bRetryR').onclick=retrySame;
+$('bAgain').onclick=()=>{ closeM('mRes'); if(mode==='stage'){ if(P.idx>=ST-1){ openMenu(); } else loadStage(P.lv,P.idx+1); } else load(); };
+// ---- スタートメニュー
+let mm='stage',ml=0;
+function menuRefresh(){ document.querySelectorAll('#mMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===mm));
+  $('mLv').innerHTML=LVS.map((l,i)=>{ const done=Array.from({length:ST},(_,j)=>sDone(i,j)).filter(Boolean).length; return `<button data-t="${i}" class="${i===ml?'on':''}" style="flex:1 0 45%">${l.name}<small>${mm==='stage'?'クリア '+done+'/'+ST:'ランダム'}</small></button>`; }).join('');
+  $('mLv').querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();ml=+b.dataset.t;menuRefresh()});
+  $('mSelRow').style.display=mm==='stage'?'':'none'; $('mGo').textContent=mm==='stage'?'スタート！（つづきから）':'スタート！'; }
+document.querySelectorAll('#mMode button').forEach(b=>b.onclick=()=>{actx();SFX.tap();mm=b.dataset.m;menuRefresh()});
+function openMenu(){ mm=mode; ml=mode==='stage'?P.lv:P.rlv; menuRefresh(); openM('mMenu'); }
+$('bMenu').onclick=()=>{actx();SFX.tap();openMenu()};
+$('mGo').onclick=()=>{ actx();SFX.tap();closeM('mMenu'); if(mm==='random') loadRandom(ml); else { let f=Array.from({length:ST},(_,j)=>j).find(j=>!sDone(ml,j)); loadStage(ml,f==null?0:f); } };
+$('mSelBtn').onclick=()=>{actx();SFX.tap();openSel()};
+function openSel(){ $('mSelT').textContent='🗺 '+LVS[ml].name+' のステージ'; $('selGrid').innerHTML=Array.from({length:ST},(_,j)=>{ const st=sStars(ml,j), o=sOpen(ml,j); return `<button data-i="${j}" class="${mode==='stage'&&P.lv===ml&&P.idx===j?'on':''} ${o?'':'lk'}">${o?'':'🔒'}${j+1}<small>${st?'★'.repeat(st)+'☆'.repeat(3-st):'&nbsp;'}</small></button>`; }).join('');
+  $('selGrid').querySelectorAll('button').forEach(b=>b.onclick=()=>{ const j=+b.dataset.i; if(!sOpen(ml,j)){ toast('前のステージをクリアするとあくよ'); return; } actx();SFX.tap();closeM('mSel');closeM('mMenu');loadStage(ml,j); }); openM('mSel'); }
 addEventListener('keydown',e=>{ if(/^[0-9]$/.test(e.key)) put(+e.key); if(e.key==='Backspace') put(0); });
 $('bMode').onclick=()=>{ actx(); SFX.tap(); S.numfirst=!S.numfirst; store.set('settings',S); armed=null; modeSync(); syncHelp(); draw(); toast(S.numfirst?'数字を先に選ぶモード':'マスを先に選ぶモード'); };
-modeSync(); load(P.cur);
+modeSync(); mode=P.mode==='random'?'random':'stage'; if(!(P.lv>=0&&P.lv<4)) P.lv=0; load(); openMenu();
 new MutationObserver(()=>{numSkin();draw()}).observe(document.body,{attributes:true,attributeFilter:['data-vt']});
 
 
