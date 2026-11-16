@@ -411,6 +411,28 @@ html body[data-vt] .app{overflow-x:clip}
 .rpBar .btn{padding:10px 0;font-size:15px}.rpBar #rpPlay{font-size:12px}
 .rpN{grid-column:1/-1;text-align:center;font-weight:900;font-size:13px;opacity:.85}
 body.replay .btns{opacity:.35;pointer-events:none}
+html body[data-vt=natural] .pc[data-k][data-k]{background:url(img/pc_n_s.webp?v=1) center bottom/contain no-repeat!important}
+html body[data-vt=natural] .pc.g[data-k][data-k]{background:url(img/pc_n_g.webp?v=1) center bottom/contain no-repeat!important}
+html body[data-vt=natural] .hp .pc.g[data-k][data-k]{background:url(img/pc_n_s.webp?v=1) center bottom/contain no-repeat!important}
+html body[data-vt=retro] .pc[data-k][data-k]{background:url(img/pc_r_s.webp?v=1) center bottom/contain no-repeat!important}
+html body[data-vt=retro] .pc.g[data-k][data-k]{background:url(img/pc_r_g.webp?v=1) center bottom/contain no-repeat!important}
+html body[data-vt=retro] .hp .pc.g[data-k][data-k]{background:url(img/pc_r_s.webp?v=1) center bottom/contain no-repeat!important}
+html body[data-vt=neon] .pc[data-k][data-k]{background:url(img/pc_x_s.webp?v=1) center bottom/contain no-repeat!important}
+html body[data-vt=neon] .pc.g[data-k][data-k]{background:url(img/pc_x_g.webp?v=1) center bottom/contain no-repeat!important}
+html body[data-vt=neon] .hp .pc.g[data-k][data-k]{background:url(img/pc_x_s.webp?v=1) center bottom/contain no-repeat!important}
+html body[data-vt] .pc[data-k][data-k] b,html body[data-vt] .pc[data-k][data-k] .kf{display:block}
+html body[data-vt] .pc[data-k][data-k] .kf{display:block}
+html body[data-vt] .pc.g[data-k]{transform:none}
+html body[data-vt] .pc.g[data-k] b,html body[data-vt] .pc.g[data-k] .kf{transform:rotate(180deg)}
+html body[data-vt] .hp .pc.g[data-k] b,html body[data-vt] .hp .pc.g[data-k] .kf{transform:none}
+html body[data-vt] .pc.g.drop[data-k]{animation-name:pdrop}
+html body[data-vt] .pc.s b{margin-top:8%;margin-bottom:6%}
+html body[data-vt] .pc.g b{margin-top:2%}
+html body[data-vt] .hp .pc.g b{margin-top:8%;margin-bottom:6%}
+html body[data-vt] .pc b{text-shadow:0 1px 0 rgba(255,255,255,.35)}
+html body[data-vt=neon] .pc b{color:#fff;text-shadow:0 0 6px #3ff0ff,0 0 2px #3ff0ff}
+html body[data-vt=neon] .pc.pr b{color:#ff9aea;text-shadow:0 0 7px #ff4fd8,0 0 2px #ff4fd8}
+html body[data-vt=neon] .pc{filter:drop-shadow(0 0 3px rgba(255,79,216,.55))}
 </style>
 <script>(function(){var a=document.querySelector(".app")||document.body,r=document.createElement("div");r.className="btns";r.id="bHomeRow";r.style.cssText="grid-template-columns:1fr;margin:10px 12px 0;display:grid";r.innerHTML='<button class="btn g" id="bHome2" type="button">🏠ホームへ戻る</button>';a.appendChild(r);r.firstChild.onclick=function(){var h=document.getElementById("homeBtn");location.href=h?h.href:"../"}})()</script>
 <div class="modal" id="mPro"><div class="card"><h2>成りますか？</h2><div class="prs"><button id="prA"></button><button id="prB"></button></div></div></div>
