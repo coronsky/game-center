@@ -803,7 +803,8 @@ function render(newIdx){
     if(v===E||v===X){ const d=c.querySelector('.disc'); if(d) d.remove(); }
     else{
       const fresh=!c.querySelector('.disc'); const d=discEl(c);
-      d.classList.toggle('W',v===W);
+      if(fresh){ d.style.transition='none'; d.classList.toggle('W',v===W); void d.offsetWidth; d.style.transition=''; }
+      else d.classList.toggle('W',v===W);
       if(fresh||i===newIdx){ d.classList.remove('drop'); void d.offsetWidth; d.classList.add('drop'); }
     }
   }
