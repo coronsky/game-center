@@ -482,7 +482,7 @@ function update(dt){
     if(E.pvp) moveM(m2,tgt2,1400,h,true); else { aiThink(h); moveM(m2,{x:ai.tx,y:ai.ty},E.sp,h,true); }
     const res=stepPhys(h); if(res.length){ const [p,by]=res[0]; goal(by,p); return; } }
   for(const o of obs){ if(o.mv){ o.x+=o.vx*dt; if(o.x<50){o.x=50;o.vx=Math.abs(o.vx)} if(o.x>GW-50){o.x=GW-50;o.vx=-Math.abs(o.vx)} } }
-  for(const p of pucks){ const sp=Math.hypot(p.vx,p.vy); p.stall=sp<35?p.stall+dt:Math.min(0,p.stall); if(p.stall>2){ p.stall=0; const a=Math.atan2(MID-p.y+(Math.random()*80-40),GW/2-p.x+(Math.random()*80-40)); p.vx=Math.cos(a)*260; p.vy=Math.sin(a)*260; sfxHit(150); } }
+  for(const p of pucks){ const sp=Math.hypot(p.vx,p.vy); p.stall=sp<35?p.stall+dt:Math.min(0,p.stall); if(p.stall>2){ p.stall=-1.5; if(p.extra){ p.life=0; } else { p.x=GW/2; p.y=MID; const d=(lastBy===1?-1:1); p.vx=(Math.random()*120-60); p.vy=d*200; p.last=0; burstAt(innerWidth/2,innerHeight*.5,['✨','🐾'],6,70); } sfxHit(150); } }
   for(const p of pucks){ if(p.extra){ p.life-=dt; } } pucks=pucks.filter(p=>!(p.extra&&p.life<=0));
   itemT-=dt; if(itemT<=0&&!items.length){ const k=['bolt','ice','paw'][(Math.random()*3)|0]; items.push({t:k,x:60+Math.random()*(GW-120),y:GH*.4+Math.random()*GH*.2,life:9}); itemT=(E.boss?4:7)+Math.random()*4; }
   for(const it of items){ it.life-=dt; for(const p of pucks){ if(p.last&&Math.hypot(p.x-it.x,p.y-it.y)<PR+18){ it.life=0; applyItem(it.t,p.last); } } } items=items.filter(i=>i.life>0);
