@@ -383,9 +383,9 @@ function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<but
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
 setTimeout(()=>{ try{modeSync()}catch(e){} openM('mMode') },400);
 
-const LVN=8;
-const CFG=i=>({n:[9,9,11,11,13,13,15,15][i],obs:[.10,.14,.16,.18,.18,.20,.20,.22][i],moons:1+(i>=3)+(i>=6),mv:[.52,.58,.62,.62,.66,.70,.72,.76][i],sn:[5,6,7,8,9,10,11,12][i]});
-const MIS=[{t:'おやつを4こ とってゴール',sn:4},{t:'40びょう いないにゴール',time:40},{t:'⚡ダッシュを1回つかってゴール',dash:1},{t:'🛡️バリアで1回まもられてゴール',bar:1},{t:'❄️こおりで おいかけ役を1回とめてゴール',ice:1},{t:'おやつをぜんぶ とってゴール',all:1},{t:'🌿くさむらに 3びょう かくれてゴール',hide:3},{t:'⭐金のおやつ＋おやつ6こで ゴール',gold:1,sn:6}];
+const LVN=40;
+const CFG=i=>({n:9+2*Math.floor(i/10),obs:Math.min(.24,.10+i*.0036),moons:1+(i>=6)+(i>=16)+(i>=28),mv:Math.min(.78,.52+i*.0067),sn:Math.min(14,5+Math.floor(i/4.5))});
+const MIS=[{t:'おやつを3こ とってゴール',sn:3},{t:'⚡ダッシュを1回つかってゴール',dash:1},{t:'おやつを4こ とってゴール',sn:4},{t:'🛡️バリアで1回まもられてゴール',bar:1},{t:'45びょう いないにゴール',time:45},{t:'❄️こおりで おいかけ役を1回とめてゴール',ice:1},{t:'おやつを5こ とってゴール',sn:5},{t:'🌿くさむらに 3びょう かくれてゴール',hide:3},{t:'40びょう いないにゴール',time:40},{t:'おやつをぜんぶ とってゴール',all:1},{t:'⭐金のおやつを とってゴール',gold:1},{t:'⚡ダッシュ＋おやつ4こで ゴール',dash:1,sn:4},{t:'🛡️バリア＋おやつ5こで ゴール',bar:1,sn:5},{t:'❄️こおり＋おやつ4こで ゴール',ice:1,sn:4},{t:'🌿くさむらに 4びょう かくれてゴール',hide:4},{t:'おやつ4こ＋55びょう いないにゴール',sn:4,time:55},{t:'おやつを7こ とってゴール',sn:7},{t:'⭐金のおやつ＋おやつ5こで ゴール',gold:1,sn:5},{t:'⚡ダッシュ＋🛡️バリアでゴール',dash:1,bar:1},{t:'❄️こおり＋🛡️バリアでゴール',ice:1,bar:1},{t:'おやつをぜんぶ とってゴール',all:1},{t:'⚡ダッシュ＋❄️こおりでゴール',dash:1,ice:1},{t:'🌿5びょう かくれ＋おやつ4こで ゴール',hide:5,sn:4},{t:'おやつ6こ＋60びょう いないにゴール',sn:6,time:60},{t:'⭐金のおやつ＋⚡ダッシュでゴール',gold:1,dash:1},{t:'⭐金のおやつ＋🛡️バリアでゴール',gold:1,bar:1},{t:'⭐金のおやつ＋おやつ8こで ゴール',gold:1,sn:8},{t:'❄️こおり＋🌿3びょう かくれてゴール',ice:1,hide:3},{t:'⚡ダッシュ＋おやつぜんぶで ゴール',dash:1,all:1},{t:'🛡️バリア＋おやつぜんぶで ゴール',bar:1,all:1},{t:'🌿くさむらに 6びょう かくれてゴール',hide:6},{t:'⚡🛡️❄️ 3つぜんぶ つかってゴール',dash:1,bar:1,ice:1},{t:'⭐金のおやつ＋⚡ダッシュ＋🛡️バリアでゴール',gold:1,dash:1,bar:1},{t:'おやつ9こ＋80びょう いないにゴール',sn:9,time:80},{t:'おやつぜんぶ＋100びょう いないにゴール',all:1,time:100},{t:'⭐金のおやつ＋❄️こおり＋🌿3びょうでゴール',gold:1,ice:1,hide:3},{t:'⚡🛡️❄️⭐ 4つぜんぶ つかってゴール',dash:1,bar:1,ice:1,gold:1},{t:'おやつぜんぶ＋⭐金のおやつでゴール',all:1,gold:1},{t:'ぜんぶのアイテム＋おやつぜんぶで ゴール',dash:1,bar:1,ice:1,gold:1,all:1},{t:'ラスボス！ 4つぜんぶ＋おやつぜんぶで ゴール',dash:1,bar:1,ice:1,gold:1,all:1,hide:3}];
 const ST=Object.assign({me:'colon',mode:'stage'},store.get('cfg',{}));
 const P=Object.assign({cur:0,curM:0,best:{},bestM:{},bestE:0},store.get('prog',{}));
 const VP=4, R=.27;
@@ -522,9 +522,12 @@ function draw(){ const W=cv.width,vt=document.body.dataset.vt||'natural',S=skin(
   cx.restore(); cx.setTransform(1,0,0,1,0,0); if(ok(S.frame)) cx.drawImage(S.frame,0,0,W,W);
   cx.textAlign='center'; cx.textBaseline='middle';
   if(cd>0){ cx.fillStyle='rgba(0,0,0,.28)'; cx.fillRect(0,0,W,W); const big=cd>.6; cx.font='900 '+Math.round(W*(big?.34:.16))+'px "Zen Maru Gothic",sans-serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.lineWidth=W*.02; cx.strokeStyle='#8a5a2c'; cx.fillStyle='#fff'; const t=big?String(Math.ceil(cd-.6)):'スタート！'; cx.strokeText(t,W/2,W/2); cx.fillText(t,W/2,W/2);
-    if(ST.mode==='mission'){ const m=MIS[P.curM]; if(m){ const fs=Math.round(W*.05); cx.font='900 '+fs+'px "Zen Maru Gothic",sans-serif'; const mw=W*.8; let lines=[m.t];
-        if(cx.measureText(m.t).width>mw){ const sp=[...m.t].map((c,i)=>c===' '||c==='　'?i:-1).filter(i=>i>=0); const mid=m.t.length/2; let at=sp.length?sp.reduce((q,i)=>Math.abs(i-mid)<Math.abs(q-mid)?i:q,sp[0]):Math.ceil(mid); lines=[m.t.slice(0,at).trim(),m.t.slice(at).trim()].filter(Boolean); }
-        const lh=fs*1.35, bh=lh*(lines.length+1)+fs*.5, bw=Math.min(W*.9,Math.max(...lines.map(l=>cx.measureText(l).width),W*.3)+fs*1.6), by=W*.70;
+    if(ST.mode==='mission'){ const m=MIS[P.curM]; if(m){ let fs=Math.round(W*.05); const mw=W*.8, F=f=>'900 '+f+'px "Zen Maru Gothic",sans-serif'; let lines=[m.t];
+        for(let k=0;k<8;k++){ cx.font=F(fs); const wd=t=>cx.measureText(t).width; lines=[m.t];
+          if(wd(m.t)>mw){ const cand=[]; [...m.t].forEach((c,i)=>{ if(c===' '||c==='　') cand.push([i,i]); else if(c==='＋'||c==='で') cand.push([i+1,i+1]); }); if(!cand.length) cand.push([Math.ceil(m.t.length/2),Math.ceil(m.t.length/2)]);
+            let best=null,bw2=1e9; for(const [a1,b1] of cand){ const l1=m.t.slice(0,a1).trim(),l2=m.t.slice(b1).trim(); if(!l1||!l2) continue; const w2=Math.max(wd(l1),wd(l2)); if(w2<bw2){bw2=w2;best=[l1,l2]} } if(best) lines=best; }
+          if(Math.max(...lines.map(l=>wd(l)))<=mw*1.08) break; fs=Math.round(fs*.92); }
+        cx.font=F(fs); const lh=fs*1.35, bh=lh*(lines.length+1)+fs*.5, bw=Math.min(W*.9,Math.max(...lines.map(l=>cx.measureText(l).width),W*.3)+fs*1.6), by=W*.70;
         cx.fillStyle='rgba(40,25,12,.82)'; cx.strokeStyle='#ffd36b'; cx.lineWidth=W*.006; cx.beginPath(); cx.roundRect(W/2-bw/2,by,bw,bh,fs*.6); cx.fill(); cx.stroke();
         cx.lineWidth=0; cx.fillStyle='#ffd36b'; cx.font='900 '+Math.round(fs*.8)+'px "Zen Maru Gothic",sans-serif'; cx.fillText('🎯 ミッション',W/2,by+lh*.75);
         cx.fillStyle='#fff'; cx.font='900 '+fs+'px "Zen Maru Gothic",sans-serif'; lines.forEach((l,i)=>cx.fillText(l,W/2,by+lh*(i+1.75))); } } }
