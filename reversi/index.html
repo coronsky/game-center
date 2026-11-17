@@ -519,8 +519,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
     <button data-v="full"><span class="stPrev full"><i><b></b></i><i class="w"><b></b></i></span>顔いっぱい</button></div></div>
   <div class="tg"><span>置ける場所を表示</span><div class="sw" data-k="showLegal"></div></div>
   <div class="tg"><span>最後に置いた石に印</span><div class="sw" data-k="showLast"></div></div>
-  <div class="tg"><span>盤のコロンとムーン</span><div class="sw" data-k="dogs"></div></div>
-  <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
+    <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>振動(対応スマホ)</span><div class="sw" data-k="vibe"></div></div>
   <div class="acts"><button class="btn c" id="bHelp">あそびかた</button><button class="btn g" id="bStart">この設定ではじめる</button></div>
@@ -595,7 +594,7 @@ const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
 const CORNERS=[0,7,56,63];
 const store={get(k,d){try{const v=localStorage.getItem('mcrv_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
   set(k,v){try{localStorage.setItem('mcrv_'+k,JSON.stringify(v))}catch(e){}}};
-const S=Object.assign({mode:'cpu',side:'B',order:'first',level:'2',rule:'normal',stone:'face',showLegal:true,showLast:true,dogs:true,talk:true,sound:true,vibe:true},store.get('settings',{}));
+const S=Object.assign({mode:'cpu',side:'B',order:'first',level:'2',rule:'normal',stone:'face',showLegal:true,showLast:true,dogs:true,talk:true,sound:true,vibe:true},store.get('settings',{}));S.dogs=false;
 let rec=store.get('record',{});
 const P=Object.assign({coins:0,owned:{green:1},theme:'green',equip:{},badges:{},stars:{},ruleWins:{},
   stats:{games:0,wins:0,streak:0,bestStreak:0,maxFlip:0,pats:0,earned:0,corners:0}},store.get('prof',{}));

@@ -443,8 +443,7 @@ html body[data-vt=neon] .pc{filter:drop-shadow(0 0 3px rgba(255,79,216,.55))}
   <div class="row"><div class="lb">ハンデ（CPUの駒を減らす）</div><div class="seg" data-k="handi"><button data-v="0">なし</button><button data-v="ka">角落ち</button><button data-v="hi">飛車落ち</button><button data-v="2">二枚落ち</button></div></div>
   <div class="tg"><span>動かせる場所を表示</span><div class="sw" data-k="showLegal"></div></div>
   <div class="tg"><span>王・玉にコロンとムーンの顔</span><div class="sw" data-k="kface"></div></div>
-  <div class="tg"><span>盤のコロンとムーン</span><div class="sw" data-k="dogs"></div></div>
-  <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
+    <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="acts"><button class="btn c" id="bHelp">あそびかた</button><button class="btn g" id="bStart">この設定ではじめる</button></div>
   <div class="acts"><button class="btn c" id="bResign">🏳️ 投了する</button><button class="btn c" data-close="mSet">とじる</button></div>
@@ -542,7 +541,7 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
 
 // ===== 将棋 =====
 const store=mkStore('mcsg_');
-const S=Object.assign({side:'1',level:'2',handi:'0',showLegal:true,dogs:true,talk:true,sound:true,kface:false},store.get('settings',{}));
+const S=Object.assign({side:'1',level:'2',handi:'0',showLegal:true,dogs:true,talk:true,sound:true,kface:false},store.get('settings',{}));S.dogs=false;
 SND.on=S.sound; TALK.on=S.talk;
 let rec=store.get('rec',{});
 
