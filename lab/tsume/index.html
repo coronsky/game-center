@@ -460,7 +460,7 @@ html body[data-vt=neon] .pc{filter:drop-shadow(0 0 3px rgba(255,79,216,.55))}
   <p>🐕 ムーンはいちばん長くにげようとします。あなたの手は全部「王手」でなければいけません。</p>
   <p>🎯 「3手詰め」はあなた→ムーン→あなた、の3手で詰みます。ムーンに持ち駒はありません（合い駒なし）。</p>
   <p>💡ヒントは「動かす駒」だけ、📖こたえは「次の1手」だけ（2回おすと）教えます。どちらも使うと★が減ります。</p>
-  <p>⭐ ノーミスでヒントなしなら★3つ！まちがえても、その手は取り消されます。</p>
+  <p>⭐ ノーミスでヒントなしなら★3つ！まちがえた手も最後まで指せて、詰まなかったらお知らせします（「待った」でもどせます）。</p>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div>
 </div></div>
 <div style="display:none">
@@ -551,7 +551,7 @@ const store=mkStore('mcts_');
 const S=Object.assign({showLegal:true,dogs:true,talk:true,sound:true,kface:false},store.get('settings',{}));
 SND.on=S.sound; TALK.on=S.talk; S.dogs=false;
 const PROBS={"1":[{"p":[[6,-8],[5,4]],"h":{"5":1}},{"p":[[18,-8],[46,7],[29,4]],"h":{}},{"p":[[9,-8],[20,-5],[18,6],[0,4]],"h":{}},{"p":[[7,-8],[6,-4],[25,5],[26,12]],"h":{}},{"p":[[0,-8],[2,-5],[10,-3],[28,3]],"h":{"4":1}},{"p":[[9,-8],[28,12],[10,4]],"h":{}},{"p":[[18,-8],[1,-3],[37,2],[47,7]],"h":{}},{"p":[[1,-8],[2,-1],[0,6]],"h":{"5":1}},{"p":[[17,-8],[8,-1],[26,6],[35,3]],"h":{}},{"p":[[8,-8],[24,-2],[7,-1],[26,5]],"h":{"2":1}},{"p":[[19,-8],[30,-1],[38,9],[18,4],[2,5]],"h":{}},{"p":[[26,-8],[25,-1],[8,9],[44,4]],"h":{"6":1}},{"p":[[10,-8],[0,-4],[21,-6],[11,4],[28,1]],"h":{}},{"p":[[17,-8],[8,-5],[26,-6],[35,4],[16,4]],"h":{}},{"p":[[6,-8],[8,-3],[14,-4],[26,3],[25,7]],"h":{}},{"p":[[0,-8],[2,-4],[10,-6],[18,4]],"h":{"4":1}},{"p":[[0,-8],[18,-6],[1,-7],[19,12]],"h":{"2":1}},{"p":[[0,-8],[20,-1],[2,-3],[1,4],[18,3]],"h":{"7":1}},{"p":[[8,-8],[17,-4],[7,-5],[6,4],[26,2]],"h":{"3":1}},{"p":[[19,-8],[29,-2],[11,-1],[46,3],[9,9],[45,2],[30,5]],"h":{}}],"3":[{"p":[[8,-8],[7,-4],[26,-1],[24,7]],"h":{"5":1}},{"p":[[7,-8],[16,-3],[8,-5],[5,4],[35,9]],"h":{"4":1}},{"p":[[0,-8],[1,-7],[20,-2],[21,3]],"h":{"5":1,"7":1}},{"p":[[15,-8],[6,-1],[31,-6],[34,-3],[26,3],[33,1],[4,6]],"h":{}},{"p":[[11,-8],[4,-4],[28,-2],[29,1],[39,2]],"h":{"5":2}},{"p":[[7,-8],[26,-1],[14,4],[13,7]],"h":{"5":1}},{"p":[[0,-8],[18,-2],[3,4],[19,9]],"h":{"1":1}},{"p":[[5,-8],[3,-5],[23,6],[2,12]],"h":{"5":1}},{"p":[[14,-8],[24,-1],[32,4]],"h":{"4":1,"5":1}},{"p":[[17,-8],[6,-3],[8,4]],"h":{"5":1,"7":1}},{"p":[[10,-8],[1,-6],[2,7],[38,2]],"h":{"5":1}},{"p":[[8,-8],[6,-3],[24,-6],[34,3],[35,5]],"h":{"2":1}},{"p":[[6,-8],[4,-7],[24,3],[8,5],[33,9]],"h":{"5":1}},{"p":[[10,-8],[3,-1],[18,-4],[9,-3],[2,5],[1,6]],"h":{}},{"p":[[7,-8],[8,-4],[25,-3],[17,-5],[44,2],[12,7]],"h":{}},{"p":[[17,-8],[7,-2],[35,4],[51,3],[8,4]],"h":{"5":1}},{"p":[[13,-8],[29,-1],[30,-1],[11,-3],[6,6],[31,12]],"h":{"4":1}},{"p":[[17,-8],[7,-1],[8,-1],[6,-1],[44,5],[31,6]],"h":{"5":1}},{"p":[[8,-8],[7,-6],[26,-1],[15,-1],[24,5]],"h":{"3":1,"7":1}},{"p":[[2,-8],[4,-7],[12,-4],[3,-6],[30,3]],"h":{"5":1,"6":1}}],"5":[{"p":[[0,-8],[19,-4],[36,6]],"h":{"5":1}},{"p":[[16,-8],[8,-1],[5,4]],"h":{"2":2,"7":1}},{"p":[[21,-8],[19,-1],[11,7],[28,5],[23,5]],"h":{"4":1}},{"p":[[20,-8],[12,-1],[4,-5],[0,4],[40,4],[19,4]],"h":{"4":1,"7":1}},{"p":[[0,-8],[9,-5],[20,-1],[2,-6],[3,6]],"h":{"5":3}},{"p":[[0,-8],[1,-3],[18,-4],[40,6],[30,3]],"h":{"5":1}},{"p":[[0,-8],[1,-1],[27,5],[19,1]],"h":{"1":2,"4":1}},{"p":[[8,-8],[7,-1],[17,-4],[24,-3],[26,9],[34,5]],"h":{"4":1}},{"p":[[1,-8],[11,-4],[0,-7],[2,-4],[21,5],[36,2],[9,1]],"h":{}},{"p":[[18,-8],[27,-5],[28,-4],[0,4],[2,4]],"h":{"5":1,"6":1}},{"p":[[6,-8],[15,-4],[24,-7],[8,4],[38,1]],"h":{"5":1,"6":1}},{"p":[[9,-8],[29,-4],[18,-1],[27,2],[45,3],[3,6]],"h":{"1":1}},{"p":[[25,-8],[15,-6],[7,4],[41,2]],"h":{"5":2,"7":1}},{"p":[[11,-8],[1,-4],[29,-1],[36,5],[49,7],[37,4]],"h":{"2":1}},{"p":[[26,-8],[17,-6],[44,-4],[16,-3],[15,7],[53,4]],"h":{"3":1,"5":1}},{"p":[[8,-8],[7,-6],[4,5],[35,5],[6,12]],"h":{"2":1,"5":2}},{"p":[[6,-8],[7,-4],[5,-1],[14,-4],[8,5],[41,9],[4,12],[43,2]],"h":{}},{"p":[[26,-8],[34,-5],[17,-3],[33,4],[44,1],[53,2]],"h":{"4":1,"5":1}},{"p":[[16,-8],[8,-3],[6,-5],[35,12],[50,2]],"h":{"2":1,"4":2}},{"p":[[0,-8],[9,-2],[1,-1],[19,-5],[28,12],[10,2],[21,4]],"h":{"4":1,"5":1}}],"7":[{"p":[[16,-8],[7,-5],[17,4],[15,-1]],"h":{"5":1,"7":1}},{"p":[[14,-8],[21,-3],[22,7],[17,4],[24,-2]],"h":{"5":1}},{"p":[[7,-8],[17,-1],[26,-4],[43,3],[23,7],[25,-1]],"h":{}},{"p":[[20,-8],[12,-1],[4,-5],[40,4],[19,4],[36,-5],[38,-2]],"h":{"4":1,"7":1}},{"p":[[2,-8],[1,-1],[18,-1],[0,-4],[40,7],[31,5],[4,-2]],"h":{"4":1,"5":1}}]};
-let hintFull=false;
+let hintFull=false, failed=false;
 const FU=1,KY=2,KE=3,GI=4,KI=5,KA=6,HI=7,OU=8,TO=9,NY=10,NK=11,NG=12,UM=13,RY=14;
 const KANJI={1:'歩',2:'香',3:'桂',4:'銀',5:'金',6:'角',7:'飛',8:'王',9:'と',10:'杏',11:'圭',12:'全',13:'馬',14:'龍'};
 const NAMEJ={1:'歩',2:'香',3:'桂',4:'銀',5:'金',6:'角',7:'飛',8:'玉',9:'と',10:'成香',11:'成桂',12:'成銀',13:'馬',14:'龍'};
@@ -703,7 +703,7 @@ function render(){
   $('scS').classList.toggle('active',!over&&side===1); $('scG').classList.toggle('active',!over&&side===-1);
   $('plyN').textContent=P?Math.max(0,(P.n+1)/2-Math.floor(plyN/2)):1;
   if(!over&&!busy&&P) setStatus((P.n)+'手詰め：玉を詰ませよう');
-  $('bUndo').disabled=busy||over||!hist.some(h=>h.side===me());
+  $('bUndo').disabled=busy||(over&&!failed)||!hist.some(h=>h.side===me());
   $('bHint').disabled=over||busy||!isHuman(side);
 }
 function notation(m,s){
@@ -751,9 +751,11 @@ function defendAll(n){ const rep=legalMoves(-1); if(!rep.length) return true; if
   for(const r of rep){ make(r); const ok=mates(n-1); unmake(r); if(!ok) return false; } return true; }
 function firstMoves(n){ const res=[]; for(const m of checkMoves()){ make(m); const ok=defendAll(n-1); unmake(m); if(ok) res.push(m); } return res; }
 function minMate(maxN){ for(let n=1;n<=maxN;n+=2){ if(mates(n)) return n; } return 0; }
-function bestDefense(){ // いちばん長く粘る応手
-  const reps=legalMoves(-1), maxK=P.n-plyN-1; let best=[], bd=-1;
-  for(const r of reps){ make(r); let d=minMate(maxK); unmake(r); if(d===0) d=99; if(d>bd){bd=d;best=[r]} else if(d===bd) best.push(r); }
+function bestDefense(){ // 逃げ切れる手があればそれ、なければいちばん長く粘る手
+  const reps=legalMoves(-1).sort(()=>Math.random()-.5), maxK=P.n-plyN-1;
+  for(const r of reps){ make(r); const esc=!mates(maxK); unmake(r); if(esc) return r; }
+  let best=[], bd=-1;
+  for(const r of reps){ make(r); let d=minMate(maxK); unmake(r); if(d>bd){bd=d;best=[r]} else if(d===bd) best.push(r); }
   return pick(best);
 }
 const STARS=n=>'★'.repeat(n)+'☆'.repeat(3-n);
@@ -761,7 +763,7 @@ function loadProblem(lv,idx){
   gen++; LV=lv; IDX=idx; P=Object.assign({n:lv},PROBS[lv][idx]);
   b=new Int8Array(81); for(const [sq,pc] of P.p) b[sq]=pc;
   hand=[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]; for(const t in P.h) hand[0][+t]=P.h[t];
-  side=1; stack.length=0; hist=[]; lastMv=-1; sel=null; over=false; busy=false; hintMv=null; plyN=0; legalCache=null; misses=0; hints=0; 
+  side=1; stack.length=0; hist=[]; lastMv=-1; sel=null; over=false; busy=false; hintMv=null; plyN=0; legalCache=null; misses=0; hints=0; failed=false;
   ['mRes','mPro'].forEach(closeM);
   $('tagS').textContent='あなた・攻め方'; $('tagG').textContent='玉方・にげる';
   $('lastTxt').textContent='問題スタート';
@@ -784,16 +786,22 @@ function playMove(m,nt){
 function doMove(m){
   if(over||busy) return;
   const nt=notation(m,side);
-  make(m); const rem=P.n-plyN; const ok=inCheck(-1)&&defendAll(rem-1); unmake(m);
-  if(!ok){ misses++; legalCache=null; sel=null; SFX.ng(); toast('その手では詰まないよ…',true);
-    sayText(2,pick(['ふふ、にげられるよ♪','ざんね〜ん','そこじゃないワン'])); render(); return; }
   playMove(m,nt);
   if(!legalMoves(-1).length) return cleared();
+  if(plyN>=P.n) return fail();
   busy=true; setStatus('ムーンがにげ道をさがし中',true); const g0=gen;
-  setTimeout(()=>{ if(g0!==gen) return; const r=bestDefense(); playMove(r,notation(r,-1)); busy=false; render(); },650);
+  setTimeout(()=>{ if(g0!==gen) return; const r=bestDefense(); playMove(r,notation(r,-1)); busy=false; render();
+    if(plyN>=P.n||!checkMoves().length) fail(); },650);
+}
+function fail(){
+  over=true; failed=true; busy=false; misses++; render();
+  setStatus('詰みませんでした…「待った」でもどせるよ');
+  SFX.lose(); sayText(2,'ふふ、にげきったワン♪',true); sayText(1,'くぅ〜ん…',true);
+  $('bAgain').textContent='もう一回！';
+  showResult({winner:2,title:'😢 詰みませんでした',score:'',msg:'この手順では詰みませんでした。「待った」でもどして、べつの手を考えてみよう！',rec:'',delay:700});
 }
 function cleared(){
-  over=true; busy=false; render();
+  over=true; busy=false; failed=false; render(); $('bAgain').textContent='つぎの問題へ';
   let st=3-(hints?1:0)-(misses?1:0); st=Math.max(1,st);
   const key=LV+'-'+IDX; if((prog[key]||0)<st){ prog[key]=st; store.set('prog',prog); }
   setStatus('詰み！'+P.n+'手詰め クリア！');
@@ -804,8 +812,8 @@ function cleared(){
     rec:'ここまでの★：'+tot+' / '+[1,3,5,7].reduce((a,l)=>a+PROBS[l].length*3,0)});
 }
 function undo(){
-  if(busy||over||!hist.length) return;
-  gen++; let h; do{ h=hist.pop(); }while(hist.length&&h.side!==1);
+  if(busy||(over&&!failed)||!hist.length) return;
+  closeM('mRes'); over=false; failed=false; gen++; let h; do{ h=hist.pop(); }while(hist.length&&h.side!==1);
   if(h.side!==1){ hist.push(h); return; }
   b=Int8Array.from(h.b); hand=h.hand; side=h.side; lastMv=h.lastMv; plyN=h.plyN; stack.length=0; sel=null; hintMv=null; legalCache=null;
   SFX.tap(); toast('待った！'); render();
@@ -844,7 +852,7 @@ let resT=0;
 $('bFlag').onclick=()=>{ if(busy||over) return; if(Date.now()-resT<3000){ resT=0; answer(); } else { resT=Date.now(); toast('もう一度おすと、次の1手を教えるよ'); } };
 $('bHelp').onclick=()=>openM('mHelp');
 $('bNew').onclick=()=>{actx();SFX.tap();loadProblem(LV,IDX)};
-$('bAgain').onclick=()=>{SFX.tap();nextProblem()};
+$('bAgain').onclick=()=>{SFX.tap(); if(failed){ closeM('mRes'); loadProblem(LV,IDX); } else nextProblem(); };
 $('bUndo').onclick=()=>{actx();undo()};
 $('bHint').onclick=()=>{actx();hint()};
 buildUI(); { const l=store.get('last',{lv:1,idx:0}); loadProblem(PROBS[l.lv]?l.lv:1,PROBS[l.lv]&&PROBS[l.lv][l.idx]?l.idx:0); }
