@@ -1,0 +1,60 @@
+<body data-vt="natural"><div class="app">
+<div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
+  <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">ソリティア</div></div>
+  <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle" id="gTitle">ソリティア</div></div>
+  <div class="hud"><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small id="fdL">台に上げた</small><b id="fd">0/52</b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
+  <div class="panel"><div class="in" style="padding:4px"><div id="tb"></div></div></div>
+  <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
+  <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn g" id="bMenu">☰ メニュー</button><button class="btn c" id="bUndo">↩︎ もどす</button><button class="btn c" id="bHint">💡 ヒント</button><button class="btn c" id="bReset">⟳ やりなおし</button></div>
+</div>
+
+<div class="modal" id="mMenu"><div class="card menu">
+  <h2>🃏 ソリティア</h2>
+  <div class="lb2">あそぶゲーム</div>
+  <div class="gpick" id="gpick">
+    <button data-g="k"><b>🂡 クロンダイク</b><small>定番！Aから順に台へ</small><i id="gs_k"></i></button>
+    <button data-g="s"><b>🕷 スパイダー</b><small>K→Aをそろえて消そう</small><i id="gs_s"></i></button>
+    <button data-g="f"><b>🗝 フリーセル</b><small>空きマスを使って考えよう</small><i id="gs_f"></i></button>
+  </div>
+  <div class="row" id="optK"><div class="lb">ランダムのときの めくり方</div><div class="seg" data-k="kd"><button data-v="1">1枚めくり</button><button data-v="3">3枚めくり</button></div></div>
+  <div class="row" id="optS"><div class="lb">ランダムのときの スートの数</div><div class="seg" data-k="sd"><button data-v="1">1色（かんたん）</button><button data-v="2">2色（むずかしい）</button></div></div>
+  <div class="lb2">あそびかた</div>
+  <div class="modes">
+    <button data-m="stage">🗺<b>ステージ</b><small>30ステージ</small></button>
+    <button data-m="daily">📅<b>まいにち</b><small>きょうの1問</small></button>
+    <button data-m="random">🎲<b>ランダム</b><small>すきなだけ</small></button>
+  </div>
+  <div class="acts"><button class="btn c" id="bHelp">❓ ルール</button><button class="btn g" data-close="mMenu">もどる</button></div>
+</div></div>
+
+<div class="modal" id="mSel"><div class="card"><h2 id="selT">ステージ</h2>
+  <div class="selRule">★1 クリア　★2 ヒントなし　★3 ヒント・もどすなし</div>
+  <div class="selGrid" id="selGrid"></div>
+  <div class="acts"><button class="btn c" id="selBack">← ゲームえらびへ</button><button class="btn g" data-close="mSel">とじる</button></div></div></div>
+
+<div class="modal" id="mDaily"><div class="card"><h2>📅 まいにちチャレンジ</h2>
+  <div class="dSub" id="dSub"></div>
+  <div class="dRows" id="dRows"></div>
+  <div class="lb" style="margin-top:10px">スタンプちょう（どれか1つクリアで🐾）</div>
+  <div class="cal" id="cal"></div>
+  <div class="acts"><button class="btn g" data-close="mDaily">とじる</button></div></div></div>
+
+<div class="modal" id="mHelp"><div class="card help"><h2>📖 ルール</h2>
+<p><b>クロンダイク</b>：カードを赤・黒こうごに、数字を1つずつ小さくして重ねます。A→K の順で、右上の4つの台にマークごとに積めば勝ち。空いた列にはKだけ置けます。</p>
+<p><b>スパイダー</b>：数字を1つずつ小さくして重ねます（色はなんでもOK）。同じマークでK→Aがそろうと消えます。8組そろえば勝ち。右下の山を押すと1列ずつ配られます（空の列があると配れません）。</p>
+<p><b>フリーセル</b>：左上の4つの「空きマス」に1枚ずつ置けます。カードを赤・黒こうごに重ね、A→Kで右上の台へ。空きマスと空き列が多いほど、まとめて動かせます。</p>
+<p>👆 カードをタップするとおける場所へ自動で動きます。まよったら💡ヒント！</p>
+<p>★1 クリア　★2 ヒントなし　★3 ヒントも「もどす」も使わない</p>
+  <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
+  <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
+  <div class="tg"><span>タップですぐ動かす</span><div class="sw" data-k="auto"></div></div>
+  <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
+
+<div class="modal" id="mRes"><div class="card result">
+  <h2 id="resTitle"></h2>
+  <div class="avs"><div id="avB"><div class="crown"></div><div class="ph" style="background-image:var(--colon)"></div>コロン</div>
+    <div id="avW"><div class="crown"></div><div class="ph" style="background-image:var(--moon)"></div>ムーン</div></div>
+  <div class="big" id="resScore"></div><div class="msg" id="resMsg"></div><div id="resExtra"></div><div class="rec" id="resRec"></div>
+  <div class="acts"><button class="btn c" data-close="mRes">盤面を見る</button><button class="btn c" id="bResMenu">☰ メニュー</button><button class="btn g" id="bAgain">つぎへ</button></div>
+</div></div>
+<div class="toast" id="toast"></div>

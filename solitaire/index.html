@@ -257,57 +257,266 @@ html body .app .vtBtn,html body .app .homeBtn{width:90px!important;height:30px!i
 html body[data-vt=natural] .app .vtBtn{background-image:url(../img/ui/natural_skin.webp?v=2)!important}html body[data-vt=natural] .app .homeBtn{background-image:url(../img/ui/natural_home.webp?v=2)!important}
 html body[data-vt=retro] .app .vtBtn{background-image:url(../img/ui/retro_skin.webp?v=2)!important}html body[data-vt=retro] .app .homeBtn{background-image:url(../img/ui/retro_home.webp?v=2)!important}
 html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../img/ui/neon_home.webp?v=2)!important}
-</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
+</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}/* ===== ソリティア ===== */
+.lb2{font-weight:900;font-size:13px;margin:6px 0 6px;color:var(--ink2)}
+.gpick{display:grid;gap:8px;margin-bottom:10px}
+.gpick button{display:grid;grid-template-columns:1fr auto;grid-template-areas:"b i" "s i";align-items:center;text-align:left;border:2.5px solid #e2cfb2;background:#fffaf1;border-radius:16px;padding:9px 12px;font:inherit;color:var(--ink);cursor:pointer;gap:0 8px}
+.gpick b{grid-area:b;font-size:16px;font-weight:900}.gpick small{grid-area:s;font-size:11.5px;opacity:.75;font-weight:700}
+.gpick i{grid-area:i;font-style:normal;font-weight:900;font-size:12px;color:#b07a12;white-space:nowrap}
+.gpick button.on{border-color:#5c8858;background:#eef5e6;box-shadow:0 0 0 2px #5c8858}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.modes button{display:flex;flex-direction:column;align-items:center;gap:1px;border:2.5px solid #e2cfb2;background:linear-gradient(#fffaf1,#efe2cb);border-radius:16px;padding:9px 2px;font:inherit;color:var(--ink);cursor:pointer;font-size:22px;line-height:1.2}
+.modes b{font-size:14px;font-weight:900}.modes small{font-size:10px;opacity:.75;font-weight:700}
+.modes button:active{transform:scale(.95)}
+.selRule{font-size:11.5px;text-align:center;font-weight:700;opacity:.8;margin:-6px 0 10px}
+.selGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:52vh;overflow:auto;padding:2px}
+.selGrid button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:12px;padding:5px 0 3px;font:inherit;font-weight:900;font-size:16px;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.15}
+.selGrid button small{font-size:9px;font-weight:700;opacity:.7}
+.selGrid button em{font-style:normal;font-size:10px;letter-spacing:-1px;min-height:12px}
+.selGrid button.on{border-color:#5c8858;box-shadow:0 0 0 2px #5c8858}
+.selGrid .sep{grid-column:1/-1;font-size:11px;font-weight:900;opacity:.75;text-align:left;margin-top:4px}
+.dSub{text-align:center;font-weight:900;font-size:14px;margin-bottom:8px}
+.dRows{display:grid;gap:8px}
+.dRows .dr{display:flex;align-items:center;gap:8px;border:2px solid #e2cfb2;background:#fffaf1;border-radius:14px;padding:8px 10px}
+.dRows .dr span{flex:1;font-weight:900;font-size:14.5px}.dRows .dr em{font-style:normal;font-size:13px;min-width:46px;text-align:right}
+.dRows .dr .btn{flex:none;padding:7px 12px;font-size:13px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal div{aspect-ratio:1;border:2px dashed #d9c6a8;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:900;line-height:1.1;opacity:.85}
+.cal div.st{border-style:solid;border-color:#5c8858;background:#eef5e6;opacity:1}.cal div.tdy{box-shadow:0 0 0 2px #f0b429}
+.cal div b{font-size:15px}
+body:is([data-vt=retro],[data-vt=neon]) :is(.gpick button,.modes button,.selGrid button,.dRows .dr,.cal div){background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.28);color:inherit}
+body:is([data-vt=retro],[data-vt=neon]) :is(.gpick button.on,.selGrid button.on,.cal div.st){background:rgba(255,255,255,.2)}
+.bigStars{display:flex;justify-content:center;gap:4px;font-size:34px;margin:4px 0}
+/* 盤面 */
+#tb{position:relative;margin:2px;min-height:300px;touch-action:manipulation}
+.cd{transition:top .12s,left .12s;font-weight:900}
+.cd .tl{position:absolute;left:.18em;top:.1em;font-size:1em;white-space:nowrap}
+.cd .md{position:absolute;right:.12em;bottom:.02em;font-size:1.35em}
+.cd .fc{position:absolute;left:0;right:0;top:46%;transform:translateY(-40%);text-align:center;font-size:1.5em;line-height:1}
+.cd.sel{box-shadow:0 0 0 3px #ffd23a,0 2px 6px rgba(0,0,0,.4);z-index:5}
+.cd.hint,.slot.hint{box-shadow:0 0 0 3px #3ff0ff,0 0 12px #3ff0ff;animation:hb .6s infinite alternate;z-index:6}
+.cd.hint2{box-shadow:0 0 0 3px #ff9a2e,0 0 12px #ff9a2e;animation:hb .6s infinite alternate;z-index:6}
+@keyframes hb{to{filter:brightness(1.25)}}
+.slot{font-size:15px}
+.pileN{position:absolute;right:2px;bottom:1px;font-size:10px;font-weight:900;background:rgba(0,0,0,.5);color:#fff;border-radius:8px;padding:0 5px;pointer-events:none}
+.doneBox{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:8px;border:2px solid rgba(255,255,255,.55);font-weight:900;color:#fff;background:rgba(0,0,0,.18);text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.cd.up2{z-index:4}
+.result .acts .btn{padding:12px 2px;font-size:clamp(11px,3.4vw,14px);min-width:0}
+</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">ソリティア</div></div>
-  <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle">ソリティア</div></div>
-
-  <div class="hud"><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small>台に上げた</small><b id="fd">0/52</b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
+  <div class="header" id="header"><div class="bubble" id="bubB"></div><div class="bubble" id="bubW"></div><div class="gTitle" id="gTitle">ソリティア</div></div>
+  <div class="hud"><div class="box"><small>手数</small><b id="mv">0</b></div><div class="box"><small id="fdL">台に上げた</small><b id="fd">0/52</b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
   <div class="panel"><div class="in" style="padding:4px"><div id="tb"></div></div></div>
-
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
-  <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
+  <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn g" id="bMenu">☰ メニュー</button><button class="btn c" id="bUndo">↩︎ もどす</button><button class="btn c" id="bHint">💡 ヒント</button><button class="btn c" id="bReset">⟳ やりなおし</button></div>
 </div>
-<div class="modal" id="mHelp"><div class="card help"><h2>📖 ソリティア</h2><p>定番の<b>クロンダイク</b>（1枚めくり）。全部のカードを右上の4つの台に、A→2→…→Kの順で同じマークごとに積もう。</p>
-<p>👆 カードをタップで選択 → 置きたい場所をタップで移動。<b>同じカードをもう一度タップ</b>すると、置ける場所へ自動で動きます。</p>
-<p>場札は<b>赤と黒を交互</b>に、数字を1つずつ小さく重ねます。空いた列にはKだけ置けます。左上の山札をタップで1枚めくり。</p>
+
+<div class="modal" id="mMenu"><div class="card menu">
+  <h2>🃏 ソリティア</h2>
+  <div class="lb2">あそぶゲーム</div>
+  <div class="gpick" id="gpick">
+    <button data-g="k"><b>🂡 クロンダイク</b><small>定番！Aから順に台へ</small><i id="gs_k"></i></button>
+    <button data-g="s"><b>🕷 スパイダー</b><small>K→Aをそろえて消そう</small><i id="gs_s"></i></button>
+    <button data-g="f"><b>🗝 フリーセル</b><small>空きマスを使って考えよう</small><i id="gs_f"></i></button>
+  </div>
+  <div class="row" id="optK"><div class="lb">ランダムのときの めくり方</div><div class="seg" data-k="kd"><button data-v="1">1枚めくり</button><button data-v="3">3枚めくり</button></div></div>
+  <div class="row" id="optS"><div class="lb">ランダムのときの スートの数</div><div class="seg" data-k="sd"><button data-v="1">1色（かんたん）</button><button data-v="2">2色（むずかしい）</button></div></div>
+  <div class="lb2">あそびかた</div>
+  <div class="modes">
+    <button data-m="stage">🗺<b>ステージ</b><small>30ステージ</small></button>
+    <button data-m="daily">📅<b>まいにち</b><small>きょうの1問</small></button>
+    <button data-m="random">🎲<b>ランダム</b><small>すきなだけ</small></button>
+  </div>
+  <div class="acts"><button class="btn c" id="bHelp">❓ ルール</button><button class="btn g" data-close="mMenu">もどる</button></div>
+</div></div>
+
+<div class="modal" id="mSel"><div class="card"><h2 id="selT">ステージ</h2>
+  <div class="selRule">★1 クリア　★2 ヒントなし　★3 ヒント・もどすなし</div>
+  <div class="selGrid" id="selGrid"></div>
+  <div class="acts"><button class="btn c" id="selBack">← ゲームえらびへ</button><button class="btn g" data-close="mSel">とじる</button></div></div></div>
+
+<div class="modal" id="mDaily"><div class="card"><h2>📅 まいにちチャレンジ</h2>
+  <div class="dSub" id="dSub"></div>
+  <div class="dRows" id="dRows"></div>
+  <div class="lb" style="margin-top:10px">スタンプちょう（どれか1つクリアで🐾）</div>
+  <div class="cal" id="cal"></div>
+  <div class="acts"><button class="btn g" data-close="mDaily">とじる</button></div></div></div>
+
+<div class="modal" id="mHelp"><div class="card help"><h2>📖 ルール</h2>
+<p><b>クロンダイク</b>：カードを赤・黒こうごに、数字を1つずつ小さくして重ねます。A→K の順で、右上の4つの台にマークごとに積めば勝ち。空いた列にはKだけ置けます。</p>
+<p><b>スパイダー</b>：数字を1つずつ小さくして重ねます（色はなんでもOK）。同じマークでK→Aがそろうと消えます。8組そろえば勝ち。右下の山を押すと1列ずつ配られます（空の列があると配れません）。</p>
+<p><b>フリーセル</b>：左上の4つの「空きマス」に1枚ずつ置けます。カードを赤・黒こうごに重ね、A→Kで右上の台へ。空きマスと空き列が多いほど、まとめて動かせます。</p>
+<p>👆 カードをタップするとおける場所へ自動で動きます。まよったら💡ヒント！</p>
+<p>★1 クリア　★2 ヒントなし　★3 ヒントも「もどす」も使わない</p>
   <div class="tg"><span>効果音</span><div class="sw" data-k="sound"></div></div>
   <div class="tg"><span>ワンコのおしゃべり</span><div class="sw" data-k="talk"></div></div>
+  <div class="tg"><span>タップですぐ動かす</span><div class="sw" data-k="auto"></div></div>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div></div></div>
 
-<div style="display:none">
-
-</div>
 <div class="modal" id="mRes"><div class="card result">
   <h2 id="resTitle"></h2>
   <div class="avs"><div id="avB"><div class="crown"></div><div class="ph" style="background-image:var(--colon)"></div>コロン</div>
     <div id="avW"><div class="crown"></div><div class="ph" style="background-image:var(--moon)"></div>ムーン</div></div>
   <div class="big" id="resScore"></div><div class="msg" id="resMsg"></div><div id="resExtra"></div><div class="rec" id="resRec"></div>
-  <div class="acts"><button class="btn c" data-close="mRes">盤面を見る</button><button class="btn g" id="bAgain">もう一回！</button></div>
+  <div class="acts"><button class="btn c" data-close="mRes">盤面を見る</button><button class="btn c" id="bResMenu">☰ メニュー</button><button class="btn g" id="bAgain">つぎへ</button></div>
 </div></div>
 <div class="toast" id="toast"></div>
 <script>(()=>{
-const PK={dog:'colon',order:'first'};
-function askPick(onGo,o){ o=o||{};
-  let m=$('mPick');
-  if(!m){ m=document.createElement('div'); m.className='modal'; m.id='mPick';
-    m.innerHTML=`<div class="card pick"><h2>🐾 どっちで遊ぶ？</h2><div class="lb" id="pkL1">あなたのワンコ</div>
-    <div class="pkRow" data-pk="dog"><button data-v="colon"><span class="pa" style="background-image:var(--colon)"></span>コロン</button><button data-v="moon"><span class="pa" style="background-image:var(--moon)"></span>ムーン</button></div>
-    <div class="lb">順番</div><div class="pkRow" data-pk="order"><button data-v="first">⚡ 先手<small>先にはじめる</small></button><button data-v="second">🐢 後手<small>あとからはじめる</small></button></div>
-    <div class="pkNote" id="pkNote"></div><div class="acts"><button class="btn g" id="bPickGo">この順番ではじめる！</button></div></div>`;
-    document.body.appendChild(m);
-    m.querySelectorAll('.pkRow button').forEach(b=>b.onclick=()=>{ try{SFX.tap()}catch(e){} PK[b.parentElement.dataset.pk]=b.dataset.v; pkSync(); });
-  }
-  m._go=onGo; m._pvp=!!o.pvp; PK.dog=o.dog||PK.dog; PK.order=o.order||PK.order;
-  $('pkL1').textContent=o.pvp?'プレイヤー1のワンコ':'あなたのワンコ';
-  $('bPickGo').onclick=()=>{ try{SFX.tap()}catch(e){} closeM('mPick'); m._go&&m._go(PK.dog,PK.order); };
-  pkSync(); openM('mPick');
-}
-function pkSync(){ const m=$('mPick'); m.querySelectorAll('.pkRow').forEach(r=>r.querySelectorAll('button').forEach(b=>b.classList.toggle('on',PK[r.dataset.pk]===b.dataset.v)));
-  const me=PK.dog==='colon'?'コロン':'ムーン', ot=PK.dog==='colon'?'ムーン':'コロン';
-  $('pkNote').textContent=(PK.order==='first'?me:ot)+'が先にはじめるよ'; }
+// ソリティアエンジン（純粋関数）。ブラウザでもNodeでも同じものが動く。
+const SU=['♠','♥','♦','♣'],RK=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const DN=64;
+const crk=c=>(c&63)%13, cst=c=>((c&63)/13)|0, cup=c=>c<DN, cred=c=>{const s=cst(c);return s===1||s===2};
+function rng(seed){ let a=(Math.imul(seed|0,2654435761)^0x9e3779b9)>>>0; return ()=>{a=(a+0x6D2B79F5)>>>0; let t=a; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return((t^(t>>>14))>>>0)/4294967296;} }
+function shuf(a,seed){ const r=rng(seed); for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));const x=a[i];a[i]=a[j];a[j]=x} return a }
+const srt=(ms,sc)=>ms.map(m=>[sc(m),m]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
 
+/* ---------- クロンダイク ---------- */
+const KL={ id:'k',
+ init(seed,o){ const d=[];for(let i=0;i<52;i++)d.push(i); shuf(d,seed); const t=[[],[],[],[],[],[],[]];
+  for(let i=0;i<7;i++) for(let j=i;j<7;j++){ const c=d.pop(); t[j].push(j===i?c:c+DN); }
+  return {g:'k',d:(o&&o.draw)||1,stock:d,waste:[],f:[0,0,0,0],t}; },
+ moves(s,solver){ const ms=[], t=s.t;
+  const fup=c=>s.f[cst(c)]===crk(c);
+  const canT=(c,k)=>{ const col=t[k]; if(!col.length) return crk(c)===12; const x=col[col.length-1]; return cup(x)&&cred(x)!==cred(c)&&crk(x)===crk(c)+1; };
+  if(s.waste.length){ const c=s.waste[s.waste.length-1]; if(fup(c)) ms.push({a:'w',b:'f',k:cst(c)}); let e=false;
+    for(let k=0;k<7;k++) if(canT(c,k)){ if(!t[k].length){ if(e) continue; e=true } ms.push({a:'w',b:'t',k}) } }
+  for(let i=0;i<7;i++){ const col=t[i], L=col.length;
+    for(let j=0;j<L;j++){ const c=col[j]; if(!cup(c)) continue;
+      if(j===L-1&&fup(c)) ms.push({a:'t',i,j,b:'f',k:cst(c)});
+      let e=false; for(let k=0;k<7;k++){ if(k===i||!canT(c,k)) continue;
+        if(!t[k].length){ if(e||j===0) continue; e=true }
+        ms.push({a:'t',i,j,b:'t',k}) } } }
+  if(!solver) for(let su=0;su<4;su++) if(s.f[su]>0){ const c=su*13+s.f[su]-1; for(let k=0;k<7;k++) if(canT(c,k)) ms.push({a:'f',i:su,b:'t',k}); }
+  if(s.stock.length||s.waste.length) ms.push({a:'d'});
+  return ms; },
+ apply(s,m){ const n={g:'k',d:s.d,stock:s.stock,waste:s.waste,f:s.f,t:s.t};
+  if(m.a==='d'){ if(s.stock.length){ const st=s.stock.slice(), w=s.waste.slice(); for(let q=0;q<s.d&&st.length;q++) w.push(st.pop()); n.stock=st; n.waste=w; } else { n.stock=s.waste.slice().reverse(); n.waste=[]; } return n; }
+  let cards;
+  if(m.a==='w'){ n.waste=s.waste.slice(0,-1); cards=[s.waste[s.waste.length-1]]; }
+  else if(m.a==='f'){ cards=[m.i*13+s.f[m.i]-1]; n.f=s.f.slice(); n.f[m.i]--; }
+  else { const col=s.t[m.i]; cards=col.slice(m.j); n.t=s.t.slice(); const nc=col.slice(0,m.j); if(nc.length&&!cup(nc[nc.length-1])) nc[nc.length-1]-=DN; n.t[m.i]=nc; }
+  if(m.b==='f'){ if(n.f===s.f) n.f=s.f.slice(); n.f[m.k]++; }
+  else { if(n.t===s.t) n.t=s.t.slice(); n.t[m.k]=n.t[m.k].concat(cards); }
+  return n; },
+ won:s=>s.f[0]+s.f[1]+s.f[2]+s.f[3]===52,
+ count:s=>s.f[0]+s.f[1]+s.f[2]+s.f[3],
+ key:s=>s.t.map(c=>c.join(',')).join('|')+'#'+s.stock.join(',')+'#'+s.waste.join(','),
+ order(s,ms){ return srt(ms,m=>{ if(m.b==='f') return 0; if(m.a==='d') return 9;
+  if(m.a==='w') return 3;
+  const col=s.t[m.i]; if(m.j>0&&!cup(col[m.j-1])) return 1; if(m.j===0) return 2; return 5; }); } };
+
+/* ---------- スパイダー ---------- */
+function spChk(n,k){ const col=n.t[k], L=col.length; if(L<13) return;
+  const top=col[L-1]; if(!cup(top)||crk(top)!==0) return; const su=cst(top);
+  for(let q=1;q<13;q++){ const c=col[L-1-q]; if(!cup(c)||crk(c)!==q||cst(c)!==su) return; }
+  const nc=col.slice(0,L-13); if(nc.length&&!cup(nc[nc.length-1])) nc[nc.length-1]-=DN; n.t[k]=nc; n.done++; }
+const SP={ id:'s',
+ init(seed,o){ const ns=(o&&o.suits)||1, d=[]; for(let q=0;q<8;q++){ const base=ns===1?0:ns===2?(q%2)*13:(q%4)*13; for(let r=0;r<13;r++) d.push(base+r); }
+  shuf(d,seed); const t=[]; for(let k=0;k<10;k++) t.push([]);
+  for(let i=0;i<54;i++){ t[i%10].push(d.pop()+DN); } t.forEach(c=>{c[c.length-1]-=DN});
+  return {g:'s',n:ns,t,stock:d,done:0}; },
+ moves(s){ const ms=[], t=s.t;
+  for(let i=0;i<10;i++){ const col=t[i], L=col.length; if(!L) continue; let j=L-1; if(!cup(col[j])) continue;
+   while(j>0&&cup(col[j-1])&&cst(col[j-1])===cst(col[j])&&crk(col[j-1])===crk(col[j])+1) j--;
+   for(let st=L-1;st>=j;st--){ const c=col[st]; let e=false;
+    for(let k=0;k<10;k++){ if(k===i) continue; const d=t[k];
+     if(!d.length){ if(e||st===0) continue; e=true; ms.push({a:'t',i,j:st,b:'t',k}); }
+     else if(crk(d[d.length-1])===crk(c)+1) ms.push({a:'t',i,j:st,b:'t',k}); } } }
+  if(s.stock.length&&t.every(x=>x.length)) ms.push({a:'d'});
+  return ms; },
+ apply(s,m){ const n={g:'s',n:s.n,t:s.t.slice(),stock:s.stock,done:s.done};
+  if(m.a==='d'){ n.stock=s.stock.slice(0,-10); for(let k=0;k<10;k++) n.t[k]=s.t[k].concat([s.stock[s.stock.length-1-k]]); for(let k=0;k<10;k++) spChk(n,k); return n; }
+  const col=s.t[m.i], cards=col.slice(m.j), nc=col.slice(0,m.j); if(nc.length&&!cup(nc[nc.length-1])) nc[nc.length-1]-=DN;
+  n.t[m.i]=nc; n.t[m.k]=s.t[m.k].concat(cards); spChk(n,m.k); return n; },
+ won:s=>s.done===8, count:s=>s.done,
+ key:s=>s.t.map(c=>c.join(',')).join('|')+'#'+s.stock.length,
+ order(s,ms){ return srt(ms,m=>{ if(m.a==='d') return 50; const col=s.t[m.i], c=col[m.j], d=s.t[m.k], x=d[d.length-1];
+  let sc=(x!==undefined&&cst(x)===cst(c))?0:20; if(m.j>0&&!cup(col[m.j-1])) sc-=8; if(!d.length) sc+=10;
+  if(m.j>0&&cup(col[m.j-1])&&cst(col[m.j-1])===cst(c)&&crk(col[m.j-1])===crk(c)+1) sc+=30; return sc; }); } };
+
+/* ---------- フリーセル ---------- */
+const FC={ id:'f',
+ init(seed){ const d=[];for(let i=0;i<52;i++)d.push(i); shuf(d,seed); const t=[[],[],[],[],[],[],[],[]]; d.forEach((c,i)=>t[i%8].push(c));
+  return {g:'f',t,c:[-1,-1,-1,-1],f:[0,0,0,0]}; },
+ moves(s){ const ms=[], t=s.t; let nc=0,ne=0; s.c.forEach(x=>{if(x<0)nc++}); t.forEach(x=>{if(!x.length)ne++});
+  const fup=c=>s.f[cst(c)]===crk(c);
+  const canT=(c,k)=>{ const col=t[k]; if(!col.length) return true; const x=col[col.length-1]; return cred(x)!==cred(c)&&crk(x)===crk(c)+1; };
+  for(let i=0;i<4;i++){ const c=s.c[i]; if(c<0) continue; if(fup(c)) ms.push({a:'c',i,b:'f',k:cst(c),n:1}); let e=false;
+    for(let k=0;k<8;k++) if(canT(c,k)){ if(!t[k].length){ if(e) continue; e=true } ms.push({a:'c',i,b:'t',k,n:1}); } }
+  for(let i=0;i<8;i++){ const col=t[i], L=col.length; if(!L) continue; let j=L-1;
+    while(j>0&&cred(col[j-1])!==cred(col[j])&&crk(col[j-1])===crk(col[j])+1) j--;
+    for(let st=L-1;st>=j;st--){ const n=L-st, c=col[st];
+      if(n===1){ if(fup(c)) ms.push({a:'t',i,j:st,b:'f',k:cst(c),n}); if(nc>0) ms.push({a:'t',i,j:st,b:'c',n}); }
+      let e=false; for(let k=0;k<8;k++){ if(k===i||!canT(c,k)) continue; const de=!t[k].length;
+        const max=(nc+1)*(1<<(de?ne-1:ne)); if(n>max) continue;
+        if(de){ if(e||st===0) continue; e=true }
+        ms.push({a:'t',i,j:st,b:'t',k,n}); } } }
+  return ms; },
+ apply(s,m){ const n={g:'f',t:s.t,c:s.c,f:s.f}; let cards;
+  if(m.a==='c'){ cards=[s.c[m.i]]; n.c=s.c.slice(); n.c[m.i]=-1; }
+  else { const col=s.t[m.i]; cards=col.slice(m.j); n.t=s.t.slice(); n.t[m.i]=col.slice(0,m.j); }
+  if(m.b==='f'){ n.f=s.f.slice(); n.f[m.k]++; }
+  else if(m.b==='c'){ if(n.c===s.c) n.c=s.c.slice(); n.c[n.c.indexOf(-1)]=cards[0]; }
+  else { if(n.t===s.t) n.t=s.t.slice(); n.t[m.k]=n.t[m.k].concat(cards); }
+  return n; },
+ won:s=>s.f[0]+s.f[1]+s.f[2]+s.f[3]===52, count:s=>s.f[0]+s.f[1]+s.f[2]+s.f[3],
+ key:s=>s.t.map(c=>c.join(',')).sort().join('|')+'#'+s.c.slice().sort((a,b)=>a-b).join(',')+'#'+s.f.join(','),
+ order(s,ms){ return srt(ms,m=>{ if(m.b==='f') return 0; if(m.b==='c') return 6; if(m.a==='c') return 2;
+  const col=s.t[m.i]; let sc=3; if(m.j===0) sc=1; return sc-(m.n>1?0.5:0); }); } };
+
+const E={k:KL,s:SP,f:FC};
+
+/* ---------- 探索（ヒント・解ける配りの選別） ---------- */
+function solve(G,s0,cap,avoid){
+  const seen=new Set(avoid||[]); seen.add(G.key(s0)); const stack=[{s:s0,ms:G.order(s0,G.moves(s0,true)),i:0}]; const path=[]; let nodes=0;
+  if(G.won(s0)) return {ok:true,path:[],nodes:0};
+  while(stack.length){ const top=stack[stack.length-1];
+    if(top.i>=top.ms.length){ stack.pop(); if(path.length>Math.max(0,stack.length-1)) path.pop(); continue; }
+    const m=top.ms[top.i++]; const ns=G.apply(top.s,m); const k=G.key(ns);
+    if(seen.has(k)) continue; seen.add(k);
+    if(++nodes>cap) return {ok:false,timeout:true,nodes};
+    path.push(m);
+    if(G.won(ns)) return {ok:true,path,nodes};
+    stack.push({s:ns,ms:G.order(ns,G.moves(ns,true)),i:0}); }
+  return {ok:false,timeout:false,nodes}; }
+
+
+/* 最良優先探索（フリーセル用：短めの手順を見つける） */
+function fcH(s){ let h=(52-(s.f[0]+s.f[1]+s.f[2]+s.f[3]))*8; let used=0; for(const c of s.c) if(c>=0) used++; h+=used*3;
+  const need=[s.f[0],s.f[1],s.f[2],s.f[3]];
+  for(const col of s.t){ for(let j=0;j<col.length;j++){ const c=col[j], su=cst(c); if(crk(c)>=need[su]){ const above=col.length-1-j; if(crk(c)===need[su]) h+=above*4; else if(j>0&&crk(col[j-1])>=0){} } }
+    for(let j=0;j+1<col.length;j++){ const a=col[j], b=col[j+1]; if(!(cred(a)!==cred(b)&&crk(a)===crk(b)+1)) h+=1; } }
+  return h; }
+function solveBF(G,s0,cap,hf,w){ const seen=new Map(); const heap=[]; let nodes=0; w=w||1;
+  const push=n=>{ heap.push(n); let i=heap.length-1; while(i>0){ const p=(i-1)>>1; if(heap[p].f<=n.f) break; heap[i]=heap[p]; i=p; } heap[i]=n; };
+  const pop=()=>{ const top=heap[0], last=heap.pop(); if(heap.length){ let i=0; for(;;){ let c=2*i+1; if(c>=heap.length) break; if(c+1<heap.length&&heap[c+1].f<heap[c].f) c++; if(heap[c].f>=last.f) break; heap[i]=heap[c]; i=c; } heap[i]=last; } return top; };
+  const root={s:s0,g:0,p:null,m:null,f:0}; seen.set(G.key(s0),0); push(root);
+  while(heap.length){ const n=pop(); if(G.won(n.s)){ const path=[]; for(let q=n;q.p;q=q.p) path.push(q.m); path.reverse(); return {ok:true,path,nodes}; }
+    if(++nodes>cap) return {ok:false,timeout:true,nodes};
+    for(const m of G.moves(n.s,true)){ const ns=G.apply(n.s,m), k=G.key(ns), g=n.g+1; const old=seen.get(k); if(old!==undefined&&old<=g) continue; seen.set(k,g);
+      push({s:ns,g,p:n,m,f:g+w*hf(ns)}); } }
+  return {ok:false,timeout:false,nodes}; }
+/* 探索で見つけた手順の遠まわりを近道でけずる */
+const XK=s=>JSON.stringify([s.t,s.c,s.f,s.stock,s.waste]);
+function shorten(G,s0,path){
+  const st=[s0]; for(const m of path) st.push(G.apply(st[st.length-1],m));
+  const keys=st.map(XK); const out=[]; let i=0;
+  while(i<path.length){ const ms=G.moves(st[i],true); let bj=i+1, bm=path[i];
+    const idx=new Map(); for(let j=path.length;j>i;j--) if(!idx.has(keys[j])) idx.set(keys[j],j);
+    for(const m of ms){ const k=XK(G.apply(st[i],m)); const j=idx.get(k); if(j!==undefined&&j>bj){ bj=j; bm=m; } }
+    out.push(bm); i=bj; }
+  return out; }
+
+/* ヒント・選別で使う入口。ゲームごとに合う探索をえらぶ */
+function solveAny(G,s0,cap,avoid){
+  if(G.id==='f') return solveBF(G,s0,cap,fcH,2);
+  const r=solve(G,s0,cap,avoid); if(r.ok&&r.path.length>1){ let p=r.path; for(let z=0;z<3;z++){ const q=shorten(G,s0,p); if(q.length>=p.length) break; p=q; } r.path=p; } return r; }
+if(typeof module!=='undefined') module.exports={E,solve,solveAny,solveBF,fcH,shorten,KL,SP,FC,SU,RK,DN,crk,cst,cup,cred};
+
+const POOL={"k1":[1,2,3,8,9,10,12,14,16,20,22,23,24,28,30,32,34,39,40,42,43,44,45,47,49,50,51,53,55,57,58,60,61,62,63,64,66,67,69,72,73,74,77,80,81,82,86,90,91,92,95,96,97,104,105,110,115,117,121,124,126,127,130,134,135,136,137,138,140,141,142,143,145,147,149,150,152,153,155,156,158,160,163,164,165,167,168,169,170,172,173,177,179,183,184,185,186,187,188,189,191,193,195,196,197,198,199,200,203,206,207,213,214,215,216,218,220,221,222,224,225,228,230,231,232,236,237,239,241,242],"k3":[1,3,5,9,10,11,12,15,16,20,22,23,28,30,32,36,39,40,44,45,47,50,51,55,57,58,61,63,64,65,66,67,69,71,72,73,74,80,81,82,88,89,90,92,95,96,97,104,109,110,121,126,127,130,133,134,136,137,141,143,145,147,149,150,152,153,155,156,158,163,165,167,168,170,172,173,183,184,185,187,190,191,193,195,196,197,198,200,201,202,203,205,212,216,218,219,220,222,225,226,228,231,232,236,237,239,240,241,248,250,253,257,265,266,268,269,271,272,273,277,278,280,281,282,283,284,286,287,289,291],"s1":[1,2,5,6,7,8,9,10,11,12,13,18,19,20,21,22,23,24,25,26,27,28,29,31,32,33,34,35,36,37,38,39,41,42,44,45,46,47,48,50,51,55,56,57,58,59,60,61,62,63,64,65,67,68,69,70,72,73,74,75,77,78,80,82,83,85,86,87,88,89,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,112,113,115,116,117,118,119,120,121,122,123,124,125,126,127,130,131,132,133,134,135,136,137,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,156],"s2":[1027,1032,1044,1049,1056,1071,1087,1095,1121,1164,1174,1177,1181,1186,1193,1251,1302,1334,1342,1343,1348,1354,1357,1360,1373,1376,1390,1399,1401,1404,1414,1422,1434,1500,1520,1541,1542,1559,1589,1593,1605,1615,1620,1626,1627,1631,1632,1639,1644,1649,1663,1678],"f":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,48,49,51,52,53,54,55,56,57,58,59,60,61,62,63,65,66,67,68,69,70,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,119,120,121,122,124,125,126,127,128,129,130,131,132,133,134,135,136]};
+const STG={"k":[[1,152],[1,136],[1,158],[1,67],[1,140],[1,43],[1,77],[1,1],[1,199],[1,160],[1,30],[1,32],[1,115],[1,164],[1,82],[3,240],[3,205],[3,63],[3,80],[3,273],[3,1],[3,22],[3,50],[3,200],[3,272],[3,269],[3,32],[3,282],[3,231],[3,45]],"s":[[1,35],[1,94],[1,63],[1,143],[1,100],[1,146],[1,156],[1,25],[1,36],[1,144],[1,11],[1,77],[1,28],[1,150],[1,152],[2,1071],[2,1302],[2,1177],[2,1559],[2,1049],[2,1357],[2,1376],[2,1121],[2,1251],[2,1593],[2,1541],[2,1027],[2,1605],[2,1360],[2,1186]],"f":[[0,43],[0,76],[0,17],[0,84],[0,132],[0,108],[0,94],[0,36],[0,128],[0,42],[0,119],[0,58],[0,110],[0,23],[0,66],[0,4],[0,124],[0,56],[0,62],[0,15],[0,95],[0,35],[0,28],[0,73],[0,89],[0,136],[0,49],[0,75],[0,40],[0,121]]};
 const $=id=>document.getElementById(id);
 const pick=a=>a[(Math.random()*a.length)|0];
 const mkStore=pre=>({get(k,d){try{const v=localStorage.getItem(pre+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(pre+k,JSON.stringify(v))}catch(e){}}});
@@ -357,70 +566,193 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
   setTimeout(()=>openM('mRes'),o.delay??900);
 }
 
+
+
+/* ===== アプリ本体 ===== */
 const GID='solitaire';
-
 const store=mkStore('mc_'+GID+'_');
-const S=Object.assign({sound:true,talk:true},store.get('settings',{})); SND.on=S.sound; TALK.on=S.talk;
-const syncHelp=bindSettings($('mHelp'),S,()=>{SND.on=S.sound;TALK.on=S.talk;store.set('settings',S)}); syncHelp();
-$('bHelp').onclick=()=>{actx();SFX.tap();syncHelp();openM('mHelp')};
-$('bHome').onclick=()=>{location.href=$('homeBtn').href};
-function report(t,o){try{window.MC&&MC.report(GID,t,o||{})}catch(e){}}
+const S=Object.assign({sound:true,talk:true,auto:true,kd:'1',sd:'1'},store.get('settings',{}));
+SND.on=S.sound; TALK.on=S.talk;
+const GN={k:'クロンダイク',s:'スパイダー',f:'フリーセル'};
+const NST=30;
+const P=Object.assign({st:{k:{},s:{},f:{}},daily:{}},store.get('prog',{})); ['k','s','f'].forEach(g=>{P.st[g]=P.st[g]||{}});
+const saveP=()=>store.set('prog',P);
 const fmt=ms=>{const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
-function swipe(el,cb){ let sx=0,sy=0,on=false; el.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;on=true},{passive:true});
-  el.addEventListener('touchend',e=>{ if(!on) return; on=false; const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy; if(Math.max(Math.abs(dx),Math.abs(dy))<24) return;
-    cb(Math.abs(dx)>Math.abs(dy)?(dx>0?'r':'l'):(dy>0?'d':'u')); },{passive:true}); }
-function keys(cb){ addEventListener('keydown',e=>{const k={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'}[e.key]; if(k){e.preventDefault();cb(k)}}); }
-function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<button data-i="${i}" class="${i===cur?'on':''}">${n}${starsOf&&starsOf(i)?'<i>'+'★'.repeat(starsOf(i))+'</i>':''}</button>`).join('');
-  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
-if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
+function report(t,o){try{window.MC&&MC.report(GID,t,o||{})}catch(e){}}
+const syncs=[bindSettings($('mHelp'),S,()=>{SND.on=S.sound;TALK.on=S.talk;store.set('settings',S)}),bindSettings($('mMenu'),S,()=>{store.set('settings',S)})];
+const syncAll=()=>syncs.forEach(f=>f());
+const optsOf=(g,v)=>g==='k'?{draw:v}:g==='s'?{suits:v}:{};
 
-const SU=['♠','♥','♦','♣'], RK=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-let stock,waste,fnd,tab,sel=null,hist=[],mv=0,t0=0,tick=null,done=false;
-const red=c=>c.s===1||c.s===2;
-function deal(){ clearInterval(tick); const d=[]; for(let s=0;s<4;s++)for(let r=0;r<13;r++) d.push({s,r,up:false}); d.sort(()=>Math.random()-.5);
-  tab=[...Array(7)].map(()=>[]); for(let i=0;i<7;i++) for(let j=i;j<7;j++){ const c=d.pop(); tab[j].push(c); } tab.forEach(t=>t[t.length-1].up=true);
-  stock=d; waste=[]; fnd=[[],[],[],[]]; sel=null; hist=[]; mv=0; t0=0; done=false; $('tm').textContent='0:00'; draw(); setStatus('Aから台に上げていこう'); setTimeout(()=>sayText(1,'くばったワン！'),300); }
-const snap=()=>JSON.stringify({stock,waste,fnd,tab,mv});
-function save(){ hist.push(snap()); if(hist.length>200) hist.shift(); if(!t0){t0=Date.now();tick=setInterval(()=>$('tm').textContent=fmt(Date.now()-t0),500)} }
-function canF(c,fi){ const f=fnd[fi]; return f.length?(f[f.length-1].s===c.s&&f[f.length-1].r===c.r-1):c.r===0; }
-function canT(c,ti){ const t=tab[ti]; if(!t.length) return c.r===12; const top=t[t.length-1]; return top.up&&red(top)!==red(c)&&top.r===c.r+1; }
-function pickCards(src){ if(src.k==='w') return [waste[waste.length-1]]; if(src.k==='f') return [fnd[src.i][fnd[src.i].length-1]]; return tab[src.i].slice(src.j); }
-function remove(src,n){ if(src.k==='w') waste.pop(); else if(src.k==='f') fnd[src.i].pop(); else { tab[src.i].splice(src.j,n); const t=tab[src.i]; if(t.length&&!t[t.length-1].up) t[t.length-1].up=true; } }
-function tryMove(src,dst){ const cs=pickCards(src); if(!cs[0]) return false;
-  if(dst.k==='f'){ if(cs.length!==1||!canF(cs[0],dst.i)) return false; save(); remove(src,1); fnd[dst.i].push(cs[0]); }
-  else { if(src.k==='t'&&src.i===dst.i) return false; if(!canT(cs[0],dst.i)) return false; save(); remove(src,cs.length); tab[dst.i].push(...cs); }
-  mv++; SFX.put(); sel=null; after(); return true; }
-function auto(src){ const cs=pickCards(src); if(cs.length===1) for(let i=0;i<4;i++) if(canF(cs[0],i)) return tryMove(src,{k:'f',i});
-  for(let i=0;i<7;i++) if(tryMove(src,{k:'t',i})) return true; SFX.ng(); sel=null; draw(); return false; }
-function tapCard(src){ actx(); if(sel&&sel.k===src.k&&sel.i===src.i&&sel.j===src.j){ auto(src); return; }
-  if(sel){ const dst=src.k==='f'?{k:'f',i:src.i}:src.k==='t'?{k:'t',i:src.i}:null; if(dst&&tryMove(sel,dst)) return; }
+/* --- 日付 --- */
+const pad=n=>String(n).padStart(2,'0');
+const dstr=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const todayS=()=>dstr(new Date());
+const dayNum=d=>Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000);
+const DK={k:'k1',s:'s1',f:'f'}, DOFF={k:1,s:3,f:5};
+function dailySeed(g,d){ const p=POOL[DK[g]]; return p[(dayNum(d||new Date())*7+DOFF[g])%p.length]; }
+
+/* --- ゲーム状態 --- */
+let CX=null, ST=null, hist=[], mvN=0, t0=0, tick=null, done=false, busy=false, hints=0, undos=0, sel=null, hintM=null, autoT=null;
+const Gx=()=>E[CX.g];
+function modeName(){ return CX.mode==='stage'?'ステージ'+(CX.idx+1):CX.mode==='daily'?'きょうのチャレンジ':'ランダム'+(CX.g==='k'?'('+CX.o.draw+'枚)':CX.g==='s'?'('+CX.o.suits+'色)':''); }
+function startGame(g,mode,idx){ let seed,o;
+  if(mode==='stage'){ const [v,sd]=STG[g][idx]; seed=sd; o=optsOf(g,v); }
+  else if(mode==='daily'){ seed=dailySeed(g); o=optsOf(g,1); }
+  else { const key=g==='k'?'k'+S.kd:g==='s'?'s'+S.sd:'f'; const p=POOL[key]; seed=p[(Math.random()*p.length)|0]; o=optsOf(g,g==='k'?+S.kd:g==='s'?+S.sd:0); }
+  CX={g,mode,idx,seed,o}; store.set('lastg',g); newBoard(true); }
+function newBoard(fresh){ plan=null; clearInterval(tick); clearTimeout(autoT);
+  ST=Gx().init(CX.seed,CX.o); hist=[]; mvN=0; t0=0; done=false; busy=false; hints=0; undos=0; sel=null; hintM=null; $('tm').textContent='0:00';
+  ['mMenu','mSel','mDaily','mRes'].forEach(closeM);
+  $('gTitle').textContent=GN[CX.g]+' '+modeName(); $('fdL').textContent=CX.g==='s'?'完成した組':'台に上げた';
+  draw(); setStatus(CX.g==='s'?'数字を小さくして重ねよう':CX.g==='f'?'空きマスをじょうずに使おう':'Aから台に上げていこう');
+  if(fresh) setTimeout(()=>sayText(1,'くばったワン！'),300); }
+
+/* --- 動かす --- */
+const fromEq=(m,s)=>m.a===s.a&&(s.a==='w'||s.a==='d'||(m.i===s.i&&(s.a!=='t'||m.j===s.j)));
+const toEq=(m,d)=>m.b===d.b&&(d.b!=='t'||m.k===d.k);
+const legal=()=>Gx().moves(ST,false);
+function score(m){ if(m.b==='f') return 0; if(m.b==='c') return 3; const d=ST.t[m.k]; if(!d.length) return 2;
+  if(CX.g==='s'){ const c=ST.t[m.i][m.j], x=d[d.length-1]; return cst(x)===cst(c)?.5:1 } return 1; }
+const bestOf=ms=>ms.slice().sort((a,b)=>score(a)-score(b))[0];
+function doMove(m){ if(done||busy) return; const G=Gx();
+  if(!t0){ t0=Date.now(); tick=setInterval(()=>$('tm').textContent=fmt(Date.now()-t0),500); }
+  const before=G.count(ST); hist.push(ST); ST=G.apply(ST,m); mvN++; sel=null; hintM=null;
+  const after=G.count(ST);
+  if(CX.g==='s'&&after>before){ SFX.win(); burstEl($('tb'),['✨','🐾'],6); } else if(m.b==='f') SFX.ok(); else if(m.a==='d') SFX.tap(); else SFX.put();
+  draw(); afterMove(); }
+function afterMove(){ const G=Gx(); if(G.won(ST)){ win(); return; }
+  if(CX.g!=='s'&&canAuto()){ autoFinish(); return; }
+  if(CX.g!=='k'&&!G.moves(ST,false).length){ setStatus('うごかせる手がないよ…「もどす」でやりなおそう'); toast('手がなくなったよ',true); } }
+function canAuto(){ const G=Gx(); let s=ST, nd=0;
+  if(CX.g==='k'&&s.t.some(c=>c.some(x=>!cup(x)))) return false;
+  for(let q=0;q<400;q++){ if(G.won(s)) return true; const ms=G.moves(s,true); const fm=ms.find(m=>m.b==='f');
+    if(fm){ s=G.apply(s,fm); nd=0; continue; }
+    if(CX.g==='k'&&ms.some(m=>m.a==='d')&&nd<60){ s=G.apply(s,{a:'d'}); nd++; continue; } return false; }
+  return false; }
+function autoFinish(){ busy=true; const G=Gx(); setStatus('あとは自動でかたづけるよ！');
+  const step=()=>{ if(G.won(ST)){ busy=false; win(); return; }
+    const ms=G.moves(ST,true); let m=ms.find(x=>x.b==='f')||(CX.g==='k'?{a:'d'}:null); if(!m){ busy=false; return; }
+    ST=G.apply(ST,m); if(m.b==='f'){ mvN++; SFX.tap(); } draw(); autoT=setTimeout(step,m.b==='f'?80:30); };
+  autoT=setTimeout(step,300); }
+function onStock(){ if(done||busy) return; actx(); const G=Gx(), ms=legal().filter(m=>m.a==='d');
+  if(ms.length){ doMove(ms[0]); return; }
+  if(CX.g==='s'&&ST.stock.length) toast('からっぽの列があると配れないよ',true); else SFX.ng(); }
+function cardMoves(src){ return legal().filter(m=>fromEq(m,src)); }
+function tryDst(dst){ if(!sel) return false; const ms=legal().filter(m=>fromEq(m,sel)&&toEq(m,dst)); if(!ms.length) return false; doMove(bestOf(ms)); return true; }
+function onDst(dst){ if(done||busy) return; actx(); if(sel){ if(!tryDst(dst)){ SFX.ng(); sel=null; draw(); } } }
+const sameSrc=(a,b)=>a&&b&&a.a===b.a&&a.i===b.i&&a.j===b.j;
+function onSrc(src){ if(done||busy) return; actx();
+  if(hintM&&hintM.a!=='d'&&fromEq(hintM,src)){ doMove(hintM); return; }
+  if(!S.auto&&sel){ const dst=src.a==='t'?{b:'t',k:src.i}:src.a==='f'?{b:'f'}:null; if(dst&&tryDst(dst)) return; }
+  const ms=cardMoves(src); if(!ms.length){ SFX.ng(); if(sel){sel=null;draw()} return; }
+  if(S.auto||sameSrc(sel,src)){ doMove(bestOf(ms)); return; }
   sel=src; SFX.tap(); draw(); }
-function tapSlot(dst){ actx(); if(sel){ if(!tryMove(sel,dst)){SFX.ng();sel=null;draw();} } }
-function tapStock(){ actx(); save(); if(stock.length){ const c=stock.pop(); c.up=true; waste.push(c); } else { if(!waste.length){hist.pop();return} stock=waste.reverse().map(c=>(c.up=false,c)); waste=[]; } mv++; sel=null; SFX.tap(); draw(); }
-function after(){ draw(); const n=fnd.reduce((a,f)=>a+f.length,0);
-  if(n===52) return win();
-  if(!stock.length&&!waste.length&&tab.every(t=>t.every(c=>c.up))) setTimeout(autoFinish,250); }
-function autoFinish(){ for(let i=0;i<7;i++){ const t=tab[i]; if(!t.length) continue; const c=t[t.length-1]; for(let f=0;f<4;f++) if(canF(c,f)){ tab[i].pop(); fnd[f].push(c); mv++; SFX.tap(); draw(); if(fnd.reduce((a,x)=>a+x.length,0)===52) return win(); return setTimeout(autoFinish,90); } } }
-function win(){ if(done) return; done=true; clearInterval(tick); report('clear',{stars:3}); SFX.win(); confetti(['🃏','🐾','✨','♥']); sayText(1,'やったワン！',true); sayText(2,'すごーい♪',true); setStatus('クリア！');
-  showResult({winner:0,title:'🎉 ソリティア クリア！',score:fmt(Date.now()-t0)+'・'+mv+'手',msg:'全部のカードを台に上げたよ！'}); }
-function cardEl(c,x,y,w,h,src){ const e=document.createElement('div'); e.className='cd '+(c.up?(red(c)?'r':'k'):'dn'); Object.assign(e.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'});
-  if(c.up){ e.innerHTML=`<span class="tl">${RK[c.r]}<s>${SU[c.s]}</s></span><span class="md">${SU[c.s]}</span>`; if(src) e.onclick=ev=>{ev.stopPropagation();tapCard(src)}; }
-  if(sel&&src&&sel.k===src.k&&sel.i===src.i&&(sel.k!=='t'||src.j>=sel.j)) e.classList.add('sel'); return e; }
-function slot(x,y,w,h,txt,fn){ const e=document.createElement('div'); e.className='slot'; Object.assign(e.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'}); e.textContent=txt; e.onclick=fn; return e; }
-function draw(){ const T=$('tb'), W=T.clientWidth||360, g=4, w=Math.floor((W-g*6)/7), h=Math.round(w*1.4), X=i=>i*(w+g); T.innerHTML='';
-  const st=slot(X(0),0,w,h,stock.length?'':'↻',tapStock); T.appendChild(st); if(stock.length){ const e=cardEl(stock[0],X(0),0,w,h); e.onclick=tapStock; T.appendChild(e); }
-  T.appendChild(slot(X(1),0,w,h,'',null)); if(waste.length){ T.appendChild(cardEl(waste[waste.length-1],X(1),0,w,h,{k:'w'})); }
-  for(let i=0;i<4;i++){ T.appendChild(slot(X(3+i),0,w,h,SU[i],()=>tapSlot({k:'f',i}))); const f=fnd[i]; if(f.length) T.appendChild(cardEl(f[f.length-1],X(3+i),0,w,h,{k:'f',i})); }
-  const top0=h+12; let maxY=0;
-  for(let i=0;i<7;i++){ T.appendChild(slot(X(i),top0,w,h,'K',()=>tapSlot({k:'t',i}))); let y=top0; const t=tab[i]; const dn=Math.max(6,Math.round(h*.12)), up=Math.round(h*.3);
-    const avail=430+120-top0-h, need=t.reduce((a,c)=>a+(c.up?up:dn),0); const sc=need>avail?avail/need:1;
-    t.forEach((c,j)=>{ T.appendChild(cardEl(c,X(i),y,w,h,c.up?{k:'t',i,j}:null)); y+=Math.round((c.up?up:dn)*sc); }); maxY=Math.max(maxY,y+h); }
-  T.style.height=Math.max(maxY+6,top0+h*3)+'px';
-  $('mv').textContent=mv; $('fd').textContent=fnd.reduce((a,f)=>a+f.length,0)+'/52'; $('bUndo').disabled=!hist.length; }
-$('bUndo').onclick=()=>{ if(!hist.length) return; const o=JSON.parse(hist.pop()); ({stock,waste,fnd,tab,mv}=o); sel=null; done=false; SFX.tap(); draw(); };
-$('bReset').onclick=()=>{actx();SFX.tap();deal()}; $('bAgain').textContent='新しくくばる'; $('bAgain').onclick=()=>{closeM('mRes');deal()};
-addEventListener('resize',draw); deal();
 
+/* --- もどす・やりなおし・ヒント --- */
+$('bUndo').onclick=()=>{ if(!hist.length||busy) return; actx(); ST=hist.pop(); mvN=Math.max(0,mvN-1); undos++; done=false; sel=null; hintM=null; SFX.tap(); draw(); };
+$('bReset').onclick=()=>{ if(busy) return; actx(); SFX.tap(); newBoard(false); };
+$('bMenu').onclick=()=>{ actx(); SFX.tap(); openMenu(); };
+let plan=null;
+const xkey=s=>JSON.stringify([s.t,s.c,s.f,s.stock,s.waste]);
+$('bHint').onclick=()=>{ if(done||busy) return; actx(); const G=Gx(); setStatus('考え中',true);
+  setTimeout(()=>{ let m=null; const xk=xkey(ST);
+    if(plan){ const i=plan.keys.indexOf(xk); if(i>=0&&i<plan.moves.length) m=plan.moves[i]; }
+    if(!m){ let r; if(hist.length){ r=solveAny(G,ST,120000,hist.map(G.key)); if(!r.ok) r=solveAny(G,ST,120000); } else r=solveAny(G,ST,120000);
+      if(r.ok&&r.path.length){ const keys=[xk]; let s=ST; r.path.forEach(p=>{ s=G.apply(s,p); keys.push(xkey(s)); }); plan={moves:r.path,keys}; m=r.path[0]; }
+      else if(!r.ok&&!r.timeout){ setStatus('この形からは解けないかも…「もどす」でやり直してみよう'); toast('むずかしい形だよ',true); return; }
+      else { const ms=G.order(ST,G.moves(ST,true)); m=ms[0]||null; } }
+    if(!m){ setStatus('うごかせる手がないよ'); return; }
+    hintM=m; hints++; sel=null; SFX.ok(); draw();
+    setStatus(m.a==='d'?(CX.g==='s'?'山札から配ってみよう（光ってるよ）':'山札をめくってみよう（光ってるよ）'):'光ったカードを光った場所へ動かそう'); sayText(2,'こうしてみて！'); },30); };
+
+/* --- クリア --- */
+function win(){ if(done) return; done=true; clearInterval(tick); clearTimeout(autoT); busy=false;
+  const ms=Date.now()-t0, stars=hints?1:undos?2:3;
+  if(CX.mode==='stage'){ if(stars>(P.st[CX.g][CX.idx]||0)) P.st[CX.g][CX.idx]=stars; }
+  else if(CX.mode==='daily'){ const d=todayS(); P.daily[d]=P.daily[d]||{}; if(stars>(P.daily[d][CX.g]||0)) P.daily[d][CX.g]=stars; }
+  saveP(); report('clear',{stars}); SFX.win(); confetti(['🃏','🐾','✨','♥','♠']); sayText(1,'やったワン！',true); sayText(2,'すごーい♪',true); setStatus('クリア！');
+  const nextLbl=CX.mode==='stage'?(CX.idx<NST-1?'つぎのステージ':'ステージえらび'):CX.mode==='daily'?'まいにち画面へ':'あたらしく配る';
+  $('bAgain').textContent=nextLbl;
+  $('bAgain').onclick=()=>{ closeM('mRes'); if(CX.mode==='stage'){ if(CX.idx<NST-1) startGame(CX.g,'stage',CX.idx+1); else openSel(CX.g); } else if(CX.mode==='daily') openDaily(); else startGame(CX.g,'random'); };
+  showResult({winner:0,title:'🎉 '+GN[CX.g]+' クリア！',score:fmt(ms)+'・'+mvN+'手',msg:stars===3?'★★★ ヒントも「もどす」も使わなかったよ！':stars===2?'ヒントなしでクリア！':'クリアおめでとう！',
+    extra:`<div class="bigStars">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</div>`,rec:'★1 クリア　★2 ヒントなし　★3 ヒント・もどすなし'}); }
+$('bResMenu').onclick=()=>{ closeM('mRes'); openMenu(); };
+
+/* --- 描画 --- */
+function faceOf(r){ return r===10?'🐕':r===11?'🐩':r===12?'🦮':''; }
+function cardEl(c,x,y,w,h,cls){ const e=document.createElement('div'); const up=cup(c);
+  e.className='cd '+(up?(cred(c)?'r':'k'):'dn')+(cls?' '+cls:''); Object.assign(e.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px',fontSize:(w*.4)+'px'});
+  if(up){ const r=crk(c), s=cst(c); e.innerHTML=`<span class="tl">${RK[r]}${SU[s]}</span>`+(r>=10?`<span class="fc">${faceOf(r)}</span>`:`<span class="md">${SU[s]}</span>`); }
+  return e; }
+function slot(x,y,w,h,txt,fn,cls){ const e=document.createElement('div'); e.className='slot'+(cls?' '+cls:''); Object.assign(e.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'}); e.textContent=txt||''; if(fn) e.onclick=fn; return e; }
+const hSrc=(a,i,j)=>hintM&&hintM.a===a&&(a==='w'||a==='d'||(hintM.i===i&&(a!=='t'||j>=hintM.j)));
+const hDst=(b,k)=>hintM&&hintM.b===b&&(b!=='t'||hintM.k===k);
+const selOn=(a,i,j)=>sel&&sel.a===a&&(a==='w'||(sel.i===i&&(a!=='t'||j>=sel.j)));
+function clsFor(a,i,j,dstTop){ let c=''; if(selOn(a,i,j)) c='sel'; if(hSrc(a,i,j)) c+=' hint'; if(dstTop&&hDst('t',i)) c+=' hint2'; return c; }
+function stackCol(T,col,i,x,top0,w,h,avail){ const dn=Math.max(5,Math.round(h*.12)), up=Math.round(h*(CX.g==='s'?.27:.3));
+  const need=col.reduce((a,c)=>a+(cup(c)?up:dn),0), sc=need>avail?Math.max(avail/need,.5):1; let y=top0;
+  T.appendChild(slot(x,top0,w,h,CX.g==='k'?'K':'',()=>onDst({b:'t',k:i}),hDst('t',i)&&!col.length?'hint':''));
+  col.forEach((c,j)=>{ const last=j===col.length-1, e=cardEl(c,x,y,w,h,clsFor('t',i,j,last));
+    if(cup(c)) e.onclick=ev=>{ev.stopPropagation();onSrc({a:'t',i,j})}; else e.onclick=ev=>{ev.stopPropagation();onDst({b:'t',k:i})};
+    T.appendChild(e); y+=Math.round((cup(c)?up:dn)*sc); });
+  return y+h; }
+function drawK(T,W){ const g=4,w=Math.floor((W-g*6)/7),h=Math.round(w*1.4),X=i=>i*(w+g); let maxY=0;
+  T.appendChild(slot(X(0),0,w,h,ST.stock.length?'':(ST.waste.length?'↻':''),onStock,hintM&&hintM.a==='d'?'hint':''));
+  if(ST.stock.length){ const e=cardEl(DN,X(0),0,w,h,hintM&&hintM.a==='d'?'hint':''); e.onclick=onStock; const n=document.createElement('span'); n.className='pileN'; n.textContent=ST.stock.length; e.appendChild(n); T.appendChild(e); }
+  T.appendChild(slot(X(1),0,w,h,'',null));
+  const nw=Math.min(ST.d,ST.waste.length), dx=Math.round(w*.3);
+  for(let q=0;q<nw;q++){ const c=ST.waste[ST.waste.length-nw+q], top=q===nw-1; const e=cardEl(c,X(1)+q*dx,0,w,h,top?clsFor('w'):''); if(top) e.onclick=ev=>{ev.stopPropagation();onSrc({a:'w'})}; T.appendChild(e); }
+  for(let i=0;i<4;i++){ T.appendChild(slot(X(3+i),0,w,h,SU[i],()=>onDst({b:'f',k:i}),hDst('f',i)?'hint':'')); if(ST.f[i]>0){ const e=cardEl(i*13+ST.f[i]-1,X(3+i),0,w,h,''); e.onclick=ev=>{ev.stopPropagation();onSrc({a:'f',i})}; T.appendChild(e); } }
+  const top0=h+10; for(let i=0;i<7;i++) maxY=Math.max(maxY,stackCol(T,ST.t[i],i,X(i),top0,w,h,470-top0-h));
+  return Math.max(maxY+6,top0+h*3); }
+function drawS(T,W){ const g=2,w=Math.floor((W-g*9)/10),h=Math.round(w*1.45),X=i=>i*(w+g); let maxY=0;
+  const bw=X(4)-g; const b=document.createElement('div'); b.className='doneBox'; Object.assign(b.style,{left:'0px',top:'0px',width:bw+'px',height:Math.round(h*.8)+'px',fontSize:Math.round(w*.42)+'px'});
+  b.textContent='完成 '+ST.done+'/8　'+'♠'.repeat(ST.done)+'·'.repeat(8-ST.done); T.appendChild(b);
+  const dl=Math.floor(ST.stock.length/10); T.appendChild(slot(X(9),0,w,h,dl?'':'',onStock,hintM&&hintM.a==='d'?'hint':''));
+  if(dl){ const e=cardEl(DN,X(9),0,w,h,hintM&&hintM.a==='d'?'hint':''); e.onclick=onStock; const n=document.createElement('span'); n.className='pileN'; n.textContent='×'+dl; e.appendChild(n); T.appendChild(e); }
+  const top0=h+8; for(let i=0;i<10;i++) maxY=Math.max(maxY,stackCol(T,ST.t[i],i,X(i),top0,w,h,520-top0-h));
+  return Math.max(maxY+6,top0+h*3); }
+function drawF(T,W){ const g=3,w=Math.floor((W-g*7)/8),h=Math.round(w*1.42),X=i=>i*(w+g); let maxY=0;
+  for(let i=0;i<4;i++){ T.appendChild(slot(X(i),0,w,h,'',()=>onDst({b:'c'}),hDst('c')&&ST.c[i]<0&&ST.c.indexOf(-1)===i?'hint':'')); const c=ST.c[i];
+    if(c>=0){ const e=cardEl(c,X(i),0,w,h,clsFor('c',i)); e.onclick=ev=>{ev.stopPropagation();onSrc({a:'c',i})}; T.appendChild(e); } }
+  for(let i=0;i<4;i++){ T.appendChild(slot(X(4+i),0,w,h,SU[i],()=>onDst({b:'f',k:i}),hDst('f',i)?'hint':'')); if(ST.f[i]>0){ const e=cardEl(i*13+ST.f[i]-1,X(4+i),0,w,h,''); e.onclick=ev=>{ev.stopPropagation();onDst({b:'f',k:i})}; T.appendChild(e); } }
+  const top0=h+10; for(let i=0;i<8;i++) maxY=Math.max(maxY,stackCol(T,ST.t[i],i,X(i),top0,w,h,500-top0-h));
+  return Math.max(maxY+6,top0+h*3); }
+function draw(){ if(!ST) return; const T=$('tb'), W=T.clientWidth||340; T.innerHTML='';
+  const H=CX.g==='k'?drawK(T,W):CX.g==='s'?drawS(T,W):drawF(T,W); T.style.height=H+'px';
+  const G=Gx(); $('mv').textContent=mvN; $('fd').textContent=CX.g==='s'?ST.done+'/8':G.count(ST)+'/52'; $('bUndo').disabled=!hist.length||busy; $('bHint').disabled=done||busy; }
+addEventListener('resize',draw);
+
+/* --- メニュー・ステージ・毎日 --- */
+let mg=store.get('lastg','k');
+function starSum(g){ let n=0; for(const k in P.st[g]) n+=P.st[g][k]; return n; }
+function syncMenu(){ document.querySelectorAll('#gpick button').forEach(b=>{ b.classList.toggle('on',b.dataset.g===mg); $('gs_'+b.dataset.g).textContent='★'+starSum(b.dataset.g)+'/'+NST*3; });
+  $('optK').style.display=mg==='k'?'':'none'; $('optS').style.display=mg==='s'?'':'none'; syncAll(); }
+function openMenu(){ syncMenu(); openM('mMenu'); }
+document.querySelectorAll('#gpick button').forEach(b=>b.onclick=()=>{ actx(); SFX.tap(); mg=b.dataset.g; syncMenu(); });
+document.querySelectorAll('.modes button').forEach(b=>b.onclick=()=>{ actx(); SFX.tap(); const m=b.dataset.m;
+  if(m==='stage'){ closeM('mMenu'); openSel(mg); } else if(m==='daily'){ closeM('mMenu'); openDaily(); } else { startGame(mg,'random'); } });
+function openSel(g){ mg=g; $('selT').textContent=GN[g]+' のステージ'; const gr=$('selGrid'); let h='';
+  for(let i=0;i<NST;i++){ const v=STG[g][i][0];
+    if(g==='k'&&(i===0||i===15)) h+=`<div class="sep">${v===1?'1枚めくり':'3枚めくり'}</div>`;
+    if(g==='s'&&(i===0||i===15)) h+=`<div class="sep">${v===1?'1色（かんたん）':'2色（むずかしい）'}</div>`;
+    if(g==='f'&&i===0) h+=`<div class="sep">かんたん → むずかしい</div>`;
+    const n=P.st[g][i]||0; h+=`<button data-i="${i}" class="${CX&&CX.g===g&&CX.mode==='stage'&&CX.idx===i?'on':''}">${i+1}<em>${'★'.repeat(n)}${'☆'.repeat(3-n)}</em></button>`; }
+  gr.innerHTML=h; gr.querySelectorAll('button').forEach(b=>b.onclick=()=>{ actx(); SFX.tap(); startGame(g,'stage',+b.dataset.i); }); openM('mSel'); }
+$('selBack').onclick=()=>{ closeM('mSel'); openMenu(); };
+function streak(){ let n=0; const d=new Date(); if(!P.daily[dstr(d)]) d.setDate(d.getDate()-1); while(P.daily[dstr(d)]&&Object.keys(P.daily[dstr(d)]).length){ n++; d.setDate(d.getDate()-1); } return n; }
+function openDaily(){ const now=new Date(), WD='日月火水木金土'[now.getDay()]; $('dSub').textContent=(now.getMonth()+1)+'/'+now.getDate()+'（'+WD+'）　🔥 連続 '+streak()+' 日';
+  const td=P.daily[todayS()]||{}; $('dRows').innerHTML=['k','s','f'].map(g=>{ const n=td[g]||0; return `<div class="dr"><span>${GN[g]}</span><em>${n?'★'.repeat(n)+'☆'.repeat(3-n):'—'}</em><button class="btn g" data-g="${g}">${n?'もう一回':'あそぶ'}</button></div>`; }).join('');
+  $('dRows').querySelectorAll('button').forEach(b=>b.onclick=()=>{ actx(); SFX.tap(); startGame(b.dataset.g,'daily'); });
+  let c=''; for(let k=13;k>=0;k--){ const d=new Date(); d.setDate(d.getDate()-k); const rec=P.daily[dstr(d)], has=rec&&Object.keys(rec).length;
+    c+=`<div class="${has?'st':''} ${k===0?'tdy':''}"><span>${d.getMonth()+1}/${d.getDate()}</span><b>${has?'🐾':''}</b></div>`; }
+  $('cal').innerHTML=c; openM('mDaily'); }
+$('bHelp').onclick=()=>{ SFX.tap(); closeM('mMenu'); syncAll(); openM('mHelp'); };
+$('mHelp').querySelector('[data-close]').addEventListener('click',()=>{ if(!CX) openMenu(); });
+$('bHome')&&0;
+
+/* --- 起動 --- */
+startGame(mg,'random'); closeM('mMenu'); setTimeout(()=>{ if(!store.get('seen')){ store.set('seen',1); syncAll(); openM('mHelp'); } else openMenu(); },200);
 
 ;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();
 
@@ -434,6 +766,7 @@ const hv=(location.hash||'').slice(1); setVT(VTS.includes(hv)?hv:st.get());
 addEventListener('hashchange',()=>{const h=location.hash.slice(1); if(VTS.includes(h)&&h!==document.body.dataset.vt) setVT(h);});
 document.getElementById('vtBtn').addEventListener('click',e=>{e.stopPropagation(); try{actx();SFX.tap()}catch(_){} setVT(VTS[(VTS.indexOf(document.body.dataset.vt)+1)%3],true);});
 })();
+
 
 })();</script><script src="../fit.js"></script><script src="../backup.js"></script><script>if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 <script src="../bgm.js" data-mount=".app"></script><script src="../result-bubble.js"></script><script src="../stars.js"></script></body></html>
