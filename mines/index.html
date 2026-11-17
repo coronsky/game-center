@@ -345,6 +345,46 @@ body[data-vt=natural] .mc.ms{box-shadow:0 0 0 3px #fff,0 0 0 6px #e8453c,0 0 12p
 body[data-vt=retro] .mc.ms{box-shadow:0 0 0 3px #fff,0 0 0 7px #ffe14a,0 0 14px 8px rgba(255,225,74,.85)!important}
 body[data-vt=neon] .mc.ms{box-shadow:0 0 0 3px #fff,0 0 0 6px #ff2fd0,0 0 14px 7px rgba(255,47,208,.8)!important}
 @keyframes msb{50%{transform:scale(1.07)}}
+
+/* ---- 新素材 (v3): 1マス=1枚の絵、枠もシンプルな新フレーム ---- */
+body[data-vt=natural] .mc{background:url(img/n2_cover.webp) center/100% 100% no-repeat!important;box-shadow:none!important;border-radius:0;filter:none}
+body[data-vt=natural] .mc:not(.op):active{background:url(img/n2_press.webp) center/100% 100% no-repeat!important;filter:none}
+body[data-vt=natural] .mc.op{background:url(img/n2_open.webp) center/100% 100% no-repeat!important;box-shadow:none!important}
+body[data-vt=natural] .mc.op.a{background:url(img/n2_open2.webp) center/100% 100% no-repeat!important;filter:none}
+body[data-vt=natural] .mc.fl{background:url(img/n2_flag.webp) center/100% 100% no-repeat!important;filter:none}
+body[data-vt=natural] .mc.fl.wr{background:url(img/n2_wrong.webp) center/100% 100% no-repeat!important;font-size:0!important;color:transparent!important}
+body[data-vt=natural] .mc.op.boom,body[data-vt=natural] .mc.op.a.boom{background:url(img/n2_boom.webp) center/100% 100% no-repeat!important;filter:none}
+body[data-vt=natural] .mc.bn{background:url(img/n2_bone.webp) center/100% 100% no-repeat!important}
+body[data-vt=natural] .mc.hint{background:url(img/n2_hint.webp) center/100% 100% no-repeat!important}
+body[data-vt=natural] .mc.fl::after,body[data-vt=natural] .mc.fl.wr::after,body[data-vt=natural] .mc.boom::after,body[data-vt=natural] .mc.bn::after{display:none!important}
+body[data-vt=natural] .panel{background:none!important;box-shadow:none!important;border:14px solid transparent;border-image:url(img/n2_frame.webp) 36 fill;padding:0;margin:6px 0 0}
+body[data-vt=natural] .panel .in{background:transparent!important;box-shadow:none!important;margin:-6px}
+body[data-vt=retro] .mc{background:url(img/r2_cover.webp) center/100% 100% no-repeat!important;box-shadow:none!important;border-radius:0;filter:none}
+body[data-vt=retro] .mc:not(.op):active{background:url(img/r2_press.webp) center/100% 100% no-repeat!important;filter:none}
+body[data-vt=retro] .mc.op{background:url(img/r2_open.webp) center/100% 100% no-repeat!important;box-shadow:none!important}
+body[data-vt=retro] .mc.op.a{background:url(img/r2_open2.webp) center/100% 100% no-repeat!important;filter:none}
+body[data-vt=retro] .mc.fl{background:url(img/r2_flag.webp) center/100% 100% no-repeat!important;filter:none}
+body[data-vt=retro] .mc.fl.wr{background:url(img/r2_wrong.webp) center/100% 100% no-repeat!important;font-size:0!important;color:transparent!important}
+body[data-vt=retro] .mc.op.boom,body[data-vt=retro] .mc.op.a.boom{background:url(img/r2_boom.webp) center/100% 100% no-repeat!important;filter:none}
+body[data-vt=retro] .mc.bn{background:url(img/r2_bone.webp) center/100% 100% no-repeat!important}
+body[data-vt=retro] .mc.hint{background:url(img/r2_hint.webp) center/100% 100% no-repeat!important}
+body[data-vt=retro] .mc.fl::after,body[data-vt=retro] .mc.fl.wr::after,body[data-vt=retro] .mc.boom::after,body[data-vt=retro] .mc.bn::after{display:none!important}
+body[data-vt=retro] .panel{background:none!important;box-shadow:none!important;border:14px solid transparent;border-image:url(img/r2_frame.webp) 36 fill;padding:0;margin:6px 0 0}
+body[data-vt=retro] .panel .in{background:transparent!important;box-shadow:none!important;margin:-6px}
+body[data-vt=neon] .mc{background:url(img/x2_cover.webp) center/100% 100% no-repeat!important;box-shadow:none!important;border-radius:0;filter:none}
+body[data-vt=neon] .mc:not(.op):active{background:url(img/x2_press.webp) center/100% 100% no-repeat!important;filter:none}
+body[data-vt=neon] .mc.op{background:url(img/x2_open.webp) center/100% 100% no-repeat!important;box-shadow:none!important}
+body[data-vt=neon] .mc.op.a{background:url(img/x2_open.webp) center/100% 100% no-repeat!important;filter:brightness(.93)}
+body[data-vt=neon] .mc.fl{background:url(img/x2_flag.webp) center/100% 100% no-repeat!important;filter:none}
+body[data-vt=neon] .mc.fl.wr{background:url(img/x2_wrong.webp) center/100% 100% no-repeat!important;font-size:0!important;color:transparent!important}
+body[data-vt=neon] .mc.op.boom,body[data-vt=neon] .mc.op.a.boom{background:url(img/x2_boom.webp) center/100% 100% no-repeat!important;filter:none}
+body[data-vt=neon] .mc.bn{background:url(img/x2_bone.webp) center/100% 100% no-repeat!important}
+body[data-vt=neon] .mc.hint{background:url(img/x2_hint.webp) center/100% 100% no-repeat!important}
+body[data-vt=neon] .mc.fl::after,body[data-vt=neon] .mc.fl.wr::after,body[data-vt=neon] .mc.boom::after,body[data-vt=neon] .mc.bn::after{display:none!important}
+body[data-vt=neon] .panel{background:none!important;box-shadow:none!important;border:14px solid transparent;border-image:url(img/x2_frame.webp) 36 fill;padding:0;margin:6px 0 0}
+body[data-vt=neon] .panel .in{background:transparent!important;box-shadow:none!important;margin:-6px}
+body[data-vt=retro] .mc .n1{color:#1f5f96}body[data-vt=retro] .mc .n2{color:#2c7a35}body[data-vt=retro] .mc .n3{color:#c0392b}body[data-vt=retro] .mc .n4{color:#6a3d9a}body[data-vt=retro] .mc .n5{color:#8a3b12}body[data-vt=retro] .mc .n6{color:#138080}body[data-vt=retro] .mc .n7,body[data-vt=retro] .mc .n8{color:#333}
+body[data-vt=neon] .mc .n1{color:#1f5f96}body[data-vt=neon] .mc .n2{color:#2c7a35}body[data-vt=neon] .mc .n3{color:#c0392b}body[data-vt=neon] .mc .n4{color:#6a3d9a}body[data-vt=neon] .mc .n5{color:#8a3b12}body[data-vt=neon] .mc .n6{color:#138080}body[data-vt=neon] .mc .n7,body[data-vt=neon] .mc .n8{color:#333}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
