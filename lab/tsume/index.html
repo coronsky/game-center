@@ -260,8 +260,8 @@ html body[data-vt=natural] .app .vtBtn{background-image:url(../../img/ui/natural
 html body[data-vt=retro] .app .vtBtn{background-image:url(../../img/ui/retro_skin.webp?v=2)!important}html body[data-vt=retro] .app .homeBtn{background-image:url(../../img/ui/retro_home.webp?v=2)!important}
 html body[data-vt=neon] .app .vtBtn{background-image:url(../../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../../img/ui/neon_home.webp?v=2)!important}
 </style><link rel="manifest" href="../../manifest.webmanifest"><link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style><style>
-.stg h2{margin-bottom:10px}.stTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.stTabs button{border:2.5px solid #e2cfb2;background:#fffaf1;border-radius:14px;padding:8px 2px;font:inherit;font-weight:900;font-size:15px;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.stg h2{margin-bottom:10px}.stTabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.stTabs button{border:2.5px solid #e2cfb2;background:#fffaf1;border-radius:14px;padding:8px 0;font:inherit;font-weight:900;font-size:13.5px;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center}
 .stTabs button small{font-size:11px;opacity:.7;font-weight:700}.stTabs button.on{border-color:#5c8858;background:#eef5e6;box-shadow:0 0 0 2px #5c8858}
 .stGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
 .stGrid button{border:2.5px solid #e2cfb2;background:#fffaf1;border-radius:14px;padding:8px 0;font:inherit;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
@@ -459,7 +459,8 @@ html body[data-vt=neon] .pc{filter:drop-shadow(0 0 3px rgba(255,79,216,.55))}
   <p>👆 駒をタップすると、王手になる場所に●が出ます。もう一度タップで動かします。持ち駒は、タップしてから空いているマスをタップ。</p>
   <p>🐕 ムーンはいちばん長くにげようとします。あなたの手は全部「王手」でなければいけません。</p>
   <p>🎯 「3手詰め」はあなた→ムーン→あなた、の3手で詰みます。ムーンに持ち駒はありません（合い駒なし）。</p>
-  <p>⭐ ノーミス・ヒントなしで★3つ！まちがえる／ヒントを使うと★が減ります。📖こたえは2回おすと見られます。</p>
+  <p>💡ヒントは「動かす駒」だけ、📖こたえは「次の1手」だけ（2回おすと）教えます。どちらも使うと★が減ります。</p>
+  <p>⭐ ノーミスでヒントなしなら★3つ！まちがえても、その手は取り消されます。</p>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div>
 </div></div>
 <div style="display:none">
@@ -549,7 +550,8 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
 const store=mkStore('mcts_');
 const S=Object.assign({showLegal:true,dogs:true,talk:true,sound:true,kface:false},store.get('settings',{}));
 SND.on=S.sound; TALK.on=S.talk; S.dogs=false;
-const PROBS={"1":[{"p":[[6,-8],[5,4]],"h":{"5":1}},{"p":[[18,-8],[46,7],[29,4]],"h":{}},{"p":[[9,-8],[20,-5],[18,6],[0,4]],"h":{}},{"p":[[7,-8],[6,-4],[25,5],[26,12]],"h":{}},{"p":[[0,-8],[2,-5],[10,-3],[28,3]],"h":{"4":1}}],"3":[{"p":[[8,-8],[7,-4],[26,-1],[24,7]],"h":{"5":1}},{"p":[[7,-8],[16,-3],[8,-5],[5,4],[35,9]],"h":{"4":1}},{"p":[[0,-8],[1,-7],[20,-2],[21,3]],"h":{"5":1,"7":1}},{"p":[[15,-8],[6,-1],[31,-6],[34,-3],[26,3],[33,1],[4,6]],"h":{}},{"p":[[11,-8],[4,-4],[28,-2],[29,1],[39,2]],"h":{"5":2}}],"5":[{"p":[[0,-8],[19,-4],[36,6]],"h":{"5":1}},{"p":[[16,-8],[8,-1],[5,4]],"h":{"2":2,"7":1}},{"p":[[21,-8],[19,-1],[11,7],[28,5],[23,5]],"h":{"4":1}},{"p":[[20,-8],[12,-1],[4,-5],[0,4],[40,4],[19,4]],"h":{"4":1,"7":1}},{"p":[[0,-8],[9,-5],[20,-1],[2,-6],[3,6]],"h":{"5":3}}]};
+const PROBS={"1":[{"p":[[6,-8],[5,4]],"h":{"5":1}},{"p":[[18,-8],[46,7],[29,4]],"h":{}},{"p":[[9,-8],[20,-5],[18,6],[0,4]],"h":{}},{"p":[[7,-8],[6,-4],[25,5],[26,12]],"h":{}},{"p":[[0,-8],[2,-5],[10,-3],[28,3]],"h":{"4":1}},{"p":[[9,-8],[28,12],[10,4]],"h":{}},{"p":[[18,-8],[1,-3],[37,2],[47,7]],"h":{}},{"p":[[1,-8],[2,-1],[0,6]],"h":{"5":1}},{"p":[[17,-8],[8,-1],[26,6],[35,3]],"h":{}},{"p":[[8,-8],[24,-2],[7,-1],[26,5]],"h":{"2":1}},{"p":[[19,-8],[30,-1],[38,9],[18,4],[2,5]],"h":{}},{"p":[[26,-8],[25,-1],[8,9],[44,4]],"h":{"6":1}},{"p":[[10,-8],[0,-4],[21,-6],[11,4],[28,1]],"h":{}},{"p":[[17,-8],[8,-5],[26,-6],[35,4],[16,4]],"h":{}},{"p":[[6,-8],[8,-3],[14,-4],[26,3],[25,7]],"h":{}},{"p":[[0,-8],[2,-4],[10,-6],[18,4]],"h":{"4":1}},{"p":[[0,-8],[18,-6],[1,-7],[19,12]],"h":{"2":1}},{"p":[[0,-8],[20,-1],[2,-3],[1,4],[18,3]],"h":{"7":1}},{"p":[[8,-8],[17,-4],[7,-5],[6,4],[26,2]],"h":{"3":1}},{"p":[[19,-8],[29,-2],[11,-1],[46,3],[9,9],[45,2],[30,5]],"h":{}}],"3":[{"p":[[8,-8],[7,-4],[26,-1],[24,7]],"h":{"5":1}},{"p":[[7,-8],[16,-3],[8,-5],[5,4],[35,9]],"h":{"4":1}},{"p":[[0,-8],[1,-7],[20,-2],[21,3]],"h":{"5":1,"7":1}},{"p":[[15,-8],[6,-1],[31,-6],[34,-3],[26,3],[33,1],[4,6]],"h":{}},{"p":[[11,-8],[4,-4],[28,-2],[29,1],[39,2]],"h":{"5":2}},{"p":[[7,-8],[26,-1],[14,4],[13,7]],"h":{"5":1}},{"p":[[0,-8],[18,-2],[3,4],[19,9]],"h":{"1":1}},{"p":[[5,-8],[3,-5],[23,6],[2,12]],"h":{"5":1}},{"p":[[14,-8],[24,-1],[32,4]],"h":{"4":1,"5":1}},{"p":[[17,-8],[6,-3],[8,4]],"h":{"5":1,"7":1}},{"p":[[10,-8],[1,-6],[2,7],[38,2]],"h":{"5":1}},{"p":[[8,-8],[6,-3],[24,-6],[34,3],[35,5]],"h":{"2":1}},{"p":[[6,-8],[4,-7],[24,3],[8,5],[33,9]],"h":{"5":1}},{"p":[[10,-8],[3,-1],[18,-4],[9,-3],[2,5],[1,6]],"h":{}},{"p":[[7,-8],[8,-4],[25,-3],[17,-5],[44,2],[12,7]],"h":{}},{"p":[[17,-8],[7,-2],[35,4],[51,3],[8,4]],"h":{"5":1}},{"p":[[13,-8],[29,-1],[30,-1],[11,-3],[6,6],[31,12]],"h":{"4":1}},{"p":[[17,-8],[7,-1],[8,-1],[6,-1],[44,5],[31,6]],"h":{"5":1}},{"p":[[8,-8],[7,-6],[26,-1],[15,-1],[24,5]],"h":{"3":1,"7":1}},{"p":[[2,-8],[4,-7],[12,-4],[3,-6],[30,3]],"h":{"5":1,"6":1}}],"5":[{"p":[[0,-8],[19,-4],[36,6]],"h":{"5":1}},{"p":[[16,-8],[8,-1],[5,4]],"h":{"2":2,"7":1}},{"p":[[21,-8],[19,-1],[11,7],[28,5],[23,5]],"h":{"4":1}},{"p":[[20,-8],[12,-1],[4,-5],[0,4],[40,4],[19,4]],"h":{"4":1,"7":1}},{"p":[[0,-8],[9,-5],[20,-1],[2,-6],[3,6]],"h":{"5":3}},{"p":[[0,-8],[1,-3],[18,-4],[40,6],[30,3]],"h":{"5":1}},{"p":[[0,-8],[1,-1],[27,5],[19,1]],"h":{"1":2,"4":1}},{"p":[[8,-8],[7,-1],[17,-4],[24,-3],[26,9],[34,5]],"h":{"4":1}},{"p":[[1,-8],[11,-4],[0,-7],[2,-4],[21,5],[36,2],[9,1]],"h":{}},{"p":[[18,-8],[27,-5],[28,-4],[0,4],[2,4]],"h":{"5":1,"6":1}},{"p":[[6,-8],[15,-4],[24,-7],[8,4],[38,1]],"h":{"5":1,"6":1}},{"p":[[9,-8],[29,-4],[18,-1],[27,2],[45,3],[3,6]],"h":{"1":1}},{"p":[[25,-8],[15,-6],[7,4],[41,2]],"h":{"5":2,"7":1}},{"p":[[11,-8],[1,-4],[29,-1],[36,5],[49,7],[37,4]],"h":{"2":1}},{"p":[[26,-8],[17,-6],[44,-4],[16,-3],[15,7],[53,4]],"h":{"3":1,"5":1}},{"p":[[8,-8],[7,-6],[4,5],[35,5],[6,12]],"h":{"2":1,"5":2}},{"p":[[6,-8],[7,-4],[5,-1],[14,-4],[8,5],[41,9],[4,12],[43,2]],"h":{}},{"p":[[26,-8],[34,-5],[17,-3],[33,4],[44,1],[53,2]],"h":{"4":1,"5":1}},{"p":[[16,-8],[8,-3],[6,-5],[35,12],[50,2]],"h":{"2":1,"4":2}},{"p":[[0,-8],[9,-2],[1,-1],[19,-5],[28,12],[10,2],[21,4]],"h":{"4":1,"5":1}}],"7":[{"p":[[16,-8],[7,-5],[17,4],[15,-1]],"h":{"5":1,"7":1}},{"p":[[14,-8],[21,-3],[22,7],[17,4],[24,-2]],"h":{"5":1}},{"p":[[7,-8],[17,-1],[26,-4],[43,3],[23,7],[25,-1]],"h":{}},{"p":[[20,-8],[12,-1],[4,-5],[40,4],[19,4],[36,-5],[38,-2]],"h":{"4":1,"7":1}},{"p":[[2,-8],[1,-1],[18,-1],[0,-4],[40,7],[31,5],[4,-2]],"h":{"4":1,"5":1}}]};
+let hintFull=false;
 const FU=1,KY=2,KE=3,GI=4,KI=5,KA=6,HI=7,OU=8,TO=9,NY=10,NK=11,NG=12,UM=13,RY=14;
 const KANJI={1:'歩',2:'香',3:'桂',4:'銀',5:'金',6:'角',7:'飛',8:'王',9:'と',10:'杏',11:'圭',12:'全',13:'馬',14:'龍'};
 const NAMEJ={1:'歩',2:'香',3:'桂',4:'銀',5:'金',6:'角',7:'飛',8:'玉',9:'と',10:'成香',11:'成桂',12:'成銀',13:'馬',14:'龍'};
@@ -686,7 +688,7 @@ function render(){
     c.classList.toggle('last',lastMv>=0&&i===mTo(lastMv));
     c.classList.toggle('lastf',lastMv>=0&&mFrom(lastMv)<81&&i===mFrom(lastMv));
     c.classList.toggle('chk',i===chk);
-    c.classList.toggle('hint',hintMv!==null&&(i===mTo(hintMv)||(mFrom(hintMv)<81&&i===mFrom(hintMv))));
+    c.classList.toggle('hint',hintMv!==null&&((hintFull&&i===mTo(hintMv))||(mFrom(hintMv)<81&&i===mFrom(hintMv))));
   }
   for(const s of [1,-1]){
     const el=$(s===1?'handS':'handG'), H=hand[hi(s)]; let h='';
@@ -742,7 +744,7 @@ function askPromote(c){
 }
 
 // ----- 詰将棋ソルバー（問題は検証済み） -----
-let P=null, LV=1, IDX=0, misses=0, hints=0, answered=false, prog=store.get('prog',{});
+let P=null, LV=1, IDX=0, misses=0, hints=0, prog=store.get('prog',{});
 function checkMoves(){ const out=[]; for(const m of legalMoves(1)){ make(m); const c=inCheck(-1); unmake(m); if(c) out.push(m); } return out; }
 function mates(n){ for(const m of checkMoves()){ make(m); const ok=defendAll(n-1); unmake(m); if(ok) return true; } return false; }
 function defendAll(n){ const rep=legalMoves(-1); if(!rep.length) return true; if(n<2) return false;
@@ -759,7 +761,7 @@ function loadProblem(lv,idx){
   gen++; LV=lv; IDX=idx; P=Object.assign({n:lv},PROBS[lv][idx]);
   b=new Int8Array(81); for(const [sq,pc] of P.p) b[sq]=pc;
   hand=[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]; for(const t in P.h) hand[0][+t]=P.h[t];
-  side=1; stack.length=0; hist=[]; lastMv=-1; sel=null; over=false; busy=false; hintMv=null; plyN=0; legalCache=null; misses=0; hints=0; answered=false;
+  side=1; stack.length=0; hist=[]; lastMv=-1; sel=null; over=false; busy=false; hintMv=null; plyN=0; legalCache=null; misses=0; hints=0; 
   ['mRes','mPro'].forEach(closeM);
   $('tagS').textContent='あなた・攻め方'; $('tagG').textContent='玉方・にげる';
   $('lastTxt').textContent='問題スタート';
@@ -799,7 +801,7 @@ function cleared(){
   const tot=Object.values(prog).reduce((a,c)=>a+c,0);
   showResult({winner:1,title:'🎉 詰みました！',score:STARS(st),
     msg:P.n+'手詰め 第'+(IDX+1)+'問をクリア！'+(st<3?(hints&&misses?'（ヒントとまちがいあり）':hints?'（ヒントを使ったよ）':'（まちがいがあったよ）'):'ノーミスでかんぺき！'),
-    rec:'ここまでの★：'+tot+' / '+[1,3,5].reduce((a,l)=>a+PROBS[l].length*3,0)});
+    rec:'ここまでの★：'+tot+' / '+[1,3,5,7].reduce((a,l)=>a+PROBS[l].length*3,0)});
 }
 function undo(){
   if(busy||over||!hist.length) return;
@@ -808,29 +810,24 @@ function undo(){
   b=Int8Array.from(h.b); hand=h.hand; side=h.side; lastMv=h.lastMv; plyN=h.plyN; stack.length=0; sel=null; hintMv=null; legalCache=null;
   SFX.tap(); toast('待った！'); render();
 }
-function hint(){
+function hint(){ // 動かす駒だけ教える
   if(over||busy||side!==1) return;
-  const fm=firstMoves(P.n-plyN); if(!fm.length) return;
-  hints++; const m=fm[0]; hintMv=m; sel=mFrom(m)>=81?{drop:true,t:mFrom(m)-81}:{sq:mFrom(m)}; SFX.tap(); render();
-  setStatus('ヒント：光っているところを動かしてみよう');
+  const fm=firstMoves(P.n-plyN); if(!fm.length){ toast('ここから先は詰まないみたい。「待った」でもどろう',true); return; }
+  hints++; hintMv=fm[0]; hintFull=false; sel=null; SFX.tap(); render();
+  setStatus('ヒント：光っている駒を動かしてみよう');
 }
-function showAnswer(){
-  if(busy) return; loadProblem(LV,IDX); answered=true; busy=true; const g0=gen, log=[];
-  setStatus('こたえを見せるよ',true);
-  (function step(){
-    if(g0!==gen) return;
-    let m; if(side===1){ m=firstMoves(P.n-plyN)[0]; } else { m=bestDefense(); }
-    const nt=notation(m,side); log.push(nt); playMove(m,nt);
-    if(side===-1 && !legalMoves(-1).length){ over=true; busy=false; render(); setStatus('こたえ：'+log.join(' ')); return; }
-    setTimeout(step,950);
-  })();
+function answer(){ // 次の1手だけ教える
+  if(over||busy||side!==1) return;
+  const fm=firstMoves(P.n-plyN); if(!fm.length){ toast('ここから先は詰まないみたい。「待った」でもどろう',true); return; }
+  hints++; const m=fm[0]; hintMv=m; hintFull=true; sel=null; SFX.tap(); render();
+  setStatus('こたえ（次の1手だけ）：'+notation(m,1));
 }
 function nextProblem(){ closeM('mRes'); if(IDX+1<PROBS[LV].length) loadProblem(LV,IDX+1); else { toast('この級はぜんぶ終わり！'); drawStage(); openM('mStage'); } }
 // 問題えらび
 let stgLv=1;
 function drawStage(){
   const tabs=$('stTabs'); tabs.innerHTML='';
-  for(const lv of [1,3,5]){ let s=0; PROBS[lv].forEach((_,i)=>s+=prog[lv+'-'+i]||0);
+  for(const lv of [1,3,5,7]){ let s=0; PROBS[lv].forEach((_,i)=>s+=prog[lv+'-'+i]||0);
     const bt=document.createElement('button'); bt.className=lv===stgLv?'on':''; bt.innerHTML=lv+'手詰め<small>★'+s+'/'+PROBS[lv].length*3+'</small>';
     bt.onclick=()=>{SFX.tap();stgLv=lv;drawStage()}; tabs.appendChild(bt); }
   const g=$('stGrid'); g.innerHTML='';
@@ -844,7 +841,7 @@ const syncSet=bindSettings($('mSet'),pend,k=>{ S[k]=pend[k]; SND.on=S.sound; TAL
 $('bSet').onclick=()=>{actx();SFX.tap();stgLv=LV;drawStage();openM('mStage')};
 $('bStgSet').onclick=()=>{Object.assign(pend,S);syncSet();closeM('mStage');openM('mSet')};
 let resT=0;
-$('bFlag').onclick=()=>{ if(busy) return; if(Date.now()-resT<3000){ resT=0; showAnswer(); } else { resT=Date.now(); toast('もう一度おすと、こたえを見せるよ'); } };
+$('bFlag').onclick=()=>{ if(busy||over) return; if(Date.now()-resT<3000){ resT=0; answer(); } else { resT=Date.now(); toast('もう一度おすと、次の1手を教えるよ'); } };
 $('bHelp').onclick=()=>openM('mHelp');
 $('bNew').onclick=()=>{actx();SFX.tap();loadProblem(LV,IDX)};
 $('bAgain').onclick=()=>{SFX.tap();nextProblem()};
