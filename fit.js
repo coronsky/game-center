@@ -118,8 +118,8 @@
   var BASE=(document.currentScript&&document.currentScript.src||'').replace(/fit\.js.*$/,'');
   // [名前, ナチュラル専用か]
   var MAP={'🏠':['home',0],'❓':['help',0],'💡':['hint',0],'⟳':['reset',0],'🔁':['reset',0],'🔄':['reset',0],
-           '🎨':['skin',1],'⚙':['gear',1],'↩':['undo',1],'⚡':['first',1],'🐢':['second',1],'🗺':['map',1]};
-  var RE=/^\s*(🏠|❓|💡|⟳|🔁|🔄|🎨|⚙|↩|⚡|🐢|🗺)[\uFE0E\uFE0F]?\s*/;
+           '🎨':['skin',1],'⚙':['gear',1],'↩':['undo',1],'⚡':['first',1],'🐢':['second',1],'🗺':['map',1],'🎮':['menu',1],'🎲':['random',1]};
+  var RE=/^\s*(🏠|❓|💡|⟳|🔁|🔄|🎨|⚙|↩|⚡|🐢|🗺|🎮|🎲)[\uFE0E\uFE0F]?\s*/;
   var SEL='button,.btn,a.btn';
   function css(){
     var t='.mcIco{display:inline-block;width:1.35em;height:1.35em;vertical-align:-.32em;margin-right:.18em;background-position:center;background-size:contain;background-repeat:no-repeat;flex:none}';
@@ -127,7 +127,7 @@
       t+=(s==='natural'?'.mcIco[data-k='+k+'],':'')+'body[data-vt='+s+'] .mcIco[data-k='+k+']{background-image:url('+BASE+'img/ico/'+s+'_'+k+'.webp)}';
     }); });
     // 絵があるスキンだけイラスト、無いスキンは元の絵文字を表示
-    var HAS={skin:['natural','retro','neon'],gear:['natural','retro','neon'],undo:['natural','retro','neon'],first:['natural','retro','neon'],second:['natural','retro','neon'],map:['natural','retro','neon']};
+    var HAS={skin:['natural','retro','neon'],gear:['natural','retro','neon'],undo:['natural','retro','neon'],first:['natural','retro','neon'],second:['natural','retro','neon'],map:['natural','retro','neon'],menu:['natural','retro'],random:['natural','retro']};
     Object.keys(HAS).forEach(function(k){ ['natural','retro','neon'].forEach(function(s){
       var q=(s==='natural'?'':'body[data-vt='+s+'] ')+'.mcIco[data-k='+k+']';
       if(HAS[k].indexOf(s)>=0) t+=q+'{background-image:url('+BASE+'img/ico/'+s+'_'+k+'.webp);width:1.35em;height:1.35em;vertical-align:-.32em}'+q+'::before{content:none}';
