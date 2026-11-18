@@ -559,7 +559,7 @@ function draw(fresh){ const bd=$('bd'),sy=scrollY,sc=document.scrollingElement; 
     if(fresh&&fresh.has(i)) e.style.animation=`mcpop .34s ${Math.min(fresh.get(i),14)*34}ms backwards`;
     let lt; e.addEventListener('pointerdown',()=>{lt=setTimeout(()=>{lt=null;toggle(i)},420)});
     e.addEventListener('pointerup',()=>{ if(lt){clearTimeout(lt);lt=null; flagMode?toggle(i):dig(i);} });
-    e.addEventListener('pointerleave',()=>{clearTimeout(lt);lt=null}); e.oncontextmenu=ev=>{ev.preventDefault()};
+    ['pointerleave','pointercancel'].forEach(ev=>e.addEventListener(ev,()=>{clearTimeout(lt);lt=null})); e.oncontextmenu=ev=>{ev.preventDefault()};
     bd.appendChild(e); }
   bd.style.minHeight=''; if(sc&&sc.scrollTop!==sy) sc.scrollTop=sy;
   $('left').textContent=L.m-flag.filter(Boolean).length; }
