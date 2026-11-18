@@ -113,3 +113,33 @@
   }
   if(document.body) init(); else addEventListener('DOMContentLoaded',init);
 })();
+// 共通ボタン（ホーム・あそびかた・ヒント・リセット）の絵文字を、スキンごとのイラストに差し替える
+(function(){
+  var BASE=(document.currentScript&&document.currentScript.src||'').replace(/fit\.js.*$/,'');
+  var MAP={'🏠':'home','❓':'help','💡':'hint','⟳':'reset','🔁':'reset','🔄':'reset'};
+  var IDS=['bHome','bHome2','bHelp','bHint','bReset'];
+  var RE=/^\s*(🏠|❓|💡|⟳|🔁|🔄)️?\s*/;
+  function css(){
+    var t='.mcIco{display:inline-block;width:1.35em;height:1.35em;vertical-align:-.32em;margin-right:.18em;background-position:center;background-size:contain;background-repeat:no-repeat;flex:none}';
+    ['natural','retro','neon'].forEach(function(s){ ['home','help','hint','reset'].forEach(function(k){
+      t+=(s==='natural'?'.mcIco[data-k='+k+'],':'')+'body[data-vt='+s+'] .mcIco[data-k='+k+']{background-image:url('+BASE+'img/ico/'+s+'_'+k+'.webp)}';
+    }); });
+    var st=document.createElement('style'); st.textContent=t; document.head.appendChild(st);
+  }
+  function apply(el){
+    var n=el.firstChild; if(!n||n.nodeType!==3) return;
+    var m=RE.exec(n.nodeValue); if(!m) return;
+    var i=document.createElement('i'); i.className='mcIco'; i.setAttribute('data-k',MAP[m[1]]);
+    n.nodeValue=n.nodeValue.slice(m[0].length);
+    el.insertBefore(i,n);
+  }
+  function scan(){
+    IDS.forEach(function(id){
+      var el=document.getElementById(id); if(!el||el.__mcIco) return; el.__mcIco=1;
+      apply(el);
+      new MutationObserver(function(){ apply(el); }).observe(el,{childList:true,characterData:true,subtree:false});
+    });
+  }
+  function init(){ css(); scan(); setTimeout(scan,500); setTimeout(scan,2000); }
+  if(document.readyState==='loading') addEventListener('DOMContentLoaded',init); else init();
+})();
