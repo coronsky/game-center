@@ -127,7 +127,7 @@
       t+=(s==='natural'?'.mcIco[data-k='+k+'],':'')+'body[data-vt='+s+'] .mcIco[data-k='+k+']{background-image:url('+BASE+'img/ico/'+s+'_'+k+'.webp)}';
     }); });
     // 絵があるスキンだけイラスト、無いスキンは元の絵文字を表示
-    var HAS={skin:['natural','retro'],gear:['natural','retro'],undo:['natural','retro'],first:['natural','retro'],second:['natural','retro'],map:['retro']};
+    var HAS={skin:['natural','retro','neon'],gear:['natural','retro','neon'],undo:['natural','retro','neon'],first:['natural','retro','neon'],second:['natural','retro','neon'],map:['retro','neon']};
     Object.keys(HAS).forEach(function(k){ ['natural','retro','neon'].forEach(function(s){
       var q=(s==='natural'?'':'body[data-vt='+s+'] ')+'.mcIco[data-k='+k+']';
       if(HAS[k].indexOf(s)>=0) t+=q+'{background-image:url('+BASE+'img/ico/'+s+'_'+k+'.webp);width:1.35em;height:1.35em;vertical-align:-.32em}'+q+'::before{content:none}';
