@@ -259,7 +259,7 @@ html body .app .vtBtn,html body .app .homeBtn{width:90px!important;height:30px!i
 html body[data-vt=natural] .app .vtBtn{background-image:url(../../img/ui/natural_skin.webp?v=2)!important}html body[data-vt=natural] .app .homeBtn{background-image:url(../../img/ui/natural_home.webp?v=2)!important}
 html body[data-vt=retro] .app .vtBtn{background-image:url(../../img/ui/retro_skin.webp?v=2)!important}html body[data-vt=retro] .app .homeBtn{background-image:url(../../img/ui/retro_home.webp?v=2)!important}
 html body[data-vt=neon] .app .vtBtn{background-image:url(../../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../../img/ui/neon_home.webp?v=2)!important}
-</style><link rel="manifest" href="../../manifest.webmanifest"><link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style><style>
+html,body,.app,.board,.cell,.boardWrap{touch-action:pan-x pan-y}</style><link rel="manifest" href="../../manifest.webmanifest"><link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style><style>
 .stg h2{margin-bottom:10px}.stTabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
 .stTabs button{border:2.5px solid #e2cfb2;background:#fffaf1;border-radius:14px;padding:8px 0;font:inherit;font-weight:900;font-size:13.5px;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center}
 .stTabs button small{font-size:11px;opacity:.7;font-weight:700}.stTabs button.on{border-color:#5c8858;background:#eef5e6;box-shadow:0 0 0 2px #5c8858}
@@ -267,7 +267,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../../img/ui/neon_skin.
 .stGrid button{border:2.5px solid #e2cfb2;background:#fffaf1;border-radius:14px;padding:8px 0;font:inherit;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
 .stGrid button b{font-size:20px;font-weight:900}.stGrid button small{font-size:10px;letter-spacing:-.5px;color:#c98a1a;font-weight:700}
 .stGrid button.done{background:#f3f8e8;border-color:#b9cfa7}.stGrid button.cur{box-shadow:0 0 0 3px #5c8858}
-</style></head>
+html,body,.app,.board,.cell,.boardWrap{touch-action:pan-x pan-y}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">詰将棋</div></div>
@@ -398,7 +398,7 @@ html body[data-vt=neon] .pc[data-k="11"]{background-image:url(../../img/neon/sg_
 html body[data-vt=neon] .pc[data-k="12"]{background-image:url(../../img/neon/sg_pc_ngi.webp)!important;--h:94%}
 html body[data-vt=neon] .pc[data-k="13"]{background-image:url(../../img/neon/sg_pc_uma.webp)!important;--h:97%}
 html body[data-vt=neon] .pc[data-k="14"]{background-image:url(../../img/neon/sg_pc_ryu.webp)!important;--h:97%}
-html,body{overflow-x:hidden}
+html,body{overflow-x:clip;overscroll-behavior-y:auto}
 html body[data-vt=natural] .boardWrap{width:min(calc(96vw*100/76.486),calc(470px*100/76.486))}
 html body[data-vt=natural].nodog .boardWrap{aspect-ratio:740/809;background-image:url(../../img/natural/sg_frame_nd.webp)}html body[data-vt=natural].nodog .bgrid{top:12.485%;height:74.266%}
 html body[data-vt=retro] .boardWrap{width:min(calc(96vw*100/73.158),calc(470px*100/73.158))}
@@ -442,7 +442,7 @@ html body[data-vt=neon] .pc b{color:#fff;text-shadow:0 0 6px #3ff0ff,0 0 2px #3f
 html body[data-vt=neon] .pc.pr b{color:#ff9aea;text-shadow:0 0 7px #ff4fd8,0 0 2px #ff4fd8}
 html body[data-vt=neon] .pc{filter:drop-shadow(0 0 3px rgba(255,79,216,.55))}
 .pc.king:not(.kfc) b{font-size:clamp(15px,5vw,24px);margin-top:12%}.pc.king.sm:not(.kfc) b{font-size:17px;margin-top:5px}
-</style>
+html,body,.app,.board,.cell,.boardWrap{touch-action:pan-x pan-y}</style>
 <script>(function(){var a=document.querySelector(".app")||document.body,r=document.createElement("div");r.className="btns";r.id="bHomeRow";r.style.cssText="grid-template-columns:1fr;margin:10px 12px 0;display:grid";r.innerHTML='<button class="btn g" id="bHome2" type="button">🏠ホームへ戻る</button>';a.appendChild(r);r.firstChild.onclick=function(){var h=document.getElementById("homeBtn");location.href=h?h.href:"../../"}})()</script>
 <div class="modal" id="mPro"><div class="card"><h2>成りますか？</h2><div class="prs"><button id="prA"></button><button id="prB"></button></div></div></div>
 <div class="modal" id="mSet"><div class="card">

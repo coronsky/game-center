@@ -103,7 +103,7 @@
 (function(){
   var SEL='#bd,#board,#kb,#stage,#cv,#grid,#gb,#gw,#scene,#pb,#rg,#tb,#sb,#eq,#fd';
   function init(){
-    if(/\/(osanpo|ponpon|reversi|gomoku)\//.test(location.pathname)) return;
+    if(/\/(osanpo|ponpon|reversi|gomoku|shogi|tsume)\//.test(location.pathname)) return;
     var st=document.createElement('style'); st.textContent=SEL.split(',').map(function(s){return s+','+s+' *'}).join(',')+'{touch-action:none!important;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}';
     document.head.appendChild(st);
     var on=false;
