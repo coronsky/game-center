@@ -282,7 +282,7 @@ html,body,.app,.board,.cell,.boardWrap{touch-action:pan-x pan-y}</style><link re
   <div class="handRow"><span class="lbl">コロンの<br>持ち駒</span><div id="handS" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"></div></div>
   <div class="lastBox">直前の手：<span id="lastTxt"></span></div>
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
-  <div class="endBar" id="endBar"><button class="btn c" id="bResAgain">📊 結果をもう一度</button><button class="btn c" id="bRp">🎬 ふりかえり</button></div>
+  <div class="endBar" id="endBar"><button class="btn c" id="bResAgain">📊 結果をもう一度</button><button class="btn c" id="bRp">➡ つぎの問題</button></div>
   <div class="rpBar" id="rpBar"><button class="btn c" data-rp="first">⏮</button><button class="btn c" data-rp="prev">◀</button><button class="btn g" data-rp="play" id="rpPlay">▶ 再生</button><button class="btn c" data-rp="next">▶</button><button class="btn c" data-rp="last">⏭</button><button class="btn c" data-rp="end">✕</button><div class="rpN" id="rpN"></div></div>
   <div class="btns">
     <button class="btn g" id="bHint"><i class="bi"></i><span class="ic">💡</span>ヒント</button><button class="btn c" id="bUndo"><i class="bi"></i><span class="ic">↩︎</span>待った</button>
@@ -702,6 +702,7 @@ function render(){
   document.querySelectorAll('.hp').forEach(x=>x.onclick=()=>onHand(+x.dataset.s,+x.dataset.t));
   $('scS').classList.toggle('active',!over&&side===1); $('scG').classList.toggle('active',!over&&side===-1);
   $('plyN').textContent=P?Math.max(0,(P.n+1)/2-Math.floor(plyN/2)):1;
+  $('endBar').style.display=over?'grid':'none'; $('bRp').textContent=failed?'🔄 もう一回':'➡ つぎの問題';
   if(!over&&!busy&&P) setStatus((P.n)+'手詰め：玉を詰ませよう');
   $('bUndo').disabled=busy||(over&&!failed)||!hist.some(h=>h.side===me());
   $('bHint').disabled=over||busy||!isHuman(side);
@@ -858,7 +859,8 @@ $('bHint').onclick=()=>{actx();hint()};
 buildUI(); { const l=store.get('last',{lv:3,idx:0}); loadProblem(PROBS[l.lv]?l.lv:3,PROBS[l.lv]&&PROBS[l.lv][l.idx]?l.idx:0); }
 document.body.classList.toggle('nodog',S.dogs===false);
 setTimeout(()=>{sayText(1,'詰ませるワン！');setTimeout(()=>sayText(2,'にげちゃうよ〜♪'),500)},300);
-
+$('bResAgain').onclick=()=>{SFX.tap();openM('mRes')};
+$('bRp').onclick=()=>{SFX.tap(); if(failed){ loadProblem(LV,IDX); } else nextProblem(); };
 ;(function(){var h=document.getElementById('header');['homeBtn','vtBtn'].forEach(function(id){var b=document.getElementById(id);if(b){b.addEventListener('click',function(e){e.stopPropagation()})}})})();
 
 (()=>{const VTS=['natural','retro','neon'],VTN={natural:'ナチュラル',retro:'レトロ',neon:'サイバーネオン'};
