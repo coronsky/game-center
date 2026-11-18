@@ -446,12 +446,17 @@ html body[data-vt=retro] .app .vtBtn{background-image:url(../img/ui/retro_skin.w
 html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../img/ui/neon_home.webp?v=2)!important}
 
 /* 石の裏表を明示（アニメ中の3D平坦化でコロン顔が出るのを防ぐ）＋盤面の縦スクロール許可 */
-.board,.cell,.boardWrap{touch-action:pan-y manipulation}
+html,body,.app,.board,.cell,.boardWrap{touch-action:pan-x pan-y}
 .disc .b1,.disc .w1{transition:visibility 0s .21s}
 .disc:not(.W) .w1{visibility:hidden}
 .disc.W .b1{visibility:hidden}
 .disc.drop,.disc.W.drop{animation-name:dropS!important}
 @keyframes dropS{0%{scale:1.5}100%{scale:1}}
+
+/* ふりかえり・結果後の描画負荷を軽く（端末によるフリーズ対策） */
+body.replay .disc .f{filter:none!important}
+body.replay .boardWrap{animation:none!important}
+body.replay .disc{transition:none}
 </style>
 <link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural">
@@ -1188,7 +1193,7 @@ function rpFrames(){ const f=history.map(h=>({b:h.board.slice(),l:h.lastMove}));
 function rpShow(k){ if(!RP) return; RP.k=Math.max(0,Math.min(RP.f.length-1,k)); const fr=RP.f[RP.k]; board=fr.b.slice(); lastMove=fr.l; render(fr.l);
   $('rpN').textContent=RP.k===0?'はじめの盤面':RP.k+' / '+(RP.f.length-1)+'手目'; setStatus(RP.k===RP.f.length-1?'さいごの盤面':'ふりかえり中…'); }
 function rpStop(){ if(RP&&RP.t){ clearInterval(RP.t); RP.t=0; $('rpPlay').textContent='▶ 再生'; } }
-function rpStart(){ if(!over||RP) return; $('mRes').classList.remove('show'); RP={f:rpFrames(),save:{b:board.slice(),l:lastMove},k:0,t:0}; document.body.classList.add('replay'); rpShow(0); }
+function rpStart(){ if(!over||RP||busy) return; $('mRes').classList.remove('show'); RP={f:rpFrames(),save:{b:board.slice(),l:lastMove},k:0,t:0}; document.body.classList.add('replay'); rpShow(0); }
 function rpEnd(){ if(!RP) return; rpStop(); board=RP.save.b; lastMove=RP.save.l; RP=null; document.body.classList.remove('replay'); render(); }
 function rpAct(a){ if(!RP) return; sfx.tap();
   if(a==='play'){ if(RP.t){ rpStop(); return; } if(RP.k>=RP.f.length-1) rpShow(0); $('rpPlay').textContent='⏸ 停止'; RP.t=setInterval(()=>{ if(RP.k>=RP.f.length-1){ rpStop(); return; } rpShow(RP.k+1); try{sfx.place()}catch(e){} },700); return; }
@@ -1196,7 +1201,7 @@ function rpAct(a){ if(!RP) return; sfx.tap();
 function confetti(p){
   { const cf=document.createElement('div'); cf.className='cfx'; document.body.appendChild(cf); setTimeout(()=>cf.remove(),1900); }
   const items=p===B?['🐾','🍪','✨','🟤','🎉']:['🐾','🦴','✨','🤍','🎉'];
-  for(let k=0;k<26;k++){
+  for(let k=0;k<14;k++){
     const s=document.createElement('div'); s.className='fx'; s.textContent=pick(items);
     s.style.left=(Math.random()*window.innerWidth)+'px'; s.style.top='-30px';
     s.style.setProperty('--dx',(Math.random()*80-40)+'px'); s.style.setProperty('--dy',(window.innerHeight*.6+Math.random()*200)+'px'); s.style.setProperty('--r',(Math.random()*360)+'deg');
@@ -1240,7 +1245,7 @@ $('bStart').onclick=()=>{
   $('mSet').classList.remove('show'); askStart();
 };
 $('bHelp').onclick=()=>openM('mHelp');
-document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove('show'));
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{$(b.dataset.close).classList.remove('show');if(b.dataset.close==='mRes')document.querySelectorAll('.fx,.cfx').forEach(e=>e.remove())});
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')}));
 $('bResAgain').onclick=()=>{ctx();sfx.tap();openM('mRes')};
 $('bRp').onclick=()=>{ctx();sfx.tap();rpStart()};
