@@ -2,7 +2,11 @@
 (function(){
   var POS=(document.currentScript&&document.currentScript.dataset.pos)||'top', INTO=document.currentScript&&document.currentScript.dataset.into;
   var BASE=(document.currentScript&&document.currentScript.src||'').replace(/home\.js.*$/,'');
-  function vt(){ try{ return localStorage.getItem('mc_vt')||'natural'; }catch(e){ return 'natural'; } }
+  function vt(){ var ok=function(v){ return v==='natural'||v==='retro'||v==='neon'; }, h=(location.hash||'').slice(1);
+    if(ok(h)){ try{ localStorage.setItem('mc_vt',h); }catch(e){} return h; }
+    try{ var v=localStorage.getItem('mc_vt'); if(ok(v)) return v; }catch(e){}
+    try{ var p=JSON.parse(localStorage.getItem('mcgc_p')||'{}'); if(ok(p.theme)) return p.theme; }catch(e){}
+    return 'natural'; }
   function init(){
     var b=document.createElement('a'); b.id='mcHome'; b.href=BASE+'#'+vt(); b.setAttribute('aria-label','ホーム');
     var st=document.createElement('style');
