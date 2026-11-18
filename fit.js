@@ -113,33 +113,42 @@
   }
   if(document.body) init(); else addEventListener('DOMContentLoaded',init);
 })();
-// 共通ボタン（ホーム・あそびかた・ヒント・リセット）の絵文字を、スキンごとのイラストに差し替える
+// 共通ボタンの絵文字を、スキンごとのイラストに差し替える
 (function(){
   var BASE=(document.currentScript&&document.currentScript.src||'').replace(/fit\.js.*$/,'');
-  var MAP={'🏠':'home','❓':'help','💡':'hint','⟳':'reset','🔁':'reset','🔄':'reset'};
-  var IDS=['bHome','bHome2','bHelp','bHint','bReset'];
-  var RE=/^\s*(🏠|❓|💡|⟳|🔁|🔄)️?\s*/;
+  // [名前, ナチュラル専用か]
+  var MAP={'🏠':['home',0],'❓':['help',0],'💡':['hint',0],'⟳':['reset',0],'🔁':['reset',0],'🔄':['reset',0],
+           '🎨':['skin',1],'⚙':['gear',1],'↩':['undo',1],'⚡':['first',1],'🐢':['second',1]};
+  var RE=/^\s*(🏠|❓|💡|⟳|🔁|🔄|🎨|⚙|↩|⚡|🐢)[\uFE0E\uFE0F]?\s*/;
+  var SEL='button,.btn,a.btn';
   function css(){
     var t='.mcIco{display:inline-block;width:1.35em;height:1.35em;vertical-align:-.32em;margin-right:.18em;background-position:center;background-size:contain;background-repeat:no-repeat;flex:none}';
-    ['natural','retro','neon'].forEach(function(s){ ['home','help','hint','reset'].forEach(function(k){
+    ['home','help','hint','reset'].forEach(function(k){ ['natural','retro','neon'].forEach(function(s){
       t+=(s==='natural'?'.mcIco[data-k='+k+'],':'')+'body[data-vt='+s+'] .mcIco[data-k='+k+']{background-image:url('+BASE+'img/ico/'+s+'_'+k+'.webp)}';
     }); });
+    ['skin','gear','undo','first','second'].forEach(function(k){
+      t+='.mcIco[data-k='+k+']{background-image:url('+BASE+'img/ico/natural_'+k+'.webp)}';
+    });
+    // ナチュラル以外のスキンでは、絵がまだ無いものは元の絵文字を表示
+    t+='body[data-vt=retro] .mcIco[data-n],body[data-vt=neon] .mcIco[data-n]{background:none;width:auto;height:auto;vertical-align:baseline}'
+      +'body[data-vt=retro] .mcIco[data-n]::before,body[data-vt=neon] .mcIco[data-n]::before{content:attr(data-e)}';
     var st=document.createElement('style'); st.textContent=t; document.head.appendChild(st);
   }
   function apply(el){
     var n=el.firstChild; if(!n||n.nodeType!==3) return;
     var m=RE.exec(n.nodeValue); if(!m) return;
-    var i=document.createElement('i'); i.className='mcIco'; i.setAttribute('data-k',MAP[m[1]]);
+    var d=MAP[m[1]]; if(!d) return;
+    var i=document.createElement('i'); i.className='mcIco'; i.setAttribute('data-k',d[0]);
+    if(d[1]){ i.setAttribute('data-n','1'); i.setAttribute('data-e',m[1]); }
     n.nodeValue=n.nodeValue.slice(m[0].length);
     el.insertBefore(i,n);
   }
-  function scan(){
-    IDS.forEach(function(id){
-      var el=document.getElementById(id); if(!el||el.__mcIco) return; el.__mcIco=1;
-      apply(el);
-      new MutationObserver(function(){ apply(el); }).observe(el,{childList:true,characterData:true,subtree:false});
-    });
+  var busy=false;
+  function scan(){ busy=false; var l=document.querySelectorAll(SEL); for(var k=0;k<l.length;k++) apply(l[k]); }
+  function later(){ if(!busy){ busy=true; (window.requestAnimationFrame||setTimeout)(scan); } }
+  function init(){
+    css(); scan();
+    new MutationObserver(later).observe(document.body,{childList:true,characterData:true,subtree:true});
   }
-  function init(){ css(); scan(); setTimeout(scan,500); setTimeout(scan,2000); }
   if(document.readyState==='loading') addEventListener('DOMContentLoaded',init); else init();
 })();
