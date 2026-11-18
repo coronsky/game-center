@@ -127,7 +127,7 @@
       t+=(s==='natural'?'.mcIco[data-k='+k+'],':'')+'body[data-vt='+s+'] .mcIco[data-k='+k+']{background-image:url('+BASE+'img/ico/'+s+'_'+k+'.webp)}';
     }); });
     // 絵があるスキンだけイラスト、無いスキンは元の絵文字を表示
-    var HAS={skin:['natural','retro','neon'],gear:['natural','retro','neon'],undo:['natural','retro','neon'],first:['natural','retro','neon'],second:['natural','retro','neon'],map:['retro','neon']};
+    var HAS={skin:['natural','retro','neon'],gear:['natural','retro','neon'],undo:['natural','retro','neon'],first:['natural','retro','neon'],second:['natural','retro','neon'],map:['natural','retro','neon']};
     Object.keys(HAS).forEach(function(k){ ['natural','retro','neon'].forEach(function(s){
       var q=(s==='natural'?'':'body[data-vt='+s+'] ')+'.mcIco[data-k='+k+']';
       if(HAS[k].indexOf(s)>=0) t+=q+'{background-image:url('+BASE+'img/ico/'+s+'_'+k+'.webp);width:1.35em;height:1.35em;vertical-align:-.32em}'+q+'::before{content:none}';
@@ -150,6 +150,49 @@
   function init(){
     css(); scan();
     new MutationObserver(later).observe(document.body,{childList:true,characterData:true,subtree:true});
+  }
+  if(document.readyState==='loading') addEventListener('DOMContentLoaded',init); else init();
+})();
+
+// 🔒 の文字を、スキンごとのイラストに差し替える
+(function(){
+  var BASE=(document.currentScript&&document.currentScript.src||'').replace(/fit\.js.*$/,'');
+  var G={'🔒':'lock'}, RE=/🔒/, SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,OPTION:1,TITLE:1,CANVAS:1,NOSCRIPT:1,INPUT:1};
+  function css(){
+    var t='.mcGl{display:inline-block;width:1em;height:1em;vertical-align:-.14em;background-position:center;background-size:contain;background-repeat:no-repeat;flex:none}';
+    ['lock'].forEach(function(k){ ['natural','retro','neon'].forEach(function(s){
+      t+=(s==='natural'?'.mcGl[data-k='+k+'],':'')+'body[data-vt='+s+'] .mcGl[data-k='+k+']{background-image:url('+BASE+'img/ico/'+s+'_'+k+'.webp)}';
+    }); });
+    var st=document.createElement('style'); st.textContent=t; document.head.appendChild(st);
+  }
+  function conv(n){
+    var p=n.parentNode; if(!p||SKIP[p.nodeName]||!RE.test(n.nodeValue)) return;
+    var f=document.createDocumentFragment(), v=n.nodeValue, buf='';
+    for(var i=0;i<v.length;i++){
+      var c=v[i]; if(c==='\uD83D'&&v[i+1]==='\uDD12'){c='🔒'; i++;}
+      if(G[c]){ if(buf){ f.appendChild(document.createTextNode(buf)); buf=''; }
+        var e=document.createElement('i'); e.className='mcGl'; e.setAttribute('data-k',G[c]); f.appendChild(e);
+        if(v[i+1]==='\uFE0F'||v[i+1]==='\uFE0E') i++;
+      } else buf+=c;
+    }
+    if(buf) f.appendChild(document.createTextNode(buf));
+    p.replaceChild(f,n);
+  }
+  function walk(r){
+    if(r.nodeType===3){ conv(r); return; }
+    if(r.nodeType!==1||SKIP[r.nodeName]) return;
+    var w=document.createTreeWalker(r,4,null,false), a=[], x; while((x=w.nextNode())) if(RE.test(x.nodeValue)&&!SKIP[x.parentNode.nodeName]) a.push(x);
+    for(var i=0;i<a.length;i++) conv(a[i]);
+  }
+  var q=[], busy=false;
+  function flush(){ busy=false; var l=q; q=[]; for(var i=0;i<l.length;i++) if(l[i].parentNode||l[i]===document.body) walk(l[i]); }
+  function init(){
+    css(); walk(document.body);
+    new MutationObserver(function(ms){
+      for(var i=0;i<ms.length;i++){ var m=ms[i];
+        if(m.type==='characterData') q.push(m.target); else for(var j=0;j<m.addedNodes.length;j++) q.push(m.addedNodes[j]); }
+      if(q.length&&!busy){ busy=true; (window.requestAnimationFrame||setTimeout)(flush); }
+    }).observe(document.body,{childList:true,characterData:true,subtree:true});
   }
   if(document.readyState==='loading') addEventListener('DOMContentLoaded',init); else init();
 })();
