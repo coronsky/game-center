@@ -289,6 +289,7 @@ body[data-theme=natural] #hdrChip{background-image:url(img/ui/natural_skin.webp?
   <input class="txt" id="nameIn" maxlength="12" placeholder="ゲスト">
   <div class="row"><span>効果音</span><button class="sw" id="swSound"></button></div>
   <button class="btn c" id="instSet" style="margin-top:10px">📲 ホーム画面に追加</button>
+  <button class="btn c" id="updSet" style="margin-top:8px">🔄 最新版に更新</button>
   <div class="acts"><button class="btn" data-close="mSet">とじる</button></div>
 </div></div>
 
@@ -470,6 +471,7 @@ function drawSet(){
   $('swSound').classList.toggle('on',P.sound);
 }
 document.querySelectorAll('.th').forEach(b=>b.onclick=()=>{actx();SFX.tap();P.theme=b.dataset.t;save();render();drawSet()});
+$('updSet').onclick=async()=>{const b=$('updSet');b.textContent='更新中…';b.disabled=true;try{if('serviceWorker' in navigator){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch(e){}const u=new URL(location.href);u.searchParams.set('r',Date.now());location.replace(u.toString())};
 $('swSound').onclick=()=>{P.sound=!P.sound;save();drawSet();SFX.tap()};
 $('nameIn').addEventListener('input',()=>{P.name=$('nameIn').value.trim().slice(0,12);save();drawPlayer()});
 $('pinfo').onclick=$('plProf').onclick=()=>{actx();openSet();setTimeout(()=>$('nameIn').focus(),100)};
