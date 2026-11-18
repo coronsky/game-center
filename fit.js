@@ -85,6 +85,7 @@
     '#mcSkinPop.on i{animation:mcSpD .9s ease-out forwards}'+
     '#mcSkinPop i:nth-of-type(1){right:-4%;top:-26%;animation-delay:.12s!important}#mcSkinPop i:nth-of-type(2){right:20%;bottom:-30%;animation-delay:.22s!important}#mcSkinPop i:nth-of-type(3){left:34%;top:-30%;animation-delay:.3s!important}'+
     '@keyframes mcSpD{0%{opacity:0;transform:scale(.3) rotate(-20deg)}50%{opacity:1;transform:scale(1.15) rotate(8deg)}100%{opacity:1;transform:scale(1) rotate(0)}}'+
+    '#mcSkinPop.retro b{left:23%;right:10%;transform:translateY(8%)}#mcSkinPop.neon b{left:24%;right:3%;transform:translateY(11.5%)}'+
     '#mcSkinPop.natural b{color:#5a3d2b;text-shadow:0 1px 0 #fff8e6}#mcSkinPop.retro b{color:#8a1e12;text-shadow:0 1px 0 #ffe9b8}#mcSkinPop.neon b{color:#fff;text-shadow:0 0 8px #ff4fd8,0 0 14px #3ff0ff}';
     document.head.appendChild(st);
     var p=document.createElement('div'); p.id='mcSkinPop'; p.innerHTML='<span class="ic"></span><b></b><i></i><i></i><i></i>'; document.body.appendChild(p);
