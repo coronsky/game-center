@@ -409,7 +409,7 @@ body[data-vt=neon] .mc.op.a{background:url(img/x2_open.webp) center/100% 100% no
 <div class="modal" id="mMenu"><div class="card"><h2>🐾 どれであそぶ？</h2>
   <div class="seg" id="mMode"><button data-m="stage">🗺️ ステージ</button><button data-m="random">🎲 ランダム</button></div>
   <div id="mStageBox"><div class="lb" style="margin-top:12px">ステージをえらぶ（全30）</div><div class="selG" id="selG"></div><div class="acts"><button class="btn g" id="mStart">はじめる</button></div></div>
-  <div id="mRandBox"><div class="lb" style="margin-top:12px">ランダムの大きさ</div><div class="seg" id="mSize"><button data-s="0">かんたん<br><small>9×9</small></button><button data-s="1">やさしい<br><small>12×12</small></button><button data-s="2">ふつう<br><small>16×16</small></button></div><div class="acts"><button class="btn g" id="mRand">ランダムではじめる</button></div></div>
+  <div id="mRandBox"><div class="lb" style="margin-top:12px">ランダムの大きさ</div><div class="seg" id="mSize"><button data-s="0">やさしい<br><small>9×9</small></button><button data-s="1">ふつう<br><small>12×12</small></button><button data-s="2">むずかしい<br><small>16×16</small></button></div><div class="acts"><button class="btn g" id="mRand">ランダムではじめる</button></div></div>
 </div></div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 マインスイーパー</h2><p>草むらにかくれた<b>ほねっこ🦴（地雷）</b>をふまないように、安全なマスを全部ひらこう。</p>
 <p>🔢 ひらいたマスの数字は、まわり8マスにあるお肉の数です。</p>
@@ -518,7 +518,7 @@ function lvRow(el,names,cur,starsOf,onPick){ el.innerHTML=names.map((n,i)=>`<but
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{actx();SFX.tap();onPick(+b.dataset.i)}); const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
 if(!store.get('seen')){ store.set('seen',1); setTimeout(()=>openM('mHelp'),400); }
 
-const LVS=[{w:9,h:9,m:10,name:'かんたん 9×9'},{w:12,h:12,m:25,name:'やさしい 12×12'},{w:16,h:16,m:50,name:'ふつう 16×16'}];
+const LVS=[{w:9,h:9,m:10,name:'やさしい 9×9'},{w:12,h:12,m:25,name:'ふつう 12×12'},{w:16,h:16,m:50,name:'むずかしい 16×16'}];
 const NST=30;
 const stageCfg=n=>{const w=Math.min(16,7+Math.floor((n-1)/3)),d=.12+(n-1)*.0035; return {w,h:w,m:Math.round(w*w*d),name:'ステージ '+n+'（'+w+'×'+w+'）'}};
 const P=Object.assign({cur:0,best2:{},stage:1,stars:{}},store.get('prog',{})); if(!(P.cur>=0&&P.cur<=3)) P.cur=0; if(!P.best2) P.best2={}; if(!P.stars) P.stars={}; if(!(P.stage>=1)) P.stage=1;
