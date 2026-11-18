@@ -118,20 +118,21 @@
   var BASE=(document.currentScript&&document.currentScript.src||'').replace(/fit\.js.*$/,'');
   // [名前, ナチュラル専用か]
   var MAP={'🏠':['home',0],'❓':['help',0],'💡':['hint',0],'⟳':['reset',0],'🔁':['reset',0],'🔄':['reset',0],
-           '🎨':['skin',1],'⚙':['gear',1],'↩':['undo',1],'⚡':['first',1],'🐢':['second',1]};
-  var RE=/^\s*(🏠|❓|💡|⟳|🔁|🔄|🎨|⚙|↩|⚡|🐢)[\uFE0E\uFE0F]?\s*/;
+           '🎨':['skin',1],'⚙':['gear',1],'↩':['undo',1],'⚡':['first',1],'🐢':['second',1],'🗺':['map',1]};
+  var RE=/^\s*(🏠|❓|💡|⟳|🔁|🔄|🎨|⚙|↩|⚡|🐢|🗺)[\uFE0E\uFE0F]?\s*/;
   var SEL='button,.btn,a.btn';
   function css(){
     var t='.mcIco{display:inline-block;width:1.35em;height:1.35em;vertical-align:-.32em;margin-right:.18em;background-position:center;background-size:contain;background-repeat:no-repeat;flex:none}';
     ['home','help','hint','reset'].forEach(function(k){ ['natural','retro','neon'].forEach(function(s){
       t+=(s==='natural'?'.mcIco[data-k='+k+'],':'')+'body[data-vt='+s+'] .mcIco[data-k='+k+']{background-image:url('+BASE+'img/ico/'+s+'_'+k+'.webp)}';
     }); });
-    ['skin','gear','undo','first','second'].forEach(function(k){
-      t+='.mcIco[data-k='+k+']{background-image:url('+BASE+'img/ico/natural_'+k+'.webp)}';
-    });
-    // ナチュラル以外のスキンでは、絵がまだ無いものは元の絵文字を表示
-    t+='body[data-vt=retro] .mcIco[data-n],body[data-vt=neon] .mcIco[data-n]{background:none;width:auto;height:auto;vertical-align:baseline}'
-      +'body[data-vt=retro] .mcIco[data-n]::before,body[data-vt=neon] .mcIco[data-n]::before{content:attr(data-e)}';
+    // 絵があるスキンだけイラスト、無いスキンは元の絵文字を表示
+    var HAS={skin:['natural','retro'],gear:['natural','retro'],undo:['natural','retro'],first:['natural','retro'],second:['natural','retro'],map:['retro']};
+    Object.keys(HAS).forEach(function(k){ ['natural','retro','neon'].forEach(function(s){
+      var q=(s==='natural'?'':'body[data-vt='+s+'] ')+'.mcIco[data-k='+k+']';
+      if(HAS[k].indexOf(s)>=0) t+=q+'{background-image:url('+BASE+'img/ico/'+s+'_'+k+'.webp);width:1.35em;height:1.35em;vertical-align:-.32em}'+q+'::before{content:none}';
+      else t+=q+'{background:none;width:auto;height:auto;vertical-align:baseline}'+q+'::before{content:attr(data-e)}';
+    }); });
     var st=document.createElement('style'); st.textContent=t; document.head.appendChild(st);
   }
   function apply(el){
