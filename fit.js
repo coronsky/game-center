@@ -302,3 +302,19 @@
   });
   var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
 })();
+/* ステージ選択タイル（ドキドキ鬼ごっこ：.tile） */
+(function(){
+  var r=new URL('img/',document.currentScript.src).href;
+  var S={natural:{c:'#6b3f17',cur:'0 0 0 3px #f0b429'},retro:{c:'#ffe7b0',cur:'0 0 0 3px #fff3a0,0 0 10px #ffd36b'},neon:{c:'#bff8ff',cur:'0 0 0 3px #fff,0 0 12px #19e6ff'}};
+  var css='';
+  Object.keys(S).forEach(function(k){
+    var s=S[k],p='html body[data-vt='+k+'] #selG .tile',f=r+k+'/stg_frame.webp?v=2',fc=r+k+'/stg_frame_clear.webp?v=5';
+    css+=p+'{padding:0!important;background:url('+f+') center/100% 100% no-repeat!important;color:'+s.c+'!important;font-size:clamp(14px,4.6vw,19px)!important;text-shadow:none;box-shadow:none}'
+     +p+':is(.ck,.pf){background-image:url('+fc+')!important}'
+     +p+'.lk{opacity:.55;filter:grayscale(.5);font-size:0!important}'+p+'.lk::after{content:"🔒";font-size:18px}'
+     +p+'.cur{border-radius:16px;box-shadow:'+s.cur+'}'
+     +p+' .ts{font-size:0;line-height:0;margin-top:1px;color:inherit;text-shadow:none}'
+     +p+' .gcs{width:15px;height:15px;margin:0}';
+  });
+  var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+})();
