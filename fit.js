@@ -197,3 +197,17 @@
   }
   if(document.readyState==='loading') addEventListener('DOMContentLoaded',init); else init();
 })();
+
+/* ステージ選択タイルの共通デザイン（ナチュラル）：枠画像＋番号＋星 */
+(function(){
+  var b=new URL('img/natural/',document.currentScript.src).href;
+  var st=document.createElement('style');
+  st.textContent='body[data-vt=natural] .qg{gap:8px}'
+   +'body[data-vt=natural] .qg button{aspect-ratio:1/1;border:0!important;border-radius:0!important;padding:0!important;gap:0!important;flex-direction:column;align-items:center;justify-content:center;color:#6b3f17!important;font-size:clamp(14px,4.6vw,19px)!important;font-weight:900;line-height:1.1;background:url('+b+'stg_frame.webp) center/100% 100% no-repeat!important;box-shadow:none}'
+   +'body[data-vt=natural] .qg button.ok{background-image:url('+b+'stg_frame_clear.webp)!important;color:#2f5a1f!important}'
+   +'body[data-vt=natural] .qg button.lk{opacity:.55;filter:grayscale(.6)}'
+   +'body[data-vt=natural] .qg button.cur{box-shadow:0 0 0 3px #f0b429!important;border-radius:16px!important}'
+   +'body[data-vt=natural] .qg button small{display:none;font-size:0;line-height:0;margin-top:1px}body[data-vt=natural] .qg button small:has(.gcs){display:block}'
+   +'body[data-vt=natural] .qg button .gcs{width:15px;height:15px;margin:0 0}';
+  document.head.appendChild(st);
+})();

@@ -467,7 +467,7 @@ function lvs(){ const el=$('lvs'); el.innerHTML=QS().map((_,i)=>{ const u=unlock
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; if(!unlocked(P.k,i)){toast('前の問題をクリアするとあくよ');return} actx();SFX.tap();load(i); });
   const on=el.querySelector('.on'); if(on) on.scrollIntoView({inline:'center',block:'nearest'}); }
 function listM(k){ lvRow($('lkRow'),['1本','2本','3本'],+k-1,null,j=>listM(String(j+1)));
-  const qs=Q[k]; $('qg').innerHTML=qs.map((q,i)=>{ const u=unlocked(k,i),d=isDone(k,i); return `<button data-i="${i}" class="${d?'ok':''} ${!u?'lk':''} ${k===P.k&&i===P.cur?'cur':''}">${!u?'🔒':d?'★':'・'}${i+1}<small>${u?q:'？'}</small></button>`; }).join('');
+  const qs=Q[k]; $('qg').innerHTML=qs.map((q,i)=>{ const u=unlocked(k,i),d=isDone(k,i); return `<button data-i="${i}" class="${d?'ok':''} ${!u?'lk':''} ${k===P.k&&i===P.cur?'cur':''}">${!u?'🔒':''}${i+1}<small>${d?'★':(u?q:'？')}</small></button>`; }).join('');
   $('qg').querySelectorAll('button').forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; if(!unlocked(k,i)){toast('前の問題をクリアするとあくよ');return} actx();SFX.tap(); closeM('mList'); P.k=k; kRow(); load(i); }); }
 $('bList').onclick=()=>{actx();SFX.tap();listM(P.k);openM('mList')};
 if(!unlocked(P.k,P.cur)) P.cur=0;
