@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>コロン＆ムーンの詰将棋</title>
+<title>【叩き台】コロン＆ムーンの詰将棋</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Mochiy+Pop+One&family=DotGothic16&display=swap" rel="stylesheet">
 <style>
@@ -299,7 +299,7 @@ html body[data-vt] .star{width:2.2%;height:auto;aspect-ratio:1}
 html body[data-vt] #files span,html body[data-vt] #ranks span{font-size:clamp(8px,2.4vw,11px);font-weight:900}
 html body[data-vt] .pc{clip-path:none;width:96%;height:96%;background:center 80%/auto var(--h,92%) no-repeat!important;filter:drop-shadow(0 1.5px 1.2px rgba(0,0,0,.45))}
 html body[data-vt] .pc b,html body[data-vt] .pc .kf{display:none}
-html body[data-vt] .hp .pc.sm{width:30px;height:34px}html body[data-vt] .prs button .pc{width:50px;height:56px}
+html body[data-vt] .hp .pc.sm{width:30px;height:34px}html body[data-vt] .handRow>div{flex:1;min-width:0}html body[data-vt] .hp{padding:1px 3px}html body[data-vt] .hp i{right:-2px;bottom:-1px}html body[data-vt] .prs button .pc{width:50px;height:56px}
 html body[data-vt] .sq.tgt::after{width:30%;height:28%;border-radius:50%}
 html body[data-vt] .sq.cap::after{width:88%;height:88%;border-radius:8px;background:none!important;border:3px solid rgba(230,70,50,.85)!important;box-shadow:0 0 8px rgba(255,80,60,.7)}
 html body[data-vt] .handRow{background:none!important;border-style:solid;border-color:transparent;border-width:10px 22px 16px;border-radius:0;min-height:44px;padding:0 4px}
@@ -318,9 +318,8 @@ html body[data-vt=natural] :is(#files,#ranks) span{color:#6b4a2f!important;}
 html body[data-vt=natural] .sq.sel{box-shadow:inset 0 0 0 3px #ffe066,0 0 10px #ffe066!important;background:rgba(255,230,120,.25)!important}
 html body[data-vt=natural] .sq.last{background:rgba(140,200,90,.45)!important}html body[data-vt=natural] .sq.lastf{background:rgba(140,200,90,.25)!important}
 html body[data-vt=natural] .sq.tgt::after{background:#2f9e44!important;box-shadow:0 0 0 2.5px #fff,0 0 8px rgba(20,90,30,.8)}
-html body[data-vt=natural] .handRow:first-of-type,html body[data-vt=natural] .handRow{border-image:url(../img/natural/sg_box2.webp) 30% 24% 34% 24% fill / 10px 22px 16px round}
-html body[data-vt=natural] .handRow ~ .boardWrap ~ .handRow{border-image:url(../img/natural/sg_box1.webp) 30% 24% 34% 24% fill / 10px 22px 16px round}
-html body[data-vt=natural] .handRow :is(.lbl,.none){color:#fff8e8!important;text-shadow:0 1px 2px rgba(0,0,0,.7);opacity:1!important}
+html body[data-vt=natural] .handRow,html body[data-vt=natural] .handRow ~ .boardWrap ~ .handRow{border-width:16px;padding:3px 6px;min-height:40px;border-image:url(../img/natural/sg_komadai.webp) 34 34 34 34 fill / 16px stretch}
+html body[data-vt=natural] .handRow :is(.lbl,.none){color:#6b4220!important;text-shadow:none;opacity:1!important}
 html body[data-vt=natural] #bHint .bi{background-image:url(../img/natural/sg_bt_hint.webp)}html body[data-vt=natural] #bUndo .bi{background-image:url(../img/natural/sg_bt_undo.webp)}html body[data-vt=natural] #bNew .bi{background-image:url(../img/natural/rv_bt_new.webp?v=3)}html body[data-vt=natural] #bSet .bi{background-image:url(../img/natural/sg_bt_set.webp)}
 html body[data-vt=natural] #bgLayer{background-image:linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.15)),url(../img/natural/sg_tx1.webp)!important;background-size:cover!important;background-position:center!important}
 html body[data-vt=natural] .btns .btn{color:#5a3d2b!important;text-shadow:0 1px 0 #fff8e8}
@@ -348,8 +347,7 @@ html body[data-vt=retro] :is(#files,#ranks) span{color:#5a3214!important;}
 html body[data-vt=retro] .sq.sel{box-shadow:inset 0 0 0 3px #ffc23a,0 0 10px #ffc23a!important;background:rgba(255,230,120,.25)!important}
 html body[data-vt=retro] .sq.last{background:rgba(150,190,90,.42)!important}html body[data-vt=retro] .sq.lastf{background:rgba(150,190,90,.22)!important}
 html body[data-vt=retro] .sq.tgt::after{background:#e0452f!important;box-shadow:0 0 0 2.5px #fff3c4,0 0 10px rgba(224,69,47,.9)}
-html body[data-vt=retro] .handRow:first-of-type,html body[data-vt=retro] .handRow{border-image:url(../img/retro/sg_box2.webp) 30% 24% 34% 24% fill / 10px 22px 16px round}
-html body[data-vt=retro] .handRow ~ .boardWrap ~ .handRow{border-image:url(../img/retro/sg_box2.webp) 30% 24% 34% 24% fill / 10px 22px 16px round}
+html body[data-vt=retro] .handRow,html body[data-vt=retro] .handRow ~ .boardWrap ~ .handRow{border-width:16px;padding:3px 6px;min-height:40px;border-image:url(../img/retro/sg_komadai.webp) 34 34 34 34 fill / 16px stretch}
 html body[data-vt=retro] .handRow :is(.lbl,.none){color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.7);opacity:1!important}
 html body[data-vt=retro] #bHint .bi{background-image:url(../img/retro/sg_bt_hint.webp)}html body[data-vt=retro] #bUndo .bi{background-image:url(../img/retro/sg_bt_undo.webp)}html body[data-vt=retro] #bNew .bi{background-image:url(../img/retro/sg_bt_new.webp)}html body[data-vt=retro] #bSet .bi{background-image:url(../img/retro/sg_bt_set.webp)}
 html body[data-vt=retro] #bgLayer{background-image:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.6)),url(../img/retro/sg_tx2.webp)!important;background-size:cover!important;background-position:center!important}
@@ -378,8 +376,7 @@ html body[data-vt=neon] :is(#files,#ranks) span{color:#9ff8ff!important;text-sha
 html body[data-vt=neon] .sq.sel{box-shadow:inset 0 0 0 3px #ffe14a,0 0 10px #ffe14a!important;background:rgba(255,230,120,.25)!important}
 html body[data-vt=neon] .sq.last{background:rgba(63,160,255,.4)!important}html body[data-vt=neon] .sq.lastf{background:rgba(63,160,255,.2)!important}
 html body[data-vt=neon] .sq.tgt::after{background:#3ff0ff!important;box-shadow:0 0 8px #3ff0ff}
-html body[data-vt=neon] .handRow:first-of-type,html body[data-vt=neon] .handRow{border-image:url(../img/neon/sg_box1.webp) 30% 24% 34% 24% fill / 10px 22px 16px round}
-html body[data-vt=neon] .handRow ~ .boardWrap ~ .handRow{border-image:url(../img/neon/sg_box2.webp) 30% 24% 34% 24% fill / 10px 22px 16px round}
+html body[data-vt=neon] .handRow,html body[data-vt=neon] .handRow ~ .boardWrap ~ .handRow{border-width:16px;padding:3px 6px;min-height:40px;border-image:url(../img/neon/sg_komadai.webp) 34 34 34 34 fill / 16px stretch}
 html body[data-vt=neon] .handRow :is(.lbl,.none){color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.7);opacity:1!important}
 html body[data-vt=neon] #bHint .bi{background-image:url(../img/neon/sg_bt_hint.webp)}html body[data-vt=neon] #bUndo .bi{background-image:url(../img/neon/sg_bt_undo.webp)}html body[data-vt=neon] #bNew .bi{background-image:url(../img/neon/sg_bt_new.webp)}html body[data-vt=neon] #bSet .bi{background-image:url(../img/neon/sg_bt_set.webp)}
 html body[data-vt=neon] #bgLayer{background-image:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.6)),url(../img/neon/sg_tx1.webp)!important;background-size:cover!important;background-position:center!important}
