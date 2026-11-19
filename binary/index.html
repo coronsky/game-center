@@ -91,7 +91,7 @@ body{min-height:100vh;display:flex;justify-content:center;background:radial-grad
 body:is([data-vt=retro],[data-vt=neon]) .hud .box{background:rgba(0,0,0,.35);border-color:rgba(255,255,255,.25);color:inherit}
 body:is([data-vt=retro],[data-vt=neon]) .hud .box small{color:inherit;opacity:.75}
 .gbtns{margin-top:10px}
-.gbtns .btn{font-size:clamp(11px,3.3vw,14px);padding:11px 2px}
+.gbtns .btn{font-size:clamp(12px,3.6vw,14px);padding:11px 6px;white-space:nowrap}
 .lvRow{display:flex;gap:6px;margin:8px 10px 0;overflow-x:auto;scrollbar-width:none}
 .lvRow::-webkit-scrollbar{display:none}
 .lvRow button{flex:1 0 auto;border:2px solid #e2cfb2;background:#fffaf1;border-radius:14px;padding:7px 10px;font:inherit;font-weight:900;font-size:13px;color:var(--ink);cursor:pointer;white-space:nowrap}
@@ -288,7 +288,7 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
   <div class="pad"><button class="u" data-d="u">▲</button><button class="l" data-d="l">◀</button><button class="c" id="bNext">つぎ ▶</button><button class="r" data-d="r">▶</button><button class="d" data-d="d">▼</button></div>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
-  <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
+  <div class="btns gbtns" style="grid-template-columns:repeat(2,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn c" id="bUndo">↩︎1手戻す</button><button class="btn g" id="bHome">🏠ホームへ戻る</button></div>
 </div>
 <div class="modal" id="mHelp"><div class="card help"><h2>📖 なかよしミラー</h2><p>コロン（左）とムーン（右）を<b>同時に</b>動かして、まんなかのハート💗の両どなり💕へ連れていこう！</p>
 <p>⬆️⬇️ 上下はふたりとも同じ向き。⬅️➡️ 左右は<b>ムーンだけ反対</b>に動きます。</p>
