@@ -239,3 +239,29 @@
    +'body[data-vt=neon] .qg button .gcs{width:15px;height:15px;margin:0 0}';
   document.head.appendChild(st);
 })();
+
+/* ステージ選択タイル（#mStage .stb：ペグ・ハノイ・脱出・リング・スライド 共通） */
+(function(){
+  var r=new URL('img/',document.currentScript.src).href;
+  var S={natural:{c:'#6b3f17',ok:'#2f5a1f',sh:'none',cur:'0 0 0 3px #f0b429',su:'n'},
+         retro:{c:'#ffe7b0',ok:'#fff',sh:'0 1px 2px rgba(0,0,0,.7)',cur:'0 0 0 3px #fff3a0,0 0 10px #ffd36b',su:'r'},
+         neon:{c:'#bff8ff',ok:'#fff',sh:'0 0 6px #19e6ff',cur:'0 0 0 3px #fff,0 0 12px #19e6ff',su:'x'}};
+  var css='';
+  Object.keys(S).forEach(function(k){
+    var s=S[k],p='body[data-vt='+k+'] #mStage .stb',f=r+k+'/stg_frame.webp',fc=r+k+'/stg_frame_clear.webp';
+    css+=p+'{aspect-ratio:1/1;border:0!important;border-radius:0!important;box-shadow:none;padding:6% 5%!important;gap:1px!important;justify-content:center;opacity:1;overflow:visible;isolation:auto;color:'+s.c+'!important;text-shadow:'+s.sh+';background:url('+f+') center/100% 100% no-repeat!important}'
+     +p+':has(.sr i.on){background-image:url('+fc+')!important;color:'+s.ok+'!important}'
+     +p+'.lock,'+p+'.lk{opacity:.55;filter:grayscale(.5)}'
+     +p+'.cur{border-radius:16px!important;box-shadow:'+s.cur+'!important;background-image:url('+f+')!important}'
+     +p+'.cur:has(.sr i.on){background-image:url('+fc+')!important}'
+     +p+'.cur::before{display:none!important}'
+     +p+' .no{width:auto!important;height:auto!important;aspect-ratio:auto!important;min-width:0;padding:0!important;background:none!important;border-radius:0;color:inherit!important;font-size:clamp(15px,5vw,20px)!important;font-weight:900;line-height:1.1}'
+     +p+' b{color:inherit!important;font-size:10.5px!important;line-height:1.15;font-weight:700}'
+     +p+' small{display:none!important}'
+     +p+' .sr{display:flex;justify-content:center;gap:2px;width:100%;margin-top:1px}'
+     +p+' .sr i{font-size:0!important;width:19%!important;aspect-ratio:1;background:url('+r+'ui/star_'+s.su+'0.webp?v=2) center/contain no-repeat!important}'
+     +p+' .sr i.on{background-image:url('+r+'ui/star_'+s.su+'.webp?v=2)!important}'
+     +p+' .sr i .gcs{display:none!important}';
+  });
+  var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+})();
