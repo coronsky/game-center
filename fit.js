@@ -225,3 +225,17 @@
    +'body[data-vt=retro] .qg button .gcs{width:15px;height:15px;margin:0 0}';
   document.head.appendChild(st);
 })();
+
+/* ステージ選択タイル（ネオン） */
+(function(){
+  var b=new URL('img/neon/',document.currentScript.src).href;
+  var st=document.createElement('style');
+  st.textContent='body[data-vt=neon] .qg{gap:8px}'
+   +'body[data-vt=neon] .qg button{aspect-ratio:1/1;border:0!important;border-radius:0!important;padding:0!important;gap:0!important;flex-direction:column;align-items:center;justify-content:center;color:#bff8ff!important;text-shadow:0 0 6px #19e6ff;font-size:clamp(14px,4.6vw,19px)!important;font-weight:900;line-height:1.1;background:url('+b+'stg_frame.webp) center/100% 100% no-repeat!important;box-shadow:none}'
+   +'body[data-vt=neon] .qg button.ok{background-image:url('+b+'stg_frame_clear.webp)!important;color:#fff!important}'
+   +'body[data-vt=neon] .qg button.lk{opacity:.55;filter:grayscale(.5)}'
+   +'body[data-vt=neon] .qg button.cur{box-shadow:0 0 0 3px #fff,0 0 12px #19e6ff!important;border-radius:16px!important}'
+   +'body[data-vt=neon] .qg button small{display:none;font-size:0;line-height:0;margin-top:1px}body[data-vt=neon] .qg button small:has(.gcs){display:block}'
+   +'body[data-vt=neon] .qg button .gcs{width:15px;height:15px;margin:0 0}';
+  document.head.appendChild(st);
+})();
