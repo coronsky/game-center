@@ -268,3 +268,20 @@
 
 
 (function(){var st=document.createElement('style');st.textContent=':is(.qg,.stGrid) button small:has(.gcs){opacity:1!important}';document.head.appendChild(st);})();
+/* ステージ一覧（リバーシ：button.stg 行形式） */
+(function(){
+  var r=new URL('img/',document.currentScript.src).href;
+  var S={natural:{c:'#6b3f17',ok:'#6b3f17',su:'n'},retro:{c:'#ffe7b0',ok:'#fff',su:'r'},neon:{c:'#bff8ff',ok:'#fff',su:'x'}};
+  var css='';
+  Object.keys(S).forEach(function(k){
+    var s=S[k],p='body[data-vt='+k+'] button.stg';
+    css+=p+' .no{width:46px!important;height:46px!important;border-radius:0!important;background:url('+r+k+'/stg_frame.webp?v=2) center/100% 100% no-repeat!important;color:'+s.c+'!important;font-size:18px;font-weight:900;text-shadow:none}'
+     +p+':has(.sr i.on) .no{background-image:url('+r+k+'/stg_frame_clear.webp?v=5)!important;color:'+s.ok+'!important}'
+     +p+'.lock .no{opacity:.6;filter:grayscale(.5)}'
+     +p+' .sr{display:flex;gap:2px;flex:none}'
+     +p+' .sr i{font-size:0!important;width:22px;height:22px;background:url('+r+'ui/star_'+s.su+'0.webp?v=2) center/contain no-repeat!important}'
+     +p+' .sr i.on{background-image:url('+r+'ui/star_'+s.su+'.webp?v=3)!important}'
+     +p+' .sr i .gcs{display:none!important}';
+  });
+  var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+})();
