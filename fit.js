@@ -285,3 +285,20 @@
   });
   var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
 })();
+/* ステージ選択グリッド（ブロック・まちがい・数独・マイン・ソリティア：#selGrid / #selG） */
+(function(){
+  var r=new URL('img/',document.currentScript.src).href;
+  var S={natural:{c:'#6b3f17',cur:'0 0 0 3px #f0b429'},retro:{c:'#ffe7b0',cur:'0 0 0 3px #fff3a0,0 0 10px #ffd36b'},neon:{c:'#bff8ff',cur:'0 0 0 3px #fff,0 0 12px #19e6ff'}};
+  var css='';
+  Object.keys(S).forEach(function(k){
+    var s=S[k],p='body[data-vt='+k+'] :is(.selGridB,.selG,.selGrid) button',f=r+k+'/stg_frame.webp?v=2',fc=r+k+'/stg_frame_clear.webp?v=5';
+    css+=p+'{aspect-ratio:1/1;height:auto;border:0!important;border-radius:0!important;padding:0!important;gap:0!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;font-size:clamp(14px,4.6vw,19px)!important;font-weight:900;line-height:1.1;color:'+s.c+'!important;text-shadow:none;box-shadow:none!important;opacity:1;background:url('+f+') center/100% 100% no-repeat!important}'
+     +p+':has(.gcs.on){background-image:url('+fc+')!important}'
+     +p+'.lk{opacity:.55;filter:grayscale(.5)}'
+     +p+'.on{border-radius:16px!important;box-shadow:'+s.cur+'!important}'
+     +p+' > :is(small,i,em):not(.gcs){display:none!important}'
+     +p+' > :is(small,i,em):not(.gcs):has(.gcs){display:block!important;opacity:1;font-size:0;line-height:0;margin-top:1px}'
+     +p+' .gcs{width:15px;height:15px;margin:0}';
+  });
+  var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+})();
