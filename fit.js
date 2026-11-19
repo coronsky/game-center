@@ -266,7 +266,5 @@
   var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
 })();
 
-(function(){var st=document.createElement('style');st.textContent='body[data-vt=natural] .gcs.on,body:not([data-vt]) .gcs.on,body[data-vt=natural] #mStage .stb .sr i.on{filter:saturate(1.1) brightness(1.05) drop-shadow(0 0 1px #c25e00) drop-shadow(0 0 3px #ffb300) drop-shadow(0 0 7px rgba(255,170,0,.95))}';document.head.appendChild(st);})();
 
-(function(){var st=document.createElement('style');st.textContent='body[data-vt=retro] .gcs.on,body[data-vt=retro] #mStage .stb .sr i.on{filter:brightness(1.1) saturate(1.2) drop-shadow(0 0 2px #fff0a0) drop-shadow(0 0 4px #ffb300) drop-shadow(0 0 6px rgba(255,200,0,.95))}body[data-vt=neon] .gcs.on,body[data-vt=neon] #mStage .stb .sr i.on{filter:brightness(1.35) saturate(1.3) drop-shadow(0 0 2px #fff176) drop-shadow(0 0 4px #ffeb3b) drop-shadow(0 0 6px rgba(255,235,59,.95)) drop-shadow(0 0 10px rgba(25,230,255,.6))}';document.head.appendChild(st);})();
 (function(){var st=document.createElement('style');st.textContent='.qg button small:has(.gcs){opacity:1!important}';document.head.appendChild(st);})();
