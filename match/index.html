@@ -476,7 +476,7 @@ function rpick(){ const ks=P.rall?['1','2','3']:[P.k]; let all=[],todo=[];
   const c=todo.length?todo:all; if(!c.length){ load(P.cur); return; } const [k,i]=c[Math.floor(Math.random()*c.length)]; P.k=k; save(); kRow(); load(i); }
 function modeRow(){ lvRow($('mRow'),['📋 ステージをえらぶ','🎲 ランダム'],P.mode==='random'?1:0,null,i=>setMode(i?'random':'stage')); $('lvs').style.display=P.mode==='random'?'none':''; }
 function setMode(m){ P.mode=m; save(); modeRow(); if(m==='random') rpick(); else { kRow(); load(P.cur); } }
-$('bStStage').onclick=()=>{actx();SFX.tap();closeM('mStart');if(P.mode!=='stage') setMode('stage');};
+$('bStStage').onclick=()=>{actx();SFX.tap();closeM('mStart');if(P.mode!=='stage') setMode('stage'); listM(P.k); openM('mList');};
 $('bStRand').onclick=()=>{actx();SFX.tap();closeM('mStart');if(P.mode!=='random') setMode('random'); else rpick();};
 modeRow(); if(P.mode==='random') rpick(); else { kRow(); load(P.cur); }
 if(wasSeen) setTimeout(()=>openM('mStart'),350);
