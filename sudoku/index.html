@@ -304,6 +304,11 @@ html body:is([data-vt=retro],[data-vt=neon]) .sc.err{background:#7a1d16!importan
 html body .num button.ib{background-color:transparent!important;border:none!important;box-shadow:none!important;padding:0;aspect-ratio:1;background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3));display:flex;align-items:center;justify-content:center;font-family:var(--dgf);font-weight:var(--dgw);font-size:clamp(22px,7vw,30px);line-height:1;color:var(--dgc);text-shadow:var(--dgs)}
 html body .num button.ib.dim{opacity:.3}
 html body .num button.ib:active{transform:scale(.9)}
+/* ネオン：数字パネルをくっきり */
+body[data-vt=neon] .dg.g,body[data-vt=neon] .dg.u{background:linear-gradient(#17125a,#0a0632)!important;border-radius:22%;text-shadow:none!important;-webkit-text-stroke:.7px currentColor;filter:none}
+body[data-vt=neon] .dg.g{color:#fff!important;box-shadow:inset 0 0 0 2px #ff4fd8,0 0 4px rgba(255,79,216,.55)}
+body[data-vt=neon] .dg.u{color:#c8fbff!important;box-shadow:inset 0 0 0 2px #3ff0ff,0 0 4px rgba(63,240,255,.55)}
+html body[data-vt=neon] .num button.ib{background:linear-gradient(#17125a,#0a0632)!important;background-image:linear-gradient(#17125a,#0a0632)!important;border-radius:22%;box-shadow:inset 0 0 0 2px #3ff0ff,0 0 5px rgba(63,240,255,.55)!important;filter:none;color:#fff;text-shadow:none;-webkit-text-stroke:.7px #fff}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
