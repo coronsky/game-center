@@ -1,0 +1,54 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>コロンの山のぼり（たたき台）</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:system-ui,"Hiragino Sans",sans-serif;background:#1b2a3a;color:#fff;min-height:100vh;display:flex;justify-content:center}
+.app{width:100%;max-width:480px;padding:10px 12px 22px}
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:900}
+.top a{color:#fff;text-decoration:none;background:rgba(255,255,255,.18);border-radius:14px;padding:6px 12px;font-size:14px}
+h1{font-size:18px;margin:0}
+.stage{position:relative;margin-top:10px;border-radius:20px;overflow:hidden;border:3px solid rgba(255,255,255,.35);aspect-ratio:3/4;transition:background 1s}
+svg{position:absolute;inset:0;width:100%;height:100%}
+.lamp{fill:#3a3f4a;stroke:#8b93a1;stroke-width:2;transition:fill .3s,filter .3s}
+.lamp.on{fill:#ffd23a;stroke:#fff3b0;filter:drop-shadow(0 0 7px #ffd23a)}
+.dog{position:absolute;width:13%;aspect-ratio:1;border-radius:50%;background:#fff center/cover url(../img/colon.webp);border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.4);transform:translate(-50%,-110%);transition:left .6s ease-in-out,top .6s ease-in-out}
+.dog.hop{animation:hop .6s}
+@keyframes hop{50%{margin-top:-14px}}
+.alt{position:absolute;left:10px;top:8px;background:rgba(0,0,0,.45);border-radius:12px;padding:4px 10px;font-weight:900;font-size:15px}
+.msg{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-weight:900;font-size:15px;text-shadow:0 1px 3px #000;min-height:22px;padding:0 8px}
+.btn{display:block;width:100%;margin-top:12px;border:0;border-radius:22px;padding:18px;font-size:22px;font-weight:900;color:#3b2a00;background:linear-gradient(#ffe27a,#ffb82e);box-shadow:0 5px 0 #b97d00;cursor:pointer;font-family:inherit}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b97d00}
+.btn.again{background:linear-gradient(#bfe8b0,#6fbf5a);box-shadow:0 5px 0 #3f8a30;color:#12330a}
+.note{font-size:11px;opacity:.7;text-align:center;margin-top:8px}
+</style></head><body><div class="app">
+<div class="top"><h1>🏔 コロンの山のぼり</h1><a href="../lab/">🏠 ラボ</a></div>
+<div class="stage" id="stage"><svg viewBox="0 0 300 400" preserveAspectRatio="none" id="sv"></svg><div class="dog" id="dog"></div><div class="alt" id="alt">0 m</div><div class="msg" id="msg">ボタンをおして、ランプをつけながら のぼろう！</div></div>
+<button class="btn" id="go">🔦 ボタンをおす</button>
+<div class="note">たたき台：ボタンでランプがついて、ワンコが1つずつ山をのぼります</div>
+</div>
+<script>
+(()=>{
+const N=12, H=3600;
+const PTS=[[40,368]];  // ジグザグの登山道
+for(let i=1;i<=N;i++){ const t=i/N, y=368-t*300; const x=(i%2? 230-(t*40):70+(t*40)); PTS.push([i===N?150:x,y]); }
+const sv=document.getElementById('sv'), dog=document.getElementById('dog'), go=document.getElementById('go'), msg=document.getElementById('msg'), alt=document.getElementById('alt'), stage=document.getElementById('stage');
+let h='<defs><linearGradient id="g1" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#5d7f5a"/><stop offset=".6" stop-color="#7d8a95"/><stop offset="1" stop-color="#f1f5f8"/></linearGradient></defs>';
+h+='<path d="M-10 400 L110 150 L150 70 L190 150 L310 400Z" fill="url(#g1)"/>';
+h+='<path d="M150 70 L128 112 L150 104 L172 112Z" fill="#fff" opacity=".9"/>';
+h+='<polyline points="'+PTS.map(p=>p.join(',')).join(' ')+'" fill="none" stroke="#e9d8a6" stroke-width="5" stroke-dasharray="2 8" stroke-linecap="round"/>';
+for(let i=1;i<=N;i++){ const [x,y]=PTS[i]; h+='<circle class="lamp" id="l'+i+'" cx="'+x+'" cy="'+y+'" r="9"/>'; }
+h+='<g id="flag" opacity="0"><line x1="150" y1="70" x2="150" y2="38" stroke="#fff" stroke-width="3"/><path d="M150 38 L178 46 L150 54Z" fill="#ff5a5a"/></g>';
+sv.innerHTML=h;
+const SKY=['#8fd3ff','#9fd8f2','#f7d58a','#f59a6b','#6b4e8f','#1c1f4a'];
+const SAY=['いいかんじ！','ひとつ ともった！','おひさまがぽかぽか','くうきがおいしいワン','もうすこし！','星がみえてきた…','あしどりかるいワン','ランプがきれい✨'];
+let step=0;
+const place=i=>{ const [x,y]=PTS[i]; dog.style.left=(x/300*100)+'%'; dog.style.top=(y/400*100)+'%'; };
+function sky(){ const k=step/N, i=Math.min(SKY.length-2,Math.floor(k*(SKY.length-1))); stage.style.background='linear-gradient(#'+'0'+',#0)'; stage.style.background='linear-gradient('+SKY[Math.min(SKY.length-1,i+1)]+','+SKY[i]+')'; }
+function reset(){ step=0; for(let i=1;i<=N;i++) document.getElementById('l'+i).classList.remove('on'); document.getElementById('flag').setAttribute('opacity',0); place(0); alt.textContent='0 m'; msg.textContent='ボタンをおして、ランプをつけながら のぼろう！'; go.textContent='🔦 ボタンをおす'; go.className='btn'; sky(); }
+function press(){ if(step>=N){ reset(); return; } step++; document.getElementById('l'+step).classList.add('on'); place(step); dog.classList.remove('hop'); void dog.offsetWidth; dog.classList.add('hop');
+  alt.textContent=Math.round(step/N*H)+' m'; sky();
+  if(step===N){ document.getElementById('flag').setAttribute('opacity',1); msg.textContent='🎉 ちょうじょう！ やったワン！'; go.textContent='🔁 もういちど のぼる'; go.className='btn again'; }
+  else msg.textContent=SAY[(Math.random()*SAY.length)|0];
+  try{ if(navigator.vibrate) navigator.vibrate(15); }catch(e){} }
+go.onclick=press; reset();
+})();
+</script></body></html>
