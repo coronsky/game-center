@@ -1,54 +1,140 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>コロンの山のぼり（たたき台）</title>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>コロン＆ムーンの山のぼり</title>
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;font-family:system-ui,"Hiragino Sans",sans-serif;background:#1b2a3a;color:#fff;min-height:100vh;display:flex;justify-content:center}
-.app{width:100%;max-width:480px;padding:10px 12px 22px}
-.top{display:flex;justify-content:space-between;align-items:center;font-weight:900}
-.top a{color:#fff;text-decoration:none;background:rgba(255,255,255,.18);border-radius:14px;padding:6px 12px;font-size:14px}
-h1{font-size:18px;margin:0}
-.stage{position:relative;margin-top:10px;border-radius:20px;overflow:hidden;border:3px solid rgba(255,255,255,.35);aspect-ratio:3/4;transition:background 1s}
-svg{position:absolute;inset:0;width:100%;height:100%}
-.lamp{fill:#3a3f4a;stroke:#8b93a1;stroke-width:2;transition:fill .3s,filter .3s}
-.lamp.on{fill:#ffd23a;stroke:#fff3b0;filter:drop-shadow(0 0 7px #ffd23a)}
-.dog{position:absolute;width:13%;aspect-ratio:1;border-radius:50%;background:#fff center/cover url(../img/colon.webp);border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.4);transform:translate(-50%,-110%);transition:left .6s ease-in-out,top .6s ease-in-out}
-.dog.hop{animation:hop .6s}
-@keyframes hop{50%{margin-top:-14px}}
-.alt{position:absolute;left:10px;top:8px;background:rgba(0,0,0,.45);border-radius:12px;padding:4px 10px;font-weight:900;font-size:15px}
-.msg{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-weight:900;font-size:15px;text-shadow:0 1px 3px #000;min-height:22px;padding:0 8px}
-.btn{display:block;width:100%;margin-top:12px;border:0;border-radius:22px;padding:18px;font-size:22px;font-weight:900;color:#3b2a00;background:linear-gradient(#ffe27a,#ffb82e);box-shadow:0 5px 0 #b97d00;cursor:pointer;font-family:inherit}
-.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b97d00}
-.btn.again{background:linear-gradient(#bfe8b0,#6fbf5a);box-shadow:0 5px 0 #3f8a30;color:#12330a}
-.note{font-size:11px;opacity:.7;text-align:center;margin-top:8px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+body{margin:0;font-family:system-ui,"Hiragino Sans",sans-serif;background:#16301f;color:#fff;min-height:100dvh;display:flex;justify-content:center}
+.app{width:100%;max-width:480px;padding:6px 8px calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center}
+.top{width:100%;display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:14px}
+.top a{color:#fff;text-decoration:none;background:rgba(255,255,255,.18);border-radius:14px;padding:5px 11px}
+.hud{width:100%;display:flex;gap:6px;margin:4px 0;font-weight:900;font-size:14px}
+.hud div{flex:1;background:rgba(0,0,0,.35);border-radius:12px;padding:4px 8px;text-align:center}
+.hud b{font-size:18px}
+.board{position:relative;aspect-ratio:3/4;height:min(calc(100dvh - 205px),calc((100vw - 16px)*4/3),640px);border-radius:16px;overflow:hidden;border:3px solid #f3e3a6;background:#456 url(img/board.webp) center/100% 100%}
+.lp{position:absolute;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;opacity:0;transition:opacity .25s,box-shadow .25s}
+.lp.pl{opacity:1;background:radial-gradient(ellipse,#fff7b0 0%,#ffd83a 55%,rgba(255,170,0,.3) 100%);box-shadow:0 0 10px 3px #ffc21a}
+.lp.mo.pl{box-shadow:0 0 10px 3px #ffc21a,0 0 0 3px #7fd0ff inset}
+.lp.mo:not(.pl){opacity:.9;background:radial-gradient(ellipse,#e8f8ff 0%,#9ad8ff 60%,rgba(80,160,255,.3) 100%);box-shadow:0 0 9px 2px #6cc4ff}
+.ev{position:absolute;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
+.ev.gone{opacity:.0;transition:opacity .4s}
+.dec{position:absolute;transform:translate(-50%,-50%);border-radius:50%;background:rgba(40,30,0,.28);pointer-events:none}
+.ch{position:absolute;width:14%;transform:translate(-50%,-93%);transition:left .14s linear,top .14s linear;pointer-events:none;filter:drop-shadow(0 3px 3px rgba(0,0,0,.4))}
+.ch.hop{animation:hop .14s}
+@keyframes hop{50%{margin-top:-2.2%}}
+.ch.m{width:13%}
+.ch .tag{position:absolute;top:-4px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:900;background:rgba(0,0,0,.55);border-radius:8px;padding:0 5px;white-space:nowrap}
+.say{z-index:4000;position:absolute;left:0;right:0;top:6px;text-align:center;font-weight:900;font-size:17px;text-shadow:0 2px 4px #000,0 0 8px #000;pointer-events:none;min-height:24px;padding:0 8px}
+.ctl{display:flex;gap:10px;width:100%;margin-top:8px}
+.b{flex:1;border:0;border-radius:22px;padding:12px 4px;font-size:20px;font-weight:900;color:#fff;font-family:inherit;line-height:1.15}
+.b small{display:block;font-size:11px;font-weight:700;opacity:.9}
+.b.g{background:linear-gradient(#5fe07a,#1fa84a);box-shadow:0 5px 0 #11702f}
+.b.r{background:linear-gradient(#ff7a6a,#d9322a);box-shadow:0 5px 0 #8e1a14}
+.b:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+.b:disabled{filter:grayscale(.7) brightness(.8)}
+.ov{position:absolute;inset:0;z-index:5000;background:rgba(10,30,15,.8);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;text-align:center}
+.ov.hide{display:none}
+.ov img.logo{width:78%;max-width:300px}
+.ov h2{margin:0;font-size:24px}
+.stg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:92%}
+.stg button{border:0;border-radius:14px;padding:8px 2px;font-family:inherit;font-weight:900;font-size:15px;background:#fff3c4;color:#4a3300;box-shadow:0 3px 0 #b08a2a}
+.stg button i{display:block;font-style:normal;font-size:13px;color:#d08a00;letter-spacing:1px}
+.stg button.lock{opacity:.4}
+.pb{border:0;border-radius:18px;padding:11px 26px;font-size:18px;font-weight:900;font-family:inherit;background:linear-gradient(#ffe27a,#ffb82e);color:#3b2a00;box-shadow:0 4px 0 #b97d00}
+.pb.s{background:#e8f4e8;box-shadow:0 4px 0 #8fae8f;font-size:15px;padding:8px 18px}
+.big{font-size:44px;font-weight:900;text-shadow:0 3px 6px #000}
+.stars{font-size:38px;letter-spacing:4px;color:#ffd23a}
+.rule{font-size:12px;opacity:.85;line-height:1.5}
 </style></head><body><div class="app">
-<div class="top"><h1>🏔 コロンの山のぼり</h1><a href="../lab/">🏠 ラボ</a></div>
-<div class="stage" id="stage"><svg viewBox="0 0 300 400" preserveAspectRatio="none" id="sv"></svg><div class="dog" id="dog"></div><div class="alt" id="alt">0 m</div><div class="msg" id="msg">ボタンをおして、ランプをつけながら のぼろう！</div></div>
-<button class="btn" id="go">🔦 ボタンをおす</button>
-<div class="note">たたき台：ボタンでランプがついて、ワンコが1つずつ山をのぼります</div>
+<div class="top"><span>🏔 コロン＆ムーンの山のぼり</span><a href="../lab/">🏠 ラボ</a></div>
+<div class="hud"><div>⏱ のこり <b id="tm">--</b></div><div>🐾 <b id="pr">0</b>%　ムーン <b id="mr">0</b>%</div></div>
+<div class="board" id="bd">
+<div class="say" id="say"></div>
+<div class="ov" id="ovT"><img class="logo" src="img/logo.webp" alt="">
+<div class="rule">🟢ゆっくり＝1歩ずつ　🔴ダッシュ＝2〜3歩（ころぶことも！）<br>ランプをたどって山の上のはたまで！ムーンより先に着いたら★2</div>
+<div class="stg" id="stg"></div></div>
+<div class="ov hide" id="ovR"></div>
 </div>
+<div class="ctl"><button class="b g" id="bS" disabled>🟢 ゆっくり<small>1歩・あんぜん</small></button><button class="b r" id="bD" disabled>🔴 ダッシュ！<small>2〜3歩・ころぶかも</small></button></div>
+</div>
+<script src="../coins.js"></script>
 <script>
-(()=>{
-const N=12, H=3600;
-const PTS=[[40,368]];  // ジグザグの登山道
-for(let i=1;i<=N;i++){ const t=i/N, y=368-t*300; const x=(i%2? 230-(t*40):70+(t*40)); PTS.push([i===N?150:x,y]); }
-const sv=document.getElementById('sv'), dog=document.getElementById('dog'), go=document.getElementById('go'), msg=document.getElementById('msg'), alt=document.getElementById('alt'), stage=document.getElementById('stage');
-let h='<defs><linearGradient id="g1" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#5d7f5a"/><stop offset=".6" stop-color="#7d8a95"/><stop offset="1" stop-color="#f1f5f8"/></linearGradient></defs>';
-h+='<path d="M-10 400 L110 150 L150 70 L190 150 L310 400Z" fill="url(#g1)"/>';
-h+='<path d="M150 70 L128 112 L150 104 L172 112Z" fill="#fff" opacity=".9"/>';
-h+='<polyline points="'+PTS.map(p=>p.join(',')).join(' ')+'" fill="none" stroke="#e9d8a6" stroke-width="5" stroke-dasharray="2 8" stroke-linecap="round"/>';
-for(let i=1;i<=N;i++){ const [x,y]=PTS[i]; h+='<circle class="lamp" id="l'+i+'" cx="'+x+'" cy="'+y+'" r="9"/>'; }
-h+='<g id="flag" opacity="0"><line x1="150" y1="70" x2="150" y2="38" stroke="#fff" stroke-width="3"/><path d="M150 38 L178 46 L150 54Z" fill="#ff5a5a"/></g>';
-sv.innerHTML=h;
-const SKY=['#8fd3ff','#9fd8f2','#f7d58a','#f59a6b','#6b4e8f','#1c1f4a'];
-const SAY=['いいかんじ！','ひとつ ともった！','おひさまがぽかぽか','くうきがおいしいワン','もうすこし！','星がみえてきた…','あしどりかるいワン','ランプがきれい✨'];
-let step=0;
-const place=i=>{ const [x,y]=PTS[i]; dog.style.left=(x/300*100)+'%'; dog.style.top=(y/400*100)+'%'; };
-function sky(){ const k=step/N, i=Math.min(SKY.length-2,Math.floor(k*(SKY.length-1))); stage.style.background='linear-gradient(#'+'0'+',#0)'; stage.style.background='linear-gradient('+SKY[Math.min(SKY.length-1,i+1)]+','+SKY[i]+')'; }
-function reset(){ step=0; for(let i=1;i<=N;i++) document.getElementById('l'+i).classList.remove('on'); document.getElementById('flag').setAttribute('opacity',0); place(0); alt.textContent='0 m'; msg.textContent='ボタンをおして、ランプをつけながら のぼろう！'; go.textContent='🔦 ボタンをおす'; go.className='btn'; sky(); }
-function press(){ if(step>=N){ reset(); return; } step++; document.getElementById('l'+step).classList.add('on'); place(step); dog.classList.remove('hop'); void dog.offsetWidth; dog.classList.add('hop');
-  alt.textContent=Math.round(step/N*H)+' m'; sky();
-  if(step===N){ document.getElementById('flag').setAttribute('opacity',1); msg.textContent='🎉 ちょうじょう！ やったワン！'; go.textContent='🔁 もういちど のぼる'; go.className='btn again'; }
-  else msg.textContent=SAY[(Math.random()*SAY.length)|0];
-  try{ if(navigator.vibrate) navigator.vibrate(15); }catch(e){} }
-go.onclick=press; reset();
-})();
-</script></body></html>
+const SP={"P": [[60.61, 86.77, 0], [55.1, 84.88, 0], [49.4, 83.31, 0], [43.35, 82.14, 0], [36.66, 81.92, 0], [29.92, 82.01, 0], [23.26, 82.17, 0], [16.75, 82.25, 0], [10.71, 80.93, 0], [6.69, 78.02, 0], [7.87, 74.32, 0], [12.36, 71.64, 0], [17.54, 69.45, 0], [23.43, 68.49, 0], [29.57, 68.2, 0], [35.8, 68.02, 0], [39.54, 62.95, 0], [37.04, 59.66, 0], [33.18, 56.88, 0], [27.81, 55.28, 0], [22.46, 53.96, 0], [14.5, 52.3, 1], [14.5, 46.59, 0], [19.12, 44.48, 0], [24.28, 42.45, 0], [30.14, 41.64, 0], [36.07, 41.21, 0], [42.0, 40.56, 0], [47.68, 39.51, 0], [54.78, 36.37, 1], [63.75, 36.57, 0], [69.46, 36.39, 0], [75.16, 36.61, 0], [80.22, 37.74, 0], [88.29, 38.96, 0], [90.94, 35.79, 0], [92.57, 32.53, 0], [91.98, 29.27, 0], [88.48, 26.72, 0], [84.04, 25.22, 0], [79.32, 24.28, 0], [74.34, 23.61, 0], [69.15, 22.89, 0], [63.99, 21.89, 0], [56.24, 20.47, 1], [49.57, 31.48, 0], [44.72, 29.74, 0], [39.21, 28.75, 0], [33.64, 28.21, 0], [28.03, 27.45, 0], [22.59, 26.32, 0], [14.59, 25.6, 1], [7.5, 21.61, 0], [9.16, 18.49, 0], [12.28, 15.98, 0], [16.37, 11.98, 1]], "D": [[79.81, 48.83, 0], [79.38, 52.32, 0], [66.78, 57.26, 0], [62.07, 59.17, 0], [57.84, 61.64, 0], [44.77, 67.7, 1], [53.55, 64.7, 0], [72.49, 56.56, 0], [78.35, 55.93, 0], [87.45, 56.64, 1], [82.8, 45.54, 0], [85.72, 42.3, 0], [48.11, 18.42, 0], [42.97, 17.27, 0], [37.99, 16.11, 0], [33.29, 14.65, 0], [28.42, 13.49, 0], [23.63, 12.57, 0]]};
+const P=SP.P,D=SP.D,N=P.length,GOAL=N-1;
+const EVS={21:'bee',29:'thunder',44:'snake',51:'camp'};
+const BONES=[6,13,17,25,37,48];
+const $=id=>document.getElementById(id),bd=$('bd');
+let ST={};try{ST=JSON.parse(localStorage.getItem('yama-stars')||'{}')}catch(e){}
+const NST=6;let stage=1,run=null;
+// audio
+let AC;function tone(f,d=.1,t='square',v=.05,f2){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=t;o.frequency.setValueAtTime(f,AC.currentTime);if(f2)o.frequency.exponentialRampToValueAtTime(f2,AC.currentTime+d);g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+const SFX={step:()=>tone(520+Math.random()*60,.07,'triangle'),dash:()=>tone(300,.18,'sawtooth',.04,700),bad:()=>tone(300,.4,'sawtooth',.06,90),good:()=>{tone(660,.1);setTimeout(()=>tone(880,.15),100)},win:()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.2,'triangle',.07),i*120))};
+// board build
+const sz=(big)=>big?[11.6,0]:[7.0,0];
+const lamps=[],decs=[];
+function mk(cls,x,y,big,extra){const e=document.createElement('div');e.className=cls;e.style.left=x+'%';e.style.top=y+'%';const w=big?10.2:6.3;e.style.width=w+'%';e.style.height=(big?w*.75:w*.62)+'%';bd.appendChild(e);return e}
+D.forEach(s=>mk('dec',s[0],s[1],s[2]));
+P.forEach((s,i)=>{lamps[i]=mk('lp',s[0],s[1],s[2])});
+const evEl={};
+Object.entries(EVS).forEach(([i,n])=>{const s=P[i],e=document.createElement('img');e.src='img/e_'+n+'.webp';e.className='ev';e.style.cssText+=`left:${s[0]}%;top:${s[1]}%;width:8.5%;opacity:.0`;bd.appendChild(e);evEl[i]=e;setTimeout(()=>e.style.opacity=.0,0)});
+const boneEl={};BONES.forEach(i=>{const s=P[i],e=document.createElement('img');e.src='img/e_bone.webp';e.className='ev';e.style.cssText+=`left:${s[0]}%;top:${s[1]-1.5}%;width:6%`;bd.appendChild(e);boneEl[i]=e});
+const goalMark=document.createElement('div');
+function ch(w){const e=document.createElement('img');e.className='ch'+(w==='m'?' m':'');e.src=`img/${w}_stand.webp`;bd.appendChild(e);return e}
+const cEl=ch('c'),mEl=ch('m');
+['stand','walk1','walk2','fall','wow','banzai'].forEach(n=>{new Image().src='img/c_'+n+'.webp';new Image().src='img/m_'+n+'.webp'});
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+class Rn{constructor(w,el,name){this.w=w;this.el=el;this.pos=0;this.busy=false;this.stun=0;this.wk=0;this.done=false;this.name=name;this.face=1}
+ place(){const s=P[this.pos];const off=this.w==='m'?1.6:-1.6;this.el.style.left=(s[0]+off)+'%';this.el.style.top=(s[1]+1.2)+'%';this.el.style.zIndex=Math.round(s[1]*10)}
+ pose(n){this.el.src=`img/${this.w}_${n}.webp`}
+ look(a,b){const dx=P[b][0]-P[a][0];if(Math.abs(dx)>.3)this.face=dx>0?1:-1;this.el.style.transform=`translate(-50%,-93%) scaleX(${this.face})`}
+}
+let C,M;
+function paint(){lamps.forEach((l,i)=>{l.classList.toggle('pl',i<=C.pos&&i>0||i===0&&false);l.classList.toggle('mo',i<=M.pos&&i>0)});
+ const g=n=>Math.round(n.pos/GOAL*100);$('pr').textContent=g(C);$('mr').textContent=g(M)}
+function say(t,ms=1400){const s=$('say');s.textContent=t;clearTimeout(say.t);say.t=setTimeout(()=>{if(s.textContent===t)s.textContent=''},ms)}
+async function stepTo(r,to){ // one step move
+ const from=r.pos;r.pos=to;r.look(from,to);r.wk^=1;r.pose(r.wk?'walk1':'walk2');r.place();r.el.classList.remove('hop');void r.el.offsetWidth;r.el.classList.add('hop');if(r===C)SFX.step();paint();await wait(150);}
+async function move(r,n){ // n>0 forward, n<0 backward
+ const d=n>0?1:-1;for(let k=0;k<Math.abs(n);k++){const t=r.pos+d;if(t<0||t>GOAL)break;await stepTo(r,t);if(!run||run.over)return;if(r.pos===GOAL){await arrive(r);return}
+  if(d>0&&boneEl[r.pos]&&!boneEl[r.pos].classList.contains('gone')){boneEl[r.pos].classList.add('gone');if(r===C){SFX.good();say('🦴 ボーナス！ +1歩')}await stepTo(r,Math.min(GOAL,r.pos+1));if(r.pos===GOAL){await arrive(r);return}}}
+ r.pose('stand');await land(r);}
+async function land(r){const ev=EVS[r.pos];if(!ev||!run||run.over)return;const you=r===C,nm=you?'コロン':'ムーン';
+ const e=evEl[r.pos];e.style.opacity=1;e.style.transition='transform .3s';e.style.transform='translate(-50%,-50%) scale(1.5)';setTimeout(()=>{e.style.transform='translate(-50%,-50%)'},500);setTimeout(()=>e.style.opacity=0,1800);
+ if(ev==='bee'){r.pose('wow');if(you)SFX.bad();say(`🐝 ${nm}はハチにおそわれた！ 2びょうおやすみ`);r.stun=1;await wait(2000);r.stun=0}
+ else if(ev==='thunder'){r.pose('fall');if(you)SFX.bad();say(`⚡ ${nm}にカミナリ！ 2歩もどる`);await wait(700);r.pose('stand');r.stun=0;await move(r,-2);return}
+ else if(ev==='snake'){r.pose('wow');if(you)SFX.bad();say(`🐍 ${nm}はヘビにびっくり！ 4歩もどる`);await wait(700);await move(r,-4);return}
+ else if(ev==='camp'){r.pose('banzai');if(you){SFX.good();run.t+=6;say('🏕 キャンプでひとやすみ！ +6びょう',2000)}else say('🏕 ムーンがキャンプでひとやすみ');await wait(900)}
+ r.pose('stand')}
+async function arrive(r){r.pose('banzai');r.done=true;if(r===C){run.cDone=true;run.cT=run.t;run.cFirst=!M.done;finish(true)}else{M.done=true;say('🏁 ムーンが先にちょうじょう！',2200)}}
+async function act(kind){if(!run||run.over||!run.go||C.busy||C.done||Date.now()<C.nextT)return;C.busy=true;let n,trip=false;
+ if(kind==='s'){n=1;C.nextT=Date.now()+380}else{n=Math.random()<.6?2:3;trip=Math.random()<.25;SFX.dash();C.nextT=Date.now()+850}
+ await move(C,n);
+ if(trip&&!C.done&&run&&!run.over){C.pose('fall');SFX.bad();say('ころんじゃった！');await wait(900);C.pose('stand')}
+ C.busy=false}
+// make buttons re-enable when busy ends
+async function moonLoop(){const rate=1.5+.18*stage;while(run&&!run.over&&!M.done){const iv=(1.4/rate)*1000*(.75+Math.random()*.5);await wait(iv);if(!run||run.over)break;if(M.busy)continue;M.busy=true;const n=Math.random()<.4?(Math.random()<.6?2:3):1;await move(M,n);if(Math.random()<.08&&!M.done){M.pose('fall');await wait(800);M.pose('stand')}M.busy=false}}
+function start(s){stage=s;$('ovT').classList.add('hide');$('ovR').classList.add('hide');
+ Object.values(boneEl).forEach(e=>e.classList.remove('gone'));Object.values(evEl).forEach(e=>e.style.opacity=0);
+ C=new Rn('c',cEl,'コロン');M=new Rn('m',mEl,'ムーン');C.place();M.place();C.look(0,1);M.look(0,1);C.pose('stand');M.pose('stand');paint();$('say').textContent='';
+ run={t:62-4*(stage-1),over:false};$('tm').textContent=run.t;$('bS').disabled=$('bD').disabled=true;
+ let c=3;say('よーい…',900);
+ const cd=setInterval(()=>{c--;if(c>0){say(String(c),700)}else{clearInterval(cd);say('スタート！',900);run.go=true;C.nextT=0;$('bS').disabled=$('bD').disabled=false;moonLoop();tick()}},800);say('3',700);}
+function tick(){if(!run||run.over)return;run.t=Math.max(0,run.t-0);const left=run.t;
+ run.iv=setInterval(()=>{if(run.over){clearInterval(run.iv);return}run.t-=.1;$('tm').textContent=Math.ceil(run.t);{const off=C.busy||C.done||Date.now()<C.nextT;$('bS').disabled=$('bD').disabled=off}if(run.t<=0){run.t=0;finish(false)}},100)}
+function finish(win){if(run.over)return;run.over=true;clearInterval(run.iv);$('bS').disabled=$('bD').disabled=true;
+ let stars=0;if(win){stars=1;if(run.cFirst)stars=2;if(stars===2&&run.t>=15)stars=3}
+ const old=ST[stage]||0;if(stars>old){ST[stage]=stars;try{localStorage.setItem('yama-stars',JSON.stringify(ST))}catch(e){}}
+ try{window.MC&&MC.report('yama',stars?'clear':'play',{stars})}catch(e){}
+ if(win){SFX.win();C.pose('banzai');M.pose(M.done?'banzai':'stand')}else{SFX.bad();C.pose('fall')}
+ setTimeout(()=>result(win,stars,old),1100)}
+function result(win,stars,old){const r=$('ovR');const left=Math.ceil(run.t);
+ const nxt=stage<NST&&stars>0;
+ r.innerHTML=`<div class="big">${win?(run.cFirst?'🏆 いちばん！':'🏁 とうちゃく！'):'⏰ じかんぎれ…'}</div>
+ <div class="stars">${[1,2,3].map(k=>k<=stars?'★':'☆').join('')}</div>
+ <div>${win?`のこり ${left}びょう`:`あと ${GOAL-C.pos}ます！`}</div>
+ <div class="rule">★1 ちょうじょうにとうちゃく<br>★2 ムーンより先に　★3 のこり15びょう以上</div>
+ ${stars>old&&old>0?'<div>🏅 ベストこうしん！</div>':''}
+ <button class="pb" id="rA">もういちど</button>${nxt?'<button class="pb" id="rN">つぎのステージ ▶︎</button>':''}<button class="pb s" id="rS">ステージえらび</button>`;
+ r.classList.remove('hide');$('rA').onclick=()=>start(stage);if(nxt)$('rN').onclick=()=>start(stage+1);$('rS').onclick=()=>{r.classList.add('hide');menu()}}
+function menu(){const g=$('stg');g.innerHTML='';for(let s=1;s<=NST;s++){const open=s===1||(ST[s-1]||0)>0;const b=document.createElement('button');if(!open)b.className='lock';const st=ST[s]||0;b.innerHTML=`ステージ${s}<i>${open?[1,2,3].map(k=>k<=st?'★':'☆').join(''):'🔒'}</i>`;if(open)b.onclick=()=>start(s);g.appendChild(b)}$('ovT').classList.remove('hide')}
+const press=(id,k)=>$(id).addEventListener('pointerdown',e=>{e.preventDefault();act(k)});press('bS','s');press('bD','d');
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='g')act('s');if(e.key==='ArrowUp'||e.key==='r')act('d')});
+C=new Rn('c',cEl);M=new Rn('m',mEl);C.place();M.place();paint();menu();
+</script><script src="../stars.js"></script></body></html>
