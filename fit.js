@@ -22,12 +22,12 @@
     var w=innerWidth,h=innerHeight,s=1;
     if(w>=700){
       var nh=document.querySelector('.hero')?0:natH();
-      s=Math.min(w/500,h/(nh>300?nh:820)); s=Math.max(nh>300?.6:1,Math.min(s,1.9));
+      s=Math.min(w/500,h/(nh>300?nh:820)); s=Math.max(nh>300?.5:1,Math.min(s,1.9));
     }
     var lv=LV.filter(function(x){return x.k===get()})[0]||LV[1];
     s=s*lv.m;
     if(w<700) s=Math.min(s,w/340);       // スマホでは幅がくずれない範囲まで
-    s=Math.max(.6,Math.min(s,2.4));
+    s=Math.max(.5,Math.min(s,2.4));
     document.body.style.zoom=s; if(innerWidth>=700) document.body.style.minHeight=(innerHeight/s)+'px'; document.documentElement.style.setProperty('--mcz',s);
     var b=document.getElementById('mcSizeBtn'); if(b) b.innerHTML='<b>'+lv.n+'</b>';
   }
