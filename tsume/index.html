@@ -265,7 +265,7 @@ html,body,.app,.board,.cell,.boardWrap{touch-action:pan-x pan-y}/* ヒントの�
 html body[data-vt] .sq.hint .pc,html body[data-vt] .hp.hint .pc{animation:hintPc .9s ease-in-out infinite}
 .sq.hint::after{content:"";position:absolute;inset:1px;border:3px solid #ffc83c;border-radius:6px;box-shadow:0 0 10px 2px rgba(255,190,40,.9);pointer-events:none;animation:hintRing .9s ease-in-out infinite;z-index:5}
 .hp.hint{position:relative}.hp.hint::after{content:"";position:absolute;inset:0;border:3px solid #ffc83c;border-radius:10px;box-shadow:0 0 10px 2px rgba(255,190,40,.9);pointer-events:none;animation:hintRing .9s ease-in-out infinite}
-</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style><style>
+#bFlag{display:none!important}.btns:has(#bFlag){grid-template-columns:repeat(4,1fr)!important}</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style><style>
 .stg h2{margin-bottom:10px}.stTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
 .stTabs button{border:2.5px solid #e2cfb2;background:#fffaf1;border-radius:14px;padding:8px 0;font:inherit;font-weight:900;font-size:13.5px;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center}
 .stTabs button small{font-size:11px;opacity:.7;font-weight:700}.stTabs button.on{border-color:#5c8858;background:#eef5e6;box-shadow:0 0 0 2px #5c8858}
@@ -462,7 +462,7 @@ html,body,.app,.board,.cell,.boardWrap{touch-action:pan-x pan-y}</style>
   <p>👆 駒をタップすると、王手になる場所に●が出ます。もう一度タップで動かします。持ち駒は、タップしてから空いているマスをタップ。</p>
   <p>🐕 ムーンはいちばん長くにげようとします。あなたの手は全部「王手」でなければいけません。</p>
   <p>🎯 「3手詰め」はあなた→ムーン→あなた、の3手で詰みます。ムーンに持ち駒はありません（合い駒なし）。</p>
-  <p>💡ヒントは「動かす駒」だけ、📖こたえは「次の1手」だけ（2回おすと）教えます。どちらも使うと★が減ります。</p>
+  <p>💡ヒントは「動かす駒」だけ教えます。使うと★が減ります。</p>
   <p>⭐ ノーミスでヒントなしなら★3つ！まちがえた手も最後まで指せて、詰まなかったらお知らせします（「待った」でもどせます）。</p>
   <div class="acts"><button class="btn g" data-close="mHelp">わかった！</button></div>
 </div></div>
