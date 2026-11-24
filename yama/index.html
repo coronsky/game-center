@@ -41,7 +41,7 @@ body{margin:0;font-family:system-ui,"Hiragino Sans",sans-serif;background:#16301
 .pb.s{background:#e8f4e8;box-shadow:0 4px 0 #8fae8f;font-size:15px;padding:8px 18px}
 .big{font-size:44px;font-weight:900;text-shadow:0 3px 6px #000}
 .stars{font-size:38px;letter-spacing:4px;color:#ffd23a}
-.rule{font-size:12px;opacity:.85;line-height:1.5}
+.face{height:104px;width:auto;max-width:150px;flex:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5));animation:fb 1s ease-in-out infinite alternate}@keyframes fb{to{transform:translateY(-6px)}}.say{text-shadow:none;flex:none;font-size:15px;font-weight:900;line-height:1.5;background:rgba(255,255,255,.92);color:#3b2a00;border-radius:16px;padding:8px 14px;max-width:290px}.rule{font-size:12px;opacity:.85;line-height:1.5}
 </style></head><body><div class="app">
 <div class="top"><span>🏔 コロン＆ムーンの山のぼり</span><a href="../lab/">🏠 ラボ</a></div>
 <div class="hud"><div>⏱ のこり <b id="tm">--</b></div><div>🐾 <b id="pr">0</b>%　ムーン <b id="mr">0</b>%</div></div>
@@ -126,7 +126,9 @@ function finish(win){if(run.over)return;run.over=true;clearInterval(run.iv);$('b
  setTimeout(()=>result(win,stars,old),1100)}
 function result(win,stars,old){const r=$('ovR');const left=Math.ceil(run.t);
  const nxt=stage<NST&&stars>0;
- r.innerHTML=`<div class="big">${win?(run.cFirst?'🏆 いちばん！':'🏁 とうちゃく！'):'⏰ じかんぎれ…'}</div>
+ const who=win?(run.cFirst?'c':'m'):'c', img=win?who+'_banzai':'c_fall';
+ const say=win?(stars>=3?'ぜんぶ★そろったワン！おめでとう🎉すごい！':run.cFirst?'いちばんにとうちゃく！おめでとう🎉':'ゴールできたよ！おめでとう🎉'):'ざんねん…！もういちど、ちょうせんしてみよう🐾';
+ r.innerHTML=`<img class="face" src="img/${img}.webp" alt=""><div class="say">${say}</div><div class="big">${win?(run.cFirst?'🏆 いちばん！':'🏁 とうちゃく！'):'⏰ じかんぎれ…'}</div>
  <div class="stars">${[1,2,3].map(k=>k<=stars?'★':'☆').join('')}</div>
  <div>${win?`のこり ${left}びょう`:`あと ${GOAL-C.pos}ます！`}</div>
  <div class="rule">★1 ちょうじょうにとうちゃく<br>★2 ムーンより先に　★3 のこり15びょう以上</div>
