@@ -441,6 +441,19 @@ function img(n){let i=IMG[n];if(!i){i=new Image();i.src='assets/'+n+'.webp';IMG[
 ['natural','retro','neon'].forEach(t=>{img(t+'_board');img(t+'_cd_0');img(t+'_cd_1');img(t+'_i_star');img(t+'_i_star0');['slow','stop','fast'].forEach(k=>img(t+'_i_'+k));['s0','s1','g0','g1'].forEach(k=>img(t+'_gate_'+k));img('station_'+t);img('goal_'+t);['h','v','tr','rb','bl','lt'].forEach(k=>img(t+'_t_'+k));['cross','wr','wb','jump'].forEach(k=>img(t+'_x_'+k))});
 ['natural_tile_blank','start','star'].forEach(img);['r','u','l','d'].forEach(d=>{for(let f=0;f<4;f++)img('train_'+d+f);['natural','retro','neon'].forEach(t=>img(t+'_tr_'+d))});['natural','retro','neon'].forEach(t=>img(t+'_rock'));
 [['natural',[0,1,3,5]],['retro',[0,1,3,5]],['neon',[0,1,2,5]]].forEach(([t,rs])=>rs.forEach(r=>{for(let f=0;f<6;f++)img('fx_'+t+'_'+r+f)}));
+/* 起動時：いまのスキンの画像がそろうまで「よみこみ中」を出し、1枚ずつ出てくるのを防ぐ */
+(function(){
+  const ld=document.createElement('div');
+  ld.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#f3ead7;color:#5a3d2b;font:900 16px "Zen Maru Gothic",sans-serif;transition:opacity .3s';
+  ld.innerHTML='<div style="font-size:42px">🚂</div><div>よみこみ中…</div>';
+  document.body.appendChild(ld);
+  const t0=Date.now();
+  const need=()=>{const s=(location.hash.match(/natural|retro|neon/)||[localStorage.getItem('mc_vt')||'natural'])[0];
+    return Object.keys(IMG).filter(n=>n.indexOf('natural_')!==0&&n.indexOf('retro_')!==0&&n.indexOf('neon_')!==0&&n.indexOf('fx_')!==0||n.indexOf(s+'_')===0||n.indexOf('fx_'+s)===0)};
+  const chk=()=>{const ks=need();const done=ks.every(k=>IMG[k].complete);
+    if(done||Date.now()-t0>8000){ld.style.opacity=0;setTimeout(()=>ld.remove(),350)}else setTimeout(chk,80)};
+  chk();
+})();
 const BOARD={natural:[.0277,.0319,.9723,.9723],retro:[.0437,.0513,.9563,.9529],neon:[.0592,.0668,.9408,.9341]};
 function tileImg(conns){const k={'02':'v','13':'h','01':'tr','12':'rb','23':'bl','03':'lt'}[[...conns].sort().join('')];return k&&[k]}
 let skin='natural',diff=store.get('wanwan_diff','normal');
