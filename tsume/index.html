@@ -799,10 +799,10 @@ function doMove(m){
 }
 function fail(){
   over=true; failed=true; busy=false; misses++; render();
-  setStatus('詰みませんでした…「待った」でもどせるよ');
+  setStatus('詰みませんでした…「もう一回」でこの問題をやり直そう');
   SFX.lose(); sayText(2,'ふふ、にげきったワン♪',true); sayText(1,'くぅ〜ん…',true);
-  $('bAgain').textContent='もう一回！';
-  showResult({winner:2,title:'😢 詰みませんでした',score:'',msg:'この手順では詰みませんでした。「待った」でもどして、べつの手を考えてみよう！',rec:'',delay:700});
+  $('bAgain').textContent='🔄 もう一回やり直す';
+  showResult({winner:2,title:'😢 詰みませんでした',score:'',msg:'この手順では詰みませんでした。「もう一回やり直す」で、この問題をはじめからもう一度ちょうせんしよう！（「待った」で1手もどすこともできるよ）',rec:'',delay:700});
 }
 function cleared(){
   over=true; busy=false; failed=false; render(); $('bAgain').textContent='つぎの問題へ';
