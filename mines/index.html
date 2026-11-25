@@ -116,7 +116,7 @@ body[data-vt=neon] .pad button{background:rgba(20,8,55,.85);color:#3ff0ff;border
 .mc .n1{color:#2f6a9e}.mc .n2{color:#3d8a3c}.mc .n3{color:#c0392b}.mc .n4{color:#6a3d9a}.mc .n5{color:#8a3b12}.mc .n6{color:#178a8a}.mc .n7,.mc .n8{color:#333}
 .modeRow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 10px 0}
 .modeRow button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:16px;padding:10px;font:inherit;font-weight:900;font-size:15px;color:var(--ink);cursor:pointer}
-.modeRow button.on{background:linear-gradient(#6c8a60,var(--green-d));color:#fff;border-color:transparent}
+.modeRow button{display:flex;align-items:center;justify-content:center;gap:6px}body[data-vt=natural] .modeRow .mi{width:34px;height:34px;font-size:0;background:center/contain no-repeat}body[data-vt=natural] #mOpen .mi{background-image:url(../img/natural/mine_dig.webp)}body[data-vt=natural] #mFlag .mi{background-image:url(../img/natural/mine_mark.webp)}.modeRow button.on{background:linear-gradient(#6c8a60,var(--green-d));color:#fff;border-color:transparent}
 body[data-vt=retro] .mc{background:linear-gradient(#d0452f,#8f2a1f);box-shadow:inset 0 0 0 1.5px #f2b134}body[data-vt=retro] .mc.op{background:#3a1a0c;box-shadow:none}
 body[data-vt=retro] .modeRow button{background:#3a160a;color:#ffd36b;border-color:#a8651e}body[data-vt=retro] .modeRow button.on{background:linear-gradient(#d0452f,#8f2a1f);border-color:#f2b134}
 body[data-vt=neon] .mc{background:#2a1a6a;box-shadow:inset 0 0 0 1.5px #3ff0ff}body[data-vt=neon] .mc.op{background:#0f0830;box-shadow:inset 0 0 0 1px #3a2a7a}
@@ -401,7 +401,7 @@ body[data-vt=neon] .mc.op.a{background:url(img/x2_open.webp) center/100% 100% no
   <div class="hud"><div class="box"><small>のこり🦴</small><b id="left"></b></div><div class="box"><small>タイム</small><b id="tm">0:00</b></div></div>
   <div class="lvRow" id="lvs"></div>
   <div class="panel"><div class="in"><div id="bd"></div></div></div>
-  <div class="modeRow"><button id="mOpen" class="on">👆 ほる</button><button id="mFlag">🐾 目印をつける</button></div>
+  <div class="modeRow"><button id="mOpen" class="on"><span class="mi">👆</span> ほる</button><button id="mFlag"><span class="mi">🐾</span> 目印をつける</button></div>
 
   <div class="status" id="status"><span>🐾</span><span class="txt" id="statusTxt"></span></div>
   <div class="btns gbtns" style="grid-template-columns:repeat(4,1fr)"><button class="btn c" id="bHelp">❓あそびかた</button><button class="btn c" id="bHint">💡ヒント(3)</button><button class="btn c" id="bReset">⟳リセット</button><button class="btn g" id="bHome">🏠ホーム</button></div>
