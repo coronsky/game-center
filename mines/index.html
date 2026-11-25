@@ -569,7 +569,7 @@ function expand(i,base,fresh){ if(open[i]||flag[i]||mines[i]) return; const q=[[
   while(q.length){ const [x,d]=q.shift(); if(cnt(x)===0) for(const j of nbs(x)){ if(!open[j]&&!flag[j]&&!mines[j]){open[j]=true;fresh.set(j,d+1);q.push([j,d+1])} } } }
 function hitMine(j){ if(GS.lives>0){ GS.lives--; GS.undone++; GS.lock=true; GS.streak=0; open[j]=true; SFX.ng(); sayText(1,pick(['いたっ！でももう一回！','だいじょうぶワン','つぎがんばろ！']),true); draw(); setStatus('ほねっこをふんじゃった…もう一回だけセーフ！'); toast('🦴 ほねっこ！もう一回だけセーフ',true);
       setTimeout(()=>{ open[j]=false; flag[j]=true; MS.add(j); GS.lock=false; draw(); },950); return false; }
-  open[j]=true; over=true; clearInterval(tick); SFX.lose(); sayText(1,'ほねっこをふんじゃったワン…',true); setStatus('ほねっこをふんじゃった…'); report('lose',{lv:P.cur+1}); updHint();
+  open[j]=true; over=true; clearInterval(tick); SFX.lose(); sayText(1,'ほねっこをふんじゃったワン…',true); setStatus('ほねっこをふんじゃった…'); report('lose',{lv:P.cur+1}); updHint(); wonLast=false; $('bAgain').textContent='もう一回！';
   setTimeout(()=>showResult({winner:0,title:'🦴 ざんねん…',score:'',msg:'もう一回チャレンジ！',delay:0}),700); return true; }
 function dig(i){ if(over||GS.lock||flag[i]) return; actx();
   if(first){ first=false; place(i); t0=Date.now(); tick=setInterval(()=>$('tm').textContent=fmt(Date.now()-t0),500); }
