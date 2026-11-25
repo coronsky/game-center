@@ -236,6 +236,10 @@ html body .app .vtBtn,html body .app .homeBtn{width:90px!important;height:30px!i
 html body[data-vt=natural] .app .vtBtn{background-image:url(../img/ui/natural_skin.webp?v=2)!important}html body[data-vt=natural] .app .homeBtn{background-image:url(../img/ui/natural_home.webp?v=2)!important}
 html body[data-vt=retro] .app .vtBtn{background-image:url(../img/ui/retro_skin.webp?v=2)!important}html body[data-vt=retro] .app .homeBtn{background-image:url(../img/ui/retro_home.webp?v=2)!important}
 html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.webp?v=2)!important}html body[data-vt=neon] .app .homeBtn{background-image:url(../img/ui/neon_home.webp?v=2)!important}
+@keyframes vnsh{0%{transform:scale(1);opacity:1;filter:none}25%{transform:scale(1.18);filter:brightness(1.5)}100%{transform:scale(.1) rotate(200deg);opacity:0}}
+.pt{position:relative}.st.vanish{position:absolute;left:4%;top:4%;animation:vnsh .9s ease-in forwards;z-index:6}
+.vsp{position:absolute;left:50%;top:50%;font-size:1.3em;transform:translate(-50%,-50%);animation:vsp .9s ease-out forwards;z-index:7;pointer-events:none}
+@keyframes vsp{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}40%{opacity:1}100%{opacity:0;transform:translate(-50%,-130%) scale(1.5)}}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style><style id="gmArt">
 .boardWrap{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important}
 #gb{background-size:100% 100%!important;background-repeat:no-repeat!important;box-shadow:none!important;border-radius:0!important}
@@ -478,6 +482,7 @@ function onPt(i){
   if(S.confirm&&ghost!==i){ ghost=i; SFX.tap(); render(); return; }
   place(i);
 }
+function vanishFx(i,p){ const c=cells[i]; if(!c) return; c.insertAdjacentHTML('beforeend',stoneHTML(p,'vanish')+'<span class="vsp">✨</span>'); setTimeout(()=>{ c.querySelectorAll('.vanish,.vsp').forEach(e=>e.remove()); },1000); }
 function place(i){
   const p=turn; hist.push(i); b[i]=p; last=i; ghost=-1; hintI=-1; SFX.put();
   if(navigator.vibrate){try{navigator.vibrate(10)}catch(e){}}
@@ -486,7 +491,7 @@ function place(i){
   if(line){ winLine=line; return finish(p); }
   if(S.nodraw){ ag[i]=hist.length; let cnt=0,oi=-1; for(let j=0;j<N*N;j++) if(b[j]){cnt++; if(j!==i&&(oi<0||ag[j]<ag[oi])) oi=j}
     rmv[hist.length-1]=null;
-    if(cnt>Math.floor(N*N*.7)&&oi>=0){ rmv[hist.length-1]={i:oi,p:b[oi],a:ag[oi]}; b[oi]=0; toast('古い石が消えたよ'); render(); } }
+    if(cnt>Math.floor(N*N*.7)&&oi>=0){ rmv[hist.length-1]={i:oi,p:b[oi],a:ag[oi]}; const vp=b[oi]; b[oi]=0; toast('古い石が消えたよ'); render(); vanishFx(oi,vp); } }
   else ag[i]=hist.length;
   if(b.every(x=>x)) return finish(0);
   // リーチ判定
