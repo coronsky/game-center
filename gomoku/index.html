@@ -414,11 +414,12 @@ function winningMoves(p){ return candidates().filter(i=>{ b[i]=p; const w=fiveFr
 function think(p,lv){
   const o=3-p, cs=candidates();
   // 勝てる手・止める手
-  let w=winningMoves(p); if(w.length) return w[0];
+  if(lv===1&&Math.random()<.4) return cs[(Math.random()*cs.length)|0];
+  let w=winningMoves(p); if(w.length&&(lv>1||Math.random()<.7)) return w[0];
   w=winningMoves(o); if(w.length&&(lv>2||(lv===2&&Math.random()<.7))) return w[0];
   const crowd=b.filter(x=>x).length>N*N*.45?0.7:1;
-  let scored=cs.map(i=>{ const a=cellScore(i,p), d=cellScore(i,o); return [i, a*1.0 + d*[0,0.5,0.55,0.92,0.95][lv]*crowd + Math.random()*[0,800,260,45,5][lv]]; }).sort((x,y)=>y[1]-x[1]);
-  if(lv===1&&w.length&&Math.random()<.6) return w[0];
+  let scored=cs.map(i=>{ const a=cellScore(i,p), d=cellScore(i,o); return [i, a*1.0 + d*[0,0.5,0.55,0.92,0.95][lv]*crowd + Math.random()*[0,2500,260,45,5][lv]]; }).sort((x,y)=>y[1]-x[1]);
+  if(lv===1&&w.length&&Math.random()<.2) return w[0];
   if(lv<4) return scored[0][0];
   // つよい（4）：上位候補を2手読み
   const top=scored.slice(0,10); let best=top[0][0], bv=-Infinity;
