@@ -495,7 +495,7 @@ function finish(w){
   over=true; busy=false; render();
   const k=S.mode==='pvp'?'pvp':'lv'+S.level+'_'+N; const r=rec[k]||(rec[k]={w:0,l:0,d:0}); let msg;
   if(S.mode==='pvp') msg=w?(w===1?'コロン':'ムーン')+'チームの勝ち！':'引き分け';
-  else if(!w){r.d++;msg='引き分け！'} else if(w===+S.side){r.w++;msg='あなたの勝ち！5つならんだ🎉'} else {r.l++;msg='ざんねん…ムーンに5つならべられた！'}
+  else if(!w){r.d++;msg='引き分け！'} else if(w===+S.side){r.w++;msg='あなたの勝ち！5つならんだ🎉'} else {r.l++;msg='ざんねん…'+(w===1?'コロン':'ムーン')+'に5つならべられた！'}
   store.set('rec',rec);
   setStatus(w?(w===1?'コロン':'ムーン')+'の勝ち！':'引き分け');
   try{window.MC&&MC.report('gomoku',S.mode==='pvp'?'play':(!w?'draw':w===+S.side?'win':'lose'),{lv:+S.level})}catch(e){}
