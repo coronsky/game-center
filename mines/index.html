@@ -396,7 +396,7 @@ body[data-vt=neon] .mc.op.a{background:url(img/x2_open.webp) center/100% 100% no
 body[data-vt=retro] .mc.op:not(.boom),body[data-vt=retro] .mc.op.a:not(.boom){background:#f1d9a8!important;box-shadow:inset 0 3px 5px rgba(80,30,0,.35)!important}
 body[data-vt=neon] .mc.op:not(.boom),body[data-vt=neon] .mc.op.a:not(.boom){background:#cfc8f5!important;box-shadow:inset 0 3px 6px rgba(40,20,110,.4)!important}
 .mc.op span{font-size:1.45em}
-</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
+.status{min-height:52px}.mc.op:not(.boom){transform:none!important}#bd .mc{touch-action:manipulation}</style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
   <div class="ttl"><div class="s">コロン＆ムーンの</div><div class="m">マインスイーパー</div></div>
@@ -555,15 +555,20 @@ function solvable(start){ const o=new Array(N).fill(false);
   return o.filter(Boolean).length===N-L.m; }
 function place(safe){ const ban=new Set([safe,...nbs(safe)]); const cand=[...Array(N).keys()].filter(i=>!ban.has(i)); const tEnd=Date.now()+900; let tries=0;
   do{ tries++; mines.fill(false); const c=cand.slice().sort(()=>Math.random()-.5); c.slice(0,L.m).forEach(i=>mines[i]=true); if(solvable(safe)) return; }while(Date.now()<tEnd&&tries<400); }
+// ---- tap handling (delegated: survives board redraws) ----
+(function(){ const bd=$('bd'); let di=-1,lt=null,sx=0,sy=0;
+  const clr=()=>{clearTimeout(lt);lt=null;di=-1};
+  bd.addEventListener('pointerdown',e=>{ const c=e.target.closest('.mc'); if(!c){clr();return} di=+c.dataset.i; sx=e.clientX; sy=e.clientY; const i=di; clearTimeout(lt); lt=setTimeout(()=>{lt=null;di=-1;toggle(i)},420); });
+  bd.addEventListener('pointermove',e=>{ if(di>=0&&Math.hypot(e.clientX-sx,e.clientY-sy)>14) clr(); });
+  bd.addEventListener('pointerup',e=>{ if(di<0||!lt){di=-1;return} const i=di; clr(); flagMode?toggle(i):dig(i); });
+  ['pointercancel','pointerleave'].forEach(ev=>bd.addEventListener(ev,clr)); })();
 // ---- drawing ----
 function draw(fresh){ const bd=$('bd'),sy=scrollY,sc=document.scrollingElement; if(bd.offsetHeight) bd.style.minHeight=bd.offsetHeight+'px'; bd.style.gridTemplateColumns=`repeat(${L.w},1fr)`; bd.innerHTML=''; bd.style.setProperty('--fs',Math.max(9,Math.min(22,(bd.clientWidth||340)/L.w*.5))+'px');
   for(let i=0;i<N;i++){ const e=document.createElement('div'); e.className='mc'+(open[i]?' op':'')+(i===H?' hint':'')+(((i%L.w)+((i/L.w)|0))%2?' a':'');
     if(open[i]){ if(mines[i]){e.textContent='🦴';e.classList.add('boom')} else { const c=cnt(i); if(c) e.innerHTML=`<span class="n${c}">${c}</span>`; } }
     else if(flag[i]){ e.classList.add('fl'); if(MS.has(i)) e.classList.add('ms'); if(over&&!mines[i]){e.classList.add('wr');e.textContent='❌'} else e.textContent='🐾'; } else if(over&&mines[i]){ e.classList.add('bn'); e.textContent='🦴'; }
     if(fresh&&fresh.has(i)) e.style.animation=`mcpop .34s ${Math.min(fresh.get(i),14)*34}ms backwards`;
-    let lt; e.addEventListener('pointerdown',()=>{lt=setTimeout(()=>{lt=null;toggle(i)},420)});
-    e.addEventListener('pointerup',()=>{ if(lt){clearTimeout(lt);lt=null; flagMode?toggle(i):dig(i);} });
-    ['pointerleave','pointercancel'].forEach(ev=>e.addEventListener(ev,()=>{clearTimeout(lt);lt=null})); e.oncontextmenu=ev=>{ev.preventDefault()};
+    e.dataset.i=i; e.oncontextmenu=ev=>{ev.preventDefault()};
     bd.appendChild(e); }
   bd.style.minHeight=''; if(sc&&sc.scrollTop!==sy) sc.scrollTop=sy;
   $('left').textContent=L.m-flag.filter(Boolean).length; }
