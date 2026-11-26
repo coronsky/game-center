@@ -12,7 +12,7 @@
 #res{position:fixed;inset:0;background:rgba(60,40,20,.45);display:none;align-items:center;justify-content:center;z-index:9}
 #res .box{background:#fffaf1;border-radius:20px;padding:16px;width:min(320px,90vw);text-align:center;border:3px solid #e2cfb2}
 #res .pic{display:flex;align-items:flex-start;gap:8px;justify-content:center;margin:6px 0}
-#res img{width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#res img{width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25)}#res img.spr{width:104px;height:104px;border-radius:0;border:0;box-shadow:none;object-fit:contain}
 #res .bub{position:relative;background:#fff;border:2px solid #f0d58a;border-radius:14px;padding:8px 10px;font-weight:900;font-size:14px;text-align:left;flex:1}
 #res .st{font-size:34px;letter-spacing:4px;margin:4px 0;color:#f0b429;text-shadow:0 2px 0 #c58a10}#res .st i{font-style:normal;opacity:.2}
 #res .lst{font-size:11px;text-align:left;margin:0 auto 8px;display:inline-block}
@@ -40,6 +40,9 @@
 const {W,H,FLOOR,R,ITEMS,DOG,STAGES,World,itemSeg,dogGeo,REACH}=ENG,$=id=>document.getElementById(id);
 const cv=$('cv'),x=cv.getContext('2d'),DPR=Math.min(3,window.devicePixelRatio||1);cv.width=W*DPR;cv.height=H*DPR;
 const LS=k=>{try{return JSON.parse(localStorage.getItem('lab_oy_'+k))}catch(e){return null}},SS=(k,v)=>{try{localStorage.setItem('lab_oy_'+k,JSON.stringify(v))}catch(e){}};
+// ワンコの絵（左向き）：0まち 1あーん 2パクッ 3しょんぼり 4びっくり
+const SPR={};for(const k of ['moon']){SPR[k]=[0,1,2,3,4].map(i=>{const im=new Image();im.src='img/natural_'+k+'_'+i+'.webp';return im})}
+const sprOK=k=>SPR[k]&&SPR[k].every(im=>im.complete&&im.naturalWidth);let mood='',fastT=0;
 let stars=LS('stars30')||[],cur=0,st=null,placed=[],sel=-1,mode=null,drag=null,world=null,lastPath=null,tries=0,state='edit',pops=[],caughtT=0;
 const SAY={
  moon:{ok:['パクッ！おいしい〜！','ナイスパス！もっとちょうだい','さすがだね！しっぽふりふり','いいとこに投げてくれたね！'],
@@ -71,7 +74,7 @@ function bad(it){const L=st.launch;if(Math.hypot(it.x-L.x,it.y-L.y)<34)return tr
 function add(k){if(left(k)<=0)return;placed.push({k,x:180,y:150,a:0});sel=placed.length-1;msg(k==='ball'?'ドラッグで動かそう':'ドラッグで動かす・はしの○でまわす');ui()}
 function pos(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
 function segDist(p,s){const dx=s.x2-s.x1,dy=s.y2-s.y1,l=dx*dx+dy*dy;let t=((p.x-s.x1)*dx+(p.y-s.y1)*dy)/l;t=Math.max(0,Math.min(1,t));return Math.hypot(p.x-s.x1-dx*t,p.y-s.y1-dy*t)}
-cv.addEventListener('pointerdown',e=>{if(state!=='edit')return;const p=pos(e);mode=null;
+cv.addEventListener('pointerdown',e=>{if(state!=='edit')return;const p=pos(e);mode=null;mood='';
  if(sel>=0&&placed[sel].k!=='ball'){const s=itemSeg(placed[sel]);for(const [ex,ey,flip] of [[s.x1,s.y1,180],[s.x2,s.y2,0]])if(Math.hypot(p.x-ex,p.y-ey)<20){mode='rot';drag={flip};cv.setPointerCapture(e.pointerId);return}}
  let hit=-1,hd=24;placed.forEach((it,i)=>{const d=it.k==='ball'?Math.max(0,Math.hypot(p.x-it.x,p.y-it.y)-ITEMS.ball.r):segDist(p,itemSeg(it));if(d<hd){hd=d;hit=i}});
  sel=hit;if(hit>=0){mode='move';drag={dx:placed[hit].x-p.x,dy:placed[hit].y-p.y};cv.setPointerCapture(e.pointerId)}ui()});
@@ -85,16 +88,16 @@ $('clr').onclick=()=>{placed=[];sel=-1;ui()};$('back').onclick=menu;
 
 /* ---------- はっしゃ ---------- */
 $('go').onclick=()=>{if(placed.some(bad)){msg('赤いアイテムは ワンコや発射機に近すぎるよ');return}
- tries++;sel=-1;state='fly';world=new World(st,placed.map(p=>({...p})));pops=[];ui();msg('いけ〜！')};
+ tries++;sel=-1;state='fly';mood='';world=new World(st,placed.map(p=>({...p})));pops=[];ui();msg('いけ〜！')};
 function popAdd(px,py,t){pops.push({x:px,y:py,t,life:1})}
 function tick(){if(state==='fly'&&world){for(let i=0;i<4&&!world.res;i++){world.step();
-   if(world.msg){const p=world.p;if(world.msg==='bone')popAdd(p.x,p.y-14,'ほねっこゲット！');if(world.msg==='fast')popAdd(p.x,p.y-14,'はやすぎ〜！');world.msg=''}}
+   if(world.msg){const p=world.p;if(world.msg==='bone')popAdd(p.x,p.y-14,'ほねっこゲット！');if(world.msg==='fast'){popAdd(p.x,p.y-14,'はやすぎ〜！');fastT=performance.now()}world.msg=''}}
   if(world.res==='catch'){state='caught';caughtT=performance.now();setTimeout(result,900)}
-  else if(world.res){lastPath=world.path.slice();const d=target();msg(world.why+'　'+DOG[d.k].n+'「'+pick(SAY[d.k].fail)+'」');state='edit';ui()}}
+  else if(world.res){lastPath=world.path.slice();mood='sad';const d=target();msg(world.why+'　'+DOG[d.k].n+'「'+pick(SAY[d.k].fail)+'」');state='edit';ui()}}
  draw();requestAnimationFrame(tick)}
 function result(){const got=world.bones.every(b=>b.got),d=target(),n=1+(got?1:0)+(placed.length<=st.par?1:0);
  stars[cur]=Math.max(stars[cur]||0,n);SS('stars30',stars);
- $('rimg').src='../../img/'+(d.k==='moon'?'moon':'colon')+'.webp';$('rb').textContent=pick(n===3?SAY[d.k].three:SAY[d.k].ok);
+ const sp=sprOK(d.k);$('rimg').src=sp?'img/natural_'+d.k+'_2.webp':'../../img/'+(d.k==='moon'?'moon':'colon')+'.webp';$('rimg').className=sp?'spr':'';$('rb').textContent=pick(n===3?SAY[d.k].three:SAY[d.k].ok);
  $('rst').innerHTML='★'+(got?'★':'<i>★</i>')+(placed.length<=st.par?'★':'<i>★</i>');
  $('rl2').innerHTML='✔ キャッチ<br>'+(got?'✔':'✕')+' ほねっこ<br>'+(placed.length<=st.par?'✔':'✕')+' アイテム'+st.par+'こ以内（つかった数 '+placed.length+'）';
  $('nx').style.display=cur<STAGES.length-1?'':'none';$('res').style.display='flex'}
@@ -133,6 +136,9 @@ function drawTreat(p,t){x.save();x.translate(p.x,p.y);x.rotate(t*8);x.fillStyle=
  x.fillStyle='#d9a066';for(const [a,b] of [[-2,-2],[3,1],[-1,3]]){x.beginPath();x.arc(a,b,1.3,0,7);x.fill()}x.restore()}
 function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';let ox=0,oy=0;
  if(near&&d.target){const dx=near.x-g.mx,dy=near.y-g.my,l=Math.hypot(dx,dy)||1,m=Math.min(REACH,l);ox=dx/l*m;oy=dy/l*m}
+ if(sprOK(d.k)){const S=82,fr=caught&&d.target?2:performance.now()-fastT<700&&d.target?4:near&&d.target?1:mood==='sad'&&d.target&&state==='edit'?3:0;
+  const jy=d.jy||0;x.save();x.translate(d.x+ox*.4,d.y-jy+oy*.3+S*20/760);if(d.f>0)x.scale(-1,1);x.drawImage(SPR[d.k][fr],-S/2,-S,S,S);x.restore();
+  if(d.target&&!caught){x.font='16px sans-serif';x.textAlign='center';x.fillStyle='#e0574f';x.fillText('♡',d.x+d.f*6,d.y-jy-S*.9)}return}
  const col=moon?'#fbfbf8':'#e0a66b',dark=moon?'#e3ded3':'#b8763d';
  // からだ
  x.fillStyle=col;x.strokeStyle=dark;x.lineWidth=2;x.beginPath();x.ellipse(d.x-d.f*6,d.y-16-(d.jy||0)*.3,26,17,0,0,7);x.fill();x.stroke();
