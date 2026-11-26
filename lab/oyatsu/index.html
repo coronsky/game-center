@@ -5,6 +5,7 @@
 .tray button,.tool button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:12px;padding:5px 9px;font:inherit;font-weight:900;font-size:12px;color:#5a3d2b;cursor:pointer}
 .tray button b{font-size:15px;margin-left:3px}.tray button:disabled,.tool button:disabled{opacity:.35}
 .tool{display:flex;gap:6px;justify-content:center;margin:4px 0}
+.skr{display:flex;gap:4px;justify-content:flex-end;align-items:center;font-size:10px;font-weight:900;margin:-2px 0 4px}.skb{border:2px solid #e2cfb2;background:#fffaf1;border-radius:10px;padding:2px 7px;font:inherit;font-size:10px;font-weight:900;color:#5a3d2b;cursor:pointer}.skb.on{background:#56705a;color:#fff;border-color:#56705a}
 .bar{font-size:11px;text-align:center;margin:0 0 4px;font-weight:700}.bar b{font-size:14px}#play .msg{min-height:0;font-size:12px;padding:4px 6px;margin-bottom:6px}#play .row{margin:4px 0}#play .row .btn{padding:8px 14px;font-size:14px}
 .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .grid button{aspect-ratio:1;border:2px solid #e2cfb2;background:#fffaf1;border-radius:14px;font:inherit;font-weight:900;font-size:18px;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center}
@@ -19,6 +20,7 @@
 </style></head><body><div class="wrap">
 <div class="top" style="margin-bottom:4px"><a href="../">ラボ</a><h1>パクッとおやつキャッチ <span class="tag">叩き台</span></h1></div>
 
+<div class="skr"><span>スキン</span><button class="skb" data-s="natural">ナチュラル</button><button class="skb" data-s="retro">レトロ</button><button class="skb" data-s="neon">ネオン</button></div>
 <div id="menu"><div class="msg">ステージをえらんでね</div><div class="grid" id="grid"></div>
 <p style="font-size:11px;opacity:.75;margin-top:12px">アイテムを置いてから「はっしゃ！」。おやつをはねかえして、ワンコのお口へとどけよう。<br>★1 キャッチ ／ ★2 ほねっこをとる ／ ★3 アイテムを目標の数以内で</p></div>
 
@@ -43,6 +45,19 @@ const LS=k=>{try{return JSON.parse(localStorage.getItem('lab_oy_'+k))}catch(e){r
 // ワンコの絵（左向き・全スキン共通）：0まち 1あーん 2パクッ 3しょんぼり 4びっくり
 const SPR={};for(const k of ['moon','coron']){SPR[k]=[0,1,2,3,4].map(i=>{const im=new Image();im.src='img/'+k+'_'+i+'.webp';return im})}
 const sprOK=k=>SPR[k]&&SPR[k].every(im=>im.complete&&im.naturalWidth);let mood='',fastT=-1e9;
+// スキン（ゲームセンター共通の mc_vt）
+const SKINS=[['natural','ナチュラル'],['retro','レトロ'],['neon','ネオン']];
+let skin=(()=>{const ok=v=>SKINS.some(s=>s[0]===v);const h=location.hash.slice(1);if(ok(h))return h;try{const v=localStorage.getItem('mc_vt');if(ok(v))return v;const p=JSON.parse(localStorage.getItem('mcgc_p')||'{}');if(ok(p.theme))return p.theme}catch(e){}return'natural'})();
+function setSkin(v){skin=v;try{localStorage.setItem('mc_vt',v)}catch(e){}document.body.dataset.skin=v;skinUI()}
+function skinUI(){document.querySelectorAll('.skb').forEach(b=>b.classList.toggle('on',b.dataset.s===skin))}
+// 道具の絵：META=絵の中の「本体」の範囲（左,上,右,下の割合）
+const IMETA={"natural_plank": [0.009, 0.045, 0.991, 0.955], "natural_ball": [0.024, 0.024, 0.976, 0.976], "natural_sponge": [0.013, 0.034, 0.987, 0.966], "natural_tramp": [0.012, 0.03, 0.988, 0.97], "retro_plank": [0.009, 0.039, 0.991, 0.961], "retro_ball": [0.024, 0.024, 0.976, 0.976], "retro_sponge": [0.013, 0.032, 0.987, 0.968], "retro_tramp": [0.012, 0.026, 0.988, 0.974], "neon_plank": [0.065, 0.187, 0.933, 0.813], "neon_ball": [0.139, 0.139, 0.861, 0.861], "neon_sponge": [0.086, 0.161, 0.914, 0.839], "neon_tramp": [0.084, 0.145, 0.923, 0.855]};const IIMG={};
+for(const [sk] of SKINS)for(const k of ['plank','ball','sponge','tramp']){const im=new Image();im.src='img/item_'+sk+'_'+k+'.webp';IIMG[sk+'_'+k]=im}
+// 本体の大きさ（幅, 高さ, 当たり線の位置）
+const ISIZE={plank:[88,13,.5],sponge:[68,22,.5],tramp:[64,0,.2],ball:[32,32,.5]};
+function drawItemImg(it){const im=IIMG[skin+'_'+it.k],m=IMETA[skin+'_'+it.k];if(!im||!im.complete||!im.naturalWidth)return false;
+ const [Wc,H0,ay]=ISIZE[it.k],cw=m[2]-m[0],ch=m[3]-m[1],Hc=H0||Wc*(ch*im.naturalHeight)/(cw*im.naturalWidth),fw=Wc/cw,fh=Hc/ch;
+ x.save();x.translate(it.x,it.y);if(it.k!=='ball')x.rotate(-it.a*Math.PI/180);x.drawImage(im,-Wc/2-m[0]*fw,-ay*Hc-m[1]*fh,fw,fh);x.restore();return true}
 let stars=LS('stars30')||[],cur=0,st=null,placed=[],sel=-1,mode=null,drag=null,world=null,lastPath=null,tries=0,state='edit',pops=[],caughtT=0;
 const SAY={
  moon:{ok:['パクッ！おいしい〜！','ナイスパス！もっとちょうだい','さすがだね！しっぽふりふり','いいとこに投げてくれたね！'],
@@ -107,13 +122,22 @@ $('rs').onclick=()=>{$('res').style.display='none';menu()};
 
 /* ---------- 描画 ---------- */
 function rr(x0,y0,w,h,r){x.beginPath();x.roundRect?x.roundRect(x0,y0,w,h,r):x.rect(x0,y0,w,h)}
-function bg(){const g=x.createLinearGradient(0,0,0,FLOOR);g.addColorStop(0,'#fdf6ea');g.addColorStop(1,'#f3e3c8');x.fillStyle=g;x.fillRect(0,0,W,FLOOR);
+function bg(){if(skin==='neon'){x.fillStyle='#0c1030';x.fillRect(0,0,W,H);x.strokeStyle='rgba(90,200,255,.09)';x.lineWidth=1;for(let i=0;i<W;i+=30){x.beginPath();x.moveTo(i,0);x.lineTo(i,FLOOR);x.stroke()}for(let j=0;j<FLOOR;j+=30){x.beginPath();x.moveTo(0,j);x.lineTo(W,j);x.stroke()}x.fillStyle='#161a44';x.fillRect(0,FLOOR,W,H-FLOOR);x.fillStyle='#ff4fd8';x.fillRect(0,FLOOR,W,2);return}
+ if(skin==='retro'){x.fillStyle='#f6e7c1';x.fillRect(0,0,W,FLOOR);x.fillStyle='#ecd59f';for(let i=0;i<W;i+=24)for(let j=(i/24%2)*12;j<FLOOR;j+=24)x.fillRect(i,j,12,12);x.fillStyle='#b86b2b';x.fillRect(0,FLOOR,W,H-FLOOR);x.fillStyle='#3a1a0a';x.fillRect(0,FLOOR,W,3);return}
+ const g=x.createLinearGradient(0,0,0,FLOOR);g.addColorStop(0,'#fdf6ea');g.addColorStop(1,'#f3e3c8');x.fillStyle=g;x.fillRect(0,0,W,FLOOR);
  x.fillStyle='rgba(214,180,130,.18)';for(let i=0;i<W;i+=30)x.fillRect(i,0,12,FLOOR);
  x.fillStyle='#c99a62';x.fillRect(0,FLOOR,W,H-FLOOR);x.fillStyle='#b5854f';for(let i=0;i<W;i+=48)x.fillRect(i,FLOOR,2,H-FLOOR);
  x.fillStyle='#a8794a';x.fillRect(0,FLOOR,W,3)}
 function line(s,col,w){x.strokeStyle=col;x.lineWidth=w;x.lineCap='round';x.beginPath();x.moveTo(s.x1,s.y1);x.lineTo(s.x2,s.y2);x.stroke()}
-function drawWall(w){const s={x1:w[0],y1:w[1],x2:w[2],y2:w[3]},th=Math.max(8,(w[4]==null?5:w[4])*2);line(s,'#8a5a32',th+3);line(s,'#b07a47',th)}
+function drawWall(w){const s={x1:w[0],y1:w[1],x2:w[2],y2:w[3]},th=Math.max(8,(w[4]==null?5:w[4])*2);
+ if(skin==='neon'){x.save();x.shadowColor='#3ff';x.shadowBlur=10;line(s,'#3ff',th);x.restore();line(s,'#123',th-4);return}
+ if(skin==='retro'){x.lineCap='square';line(s,'#2a1206',th+4);x.strokeStyle='#c8782e';x.lineWidth=th;x.beginPath();x.moveTo(s.x1,s.y1);x.lineTo(s.x2,s.y2);x.stroke();x.lineCap='round';return}
+ line(s,'#8a5a32',th+3);line(s,'#b07a47',th)}
 function drawItem(it,i){const k=it.k,b=bad(it);
+ if(drawItemImg(it)){const s=k==='ball'?null:itemSeg(it);
+  if(b){x.fillStyle=x.strokeStyle='rgba(230,40,40,.4)';if(s)line(s,'rgba(230,40,40,.4)',24);else{x.beginPath();x.arc(it.x,it.y,ITEMS.ball.r+6,0,7);x.fill()}}
+  if(i===sel&&state==='edit'){x.setLineDash([4,4]);x.strokeStyle='#e08a00';x.lineWidth=2;if(s){x.beginPath();x.moveTo(s.x1,s.y1);x.lineTo(s.x2,s.y2);x.stroke();x.setLineDash([]);for(const [px,py] of [[s.x1,s.y1],[s.x2,s.y2]]){x.fillStyle='#fff';x.lineWidth=2.5;x.beginPath();x.arc(px,py,8,0,7);x.fill();x.stroke()}}else{x.beginPath();x.arc(it.x,it.y,ITEMS.ball.r+5,0,7);x.stroke()}x.setLineDash([])}
+  return}
  if(k==='ball'){const r=ITEMS.ball.r;const g=x.createRadialGradient(it.x-5,it.y-6,2,it.x,it.y,r);g.addColorStop(0,'#ff9a9a');g.addColorStop(1,'#e0393e');x.fillStyle=g;x.beginPath();x.arc(it.x,it.y,r,0,7);x.fill();
   x.strokeStyle='rgba(255,255,255,.7)';x.lineWidth=2;x.beginPath();x.arc(it.x,it.y,r-5,3.6,4.6);x.stroke();
   if(b){x.fillStyle='rgba(230,40,40,.35)';x.beginPath();x.arc(it.x,it.y,r+6,0,7);x.fill()}
@@ -188,5 +212,6 @@ function draw(){x.setTransform(DPR,0,0,DPR,0,0);bg();if(!st)return;const w=world
  if(caught){const d=dogs.find(d=>d.target),g=dogGeo(d);const k=(performance.now()-caughtT)/900;x.font='bold 22px sans-serif';x.textAlign='center';x.fillStyle='#e0574f';x.fillText('パクッ！',g.hx,g.hy-50-k*16)}
  for(const p of pops){p.life-=.012;p.y-=.4;x.globalAlpha=Math.max(0,p.life);x.font='bold 13px sans-serif';x.textAlign='center';x.fillStyle='#c27a00';x.fillText(p.t,p.x,p.y);x.globalAlpha=1}
  pops=pops.filter(p=>p.life>0)}
+document.querySelectorAll('.skb').forEach(b=>b.onclick=()=>setSkin(b.dataset.s));setSkin(skin);
 menu();requestAnimationFrame(tick);
 </script></body></html>
