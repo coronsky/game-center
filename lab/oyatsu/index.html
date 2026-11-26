@@ -172,8 +172,12 @@ function drawItem(it,i){const k=it.k,b=bad(it);
   for(const [px,py] of [[s.x1,s.y1],[s.x2,s.y2]]){x.fillStyle='#fff';x.strokeStyle='#e08a00';x.lineWidth=2.5;x.beginPath();x.arc(px,py,8,0,7);x.fill();x.stroke()}}}
 function drawLauncher(){const L=st.launch,a=L.a*Math.PI/180;
  if(aok(skin+'_base')&&aok(skin+'_nozzle')){let sup=FLOOR;for(const w of st.walls||[])if(w[1]===w[3]&&w[1]>L.y&&w[1]<sup&&L.x>=Math.min(w[0],w[2])-5&&L.x<=Math.max(w[0],w[2])+5)sup=w[1]-(w[4]==null?5:w[4]);
-  const left=Math.cos(a)<0,bh=62,bw=bh/coreAsp('base');x.save();x.translate(L.x,sup-bh/2);if(left)x.scale(-1,1);drawCore('base',0,0,bw,bh);x.restore();
-  const nl=40,nh=nl*coreAsp('nozzle');x.save();x.translate(L.x,L.y);x.rotate(-a);if(left)x.scale(1,-1);drawCore('nozzle',nl/2-6,0,nl,nh);x.restore();return}x.save();x.translate(L.x,L.y);
+  // 本体の横の穴(SPX,SPY=本体内の割合)に筒の根元をつなぐ。床との間があけば木の台に乗せる
+  const SPX=.87,SPY=.74,left=Math.cos(a)<0,dir=left?-1:1,bh=56,bw=bh/coreAsp('base'),bot=L.y+(1-SPY)*bh;
+  if(sup-bot>5){const tx=L.x-dir*(SPX-.5)*bw,hw=bw/2+4;drawBoard({x1:tx-hw+5,y1:bot+4,x2:tx+hw-5,y2:bot+4},9);
+   for(const sx of [-1,1])drawBoard({x1:tx+sx*(hw-9),y1:bot+8,x2:tx+sx*(hw-9),y2:sup-4},7)}
+  x.save();x.translate(L.x,L.y);x.scale(dir,1);drawCore('base',-(SPX-.5)*bw,-(SPY-.5)*bh,bw,bh);x.restore();
+  const nl=34,nh=nl*coreAsp('nozzle');x.save();x.translate(L.x,L.y);x.rotate(-a);if(left)x.scale(1,-1);drawCore('nozzle',nl/2-nl*.12,0,nl,nh);x.restore();return}x.save();x.translate(L.x,L.y);
  x.save();x.rotate(-a);x.fillStyle='#4a6342';rr(0,-8,34,16,5);x.fill();x.fillStyle='#38502f';rr(28,-10,8,20,3);x.fill();x.restore();
  x.fillStyle='#6c8a60';x.beginPath();x.arc(0,0,17,0,7);x.fill();x.fillStyle='#fff';x.font='bold 9px sans-serif';x.textAlign='center';x.fillText('おやつ',0,3);
  x.fillStyle='#56705a';x.fillRect(-6,16,12,8);x.restore()}
