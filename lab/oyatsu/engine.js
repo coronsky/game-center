@@ -59,9 +59,6 @@ World.prototype.step=function(){
     if(Math.abs(p.x-cx)<26+R&&p.y>FLOOR-16-R)return this.end('fail','ルンバにすわれた！')}
   // ワンコ
   for(const d of this.dogs){
-    if(d.k==='coron'&&d.target){const g0=dogGeo({...d,jy:0}),dx=Math.abs(p.x-g0.mx),up=g0.my-p.y;
-      const want=(dx<50&&up>0&&up<90&&p.vy>-50)?Math.min(35,up):0;
-      d.jy+=Math.max(-420*DT,Math.min(420*DT,want-d.jy))}
     const g=dogGeo(d),md=Math.hypot(p.x-g.mx,p.y-g.my);
     if(d.target){d.near=md<g.mr+REACH+40?{x:p.x,y:p.y}:null;
       if(md<g.mr+REACH&&p.y<d.y-30-d.jy){/* 床をころがるおやつは食べない */const sp=Math.hypot(p.vx,p.vy);
