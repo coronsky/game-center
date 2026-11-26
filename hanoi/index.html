@@ -334,6 +334,9 @@ html body[data-vt=neon] .app .vtBtn{background-image:url(../img/ui/neon_skin.web
 body[data-vt=retro] .nb{background:#3a160a;border-color:#f2b134;color:#ffd36b}
 body[data-vt=neon] .nb{background:rgba(20,8,55,.92);border-color:#3ff0ff;color:#fff;text-shadow:0 0 6px #3ff0ff;box-shadow:0 0 10px rgba(63,240,255,.6)}
 #minBan{text-align:center;font-weight:900;font-size:15px;margin:2px auto 0;padding:5px 12px;border-radius:14px;background:rgba(255,236,170,.92);color:#6b3d00;width:fit-content;max-width:96%;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+body .pole .lb,body[data-vt] .pole .lb{font-size:12.5px!important;letter-spacing:0;white-space:nowrap;text-align:center;justify-content:center;align-items:center}
+body[data-vt] .pole .lb.goal,body .pole .lb.goal{font-size:13.5px!important;color:#fff!important;text-shadow:0 0 3px #b3261e,0 0 7px #b3261e,0 1px 2px #6b1000!important;animation:goalGlow 1.3s ease-in-out infinite}
+@keyframes goalGlow{0%,100%{filter:drop-shadow(0 0 3px #ffd36b) brightness(1)}50%{filter:drop-shadow(0 0 12px #ffcf3a) drop-shadow(0 0 5px #fff) brightness(1.25)}}
 </style><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" href="../icons/favicon-48.png?v=3"><meta name="theme-color" content="#56705A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ゲームセンター"><script src="../coins.js"></script><style id="noHome">html body .app #homeBtn,html body .app .homeBtn{display:none!important}</style></head>
 <body data-vt="natural"><div class="app">
 <div id="bgLayer"></div><button class="vtBtn" id="vtBtn">🎨 スキン</button><a class="homeBtn" id="homeBtn" href="../">🏠 ホーム</a>
@@ -467,7 +470,7 @@ function load(i){ $('clearBan')&&$('clearBan').classList.remove('show'); clearTi
   pos=ST.s.slice(); sel=-1; moves=0; hist=[]; t0=0; done=false; hints=0; usedDemo=false; hintM=null;
   $('stName').textContent=`${CINFO[course].ico}${i+1}・${n}まい`; $('stMin').textContent=stMin(); $('minBan').innerHTML=course==='lim'?`🎯 <b>${stMin()}手</b>以内でクリアしよう！`:`🎯 最短 <b>${stMin()}手</b> でクリアできるよ`;
   const b=P.best[i]; $('stBest').textContent=b?`${b.m}手・${fmt(b.t)}`:'—';
-  const PN=['ひだり','まんなか','みぎ']; document.querySelectorAll('.pole .lb').forEach((e,k)=>{ e.textContent=k===T?'ゴール':(course==='std'&&k===0)||(course==='goal'&&k===ST.s[0])?'スタート':PN[k]; e.classList.toggle('goal',k===T); });
+  const PN=['ひだり','まんなか','みぎ']; document.querySelectorAll('.pole .lb').forEach((e,k)=>{ e.textContent=k===T?'🏁 ゴール':(course==='std'&&k===0)||(course==='goal'&&k===ST.s[0])?'スタート':PN[k]; e.classList.toggle('goal',k===T); });
   build(); draw(); hud();
   const tn=['左','まんなか','右'][T];
   setStatus(course==='lim'?`${stMin()}手以内で${tn}の柱に全部つもう！`:course==='mix'?`バラバラのざぶとんを${tn}の柱に全部つもう！`:`ざぶとんを${tn}の柱へ全部うつそう！`);
