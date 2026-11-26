@@ -44,6 +44,8 @@ const cv=$('cv'),x=cv.getContext('2d'),DPR=Math.min(3,window.devicePixelRatio||1
 const LS=k=>{try{return JSON.parse(localStorage.getItem('lab_oy_'+k))}catch(e){return null}},SS=(k,v)=>{try{localStorage.setItem('lab_oy_'+k,JSON.stringify(v))}catch(e){}};
 // ワンコの絵（左向き・全スキン共通）：0まち 1あーん 2パクッ 3しょんぼり 4びっくり
 const SPR={};for(const k of ['moon','coron']){SPR[k]=[0,1,2,3,4].map(i=>{const im=new Image();im.src='img/'+k+'_'+i+'.webp';return im})}
+// しっぽの範囲（絵300pxの中の座標）：x0より右・y0〜y1の段がしっぽ
+const TAIL={moon:{x0:210,y0:175,y1:262,A:4},coron:{x0:226,y0:205,y1:270,A:3}};
 const sprOK=k=>SPR[k]&&SPR[k].every(im=>im.complete&&im.naturalWidth);let mood='',fastT=-1e9;
 // スキン（ゲームセンター共通の mc_vt）
 const SKINS=[['natural','ナチュラル'],['retro','レトロ'],['neon','ネオン']];
@@ -197,11 +199,12 @@ function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';l
   else if(fr===3){sw=.8*Math.sin(T*1.5);br=-.025+.006*Math.sin(T*1.5)}
   else{const k2=Math.max(0,1-(performance.now()-fastT)/700);sw=3.5*k2*Math.sin(T*60);br=.04*k2}
   x.save();x.translate(d.x,d.y-jy+S*20/760);if(d.f>0)x.scale(-1,1);
-  const im=SPR[d.k][fr],N=30,iw=im.naturalWidth,ih=im.naturalHeight,hS=S*(1+br);
-  for(let i=0;i<N;i++){const v=i/N,top=1-v,sh=ih/N,dh=hS/N+.6,ey=Math.pow(top,1.6);
-   x.drawImage(im,0,i*sh,iw,sh,-S/2+sw*ey,-hS+i*hS/N,S,dh)}
-  x.restore();
-  if(d.target&&!caught){x.font='16px sans-serif';x.textAlign='center';x.fillStyle='#e0574f';x.fillText('♡',d.x+d.f*6,d.y-jy-S*.9)}return}
+  const im=SPR[d.k][fr],N=60,iw=im.naturalWidth,ih=im.naturalHeight,hS=S*(1+br),sc=iw/300,tl=fr===0?TAIL[d.k]:null,wag=tl?tl.A*Math.sin(T*9):0;
+  for(let i=0;i<N;i++){const v=i/N,top=1-v,sh=ih/N,dh=hS/N+.6,ey=Math.pow(top,1.6),dx=-S/2+sw*ey,dy=-hS+i*hS/N,sy=(i+.5)*sh/sc;
+   if(tl&&sy>tl.y0&&sy<tl.y1){// しっぽの段：しっぽ部分だけ横にフリフリ（根もとは動かない）
+    const cx=tl.x0*sc,k2=(tl.y1-sy)/(tl.y1-tl.y0);x.drawImage(im,0,i*sh,cx,sh,dx,dy,S*cx/iw,dh);x.drawImage(im,cx,i*sh,iw-cx,sh,dx+S*cx/iw+wag*k2,dy,S*(iw-cx)/iw,dh)}
+   else x.drawImage(im,0,i*sh,iw,sh,dx,dy,S,dh)}
+  x.restore();return}
  const col=moon?'#fbfbf8':'#e0a66b',dark=moon?'#e3ded3':'#b8763d';
  // からだ
  x.fillStyle=col;x.strokeStyle=dark;x.lineWidth=2;x.beginPath();x.ellipse(d.x-d.f*6,d.y-16-(d.jy||0)*.3,26,17,0,0,7);x.fill();x.stroke();
@@ -218,7 +221,12 @@ function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';l
  else{x.strokeStyle='#2a1a10';x.lineWidth=1.6;x.beginPath();x.arc(d.f*k.hr*.55-3,9,3,0,Math.PI);x.arc(d.f*k.hr*.55+3,9,3,0,Math.PI);x.stroke()}
  if(caught){x.fillStyle='#f28b8b';x.beginPath();x.arc(fx-10,4,3.5,0,7);x.arc(fx+12,4,3.5,0,7);x.fill()}
  x.restore();
- if(d.target&&!caught){x.font='16px sans-serif';x.textAlign='center';x.fillText('♡',g.hx,g.hy-k.hr-8)}}
+}
+function heartPath(cx,cy,r){x.beginPath();x.moveTo(cx,cy+r*.95);x.bezierCurveTo(cx-r*1.35,cy+r*.1,cx-r*1.05,cy-r*1.05,cx,cy-r*.35);x.bezierCurveTo(cx+r*1.05,cy-r*1.05,cx+r*1.35,cy+r*.1,cx,cy+r*.95);x.closePath()}
+function puffyHeart(cx,cy,r){x.save();x.shadowColor='rgba(230,80,120,.35)';x.shadowBlur=6;heartPath(cx,cy,r);
+ const g=x.createRadialGradient(cx-r*.35,cy-r*.45,r*.1,cx,cy,r*1.2);g.addColorStop(0,'#ffd1de');g.addColorStop(.45,'#ff8fb0');g.addColorStop(1,'#e8517e');x.fillStyle=g;x.fill();x.restore();
+ x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=1.4;heartPath(cx,cy,r);x.stroke();
+ x.fillStyle='rgba(255,255,255,.85)';x.beginPath();x.ellipse(cx-r*.42,cy-r*.38,r*.22,r*.13,-.6,0,7);x.fill();x.beginPath();x.arc(cx-r*.15,cy-r*.52,r*.06,0,7);x.fill()}
 function draw(){x.setTransform(DPR,0,0,DPR,0,0);bg();if(!st)return;const w=world&&state!=='edit'?world:null,t=w?w.t:0;
  for(const f of st.fans||[]){x.fillStyle='rgba(120,180,230,.13)';x.fillRect(f.x,f.y,f.w,f.h);x.strokeStyle='rgba(80,140,200,.5)';x.lineWidth=2;
   const dir=Math.sign(f.fx),ph=(performance.now()/12)%40;for(let yy=f.y+20;yy<f.y+f.h;yy+=34)for(let xx=f.x;xx<f.x+f.w;xx+=40){const sx=xx+(dir>0?ph:40-ph);if(sx>f.x+f.w-10)continue;x.beginPath();x.moveTo(sx,yy);x.lineTo(sx+dir*12,yy);x.lineTo(sx+dir*7,yy-4);x.stroke()}
@@ -236,7 +244,8 @@ function draw(){x.setTransform(DPR,0,0,DPR,0,0);bg();if(!st)return;const w=world
  for(const d of dogs)drawDog(d,w?d.near:null,caught&&d.target);
  drawLauncher();
  if(w&&!caught)drawTreat(w.p,t);
- if(caught){const d=dogs.find(d=>d.target),g=dogGeo(d);const k=(performance.now()-caughtT)/900;x.font='bold 22px sans-serif';x.textAlign='center';x.fillStyle='#e0574f';x.fillText('パクッ！',g.hx,g.hy-50-k*16)}
+ if(caught){const d=dogs.find(d=>d.target),g=dogGeo(d);const k=(performance.now()-caughtT)/900;x.font='bold 22px sans-serif';x.textAlign='center';x.fillStyle='#e0574f';x.fillText('パクッ！',g.hx,g.hy-50-k*16);
+  [[-18,0,13],[16,.18,10],[2,.35,8]].forEach(([ox,dl,sz])=>{const q=Math.max(0,k-dl);if(q<=0)return;const yy=g.hy-26-q*46,xx=g.hx+ox+Math.sin(q*7+ox)*4;x.globalAlpha=Math.min(1,q*4)*Math.max(0,1.25-q);puffyHeart(xx,yy,sz*(1+.1*Math.sin(q*12)));x.globalAlpha=1})}
  for(const p of pops){p.life-=.012;p.y-=.4;x.globalAlpha=Math.max(0,p.life);x.font='bold 13px sans-serif';x.textAlign='center';x.fillStyle='#c27a00';x.fillText(p.t,p.x,p.y);x.globalAlpha=1}
  pops=pops.filter(p=>p.life>0)}
 document.querySelectorAll('.skb').forEach(b=>b.onclick=()=>setSkin(b.dataset.s));setSkin(skin);
