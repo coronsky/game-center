@@ -40,8 +40,8 @@
 const {W,H,FLOOR,R,ITEMS,DOG,STAGES,World,itemSeg,dogGeo,REACH}=ENG,$=id=>document.getElementById(id);
 const cv=$('cv'),x=cv.getContext('2d'),DPR=Math.min(3,window.devicePixelRatio||1);cv.width=W*DPR;cv.height=H*DPR;
 const LS=k=>{try{return JSON.parse(localStorage.getItem('lab_oy_'+k))}catch(e){return null}},SS=(k,v)=>{try{localStorage.setItem('lab_oy_'+k,JSON.stringify(v))}catch(e){}};
-// ワンコの絵（左向き）：0まち 1あーん 2パクッ 3しょんぼり 4びっくり
-const SPR={};for(const k of ['moon']){SPR[k]=[0,1,2,3,4].map(i=>{const im=new Image();im.src='img/natural_'+k+'_'+i+'.webp';return im})}
+// ワンコの絵（左向き・全スキン共通）：0まち 1あーん 2パクッ 3しょんぼり 4びっくり
+const SPR={};for(const k of ['moon','coron']){SPR[k]=[0,1,2,3,4].map(i=>{const im=new Image();im.src='img/'+k+'_'+i+'.webp';return im})}
 const sprOK=k=>SPR[k]&&SPR[k].every(im=>im.complete&&im.naturalWidth);let mood='',fastT=0;
 let stars=LS('stars30')||[],cur=0,st=null,placed=[],sel=-1,mode=null,drag=null,world=null,lastPath=null,tries=0,state='edit',pops=[],caughtT=0;
 const SAY={
@@ -97,7 +97,7 @@ function tick(){if(state==='fly'&&world){for(let i=0;i<4&&!world.res;i++){world.
  draw();requestAnimationFrame(tick)}
 function result(){const got=world.bones.every(b=>b.got),d=target(),n=1+(got?1:0)+(placed.length<=st.par?1:0);
  stars[cur]=Math.max(stars[cur]||0,n);SS('stars30',stars);
- const sp=sprOK(d.k);$('rimg').src=sp?'img/natural_'+d.k+'_2.webp':'../../img/'+(d.k==='moon'?'moon':'colon')+'.webp';$('rimg').className=sp?'spr':'';$('rb').textContent=pick(n===3?SAY[d.k].three:SAY[d.k].ok);
+ const sp=sprOK(d.k);$('rimg').src=sp?'img/'+d.k+'_2.webp':'../../img/'+(d.k==='moon'?'moon':'colon')+'.webp';$('rimg').className=sp?'spr':'';$('rb').textContent=pick(n===3?SAY[d.k].three:SAY[d.k].ok);
  $('rst').innerHTML='★'+(got?'★':'<i>★</i>')+(placed.length<=st.par?'★':'<i>★</i>');
  $('rl2').innerHTML='✔ キャッチ<br>'+(got?'✔':'✕')+' ほねっこ<br>'+(placed.length<=st.par?'✔':'✕')+' アイテム'+st.par+'こ以内（つかった数 '+placed.length+'）';
  $('nx').style.display=cur<STAGES.length-1?'':'none';$('res').style.display='flex'}
