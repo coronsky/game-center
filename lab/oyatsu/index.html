@@ -45,7 +45,10 @@ const LS=k=>{try{return JSON.parse(localStorage.getItem('lab_oy_'+k))}catch(e){r
 // ワンコの絵（左向き・全スキン共通）：0まち 1あーん 2パクッ 3しょんぼり 4びっくり
 const SPR={};for(const k of ['moon','coron']){SPR[k]=[0,1,2,3,4].map(i=>{const im=new Image();im.src='img/'+k+'_'+i+'.webp';return im})}
 // しっぽの範囲（絵300pxの中の座標）：x0より右・y0〜y1の段がしっぽ
-const TAIL={moon:{x0:205,x1:270,y0:175,y1:262,A:5},coron:{x0:228,x1:265,y0:200,y1:272,A:4}};
+const TAIL={coron:{x0:228,x1:265,y0:200,y1:272,A:4}};
+// ムーンのしっぽは丸い毛玉なので、切り抜いた絵を根もと(PIV)中心に回す
+const MT={body:new Image(),tail:new Image(),PIV:[233,256]};MT.body.src='img/moon_0_body.webp';MT.tail.src='img/moon_0_tail.webp';
+const mtOK=()=>MT.body.complete&&MT.body.naturalWidth&&MT.tail.complete&&MT.tail.naturalWidth;
 const sprOK=k=>SPR[k]&&SPR[k].every(im=>im.complete&&im.naturalWidth);let mood='',fastT=-1e9;
 // スキン（ゲームセンター共通の mc_vt）
 const SKINS=[['natural','ナチュラル'],['retro','レトロ'],['neon','ネオン']];
@@ -205,7 +208,7 @@ function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';l
    for(const sx of [-1,1]){x.beginPath();x.arc(d.x+sx*(14+q*16),d.y-3-q*5,3+q*4,0,7);x.fill()}x.globalAlpha=1}
   if(jy>6){x.strokeStyle=skin==='neon'?'rgba(155,231,255,.7)':'rgba(140,100,60,.45)';x.lineWidth=1.6;for(const sx of [-8,0,8]){x.beginPath();x.moveTo(d.x+sx,d.y-jy+6);x.lineTo(d.x+sx,d.y-jy+6+Math.min(10,jy*.3));x.stroke()}}
   x.save();x.translate(d.x,d.y-jy+S*20/760);if(d.f>0)x.scale(-1,1);
-  const im=SPR[d.k][fr],N=60,iw=im.naturalWidth,ih=im.naturalHeight,hS=S*(1+br),sc=iw/300,tl=fr===0?TAIL[d.k]:null,wag=tl?tl.A*Math.sin(T*9):0;
+  const mtail=d.k==='moon'&&fr===0&&mtOK(),im=mtail?MT.body:SPR[d.k][fr],N=60,iw=im.naturalWidth,ih=im.naturalHeight,hS=S*(1+br),sc=iw/300,tl=fr===0?TAIL[d.k]:null,wag=tl?tl.A*Math.sin(T*9):0;
   for(let i=0;i<N;i++){const v=i/N,top=1-v,sh=ih/N,dh=hS/N+.6,ey=Math.pow(top,1.6),dx=-S/2+sw*ey,dy=-hS+i*hS/N,sy=(i+.5)*sh/sc;
    if(tl&&sy>tl.y0&&sy<tl.y1){// しっぽの段：しっぽ部分だけ横にフリフリ（根もとは動かない）
     const cx=tl.x0*sc,k2=(tl.y1-sy)/(tl.y1-tl.y0),tw=(tl.x1-tl.x0)*sc,C=8;x.drawImage(im,0,i*sh,cx,sh,dx,dy,S*cx/iw,dh);
@@ -213,6 +216,7 @@ function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';l
     for(let c=0;c<C;c++){const sx=cx+tw*c/C,o=wag*k2*((c+.5)/C);x.drawImage(im,sx,i*sh,tw/C+.5,sh,dx+S*sx/iw+o,dy,S*(tw/C+.5)/iw,dh)}
     const ex=cx+tw;if(ex<iw)x.drawImage(im,ex,i*sh,iw-ex,sh,dx+S*ex/iw+wag*k2,dy,S*(iw-ex)/iw,dh)}
    else x.drawImage(im,0,i*sh,iw,sh,dx,dy,S,dh)}
+  if(mtail){const [px,py]=MT.PIV,ey=Math.pow(1-py/300,1.6);x.save();x.translate(-S/2+px*S/300+sw*ey,-hS+py*hS/300);x.rotate(.09*Math.sin(T*9));x.drawImage(MT.tail,-px*S/300,-py*hS/300,S,hS);x.restore()}
   x.restore();return}
  const col=moon?'#fbfbf8':'#e0a66b',dark=moon?'#e3ded3':'#b8763d';
  // からだ
