@@ -198,6 +198,12 @@ function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';l
   else if(fr===2){sw=3*Math.sin(T*11);br=.03*Math.abs(Math.sin(T*11))}
   else if(fr===3){sw=.8*Math.sin(T*1.5);br=-.025+.006*Math.sin(T*1.5)}
   else{const k2=Math.max(0,1-(performance.now()-fastT)/700);sw=3.5*k2*Math.sin(T*60);br=.04*k2}
+  // ジャンプの動き：上がる間は体がのびる・着地でむぎゅっ・足もとにけむり
+  const now=performance.now(),pj=d._pj||0;if(pj<=1&&jy>1)d._t0=now;if(pj>1&&jy<=1)d._tl=now;d._pj=jy;
+  if(jy>1)br+=.07*Math.min(1,jy/18);if(d._tl&&now-d._tl<240)br-=.08*(1-(now-d._tl)/240);
+  for(const t0 of [d._t0,d._tl])if(t0&&now-t0<380){const q=(now-t0)/380;x.globalAlpha=(1-q)*.7;x.fillStyle=skin==='neon'?'#9be7ff':'#fff7e6';
+   for(const sx of [-1,1]){x.beginPath();x.arc(d.x+sx*(14+q*16),d.y-3-q*5,3+q*4,0,7);x.fill()}x.globalAlpha=1}
+  if(jy>6){x.strokeStyle=skin==='neon'?'rgba(155,231,255,.7)':'rgba(140,100,60,.45)';x.lineWidth=1.6;for(const sx of [-8,0,8]){x.beginPath();x.moveTo(d.x+sx,d.y-jy+6);x.lineTo(d.x+sx,d.y-jy+6+Math.min(10,jy*.3));x.stroke()}}
   x.save();x.translate(d.x,d.y-jy+S*20/760);if(d.f>0)x.scale(-1,1);
   const im=SPR[d.k][fr],N=60,iw=im.naturalWidth,ih=im.naturalHeight,hS=S*(1+br),sc=iw/300,tl=fr===0?TAIL[d.k]:null,wag=tl?tl.A*Math.sin(T*9):0;
   for(let i=0;i<N;i++){const v=i/N,top=1-v,sh=ih/N,dh=hS/N+.6,ey=Math.pow(top,1.6),dx=-S/2+sw*ey,dy=-hS+i*hS/N,sy=(i+.5)*sh/sc;

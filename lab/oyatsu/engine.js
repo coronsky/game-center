@@ -60,7 +60,7 @@ World.prototype.step=function(){
   // ワンコ
   for(const d of this.dogs){
     if(d.k==='coron'&&d.target){const g0=dogGeo({...d,jy:0}),dx=Math.abs(p.x-g0.mx),up=g0.my-p.y;
-      const want=(dx<55&&up>0&&up<130&&p.vy>-50)?Math.min(70,up):0;
+      const want=(dx<50&&up>0&&up<90&&p.vy>-50)?Math.min(35,up):0;
       d.jy+=Math.max(-420*DT,Math.min(420*DT,want-d.jy))}
     const g=dogGeo(d),md=Math.hypot(p.x-g.mx,p.y-g.my);
     if(d.target){d.near=md<g.mr+REACH+40?{x:p.x,y:p.y}:null;
