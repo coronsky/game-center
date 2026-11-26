@@ -320,7 +320,7 @@ html body .panel{margin:4px 0 0!important}
   <div class="avs"><div id="avB"><div class="crown"></div><div class="ph" style="background-image:var(--colon)"></div>コロン</div>
     <div id="avW"><div class="crown"></div><div class="ph" style="background-image:var(--moon)"></div>ムーン</div></div>
   <div class="big" id="resScore"></div><div class="msg" id="resMsg"></div><div id="resExtra"></div><div class="rec" id="resRec"></div>
-  <div class="acts" style="flex-wrap:wrap"><button class="btn g" id="bRetryR" style="flex:1 1 100%">🔁 同じ問題をもう一度（ミスなしにちょうせん）</button><button class="btn c" data-close="mRes">盤面を見る</button><button class="btn g" id="bAgain">もう一回！</button></div>
+  <div class="acts" style="flex-wrap:wrap"><button class="btn c" data-close="mRes">盤面を見る</button><button class="btn g" id="bAgain">もう一回！</button></div>
 </div></div>
 <div class="toast" id="toast"></div>
 <script>(()=>{
@@ -458,11 +458,11 @@ function goal(by,p){ state='goal'; goalT=1.5; lastBy=by; sc[by-1]++; SFX.ok(); t
 function over(w){ state='over'; const me=w===1; let o;
   if(mode==='pvp'){ SFX.win(); confetti(['🐾','⭐']); o={title:w===1?'コロンの勝ち！':'ムーンの勝ち！',msg:'いい勝負だったね！',rec:'',btn:'もう一回！'}; afterFn=()=>start(); }
   else if(mode==='free'){ if(me){ P.wins++; sv(); report('win',{lv}); SFX.win(); confetti(['🐾','⭐','✨']); } else SFX.lose();
-    o={title:me?'🎉 かった！':'ざんねん…まけちゃった',msg:me?'つぎはもっと強い相手に！':'もう一回ちょうせん！',rec:'フリー対戦 '+LVLS[lv].n,btn:'もう一回！'}; afterFn=()=>start(); }
+    o={title:me?'🎉 かった！':'ざんねん…まけちゃった',msg:me?'つぎはもっと強い相手に！':'もう一度たたかおう！',rec:'フリー対戦 '+LVLS[lv].n,btn:me?'もう一回！':'もう一度たたかう！'}; afterFn=()=>start(); }
   else { if(me){ SFX.win(); confetti(['🐾','⭐','✨']); report('win',{st});
       if(st<STAGES.length-1){ st++; P.st=st; sv(); o={title:'🎉 ステージクリア！',msg:'つぎの相手は '+STAGES[st].e+' '+STAGES[st].n,rec:'STAGE '+st+' / '+STAGES.length,btn:'つぎのステージへ'}; afterFn=()=>start(); }
       else { st=0; P.st=0; P.clear++; sv(); o={title:'👑 ボスをたおした！',msg:'ぼうけんクリア！おめでとう！',rec:'クリア '+P.clear+'回',btn:'もう一回ぼうけん'}; afterFn=()=>start(); } }
-    else { SFX.lose(); o={title:'ざんねん…まけちゃった',msg:STAGES[st].e+' '+STAGES[st].n+' にリベンジ！',rec:'STAGE '+(st+1)+' / '+STAGES.length,btn:'もう一回！'}; afterFn=()=>start(); } }
+    else { SFX.lose(); o={title:'ざんねん…まけちゃった',msg:STAGES[st].e+' '+STAGES[st].n+' ともう一度たたかおう！',rec:'STAGE '+(st+1)+' / '+STAGES.length,btn:'もう一度たたかう！'}; afterFn=()=>start(); } }
   $('bAgain').textContent=o.btn;
   showResult({winner:w,title:o.title,score:sc[0]+' - '+sc[1],msg:o.msg,rec:o.rec,delay:900}); }
 const ITM={bolt:{e:'⚡'},ice:{e:'❄️'},paw:{e:'🐾'}};
