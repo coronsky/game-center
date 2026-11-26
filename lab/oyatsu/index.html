@@ -45,7 +45,7 @@ const LS=k=>{try{return JSON.parse(localStorage.getItem('lab_oy_'+k))}catch(e){r
 // ワンコの絵（左向き・全スキン共通）：0まち 1あーん 2パクッ 3しょんぼり 4びっくり
 const SPR={};for(const k of ['moon','coron']){SPR[k]=[0,1,2,3,4].map(i=>{const im=new Image();im.src='img/'+k+'_'+i+'.webp';return im})}
 // しっぽの範囲（絵300pxの中の座標）：x0より右・y0〜y1の段がしっぽ
-const TAIL={moon:{x0:210,y0:175,y1:262,A:4},coron:{x0:226,y0:205,y1:270,A:3}};
+const TAIL={moon:{x0:205,x1:270,y0:175,y1:262,A:5},coron:{x0:228,x1:265,y0:200,y1:272,A:4}};
 const sprOK=k=>SPR[k]&&SPR[k].every(im=>im.complete&&im.naturalWidth);let mood='',fastT=-1e9;
 // スキン（ゲームセンター共通の mc_vt）
 const SKINS=[['natural','ナチュラル'],['retro','レトロ'],['neon','ネオン']];
@@ -208,7 +208,10 @@ function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';l
   const im=SPR[d.k][fr],N=60,iw=im.naturalWidth,ih=im.naturalHeight,hS=S*(1+br),sc=iw/300,tl=fr===0?TAIL[d.k]:null,wag=tl?tl.A*Math.sin(T*9):0;
   for(let i=0;i<N;i++){const v=i/N,top=1-v,sh=ih/N,dh=hS/N+.6,ey=Math.pow(top,1.6),dx=-S/2+sw*ey,dy=-hS+i*hS/N,sy=(i+.5)*sh/sc;
    if(tl&&sy>tl.y0&&sy<tl.y1){// しっぽの段：しっぽ部分だけ横にフリフリ（根もとは動かない）
-    const cx=tl.x0*sc,k2=(tl.y1-sy)/(tl.y1-tl.y0);x.drawImage(im,0,i*sh,cx,sh,dx,dy,S*cx/iw,dh);x.drawImage(im,cx,i*sh,iw-cx,sh,dx+S*cx/iw+wag*k2,dy,S*(iw-cx)/iw,dh)}
+    const cx=tl.x0*sc,k2=(tl.y1-sy)/(tl.y1-tl.y0),tw=(tl.x1-tl.x0)*sc,C=8;x.drawImage(im,0,i*sh,cx,sh,dx,dy,S*cx/iw,dh);
+    // 根もと(x0)では0、先へいくほど大きくずらす＝体が切れない
+    for(let c=0;c<C;c++){const sx=cx+tw*c/C,o=wag*k2*((c+.5)/C);x.drawImage(im,sx,i*sh,tw/C+.5,sh,dx+S*sx/iw+o,dy,S*(tw/C+.5)/iw,dh)}
+    const ex=cx+tw;if(ex<iw)x.drawImage(im,ex,i*sh,iw-ex,sh,dx+S*ex/iw+wag*k2,dy,S*(iw-ex)/iw,dh)}
    else x.drawImage(im,0,i*sh,iw,sh,dx,dy,S,dh)}
   x.restore();return}
  const col=moon?'#fbfbf8':'#e0a66b',dark=moon?'#e3ded3':'#b8763d';
