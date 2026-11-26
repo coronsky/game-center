@@ -40,7 +40,7 @@
 const {W,H,FLOOR,R,ITEMS,DOG,STAGES,World,itemSeg,dogGeo,REACH}=ENG,$=id=>document.getElementById(id);
 const cv=$('cv'),x=cv.getContext('2d'),DPR=Math.min(3,window.devicePixelRatio||1);cv.width=W*DPR;cv.height=H*DPR;
 const LS=k=>{try{return JSON.parse(localStorage.getItem('lab_oy_'+k))}catch(e){return null}},SS=(k,v)=>{try{localStorage.setItem('lab_oy_'+k,JSON.stringify(v))}catch(e){}};
-let stars=LS('stars')||[],cur=0,st=null,placed=[],sel=-1,mode=null,drag=null,world=null,lastPath=null,tries=0,state='edit',pops=[],caughtT=0;
+let stars=LS('stars30')||[],cur=0,st=null,placed=[],sel=-1,mode=null,drag=null,world=null,lastPath=null,tries=0,state='edit',pops=[],caughtT=0;
 const SAY={
  moon:{ok:['パクッ！おいしい〜！','ナイスパス！もっとちょうだい','さすがだね！しっぽふりふり','いいとこに投げてくれたね！'],
   three:['かんぺき！★3つだよ！','天才すぎる…！ムーンびっくり'],fail:['おしい！もういっかい！','つぎはとれるよ！','あとちょっとだったね']},
@@ -62,18 +62,18 @@ function left(k){return(st.items[k]||0)-placed.filter(p=>p.k===k).length}
 function ui(){const t=$('tray');t.innerHTML='';const ed=state==='edit';
  for(const k in st.items){const b=document.createElement('button');b.innerHTML=ITEMS[k].e+' '+ITEMS[k].n+'<b>×'+left(k)+'</b>';
   b.disabled=!ed||left(k)<=0;b.onclick=()=>add(k);t.appendChild(b)}
- $('rl').disabled=$('rr').disabled=$('del').disabled=!ed||sel<0;$('go').disabled=!ed;$('clr').disabled=!ed||!placed.length;
+ $('rl').disabled=$('rr').disabled=!ed||sel<0||placed[sel].k==='ball';$('del').disabled=!ed||sel<0;$('go').disabled=!ed;$('clr').disabled=!ed||!placed.length;
  $('tr').textContent=tries}
 
 /* ---------- 置く・動かす ---------- */
 function bad(it){const L=st.launch;if(Math.hypot(it.x-L.x,it.y-L.y)<34)return true;
  for(const d of st.dogs){const g=dogGeo(d);if(Math.hypot(it.x-g.hx,it.y-g.hy)<g.hr+14)return true}return false}
-function add(k){if(left(k)<=0)return;placed.push({k,x:180,y:150,a:0});sel=placed.length-1;msg('ドラッグで動かす・はしの○でまわす');ui()}
+function add(k){if(left(k)<=0)return;placed.push({k,x:180,y:150,a:0});sel=placed.length-1;msg(k==='ball'?'ドラッグで動かそう':'ドラッグで動かす・はしの○でまわす');ui()}
 function pos(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
 function segDist(p,s){const dx=s.x2-s.x1,dy=s.y2-s.y1,l=dx*dx+dy*dy;let t=((p.x-s.x1)*dx+(p.y-s.y1)*dy)/l;t=Math.max(0,Math.min(1,t));return Math.hypot(p.x-s.x1-dx*t,p.y-s.y1-dy*t)}
 cv.addEventListener('pointerdown',e=>{if(state!=='edit')return;const p=pos(e);mode=null;
- if(sel>=0){const s=itemSeg(placed[sel]);for(const [ex,ey,flip] of [[s.x1,s.y1,180],[s.x2,s.y2,0]])if(Math.hypot(p.x-ex,p.y-ey)<20){mode='rot';drag={flip};cv.setPointerCapture(e.pointerId);return}}
- let hit=-1,hd=24;placed.forEach((it,i)=>{const d=segDist(p,itemSeg(it));if(d<hd){hd=d;hit=i}});
+ if(sel>=0&&placed[sel].k!=='ball'){const s=itemSeg(placed[sel]);for(const [ex,ey,flip] of [[s.x1,s.y1,180],[s.x2,s.y2,0]])if(Math.hypot(p.x-ex,p.y-ey)<20){mode='rot';drag={flip};cv.setPointerCapture(e.pointerId);return}}
+ let hit=-1,hd=24;placed.forEach((it,i)=>{const d=it.k==='ball'?Math.max(0,Math.hypot(p.x-it.x,p.y-it.y)-ITEMS.ball.r):segDist(p,itemSeg(it));if(d<hd){hd=d;hit=i}});
  sel=hit;if(hit>=0){mode='move';drag={dx:placed[hit].x-p.x,dy:placed[hit].y-p.y};cv.setPointerCapture(e.pointerId)}ui()});
 cv.addEventListener('pointermove',e=>{if(!mode||sel<0)return;const p=pos(e),it=placed[sel];
  if(mode==='move'){it.x=Math.max(12,Math.min(W-12,p.x+drag.dx));it.y=Math.max(20,Math.min(FLOOR-8,p.y+drag.dy))}
@@ -93,7 +93,7 @@ function tick(){if(state==='fly'&&world){for(let i=0;i<4&&!world.res;i++){world.
   else if(world.res){lastPath=world.path.slice();const d=target();msg(world.why+'　'+DOG[d.k].n+'「'+pick(SAY[d.k].fail)+'」');state='edit';ui()}}
  draw();requestAnimationFrame(tick)}
 function result(){const got=world.bones.every(b=>b.got),d=target(),n=1+(got?1:0)+(placed.length<=st.par?1:0);
- stars[cur]=Math.max(stars[cur]||0,n);SS('stars',stars);
+ stars[cur]=Math.max(stars[cur]||0,n);SS('stars30',stars);
  $('rimg').src='../../img/'+(d.k==='moon'?'moon':'colon')+'.webp';$('rb').textContent=pick(n===3?SAY[d.k].three:SAY[d.k].ok);
  $('rst').innerHTML='★'+(got?'★':'<i>★</i>')+(placed.length<=st.par?'★':'<i>★</i>');
  $('rl2').innerHTML='✔ キャッチ<br>'+(got?'✔':'✕')+' ほねっこ<br>'+(placed.length<=st.par?'✔':'✕')+' アイテム'+st.par+'こ以内（つかった数 '+placed.length+'）';
@@ -110,9 +110,14 @@ function bg(){const g=x.createLinearGradient(0,0,0,FLOOR);g.addColorStop(0,'#fdf
  x.fillStyle='#a8794a';x.fillRect(0,FLOOR,W,3)}
 function line(s,col,w){x.strokeStyle=col;x.lineWidth=w;x.lineCap='round';x.beginPath();x.moveTo(s.x1,s.y1);x.lineTo(s.x2,s.y2);x.stroke()}
 function drawWall(w){const s={x1:w[0],y1:w[1],x2:w[2],y2:w[3]},th=Math.max(8,(w[4]==null?5:w[4])*2);line(s,'#8a5a32',th+3);line(s,'#b07a47',th)}
-function drawItem(it,i){const s=itemSeg(it),k=it.k,b=bad(it);
+function drawItem(it,i){const k=it.k,b=bad(it);
+ if(k==='ball'){const r=ITEMS.ball.r;const g=x.createRadialGradient(it.x-5,it.y-6,2,it.x,it.y,r);g.addColorStop(0,'#ff9a9a');g.addColorStop(1,'#e0393e');x.fillStyle=g;x.beginPath();x.arc(it.x,it.y,r,0,7);x.fill();
+  x.strokeStyle='rgba(255,255,255,.7)';x.lineWidth=2;x.beginPath();x.arc(it.x,it.y,r-5,3.6,4.6);x.stroke();
+  if(b){x.fillStyle='rgba(230,40,40,.35)';x.beginPath();x.arc(it.x,it.y,r+6,0,7);x.fill()}
+  if(i===sel&&state==='edit'){x.setLineDash([4,4]);x.strokeStyle='#e08a00';x.lineWidth=2;x.beginPath();x.arc(it.x,it.y,r+5,0,7);x.stroke();x.setLineDash([])}return}
+ const s=itemSeg(it);
  if(k==='plank'){line(s,'#7b4f2a',12);line(s,'#d29a5c',9)}
- else if(k==='cushion'){line(s,'#d4708a',20);line(s,'#f6b3c4',16);x.fillStyle='#fff';const mx=(s.x1+s.x2)/2,my=(s.y1+s.y2)/2;x.beginPath();x.arc(mx,my,2.5,0,7);x.fill()}
+ else if(k==='sponge'){line(s,'#d9a81e',20);line(s,'#ffd84d',16);x.fillStyle='#e8b923';for(let q=.15;q<.9;q+=.17){x.beginPath();x.arc(s.x1+(s.x2-s.x1)*q,s.y1+(s.y2-s.y1)*q+(q*10%2>1?2:-2),2,0,7);x.fill()}}
  else{x.strokeStyle='#555';x.lineWidth=3;const nx=(s.y2-s.y1)/60*12,ny=-(s.x2-s.x1)/60*12;
   for(const [px,py] of [[s.x1,s.y1],[s.x2,s.y2]]){x.beginPath();x.moveTo(px,py);x.lineTo(px-nx,py-ny);x.stroke()}line(s,'#2b6cb0',9);line(s,'#222',5)}
  if(b){line(s,'rgba(230,40,40,.55)',22)}

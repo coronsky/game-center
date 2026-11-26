@@ -2,10 +2,11 @@
 (function(G0){
 const W=360,H=540,FLOOR=520,G=900,R=7,DT=1/240,CATCH_V=700,TMAX=12;
 // 反発係数 e・すべり f
-const MAT={wall:[.45,.92],plank:[.62,.97],cushion:[.12,.5],tramp:[1.18,.99],head:[.6,.95]};
+const MAT={wall:[.45,.92],plank:[.62,.97],sponge:[.12,.5],tramp:[1.18,.99],ball:[.95,.98],head:[.6,.95]};
 const ITEMS={
   plank:{L:84,th:5,n:'いた',e:'🪵'},
-  cushion:{L:66,th:9,n:'クッション',e:'🛏'},
+  sponge:{L:66,th:9,n:'スポンジ',e:'🧽'},
+  ball:{L:0,r:15,n:'ボール',e:'🔴'},
   tramp:{L:60,th:4,n:'トランポリン',e:'🤸'}
 };
 const DOG={moon:{hr:28,mr:20,n:'ムーン'},coron:{hr:24,mr:17,n:'コロン'}};
@@ -25,7 +26,8 @@ function World(st,placed){
   this.segs=[];
   this.segs.push({x1:-40,y1:FLOOR,x2:W+40,y2:FLOOR,th:0,m:'wall'});
   for(const w of st.walls||[])this.segs.push({x1:w[0],y1:w[1],x2:w[2],y2:w[3],th:w[4]==null?5:w[4],m:'wall'});
-  for(const it of placed||[])this.segs.push(itemSeg(it));
+  this.circles=[];
+  for(const it of placed||[])if(it.k==='ball')this.circles.push({x:it.x,y:it.y,r:ITEMS.ball.r,m:'ball'});else this.segs.push(itemSeg(it));
   this.dogs=st.dogs.map(d=>({...d,jy:0}));
   for(const d of this.dogs){// 体（背中）
     this.segs.push({x1:d.x-20,y1:d.y-24,x2:d.x+20,y2:d.y-24,th:2,m:'wall'});}
@@ -44,6 +46,7 @@ World.prototype.step=function(){
   p.x+=p.vx*DT;p.y+=p.vy*DT;
   for(const s of this.segs){const c=closest(p.x,p.y,s),dx=p.x-c[0],dy=p.y-c[1],d=Math.hypot(dx,dy),lim=R+s.th;
     if(d<lim&&d>1e-6)this.bounce(dx/d,dy/d,lim-d,s.m)}
+  for(const c of this.circles){const dx=p.x-c.x,dy=p.y-c.y,d=Math.hypot(dx,dy);if(d<c.r+R&&d>1e-6)this.bounce(dx/d,dy/d,c.r+R-d,c.m)}
   // わんこドア
   if(this.cool>0)this.cool-=DT;else for(const q of st.doors||[]){
     for(const [a,b] of [[0,2],[2,0]])if(Math.hypot(p.x-q[a],p.y-q[a+1])<16){p.x=q[b];p.y=q[b+1];this.cool=.35;this.msg='door';break}}
@@ -77,55 +80,38 @@ World.prototype.run=function(){while(!this.res)this.step();return this};
  walls:[[x1,y1,x2,y2,太さ]] items:{plank:数,...} bones:[[x,y]] cats:[[x,足もとy]]
  fans:[{x,y,w,h,fx,fy}] doors:[[x1,y1,x2,y2]] roombas:[{x,amp,sp}] */
 const STAGES=[
- {n:'いたで はねかえそう',hint:'いたを置いて、おやつの向きをかえよう',
-  launch:{x:200,y:470,a:82,v:620},dogs:[{k:'moon',x:60,y:520,f:1,target:true}],
-  walls:[],items:{plank:1},bones:[[166,395]]},
- {n:'トランポリンで ジャンプ',hint:'たなの上のムーンまで とどかせよう',
-  launch:{x:40,y:180,a:0,v:240},dogs:[{k:'moon',x:300,y:250,f:-1,target:true}],
-  walls:[[250,250,360,250,6],[250,250,250,520,4]],items:{tramp:1},bones:[[173,199]]},
- {n:'たかい たかい',hint:'高いところから落ちると速すぎてキャッチできない',
-  launch:{x:40,y:300,a:65,v:600},dogs:[{k:'moon',x:250,y:520,f:-1,target:true}],
-  walls:[[330,520,330,100,5]],items:{cushion:1,plank:1},bones:[[151,257]]},
- {n:'2まいの いた',hint:'じぐざぐに はねかえそう',
-  launch:{x:30,y:150,a:0,v:300},dogs:[{k:'moon',x:60,y:520,f:1,target:true}],
-  walls:[[0,330,200,330,6]],items:{plank:2},bones:[[205,463]]},
- {n:'コロン とうじょう',hint:'コロンは上のおやつにジャンプしてキャッチ',
-  launch:{x:320,y:470,a:105,v:560},dogs:[{k:'coron',x:110,y:520,f:1,target:true}],
-  walls:[[180,520,180,320,5]],items:{plank:2},bones:[[148,367]]},
- {n:'ネコに 気をつけて',hint:'ネコにさわると とられちゃう',
-  launch:{x:30,y:470,a:55,v:520},dogs:[{k:'moon',x:310,y:520,f:-1,target:true}],
-  cats:[[200,520]],walls:[],items:{plank:1,tramp:1},bones:[[103,345]]},
- {n:'せんぷうき',hint:'風でおやつがながされる',
-  launch:{x:30,y:470,a:60,v:500},dogs:[{k:'moon',x:300,y:520,f:-1,target:true}],
-  fans:[{x:120,y:60,w:120,h:300,fx:-900,fy:0}],walls:[[200,520,200,420,5]],items:{plank:2},bones:[[237,439]]},
- {n:'わんこドア',hint:'ドアに入ると もうひとつのドアから出てくる',
-  launch:{x:30,y:470,a:45,v:420},dogs:[{k:'moon',x:300,y:300,f:-1,target:true}],
-  doors:[[225,490,60,110]],walls:[[250,300,360,300,6],[250,300,250,520,5]],items:{plank:2},bones:[[142,494]]},
- {n:'ヘディングで パス',hint:'ムーンの頭ではねて、コロンへパス',
-  launch:{x:30,y:470,a:72,v:520},dogs:[{k:'moon',x:180,y:520,f:-1,target:false},{k:'coron',x:325,y:400,f:-1,target:true}],
-  walls:[[290,400,360,400,6],[290,400,290,520,5]],items:{plank:1},bones:[[161,335]]},
- {n:'ルンバが うろうろ',hint:'ゆかに落ちると ルンバにすわれる',
-  launch:{x:30,y:300,a:30,v:380},dogs:[{k:'moon',x:310,y:300,f:-1,target:true}],
-  roombas:[{x:180,amp:110,sp:1.6}],walls:[[260,300,360,300,6]],items:{tramp:1,plank:1},bones:[[244,273]]},
- {n:'ジグザグ',hint:'すきまから下へ、そしてコロンへ',
-  launch:{x:30,y:120,a:0,v:260},dogs:[{k:'coron',x:300,y:520,f:-1,target:true}],
-  walls:[[0,160,70,160,6],[100,300,360,300,6]],items:{plank:2},bones:[[60,400]]},
- {n:'ネコが2ひき',hint:'あいだをすりぬけて',
-  launch:{x:30,y:200,a:10,v:330},dogs:[{k:'moon',x:180,y:520,f:1,target:true}],
-  cats:[[90,520],[290,520]],walls:[],items:{plank:2,cushion:1},bones:[[279,461]]},
- {n:'風にのって',hint:'上の風で おやつがながされる',
-  launch:{x:30,y:470,a:85,v:600},dogs:[{k:'coron',x:300,y:250,f:-1,target:true}],
-  fans:[{x:0,y:150,w:230,h:110,fx:800,fy:0}],walls:[[240,250,360,250,6],[240,250,240,520,5]],items:{plank:1,tramp:1},bones:[[184,261]]},
- {n:'ながい パス',hint:'コロンの頭ではねて ムーンへ',
-  launch:{x:330,y:470,a:100,v:600},dogs:[{k:'coron',x:250,y:520,f:-1,target:false},{k:'moon',x:50,y:520,f:1,target:true}],
-  cats:[[150,520]],walls:[],items:{plank:2},bones:[[152,430]]},
- {n:'さいごの ちょうせん',hint:'ぜんぶのアイテムを うまく使おう',
-  launch:{x:35,y:330,a:60,v:600},dogs:[{k:'moon',x:310,y:200,f:-1,target:true}],
-  roombas:[{x:150,amp:100,sp:1.3}],cats:[[200,200]],walls:[[160,200,360,200,6],[160,200,160,260,5],[0,350,70,350,6],[70,350,70,520,5]],
-  items:{plank:1,tramp:1,cushion:1},bones:[[167,162]]}
+ {"n":"いたで はねかえそう","hint":"いたを置いて おやつの向きをかえよう","launch":{"x":35,"y":310,"a":55,"v":590},"dogs":[{"k":"moon","x":315,"y":340,"f":-1,"target":true}],"walls":[[0,332,70,332,6],[70,332,70,520,5],[250,340,360,340,6],[250,340,250,520,5]],"items":{"plank":1},"bones":[[152,235]],"par":1},
+ {"n":"ななめに おいてみよう","hint":"","launch":{"x":325,"y":290,"a":105,"v":520},"dogs":[{"k":"coron","x":55,"y":390,"f":1,"target":true}],"walls":[[360,312,290,312,6],[290,312,290,520,5],[115,390,0,390,6],[115,390,115,520,5]],"items":{"plank":1},"bones":[[152,200]],"par":1},
+ {"n":"たかいところへ","hint":"","launch":{"x":35,"y":350,"a":70,"v":560},"dogs":[{"k":"moon","x":280,"y":520,"f":-1,"target":true}],"walls":[[0,372,70,372,6],[70,372,70,520,5]],"items":{"plank":1},"bones":[[99,285]],"par":1},
+ {"n":"スポンジで ふんわり","hint":"スポンジは あまりはねない。いきおいを弱めるよ","launch":{"x":325,"y":320,"a":125,"v":450},"dogs":[{"k":"coron","x":80,"y":520,"f":1,"target":true}],"walls":[[360,342,290,342,6],[290,342,290,520,5]],"items":{"sponge":1},"bones":[[239,283]],"par":1},
+ {"n":"スポンジで とめる","hint":"","launch":{"x":325,"y":470,"a":135,"v":590},"dogs":[{"k":"moon","x":105,"y":520,"f":1,"target":true}],"walls":[],"items":{"sponge":1},"bones":[[181,408]],"par":1},
+ {"n":"スポンジ＋かべ","hint":"","launch":{"x":35,"y":470,"a":60,"v":540},"dogs":[{"k":"coron","x":250,"y":520,"f":-1,"target":true}],"walls":[[170,520,170,410,5]],"items":{"sponge":1},"bones":[[168,368]],"par":1},
+ {"n":"トランポリンで ぴょーん","hint":"トランポリンは よくはねる！","launch":{"x":325,"y":370,"a":155,"v":400},"dogs":[{"k":"moon","x":100,"y":520,"f":1,"target":true}],"walls":[[360,392,290,392,6],[290,392,290,520,5]],"items":{"tramp":1},"bones":[[223,381]],"par":1},
+ {"n":"トランポリンの かくど","hint":"","launch":{"x":35,"y":470,"a":75,"v":530},"dogs":[{"k":"coron","x":310,"y":360,"f":-1,"target":true}],"walls":[[225,360,360,360,6],[225,360,225,520,5]],"items":{"tramp":1},"bones":[[195,329]],"par":1},
+ {"n":"トランポリン＋かべ","hint":"","launch":{"x":325,"y":260,"a":155,"v":600},"dogs":[{"k":"moon","x":85,"y":520,"f":1,"target":true}],"walls":[[360,282,290,282,6],[290,282,290,520,5],[185,130,75,130,6]],"items":{"tramp":1},"bones":[[106,264]],"par":1},
+ {"n":"ボールで はねる","hint":"ボールは まるいので いろんな向きにはねる","launch":{"x":35,"y":270,"a":15,"v":510},"dogs":[{"k":"coron","x":260,"y":520,"f":-1,"target":true}],"walls":[[0,292,70,292,6],[70,292,70,520,5]],"items":{"ball":1},"bones":[[109,296]],"par":1},
+ {"n":"ボールの いち","hint":"","launch":{"x":35,"y":360,"a":20,"v":420},"dogs":[{"k":"moon","x":265,"y":520,"f":-1,"target":true}],"walls":[[0,382,70,382,6],[70,382,70,520,5]],"items":{"ball":1},"bones":[[170,387]],"par":1},
+ {"n":"ボール＋かべ","hint":"","launch":{"x":35,"y":330,"a":75,"v":590},"dogs":[{"k":"coron","x":300,"y":370,"f":-1,"target":true}],"walls":[[0,352,70,352,6],[70,352,70,520,5],[260,370,360,370,6],[260,370,260,520,5],[165,520,165,380,5]],"items":{"ball":1},"bones":[[103,228]],"par":1},
+ {"n":"いたと トランポリン","hint":"2しゅるいの どうぐ。どっちを使ってもいいよ","launch":{"x":325,"y":470,"a":135,"v":530},"dogs":[{"k":"moon","x":50,"y":520,"f":1,"target":true}],"walls":[[240,180,140,180,6]],"items":{"plank":1,"tramp":1},"bones":[[159,412]],"par":1},
+ {"n":"いたと ボール","hint":"","launch":{"x":35,"y":310,"a":15,"v":480},"dogs":[{"k":"coron","x":290,"y":520,"f":-1,"target":true}],"walls":[[0,332,70,332,6],[70,332,70,520,5],[190,330,280,330,6]],"items":{"plank":1,"ball":1},"bones":[[151,338]],"par":1},
+ {"n":"スポンジと トランポリン","hint":"","launch":{"x":35,"y":280,"a":45,"v":420},"dogs":[{"k":"moon","x":320,"y":520,"f":-1,"target":true}],"walls":[[0,302,70,302,6],[70,302,70,520,5],[100,170,210,170,6]],"items":{"sponge":1,"tramp":1},"bones":[[161,252]],"par":1},
+ {"n":"いたと スポンジ","hint":"","launch":{"x":325,"y":340,"a":160,"v":490},"dogs":[{"k":"coron","x":45,"y":520,"f":1,"target":true}],"walls":[[360,362,290,362,6],[290,362,290,520,5],[155,520,155,360,5]],"items":{"plank":1,"sponge":1},"bones":[[129,375]],"par":1},
+ {"n":"どれを つかう？","hint":"ぜんぶ使わなくてもOK","launch":{"x":325,"y":290,"a":150,"v":590},"dogs":[{"k":"moon","x":75,"y":520,"f":1,"target":true}],"walls":[[360,312,290,312,6],[290,312,290,520,5],[200,190,125,190,6]],"items":{"plank":2},"bones":[[267,306]],"par":1},
+ {"n":"えらんで ためそう","hint":"","launch":{"x":35,"y":280,"a":40,"v":370},"dogs":[{"k":"coron","x":325,"y":280,"f":-1,"target":true}],"walls":[[0,302,70,302,6],[70,302,70,520,5],[260,280,360,280,6],[260,280,260,520,5],[100,140,210,140,6]],"items":{"plank":1,"tramp":1},"bones":[[229,238]],"par":1},
+ {"n":"すきまを ねらえ","hint":"","launch":{"x":325,"y":470,"a":115,"v":560},"dogs":[{"k":"moon","x":65,"y":520,"f":1,"target":true}],"walls":[[225,210,160,210,6]],"items":{"plank":1,"ball":1},"bones":[[168,349]],"par":1},
+ {"n":"はずむ ふたつ","hint":"","launch":{"x":35,"y":320,"a":70,"v":390},"dogs":[{"k":"coron","x":300,"y":520,"f":-1,"target":true}],"walls":[[0,342,70,342,6],[70,342,70,520,5],[215,520,215,340,5]],"items":{"tramp":1,"ball":1},"bones":[[167,235]],"par":1},
+ {"n":"3つの どうぐ","hint":"目標の数より多く使ってもクリアはできるよ","launch":{"x":35,"y":470,"a":40,"v":600},"dogs":[{"k":"moon","x":275,"y":340,"f":-1,"target":true}],"walls":[[235,340,360,340,6],[235,340,235,520,5],[110,90,205,90,6]],"items":{"plank":2,"sponge":1},"bones":[[204,335]],"par":2},
+ {"n":"かべの むこう","hint":"","launch":{"x":325,"y":470,"a":100,"v":620},"dogs":[{"k":"coron","x":70,"y":370,"f":1,"target":true}],"walls":[[120,370,0,370,6],[120,370,120,520,5],[160,520,160,330,5],[195,80,95,80,6]],"items":{"plank":1,"tramp":1,"ball":1},"bones":[[248,303]],"par":1},
+ {"n":"ジグザグ","hint":"","launch":{"x":325,"y":290,"a":155,"v":380},"dogs":[{"k":"moon","x":35,"y":340,"f":1,"target":true}],"walls":[[360,312,290,312,6],[290,312,290,520,5],[100,340,0,340,6],[100,340,100,520,5],[225,520,225,290,5],[155,520,155,390,5]],"items":{"plank":2,"tramp":1},"bones":[[187,240]],"par":1},
+ {"n":"ちょっと むずかしい","hint":"","launch":{"x":325,"y":300,"a":165,"v":370},"dogs":[{"k":"coron","x":45,"y":360,"f":1,"target":true}],"walls":[[360,322,290,322,6],[290,322,290,520,5],[110,360,0,360,6],[110,360,110,520,5],[200,210,140,210,6],[185,520,185,300,5]],"items":{"sponge":1,"ball":1,"plank":1},"bones":[[223,253]],"par":1},
+ {"n":"ねらいどころ","hint":"","launch":{"x":325,"y":470,"a":110,"v":580},"dogs":[{"k":"moon","x":85,"y":380,"f":1,"target":true}],"walls":[[125,380,0,380,6],[125,380,125,520,5],[245,300,185,300,6],[235,90,165,90,6]],"items":{"plank":2,"ball":1},"bones":[[196,334]],"par":1},
+ {"n":"いろいろ ためそう","hint":"","launch":{"x":325,"y":360,"a":100,"v":410},"dogs":[{"k":"coron","x":60,"y":290,"f":1,"target":true}],"walls":[[360,382,290,382,6],[290,382,290,520,5],[115,290,0,290,6],[115,290,115,520,5],[215,520,215,420,5],[210,520,210,330,5]],"items":{"plank":2,"tramp":1},"bones":[[220,315]],"par":1},
+ {"n":"ぴったりの ばしょ","hint":"","launch":{"x":35,"y":470,"a":35,"v":580},"dogs":[{"k":"moon","x":310,"y":340,"f":-1,"target":true}],"walls":[[260,340,360,340,6],[260,340,260,520,5],[115,110,220,110,6],[130,270,220,270,6]],"items":{"plank":1,"sponge":1,"tramp":1},"bones":[[238,356]],"par":1},
+ {"n":"2つを くみあわせ","hint":"","launch":{"x":35,"y":340,"a":45,"v":480},"dogs":[{"k":"coron","x":325,"y":280,"f":-1,"target":true}],"walls":[[0,362,70,362,6],[70,362,70,520,5],[250,280,360,280,6],[250,280,250,520,5],[185,330,250,330,6],[135,520,135,350,5]],"items":{"plank":2,"ball":1},"bones":[[232,229]],"par":2},
+ {"n":"おしい！の さき","hint":"","launch":{"x":325,"y":470,"a":105,"v":550},"dogs":[{"k":"moon","x":70,"y":520,"f":1,"target":true}],"walls":[[190,520,190,330,5],[165,520,165,350,5]],"items":{"plank":2,"tramp":1,"ball":1},"bones":[[163,322]],"par":1},
+ {"n":"さいごの ちょうせん","hint":"","launch":{"x":35,"y":470,"a":80,"v":540},"dogs":[{"k":"coron","x":285,"y":520,"f":-1,"target":true}],"walls":[[200,520,200,300,5],[190,520,190,370,5]],"items":{"plank":2,"sponge":1,"tramp":1,"ball":1},"bones":[[173,372]],"par":2}
 ];
-// ★3の目標アイテム数（ソルバーで確認した「ほねっこ込みの最少個数」）
-const PARS=[1,1,1,1,1,1,1,1,1,1,2,1,1,1,1];STAGES.forEach((s,i)=>s.par=PARS[i]);
+// par（★3の目標アイテム数）はソルバーで確認した「ほねっこ込みの最少個数」
 const ENG={W,H,FLOOR,R,DT,CATCH_V,REACH,ITEMS,DOG,STAGES,World,itemSeg,dogGeo};
 if(typeof module!=='undefined')module.exports=ENG;else G0.ENG=ENG;
 })(this);
