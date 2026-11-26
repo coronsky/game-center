@@ -276,7 +276,7 @@ body[data-vt=neon] .st.W{background-image:url(../img/gomoku/stone_neon_W.webp?v=
   <h2>🐾 あそびかた設定</h2>
   <div class="row"><div class="lb">モード</div><div class="seg" data-k="mode"><button data-v="cpu">CPUと対戦</button><button data-v="pvp">2人で対戦</button></div></div>
   <div id="rowCpu">
-  <div class="row"><div class="lb">CPUのつよさ</div><div class="seg" data-k="level"><button data-v="1">やさしい</button><button data-v="2">ふつう</button><button data-v="3">つよい</button><button data-v="4">超強い<br><small>ほぼ勝てない</small></button></div></div>
+  <div class="row"><div class="lb">CPUのつよさ</div><div class="seg" data-k="level"><button data-v="1">やさしい</button><button data-v="2">ふつう</button><button data-v="3">つよい</button></div></div>
   </div>
   <div class="row"><div class="lb">盤の大きさ</div><div class="seg" data-k="size"><button data-v="13">13路</button><button data-v="15">15路<br><small>本格</small></button></div></div>
   <div class="row"><div class="lb">石のデザイン</div><div class="seg" data-k="stone"><button data-v="plain">ふつう</button><button data-v="face">ワンコの顔</button></div></div>
@@ -381,6 +381,7 @@ function showResult(o){ // o:{winner,title,score,msg,extra,rec}
 const store=mkStore('mcgm_');
 const S=Object.assign({mode:'cpu',side:'1',level:'2',size:'15',stone:'face',confirm:true,talk:true,sound:true,nodraw:true},store.get('settings',{}));
 if(S.size==='9')S.size='13';
+if(S.level==='4')S.level='3';
 if(S.lvv!==2){ S.lvv=2; try{ const R=store.get('rec',{}),R2={}; for(const k in R){ const m=/^lv([23])_(.*)$/.exec(k); R2[m?'lv'+(+m[1]+1)+'_'+m[2]:k]=R[k]; } store.set('rec',R2); }catch(e){} if(S.level==='3') S.level='4'; else if(S.level==='2') S.level='3'; store.set('settings',S); }
 SND.on=S.sound; TALK.on=S.talk;
 let rec=store.get('rec',{});
@@ -474,7 +475,7 @@ function newGame(){
   b=new Array(N*N).fill(0); ag=[]; rmv=[]; turn=FIRST(); hist=[]; over=false; busy=false; last=-1; ghost=-1; hintI=-1; winLine=[];
   cells.forEach(c=>{c.innerHTML='';c._h=''});
   if(S.mode==='pvp'){$('tagB').textContent='プレイヤー1';$('tagW').textContent='プレイヤー2'} else {$('tagB').textContent=(S.side==='1'?'あなた':'CPU')+(FIRST()===1?'・先手':'・後手');$('tagW').textContent=(S.side==='2'?'あなた':'CPU')+(FIRST()===2?'・先手':'・後手')}
-  $('info').textContent=(S.mode==='pvp'?'2人で対戦':'CPU：'+{1:'やさしい',2:'ふつう',3:'つよい',4:'超強い'}[S.level])+'・'+N+'路盤';
+  $('info').textContent=(S.mode==='pvp'?'2人で対戦':'CPU：'+{1:'やさしい',2:'ふつう',3:'つよい',}[S.level])+'・'+N+'路盤';
   render(); setTimeout(()=>{sayText(1,'5つならべるワン！');setTimeout(()=>sayText(2,'じゃましちゃうよ♪'),500)},300);
   next();
 }
