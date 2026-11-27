@@ -67,6 +67,10 @@ function drawItemImg(it){const im=IIMG[skin+'_'+it.k],m=IMETA[skin+'_'+it.k];if(
 // 背景・たな板・おやつ・発射機の絵（スキン別）
 const AM={"bg_natural": 0.946, "bg_retro": 0.9453, "bg_neon": 0.9049, "natural_board": [0.003, 0.032, 0.997, 0.968], "retro_board": [0.003, 0.029, 0.997, 0.971], "neon_board": [0.015, 0.164, 0.984, 0.836], "natural_treat": [0.024, 0.024, 0.976, 0.976], "natural_bone": [0.015, 0.015, 0.985, 0.985], "natural_base": [0.013, 0.01, 0.987, 0.99], "natural_nozzle": [0.012, 0.02, 0.988, 0.98], "retro_treat": [0.021, 0.021, 0.979, 0.979], "retro_bone": [0.013, 0.013, 0.987, 0.987], "retro_base": [0.013, 0.01, 0.987, 0.99], "retro_nozzle": [0.012, 0.019, 0.988, 0.981], "neon_treat": [0.125, 0.127, 0.875, 0.873], "neon_bone": [0.093, 0.088, 0.907, 0.912], "neon_base": [0.088, 0.041, 0.912, 0.93], "neon_nozzle": [0.08, 0.122, 0.92, 0.878]},AIMG={};
 for(const [sk] of SKINS){for(const n of ['board','treat','bone','base','nozzle']){const im=new Image();im.src='img/'+n+'_'+sk+'.webp';AIMG[sk+'_'+n]=im}const b=new Image();b.src='img/bg_'+sk+'.webp';AIMG['bg_'+sk]=b}
+
+// ワープ・レアおやつの絵
+Object.assign(AM,{"natural_warp0": [0.007, 0.007, 0.993, 0.993], "natural_warp1": [0.007, 0.007, 0.993, 0.993], "retro_warp0": [0.007, 0.007, 0.993, 0.993], "retro_warp1": [0.007, 0.007, 0.993, 0.993], "neon_warp0": [0.037, 0.036, 0.963, 0.964], "neon_warp1": [0.037, 0.036, 0.963, 0.964], "natural_rare0": [0.018, 0.017, 0.982, 0.983], "natural_rare1": [0.019, 0.015, 0.981, 0.985], "natural_rare2": [0.015, 0.016, 0.985, 0.984], "natural_rare3": [0.017, 0.014, 0.983, 0.986], "natural_rare4": [0.017, 0.015, 0.983, 0.985], "natural_rare5": [0.015, 0.017, 0.985, 0.983], "retro_rare0": [0.017, 0.017, 0.983, 0.983], "retro_rare1": [0.019, 0.016, 0.981, 0.984], "retro_rare2": [0.016, 0.017, 0.984, 0.983], "retro_rare3": [0.019, 0.015, 0.981, 0.985], "retro_rare4": [0.018, 0.016, 0.982, 0.984], "retro_rare5": [0.015, 0.017, 0.985, 0.983], "neon_rare0": [0.078, 0.076, 0.922, 0.924], "neon_rare1": [0.08, 0.069, 0.92, 0.931], "neon_rare2": [0.07, 0.075, 0.93, 0.925], "neon_rare3": [0.079, 0.067, 0.921, 0.933], "neon_rare4": [0.078, 0.072, 0.922, 0.928], "neon_rare5": [0.069, 0.075, 0.938, 0.925]});
+for(const [sk] of SKINS){for(let i=0;i<2;i++){const im=new Image();im.src='img/warp_'+sk+'_'+i+'.webp';AIMG[sk+'_warp'+i]=im}for(let i=0;i<6;i++){const im=new Image();im.src='img/rare_'+sk+'_'+i+'.webp';AIMG[sk+'_rare'+i]=im}}
 const aok=k=>{const im=AIMG[k];return im&&im.complete&&im.naturalWidth};
 // 本体(core)を (cx,cy) 中心に cw×ch で描く
 function drawCore(n,cx,cy,cw,ch,rot,flipY){const k=skin+'_'+n;if(!aok(k))return false;const im=AIMG[k],m=AM[k],fw=cw/(m[2]-m[0]),fh=ch/(m[3]-m[1]);
@@ -192,7 +196,7 @@ function drawLauncher(){const L=st.launch,a=L.a*Math.PI/180;
  x.fillStyle='#56705a';x.fillRect(-6,16,12,8);x.restore()}
 function bone(bx,by,s,c1,c2){x.save();x.translate(bx,by);x.scale(s,s);x.fillStyle=c1;x.strokeStyle=c2;x.lineWidth=1.5;
  x.beginPath();x.rect(-7,-3,14,6);for(const [cx,cy] of [[-8,-3],[-8,3],[8,-3],[8,3]])x.arc(cx,cy,3.6,0,7);x.fill();x.restore()}
-function drawTreat(p,t,sz){sz=sz||1;if(special){x.save();x.translate(p.x,p.y);x.rotate(t*6);x.font=Math.round(15*sz)+'px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(special.e,0,1);x.restore();return}
+function drawTreat(p,t,sz){sz=sz||1;if(special){const k='rare'+SPECIAL.indexOf(special);if(aok(skin+'_'+k)){const m=AM[skin+'_'+k],a=(m[3]-m[1])*AIMG[skin+'_'+k].naturalHeight/((m[2]-m[0])*AIMG[skin+'_'+k].naturalWidth),L=17*sz;if(drawCore(k,p.x,p.y,a>1?L/a:L,a>1?L:L*a,Math.sin(t*6)*.6))return}x.save();x.translate(p.x,p.y);x.rotate(t*6);x.font=Math.round(15*sz)+'px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(special.e,0,1);x.restore();return}
  if(drawCore('treat',p.x,p.y,13*sz,13*sz,t*8))return;x.save();x.translate(p.x,p.y);x.rotate(t*8);x.fillStyle='#a0612d';x.beginPath();x.arc(0,0,R,0,7);x.fill();
  x.fillStyle='#d9a066';for(const [a,b] of [[-2,-2],[3,1],[-1,3]]){x.beginPath();x.arc(a,b,1.3,0,7);x.fill()}x.restore()}
 function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';let ox=0,oy=0;
@@ -247,7 +251,7 @@ function puffyHeart(cx,cy,r){x.save();x.shadowColor='rgba(230,80,120,.35)';x.sha
  x.fillStyle='rgba(255,255,255,.85)';x.beginPath();x.ellipse(cx-r*.42,cy-r*.38,r*.22,r*.13,-.6,0,7);x.fill();x.beginPath();x.arc(cx-r*.15,cy-r*.52,r*.06,0,7);x.fill()}
 // ワープホール：うずまきが回る輪（スキン別の色。ペアごとに色を変える）
 const WCOL={natural:[['#8f6be0','#c9b5ff'],['#2fa7a0','#a8f0e6']],retro:[['#6b2fd6','#b48cff'],['#0f8a83','#6ff2e0']],neon:[['#b84dff','#ffd1ff'],['#20d3ff','#c8f7ff']]};
-function drawWarp(cx,cy,qi){const c=WCOL[skin][qi%2],T=performance.now()/1000,r=18;x.save();x.translate(cx,cy);
+function drawWarp(cx,cy,qi){if(drawCore('warp'+(qi%2),cx,cy,40,40,performance.now()/1000*-2.2))return;const c=WCOL[skin][qi%2],T=performance.now()/1000,r=18;x.save();x.translate(cx,cy);
  if(skin==='neon'){x.shadowColor=c[0];x.shadowBlur=14}
  const g=x.createRadialGradient(0,0,2,0,0,r);g.addColorStop(0,'#1b1030');g.addColorStop(.55,c[0]);g.addColorStop(1,c[1]);x.fillStyle=g;x.beginPath();x.arc(0,0,r,0,7);x.fill();x.shadowBlur=0;
  x.rotate(T*3);x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=2;for(let k=0;k<3;k++){x.rotate(Math.PI*2/3);x.beginPath();for(let a=0;a<2.6;a+=.2){const rr2=3+a*5.2;x.lineTo(Math.cos(a)*rr2,Math.sin(a)*rr2)}x.stroke()}
