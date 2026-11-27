@@ -29,7 +29,7 @@
 <div class="msg" id="m"></div>
 <canvas id="cv"></canvas>
 <div class="tray"><span id="tray" style="display:contents"></span><button id="rl">↺</button><button id="rr">↻</button><button id="del">🗑</button></div>
-<div class="row"><button class="btn" id="go">はっしゃ！</button><button class="btn sub" id="clr">ぜんぶもどす</button><button class="btn sub" id="back">ステージ</button></div>
+<div class="row"><button class="btn" id="go">はっしゃ！</button><button class="btn sub" id="hint">💡 ヒント</button><button class="btn sub" id="clr">ぜんぶもどす</button><button class="btn sub" id="back">ステージ</button></div>
 </div></div>
 
 <div id="res"><div class="box"><div id="rt" style="font-weight:900;font-size:18px">パクッ！</div>
@@ -114,7 +114,7 @@ function drawBoard(s,T){const k=skin+'_board';if(!aok(k))return false;const im=A
  x.drawImage(im,cx0+cap,0,cx1-cx0-2*cap,ih,-L/2+capD,top,mid,full);
  x.drawImage(im,cx1-cap,0,iw-cx1+cap,ih,L/2-capD,top,capD+(iw-cx1)*vs,full);
  x.restore();return true}
-let stars=LS('stars30')||[],cur=0,st=null,placed=[],sel=-1,mode=null,drag=null,world=null,lastPath=null,tries=0,state='edit',pops=[],caughtT=0;
+let hintN=0,stars=LS('stars30')||[],cur=0,st=null,placed=[],sel=-1,mode=null,drag=null,world=null,lastPath=null,tries=0,state='edit',pops=[],caughtT=0;
 const SAY={
  moon:{ok:['パクッ！おいしい〜！','ナイスパス！もっとちょうだい','さすがだね！しっぽふりふり','いいとこに投げてくれたね！'],
   three:['かんぺき！★3つだよ！','天才すぎる…！ムーンびっくり'],fail:['おしい！もういっかい！','つぎはとれるよ！','あとちょっとだったね']},
@@ -128,16 +128,16 @@ function menu(){state='menu';$('menu').style.display='';$('play').style.display=
  STAGES.forEach((s,i)=>{if(i===0||i===30){const h=document.createElement('div');h.className='wh';h.textContent=i?'🌀 ワープのせかい（31〜40）':'🍪 はじめてのせかい（1〜30）';g.appendChild(h)}
   const b=document.createElement('button'),n=stars[i]||0;if(n)b.className='done';
   b.innerHTML=(i+1)+'<small>'+'★'.repeat(n)+'☆'.repeat(3-n)+'</small>';b.onclick=()=>start(i);g.appendChild(b)})}
-function start(i){cur=i;st=STAGES[i];placed=[];sel=-1;world=null;lastPath=null;tries=0;state='edit';pops=[];
+function start(i){cur=i;st=STAGES[i];placed=[];sel=-1;world=null;lastPath=null;tries=0;hintN=0;state='edit';pops=[];
  $('menu').style.display='none';$('play').style.display='';$('sn').textContent=(i+1)+'/'+STAGES.length;
- $('goal').textContent='目標：★ほねっこ ★はっしゃ2回以内（アイテムはいくつつかってもOK）';
+ $('goal').textContent='目標：★ほねっこ ★はっしゃ2回以内（ヒントなし・アイテムは何こでもOK）';
  msg('「'+st.n+'」 '+st.hint);ui()}
 function msg(t){$('m').textContent=t}
 function left(k){return(st.items[k]||0)-placed.filter(p=>p.k===k).length}
 function ui(){const t=$('tray');t.innerHTML='';const ed=state==='edit';
  for(const k in st.items){const b=document.createElement('button');b.innerHTML=ITEMS[k].e+' '+ITEMS[k].n+'<b>×'+left(k)+'</b>';
   b.disabled=!ed||left(k)<=0;b.onclick=()=>add(k);t.appendChild(b)}
- $('rl').disabled=$('rr').disabled=!ed||sel<0||placed[sel].k==='ball';$('del').disabled=!ed||sel<0;$('go').disabled=!(ed||state==='fly');$('go').textContent=state==='fly'?'↺ リセット':'はっしゃ！';$('go').classList.toggle('stop',state==='fly');$('clr').disabled=!ed||!placed.length;
+ $('rl').disabled=$('rr').disabled=!ed||sel<0||placed[sel].k==='ball';$('del').disabled=!ed||sel<0;$('go').disabled=!(ed||state==='fly');$('go').textContent=state==='fly'?'↺ リセット':'はっしゃ！';$('go').classList.toggle('stop',state==='fly');$('clr').disabled=!ed||!placed.length;$('hint').disabled=!ed||hintN>=st.sol.length;$('hint').textContent='💡 ヒント'+(hintN?' '+hintN+'/'+st.sol.length:'');
  $('tr').textContent=tries}
 
 /* ---------- 置く・動かす ---------- */
@@ -157,7 +157,7 @@ cv.addEventListener('pointermove',e=>{if(!mode||sel<0)return;const p=pos(e),it=p
 cv.addEventListener('pointerup',()=>{mode=null});cv.addEventListener('pointercancel',()=>{mode=null});
 $('rl').onclick=()=>{if(sel>=0)placed[sel].a+=15};$('rr').onclick=()=>{if(sel>=0)placed[sel].a-=15};
 $('del').onclick=()=>{if(sel>=0){placed.splice(sel,1);sel=-1;ui()}};
-$('clr').onclick=()=>{placed=[];sel=-1;ui()};$('back').onclick=menu;
+$('hint').onclick=()=>{if(state!=='edit'||hintN>=st.sol.length)return;hintN++;ui();msg('ヒント：うすい絵のところにおいてみて！（ヒントをつかうと★は1つまで）')};$('clr').onclick=()=>{placed=[];sel=-1;ui()};$('back').onclick=menu;
 
 /* ---------- はっしゃ ---------- */
 $('go').onclick=()=>{if(state==='fly'){world.stopped=true;world.end('fail','とめたよ。置きかたを かえてみよう');return}if(state!=='edit')return;if(placed.some(bad)){msg('赤いアイテムは ワンコ・発射機・ワープに近すぎるよ');return}
@@ -170,11 +170,11 @@ function tick(){if(state==='fly'&&world){for(let i=0;i<4&&!world.res;i++){world.
   if(world.res==='catch'){state='caught';caughtT=performance.now();catchP={x:world.p.x,y:world.p.y};if(special)popAdd(world.p.x,world.p.y-30,'レア！'+special.n);setTimeout(result,1000)}
   else if(world.res){lastPath=world.path.slice();const d=target();if(world.stopped){mood='';msg(world.why)}else{mood='sad';msg(world.why+'　'+DOG[d.k].n+'「'+pick(SAY[d.k].fail)+'」')}state='edit';ui()}}
  draw();requestAnimationFrame(tick)}
-function result(){const got=world.bones.every(b=>b.got),d=target(),fast=tries<=2,n=1+(got?1:0)+(fast?1:0);
+function result(){const got=world.bones.every(b=>b.got),d=target(),fast=tries<=2,n=hintN?1:1+(got?1:0)+(fast?1:0);
  stars[cur]=Math.max(stars[cur]||0,n);SS('stars30',stars);
  const sp=sprOK(d.k);$('rimg').src=sp?'img/'+d.k+'_2.webp':'../../img/'+(d.k==='moon'?'moon':'colon')+'.webp';$('rimg').className=sp?'spr':'';$('rb').textContent=special?special.n+'だ〜！ラッキー！'+pick(['もう一個ちょうだい！','しあわせ〜','だいすき！']):pick(n===3?SAY[d.k].three:SAY[d.k].ok);
  $('rst').innerHTML='★'+(got?'★':'<i>★</i>')+(fast?'★':'<i>★</i>');
- $('rl2').innerHTML='✔ キャッチ<br>'+(got?'✔':'✕')+' ほねっこ<br>'+(fast?'✔':'✕')+' はっしゃ2回以内（'+tries+'回め）';
+ $('rl2').innerHTML='✔ キャッチ<br>'+(got?'✔':'✕')+' ほねっこ<br>'+(fast?'✔':'✕')+' はっしゃ2回以内（'+tries+'回め）'+(hintN?'<br>💡 ヒントをつかったので★は1つ':'');
  $('nx').style.display=cur<STAGES.length-1?'':'none';$('res').style.display='flex'}
 $('nx').onclick=()=>{$('res').style.display='none';start(cur+1)};
 $('ag').onclick=()=>{$('res').style.display='none';state='edit';world=null;ui();msg('置きかたを かえてみよう')};
@@ -297,6 +297,7 @@ function draw(){x.setTransform(DPR,0,0,DPR,0,0);bg();if(!st)return;const w=world
  const bs=w?w.bones:(st.bones||[]).map(b=>({x:b[0],y:b[1],got:false}));const pulse=1+Math.sin(performance.now()/250)*.08;
  for(const b of bs)if(!b.got){if(drawCore('bone',b.x,b.y,30*pulse,30*pulse*coreAsp('bone')))continue;x.fillStyle='rgba(255,214,90,.35)';x.beginPath();x.arc(b.x,b.y,15*pulse,0,7);x.fill();bone(b.x,b.y,1.05,'#fffdf5','#d9b45a')}
  if(lastPath&&state==='edit'){x.fillStyle='rgba(160,97,45,.35)';for(let i=0;i<lastPath.length;i+=4){x.beginPath();x.arc(lastPath[i],lastPath[i+1],1.8,0,7);x.fill()}}
+ if(state==='edit'&&hintN){x.save();x.globalAlpha=.42;st.sol.slice(0,hintN).forEach(it=>drawItem(it,-1));x.restore();x.save();x.strokeStyle='rgba(255,170,0,.9)';x.lineWidth=2;x.setLineDash([5,4]);st.sol.slice(0,hintN).forEach(it=>{if(it.k==='ball'){x.beginPath();x.arc(it.x,it.y,ITEMS.ball.r+4,0,7);x.stroke()}else{const s=itemSeg(it);x.beginPath();x.moveTo(s.x1,s.y1);x.lineTo(s.x2,s.y2);x.stroke()}});x.restore()}
  placed.forEach(drawItem);
  const dogs=w?w.dogs:st.dogs;const caught=state==='caught';
  for(const d of dogs)drawDog(d,w?d.near:null,caught&&d.target);
