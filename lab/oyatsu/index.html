@@ -40,7 +40,7 @@
 <div class="bar">ステージ <b id="sn">1</b>　ちょうせん <b id="tr">0</b>　<span id="goal"></span></div>
 <div class="msg" id="m"></div>
 <canvas id="cv"></canvas>
-<div class="tray"><span id="tray" style="display:contents"></span><button id="rl">↺</button><button id="rr">↻</button><button id="del">🗑</button></div>
+<div class="tray"><span id="tray" style="display:contents"></span><button id="del">🗑</button></div>
 <div class="row"><button class="btn" id="go">はっしゃ！</button><button class="btn sub" id="retry">🔁 やりなおす</button><button class="btn sub" id="clr">ぜんぶもどす</button><button class="btn sub" id="back">ステージ</button></div>
 </div></div>
 
@@ -155,7 +155,7 @@ function left(k){return(st.items[k]||0)-placed.filter(p=>p.k===k).length}
 function ui(){const t=$('tray');t.innerHTML='';const ed=state==='edit';
  for(const k in st.items){const b=document.createElement('button');b.innerHTML=ITEMS[k].e+' '+ITEMS[k].n+'<b>×'+left(k)+'</b>';
   b.disabled=!ed||left(k)<=0;b.onclick=()=>add(k);t.appendChild(b)}
- $('rl').disabled=$('rr').disabled=!ed||sel<0||placed[sel].k==='ball';$('del').disabled=!ed||sel<0;$('go').disabled=!(ed||state==='fly');$('go').textContent=state==='fly'?(PROTO?'リセット':'↺ リセット'):'はっしゃ！';$('go').classList.toggle('stop',state==='fly');$('clr').disabled=!ed||!placed.length;
+ $('del').disabled=!ed||sel<0;$('go').disabled=!(ed||state==='fly');$('go').textContent=state==='fly'?(PROTO?'リセット':'↺ リセット'):'はっしゃ！';$('go').classList.toggle('stop',state==='fly');$('clr').disabled=!ed||!placed.length;
  $('tr').textContent=tries}
 
 /* ---------- 置く・動かす ---------- */
@@ -173,7 +173,7 @@ cv.addEventListener('pointermove',e=>{if(!mode||sel<0)return;const p=pos(e),it=p
  if(mode==='move'){it.x=Math.max(12,Math.min(W-12,p.x+drag.dx));it.y=Math.max(20,Math.min(FLOOR-8,p.y+drag.dy))}
  else{let a=Math.atan2(-(p.y-it.y),p.x-it.x)*180/Math.PI+drag.flip;it.a=Math.round(a/5)*5}});
 cv.addEventListener('pointerup',()=>{mode=null});cv.addEventListener('pointercancel',()=>{mode=null});
-$('rl').onclick=()=>{if(sel>=0)placed[sel].a+=15};$('rr').onclick=()=>{if(sel>=0)placed[sel].a-=15};
+
 $('del').onclick=()=>{if(sel>=0){placed.splice(sel,1);sel=-1;ui()}};
 $('retry').onclick=()=>{$('res').style.display='none';if(world&&state==='fly')world.stopped=true;placed=[];sel=-1;world=null;lastPath=null;tries=0;hintN=0;state='edit';pops=[];ui();msg('はじめから やりなおそう！')};$('clr').onclick=()=>{placed=[];sel=-1;ui()};$('back').onclick=menu;
 
