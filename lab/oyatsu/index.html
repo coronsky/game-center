@@ -34,14 +34,14 @@
 
 <div class="skr"><span>スキン</span><button class="skb" data-s="natural">ナチュラル</button><button class="skb" data-s="retro">レトロ</button><button class="skb" data-s="neon">ネオン</button></div>
 <div id="menu"><div class="msg">ステージをえらんでね</div><div class="grid" id="grid"></div>
-<p style="font-size:11px;opacity:.75;margin-top:12px">アイテムを置いてから「はっしゃ！」。おやつをはねかえして、ワンコのお口へとどけよう。<br>★1 キャッチ ／ ★2 ほねっこをとる ／ ★3 ヒントなしで はっしゃ3回以内</p></div>
+<p style="font-size:11px;opacity:.75;margin-top:12px">アイテムを置いてから「はっしゃ！」。おやつをはねかえして、ワンコのお口へとどけよう。<br>★1 キャッチ ／ ★2 ほねっこをとる ／ ★3 はっしゃ3回以内</p></div>
 
 <div id="play" style="display:none">
 <div class="bar">ステージ <b id="sn">1</b>　ちょうせん <b id="tr">0</b>　<span id="goal"></span></div>
 <div class="msg" id="m"></div>
 <canvas id="cv"></canvas>
 <div class="tray"><span id="tray" style="display:contents"></span><button id="rl">↺</button><button id="rr">↻</button><button id="del">🗑</button></div>
-<div class="row"><button class="btn" id="go">はっしゃ！</button><button class="btn sub" id="hint">💡 ヒント</button><button class="btn sub" id="retry">🔁 やりなおす</button><button class="btn sub" id="clr">ぜんぶもどす</button><button class="btn sub" id="back">ステージ</button></div>
+<div class="row"><button class="btn" id="go">はっしゃ！</button><button class="btn sub" id="retry">🔁 やりなおす</button><button class="btn sub" id="clr">ぜんぶもどす</button><button class="btn sub" id="back">ステージ</button></div>
 </div></div>
 
 <div id="res"><div class="box"><div id="rt" style="font-weight:900;font-size:18px">パクッ！</div>
@@ -148,14 +148,14 @@ function menu(){state='menu';$('menu').style.display='';$('play').style.display=
   b.innerHTML=(i+1)+'<small>'+(PROTO?sxs(n):'★'.repeat(n)+'☆'.repeat(3-n))+'</small>';b.onclick=()=>start(i);g.appendChild(b)})}
 function start(i){cur=i;st=STAGES[i];placed=[];sel=-1;world=null;lastPath=null;tries=0;hintN=0;hintUsed=false;state='edit';pops=[];
  $('menu').style.display='none';$('play').style.display='';$('sn').textContent=(i+1)+'/'+STAGES.length;
- $('goal').textContent='目標：★'+(st.bones.length>1?'ちゅうけいを ぜんぶ':'ほねっこ')+' ★はっしゃ3回以内（ヒントなし・アイテムは何こでもOK）';
+ $('goal').textContent='目標：★'+(st.bones.length>1?'ちゅうけいを ぜんぶ':'ほねっこ')+' ★はっしゃ3回以内（アイテムは何こでもOK）';
  msg('「'+st.n+'」 '+st.hint);ui()}
 function msg(t){$('m').textContent=t}
 function left(k){return(st.items[k]||0)-placed.filter(p=>p.k===k).length}
 function ui(){const t=$('tray');t.innerHTML='';const ed=state==='edit';
  for(const k in st.items){const b=document.createElement('button');b.innerHTML=ITEMS[k].e+' '+ITEMS[k].n+'<b>×'+left(k)+'</b>';
   b.disabled=!ed||left(k)<=0;b.onclick=()=>add(k);t.appendChild(b)}
- $('rl').disabled=$('rr').disabled=!ed||sel<0||placed[sel].k==='ball';$('del').disabled=!ed||sel<0;$('go').disabled=!(ed||state==='fly');$('go').textContent=state==='fly'?(PROTO?'リセット':'↺ リセット'):'はっしゃ！';$('go').classList.toggle('stop',state==='fly');$('clr').disabled=!ed||!placed.length;$('hint').disabled=!ed||hintN>=st.sol.length;$('hint').textContent=(PROTO?'':'💡 ')+'ヒント'+(hintN?' '+hintN+'/'+st.sol.length:'');
+ $('rl').disabled=$('rr').disabled=!ed||sel<0||placed[sel].k==='ball';$('del').disabled=!ed||sel<0;$('go').disabled=!(ed||state==='fly');$('go').textContent=state==='fly'?(PROTO?'リセット':'↺ リセット'):'はっしゃ！';$('go').classList.toggle('stop',state==='fly');$('clr').disabled=!ed||!placed.length;
  $('tr').textContent=tries}
 
 /* ---------- 置く・動かす ---------- */
@@ -175,7 +175,7 @@ cv.addEventListener('pointermove',e=>{if(!mode||sel<0)return;const p=pos(e),it=p
 cv.addEventListener('pointerup',()=>{mode=null});cv.addEventListener('pointercancel',()=>{mode=null});
 $('rl').onclick=()=>{if(sel>=0)placed[sel].a+=15};$('rr').onclick=()=>{if(sel>=0)placed[sel].a-=15};
 $('del').onclick=()=>{if(sel>=0){placed.splice(sel,1);sel=-1;ui()}};
-$('retry').onclick=()=>{$('res').style.display='none';if(world&&state==='fly')world.stopped=true;placed=[];sel=-1;world=null;lastPath=null;tries=0;hintN=0;state='edit';pops=[];ui();msg('はじめから やりなおそう！')};$('hint').onclick=()=>{if(state!=='edit')return;if(hintN===0){placed=[]}if(hintN>=st.sol.length)return;placed.push({...st.sol[hintN]});hintN++;hintUsed=true;sel=-1;ui();msg('ヒント：正しい位置にアイテムをおいたよ！（ヒントをつかうと★は1つまで）')};$('clr').onclick=()=>{placed=[];sel=-1;ui()};$('back').onclick=menu;
+$('retry').onclick=()=>{$('res').style.display='none';if(world&&state==='fly')world.stopped=true;placed=[];sel=-1;world=null;lastPath=null;tries=0;hintN=0;state='edit';pops=[];ui();msg('はじめから やりなおそう！')};$('clr').onclick=()=>{placed=[];sel=-1;ui()};$('back').onclick=menu;
 
 /* ---------- はっしゃ ---------- */
 $('go').onclick=()=>{if(state==='fly'){world.stopped=true;world.end('fail','とめたよ。置きかたを かえてみよう');return}if(state!=='edit')return;if(placed.some(bad)){msg('赤いアイテムは ワンコ・発射機・ワープに近すぎるよ');return}
@@ -188,14 +188,14 @@ function tick(){if(state==='fly'&&world){for(let i=0;i<4&&!world.res;i++){world.
   if(world.res==='catch'){state='caught';caughtT=performance.now();catchP={x:world.p.x,y:world.p.y};if(special)popAdd(world.p.x,world.p.y-30,'レア！'+special.n);setTimeout(result,1000)}
   else if(world.res){lastPath=world.path.slice();const d=target();if(world.stopped){mood='';msg(world.why)}else{mood='sad';msg(world.why+'　'+DOG[d.k].n+'「'+pick(SAY[d.k].fail)+'」')}state='edit';ui()}}
  draw();requestAnimationFrame(tick)}
-function result(){const got=world.bones.every(b=>b.got),d=target(),fast=tries<=3,n=hintUsed?1:1+(got?1:0)+(fast?1:0);
+function result(){const got=world.bones.every(b=>b.got),d=target(),fast=tries<=3,n=1+(got?1:0)+(fast?1:0);
  stars[cur]=Math.max(stars[cur]||0,n);SS('stars30',stars);
  const sp=sprOK(d.k);$('rimg').src=sp?'img/'+d.k+'_2.webp':'../../img/'+(d.k==='moon'?'moon':'colon')+'.webp';$('rimg').className=sp?'spr':'';$('rb').textContent=special?special.n+'だ〜！ラッキー！'+pick(['もう一個ちょうだい！','しあわせ〜','だいすき！']):pick(n===3?SAY[d.k].three:SAY[d.k].ok);
- $('rst').innerHTML=PROTO?sxs(1+(!hintUsed&&got?1:0)+(!hintUsed&&fast?1:0)).replace(/(<img class="sx)( off)?/,'$1'):'★'+(!hintUsed&&got?'★':'<i>★</i>')+(!hintUsed&&fast?'★':'<i>★</i>');
- $('rl2').innerHTML='✔ キャッチ<br>'+(got?'✔':'✕')+' ほねっこ<br>'+(fast?'✔':'✕')+' はっしゃ3回以内（'+tries+'回め）'+(hintUsed?'<br>💡 ヒントをつかったので★は1つ':'');
+ $('rst').innerHTML=PROTO?sxs(1+(got?1:0)+(fast?1:0)).replace(/(<img class="sx)( off)?/,'$1'):'★'+(got?'★':'<i>★</i>')+(fast?'★':'<i>★</i>');
+ $('rl2').innerHTML='✔ キャッチ<br>'+(got?'✔':'✕')+' ほねっこ<br>'+(fast?'✔':'✕')+' はっしゃ3回以内（'+tries+'回め）';
  $('re3').style.display=n<3?'':'none';$('nx').style.display=cur<STAGES.length-1?'':'none';$('res').style.display='flex'}
 $('nx').onclick=()=>{$('res').style.display='none';start(cur+1)};
-$('re3').onclick=()=>{$('res').style.display='none';start(cur);msg('ヒントなしで ★3を めざそう！')};$('ag').onclick=()=>{$('res').style.display='none';state='edit';world=null;ui();msg('置きかたを かえてみよう')};
+$('re3').onclick=()=>{$('res').style.display='none';start(cur);msg('★3を めざそう！')};$('ag').onclick=()=>{$('res').style.display='none';state='edit';world=null;ui();msg('置きかたを かえてみよう')};
 $('rs').onclick=()=>{$('res').style.display='none';menu()};
 
 /* ---------- 描画 ---------- */
