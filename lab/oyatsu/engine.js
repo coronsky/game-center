@@ -9,7 +9,9 @@ const ITEMS={
   ball:{L:0,r:15,n:'ボール',e:'🔴'},
   tramp:{L:60,th:4,n:'トランポリン',e:'🤸'}
 };
-const DOG={moon:{hr:28,mr:20,n:'ムーン'},coron:{hr:24,mr:17,n:'コロン'}};
+const DOG={moon:{hr:28,mr:20,n:'ムーン',ru:20,rv:13},coron:{hr:24,mr:17,n:'コロン',ru:18,rv:12}};
+// 食べられる範囲：お口の少し前を中心にした横長のだ円（首をのばして届く範囲）。上はせまく
+function inBite(d,px,py,pad){const k=DOG[d.k],g=dogGeo(d),u=(px-g.mx)*d.f-6,v=py-g.my-3;pad=pad||0;return (u*u)/((k.ru+pad)*(k.ru+pad))+(v*v)/((k.rv+pad)*(k.rv+pad))<1}
 const REACH=18;// 首をのばして食いつける距離
 
 function itemSeg(it){const d=ITEMS[it.k],a=it.a*Math.PI/180,c=Math.cos(a)*d.L/2,s=Math.sin(a)*d.L/2;
@@ -60,11 +62,11 @@ World.prototype.step=function(){
   // ワンコ
   for(const d of this.dogs){
     const g=dogGeo(d),md=Math.hypot(p.x-g.mx,p.y-g.my);
-    if(d.target){d.near=md<g.mr+REACH+40?{x:p.x,y:p.y}:null;
-      if(md<g.mr+REACH&&p.y<d.y-30-d.jy){/* 床をころがるおやつは食べない */const sp=Math.hypot(p.vx,p.vy);
+    if(d.target){d.near=inBite(d,p.x,p.y,26)?{x:p.x,y:p.y}:null;
+      if(inBite(d,p.x,p.y)&&p.y<d.y-30-d.jy){/* 床をころがるおやつは食べない */const sp=Math.hypot(p.vx,p.vy);
         if(sp<CATCH_V){d.near={x:p.x,y:p.y};return this.end('catch',d.k)}if(!this.fastOnce){this.fastOnce=1;this.msg='fast'}}}
     const hx=p.x-g.hx,hy=p.y-g.hy,hd=Math.hypot(hx,hy);
-    if(hd<g.hr+R&&hd>1e-6&&!(d.target&&md<g.mr+REACH+8))this.bounce(hx/hd,hy/hd,g.hr+R-hd,'head')}
+    if(hd<g.hr+R&&hd>1e-6&&!(d.target&&inBite(d,p.x,p.y,6)))this.bounce(hx/hd,hy/hd,g.hr+R-hd,'head')}
   if(p.x<-30||p.x>W+30||p.y>H+30)return this.end('fail','おやつがとんでいっちゃった');
   if(this.t>TMAX)return this.end('fail','時間切れ');
   if(Math.hypot(p.vx,p.vy)<25){this.slow+=DT;if(this.slow>.7)return this.end('fail','おやつがとまっちゃった')}else this.slow=0;
@@ -119,6 +121,6 @@ const STAGES=[
  {"n":"ワープの さいごの ちょうせん","hint":"","launch":{"x":325,"y":470,"a":115,"v":560},"dogs":[{"k":"coron","x":50,"y":340,"f":1,"target":true}],"walls":[[165,520,165,-600,6],[125,340,0,340,6],[125,340,125,520,5],[300,520,300,430,5]],"doors":[[280,370,60,300]],"items":{"plank":2,"tramp":1,"ball":1},"bones":[[308,337]],"par":1}
 ];
 // par（★3の目標アイテム数）はソルバーで確認した「ほねっこ込みの最少個数」
-const ENG={W,H,FLOOR,R,DT,CATCH_V,REACH,ITEMS,DOG,STAGES,World,itemSeg,dogGeo};
+const ENG={W,H,FLOOR,R,DT,CATCH_V,REACH,inBite,ITEMS,DOG,STAGES,World,itemSeg,dogGeo};
 if(typeof module!=='undefined')module.exports=ENG;else G0.ENG=ENG;
 })(this);
