@@ -18,7 +18,7 @@
 #res .st{font-size:34px;letter-spacing:4px;margin:4px 0;color:#f0b429;text-shadow:0 2px 0 #c58a10}#res .st i{font-style:normal;opacity:.2}
 #res .lst{font-size:11px;text-align:left;margin:0 auto 8px;display:inline-block}
 
-.proto .grid button small{display:flex;gap:1px;margin-top:2px;height:13px}.sx{width:13px;height:13px;object-fit:contain}.sx.off{filter:grayscale(1) opacity(.35)}
+.proto .grid button small{display:flex;gap:1px;margin-top:2px;height:13px}.sx{width:13px;height:13px;object-fit:contain}
 .proto .grid button{background:var(--i-card) center/100% 100% no-repeat;border:0;border-radius:0}
 .proto .grid button.done{background-image:var(--i-cardc)}
 [data-skin=retro].proto .grid button,[data-skin=neon].proto .grid button,body.proto[data-skin=retro] .grid button,body.proto[data-skin=neon] .grid button{color:#fff4d6;text-shadow:0 1px 3px #000}
@@ -26,7 +26,7 @@
 .proto #play .row .btn{flex:0 0 auto;width:70px;height:86px;padding:0 0 0;border:0;border-radius:0;background:var(--ic) top center/64px auto no-repeat;box-shadow:none;color:#5a3d2b;font-size:11px;font-weight:900;display:flex;align-items:flex-end;justify-content:center;text-shadow:0 1px 0 #fff8}
 .proto #play .row .btn:disabled{filter:grayscale(.7) opacity(.5)}
 .proto #go{--ic:var(--i-go)}.proto #go.stop{--ic:var(--i-reset);background-color:transparent}.proto #hint{--ic:var(--i-hint)}.proto #retry{--ic:var(--i-new)}.proto #clr{--ic:var(--i-undo)}.proto #back{--ic:var(--i-back)}
-.proto #res .st{display:flex;justify-content:center;gap:6px;font-size:0;margin:6px 0}.proto #res .st .sx{width:48px;height:48px}
+.proto #res .st{display:flex;justify-content:center;gap:6px;font-size:0;margin:6px 0}.proto #res .st .sx,.proto #res img.sx{width:54px;height:54px;border:0;border-radius:0;box-shadow:none;object-fit:contain;background:none}
 .proto #res .row .btn#nx,.proto #res .row .btn#ag,.proto #res .row .btn#rs{width:64px;height:78px;padding:0;border:0;border-radius:0;box-shadow:none;background:var(--ic) top center/58px auto no-repeat;color:#5a3d2b;font-size:11px;font-weight:900;display:inline-flex;align-items:flex-end;justify-content:center}
 .proto #res #nx{--ic:var(--i-next)}.proto #res #ag{--ic:var(--i-again)}.proto #res #rs{--ic:var(--i-back)}
 </style></head><body><div class="wrap">
@@ -98,7 +98,7 @@ const PROTO=/[?&]proto/.test(location.search);if(PROTO)document.body.classList.a
 const MISS={natural:{sg_bt_new:'rv_bt_new'},neon:{sg_bt_flag:'sg_bt_set'}};
 const IMG=f=>'../../img/'+skin+'/'+((MISS[skin]||{})[f]||f)+'.webp';
 if(PROTO)$('retry').textContent='やりなおす';
-const sxs=(n)=>[0,1,2].map(i=>'<img class="sx'+(i<n?'':' off')+'" src="'+IMG('rv_mk_star')+'">').join('');
+const sxs=(n)=>[0,1,2].map(i=>'<img class="sx" src="../../img/ui/star_'+({natural:'n',retro:'r',neon:'x'}[skin])+(i<n?'':'0')+'.webp?v=3">').join('');
 function protoVars(){if(!PROTO)return;const r=document.documentElement.style,m={go:'btn_play',reset:'bt_cont',hint:'sg_bt_hint',new:'sg_bt_new',undo:'sg_bt_undo',back:'sg_bt_flag',next:'btn_play',again:'bt_cont',card:'stg_frame',cardc:'stg_frame_clear'};for(const k in m)r.setProperty('--i-'+k,'url('+IMG(m[k])+')')}
 function setSkin(v){skin=v;try{localStorage.setItem('mc_vt',v)}catch(e){}document.body.dataset.skin=v;protoVars();skinUI();if(typeof menu==='function'&&state==='menu')menu()}
 function skinUI(){document.querySelectorAll('.skb').forEach(b=>b.classList.toggle('on',b.dataset.s===skin))}
