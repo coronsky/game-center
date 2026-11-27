@@ -125,12 +125,12 @@ const target=()=>st.dogs.find(d=>d.target);
 
 /* ---------- メニュー ---------- */
 function menu(){state='menu';$('menu').style.display='';$('play').style.display='none';const g=$('grid');g.innerHTML='';
- STAGES.forEach((s,i)=>{if(i===0||i===30){const h=document.createElement('div');h.className='wh';h.textContent=i?'🌀 ワープのせかい（31〜40）':'🍪 はじめてのせかい（1〜30）';g.appendChild(h)}
+ STAGES.forEach((s,i)=>{if(i===0||i===30||i===40){const h=document.createElement('div');h.className='wh';h.textContent=i===40?'🌟 ちゅうけいのせかい（41〜50）':i?'🌀 ワープのせかい（31〜40）':'🍪 はじめてのせかい（1〜30）';g.appendChild(h)}
   const b=document.createElement('button'),n=stars[i]||0;if(n)b.className='done';
   b.innerHTML=(i+1)+'<small>'+'★'.repeat(n)+'☆'.repeat(3-n)+'</small>';b.onclick=()=>start(i);g.appendChild(b)})}
 function start(i){cur=i;st=STAGES[i];placed=[];sel=-1;world=null;lastPath=null;tries=0;hintN=0;state='edit';pops=[];
  $('menu').style.display='none';$('play').style.display='';$('sn').textContent=(i+1)+'/'+STAGES.length;
- $('goal').textContent='目標：★ほねっこ ★はっしゃ2回以内（ヒントなし・アイテムは何こでもOK）';
+ $('goal').textContent='目標：★'+(st.bones.length>1?'ちゅうけいを ぜんぶ':'ほねっこ')+' ★はっしゃ2回以内（ヒントなし・アイテムは何こでもOK）';
  msg('「'+st.n+'」 '+st.hint);ui()}
 function msg(t){$('m').textContent=t}
 function left(k){return(st.items[k]||0)-placed.filter(p=>p.k===k).length}
@@ -166,7 +166,7 @@ $('go').onclick=()=>{if(state==='fly'){world.stopped=true;world.end('fail','と�
 const SPECIAL=[{e:'🧀',n:'チーズ'},{e:'🍓',n:'いちご'},{e:'🍠',n:'おいも'},{e:'🥕',n:'にんじん'},{e:'🍎',n:'りんご'},{e:'🦴',n:'ほねガム'}];let special=null;
 function popAdd(px,py,t){pops.push({x:px,y:py,t,life:1})}
 function tick(){if(state==='fly'&&world){for(let i=0;i<4&&!world.res;i++){world.step();
-   if(world.msg){const p=world.p;if(world.msg==='bone')popAdd(p.x,p.y-14,'ほねっこゲット！');if(world.msg==='door')popAdd(p.x,p.y-20,'ワープ！');if(world.msg==='fast'){popAdd(p.x,p.y-14,'はやすぎ〜！');fastT=performance.now()}world.msg=''}}
+   if(world.msg){const p=world.p;if(world.msg==='bone')popAdd(p.x,p.y-14,world.bones.length>1?'ちゅうけい '+world.bones.filter(b=>b.got).length+'/'+world.bones.length+'！':'ほねっこゲット！');if(world.msg==='door')popAdd(p.x,p.y-20,'ワープ！');if(world.msg==='fast'){popAdd(p.x,p.y-14,'はやすぎ〜！');fastT=performance.now()}world.msg=''}}
   if(world.res==='catch'){state='caught';caughtT=performance.now();catchP={x:world.p.x,y:world.p.y};if(special)popAdd(world.p.x,world.p.y-30,'レア！'+special.n);setTimeout(result,1000)}
   else if(world.res){lastPath=world.path.slice();const d=target();if(world.stopped){mood='';msg(world.why)}else{mood='sad';msg(world.why+'　'+DOG[d.k].n+'「'+pick(SAY[d.k].fail)+'」')}state='edit';ui()}}
  draw();requestAnimationFrame(tick)}
