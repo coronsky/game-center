@@ -88,7 +88,7 @@ function skinUI(){document.querySelectorAll('.skb').forEach(b=>b.classList.toggl
 const IMETA={"natural_plank": [0.009, 0.045, 0.991, 0.955], "natural_ball": [0.024, 0.024, 0.976, 0.976], "natural_sponge": [0.013, 0.034, 0.987, 0.966], "natural_tramp": [0.012, 0.03, 0.988, 0.97], "retro_plank": [0.009, 0.039, 0.991, 0.961], "retro_ball": [0.024, 0.024, 0.976, 0.976], "retro_sponge": [0.013, 0.032, 0.987, 0.968], "retro_tramp": [0.012, 0.026, 0.988, 0.974], "neon_plank": [0.019, 0.112, 0.981, 0.888], "neon_ball": [0.139, 0.139, 0.861, 0.861], "neon_sponge": [0.086, 0.161, 0.914, 0.839], "neon_tramp": [0.084, 0.145, 0.923, 0.855]};const IIMG={};
 for(const [sk] of SKINS)for(const k of ['plank','ball','sponge','tramp']){const im=new Image();im.src='img/item_'+sk+'_'+k+'.webp';IIMG[sk+'_'+k]=im}
 // 本体の大きさ（幅, 高さ, 当たり線の位置）
-const ISIZE={plank:[88,13,.5],sponge:[68,22,.5],tramp:[64,0,.2],ball:[32,32,.5]};
+const ISIZE={plank:[88,13,.5],sponge:[54,32,.5],tramp:[64,0,.2],ball:[32,32,.5]};
 function drawItemImg(it){const im=IIMG[skin+'_'+it.k],m=IMETA[skin+'_'+it.k];if(!im||!im.complete||!im.naturalWidth)return false;
  const [Wc,H0,ay]=ISIZE[it.k],cw=m[2]-m[0],ch=m[3]-m[1],Hc=H0||Wc*(ch*im.naturalHeight)/(cw*im.naturalWidth),fw=Wc/cw,fh=Hc/ch;
  x.save();x.translate(it.x,it.y);if(it.k!=='ball')x.rotate(-it.a*Math.PI/180);x.drawImage(im,-Wc/2-m[0]*fw,-ay*Hc-m[1]*fh,fw,fh);x.restore();return true}
