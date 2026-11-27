@@ -137,7 +137,7 @@ function left(k){return(st.items[k]||0)-placed.filter(p=>p.k===k).length}
 function ui(){const t=$('tray');t.innerHTML='';const ed=state==='edit';
  for(const k in st.items){const b=document.createElement('button');b.innerHTML=ITEMS[k].e+' '+ITEMS[k].n+'<b>×'+left(k)+'</b>';
   b.disabled=!ed||left(k)<=0;b.onclick=()=>add(k);t.appendChild(b)}
- $('rl').disabled=$('rr').disabled=!ed||sel<0||placed[sel].k==='ball';$('del').disabled=!ed||sel<0;$('go').disabled=!(ed||state==='fly');$('go').textContent=state==='fly'?'■ やめる':'はっしゃ！';$('go').classList.toggle('stop',state==='fly');$('clr').disabled=!ed||!placed.length;
+ $('rl').disabled=$('rr').disabled=!ed||sel<0||placed[sel].k==='ball';$('del').disabled=!ed||sel<0;$('go').disabled=!(ed||state==='fly');$('go').textContent=state==='fly'?'↺ リセット':'はっしゃ！';$('go').classList.toggle('stop',state==='fly');$('clr').disabled=!ed||!placed.length;
  $('tr').textContent=tries}
 
 /* ---------- 置く・動かす ---------- */
