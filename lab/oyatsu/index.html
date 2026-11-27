@@ -35,7 +35,7 @@
 <div id="res"><div class="box"><div id="rt" style="font-weight:900;font-size:18px">パクッ！</div>
 <div class="pic"><img id="rimg" alt=""><div class="bub" id="rb"></div></div>
 <div class="st" id="rst"></div><div class="lst" id="rl2"></div>
-<div class="row"><button class="btn" id="nx">つぎへ</button><button class="btn sub" id="ag">もういちど</button><button class="btn sub" id="rs">ステージ</button></div></div></div>
+<div class="row"><button class="btn" id="nx">つぎへ</button><button class="btn" id="re3">⭐ ★3に ちょうせん！</button><button class="btn sub" id="ag">もういちど</button><button class="btn sub" id="rs">ステージ</button></div></div></div>
 
 <script src="engine.js"></script>
 <script>
@@ -175,9 +175,9 @@ function result(){const got=world.bones.every(b=>b.got),d=target(),fast=tries<=3
  const sp=sprOK(d.k);$('rimg').src=sp?'img/'+d.k+'_2.webp':'../../img/'+(d.k==='moon'?'moon':'colon')+'.webp';$('rimg').className=sp?'spr':'';$('rb').textContent=special?special.n+'だ〜！ラッキー！'+pick(['もう一個ちょうだい！','しあわせ〜','だいすき！']):pick(n===3?SAY[d.k].three:SAY[d.k].ok);
  $('rst').innerHTML='★'+(!hintUsed&&got?'★':'<i>★</i>')+(!hintUsed&&fast?'★':'<i>★</i>');
  $('rl2').innerHTML='✔ キャッチ<br>'+(got?'✔':'✕')+' ほねっこ<br>'+(fast?'✔':'✕')+' はっしゃ3回以内（'+tries+'回め）'+(hintUsed?'<br>💡 ヒントをつかったので★は1つ':'');
- $('nx').style.display=cur<STAGES.length-1?'':'none';$('res').style.display='flex'}
+ $('re3').style.display=n<3?'':'none';$('nx').style.display=cur<STAGES.length-1?'':'none';$('res').style.display='flex'}
 $('nx').onclick=()=>{$('res').style.display='none';start(cur+1)};
-$('ag').onclick=()=>{$('res').style.display='none';state='edit';world=null;ui();msg('置きかたを かえてみよう')};
+$('re3').onclick=()=>{$('res').style.display='none';start(cur);msg('ヒントなしで ★3を めざそう！')};$('ag').onclick=()=>{$('res').style.display='none';state='edit';world=null;ui();msg('置きかたを かえてみよう')};
 $('rs').onclick=()=>{$('res').style.display='none';menu()};
 
 /* ---------- 描画 ---------- */
