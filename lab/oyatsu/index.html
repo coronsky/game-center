@@ -130,7 +130,7 @@ function menu(){state='menu';$('menu').style.display='';$('play').style.display=
   b.innerHTML=(i+1)+'<small>'+'★'.repeat(n)+'☆'.repeat(3-n)+'</small>';b.onclick=()=>start(i);g.appendChild(b)})}
 function start(i){cur=i;st=STAGES[i];placed=[];sel=-1;world=null;lastPath=null;tries=0;state='edit';pops=[];
  $('menu').style.display='none';$('play').style.display='';$('sn').textContent=(i+1)+'/'+STAGES.length;
- $('goal').textContent='目標：★ほねっこ ★アイテム'+st.par+'こ以内';
+ $('goal').textContent='目標：★ほねっこ ★はっしゃ2回以内（アイテムはいくつつかってもOK）';
  msg('「'+st.n+'」 '+st.hint);ui()}
 function msg(t){$('m').textContent=t}
 function left(k){return(st.items[k]||0)-placed.filter(p=>p.k===k).length}
@@ -170,11 +170,11 @@ function tick(){if(state==='fly'&&world){for(let i=0;i<4&&!world.res;i++){world.
   if(world.res==='catch'){state='caught';caughtT=performance.now();catchP={x:world.p.x,y:world.p.y};if(special)popAdd(world.p.x,world.p.y-30,'レア！'+special.n);setTimeout(result,1000)}
   else if(world.res){lastPath=world.path.slice();const d=target();if(world.stopped){mood='';msg(world.why)}else{mood='sad';msg(world.why+'　'+DOG[d.k].n+'「'+pick(SAY[d.k].fail)+'」')}state='edit';ui()}}
  draw();requestAnimationFrame(tick)}
-function result(){const got=world.bones.every(b=>b.got),d=target(),n=1+(got?1:0)+(placed.length<=st.par?1:0);
+function result(){const got=world.bones.every(b=>b.got),d=target(),fast=tries<=2,n=1+(got?1:0)+(fast?1:0);
  stars[cur]=Math.max(stars[cur]||0,n);SS('stars30',stars);
  const sp=sprOK(d.k);$('rimg').src=sp?'img/'+d.k+'_2.webp':'../../img/'+(d.k==='moon'?'moon':'colon')+'.webp';$('rimg').className=sp?'spr':'';$('rb').textContent=special?special.n+'だ〜！ラッキー！'+pick(['もう一個ちょうだい！','しあわせ〜','だいすき！']):pick(n===3?SAY[d.k].three:SAY[d.k].ok);
- $('rst').innerHTML='★'+(got?'★':'<i>★</i>')+(placed.length<=st.par?'★':'<i>★</i>');
- $('rl2').innerHTML='✔ キャッチ<br>'+(got?'✔':'✕')+' ほねっこ<br>'+(placed.length<=st.par?'✔':'✕')+' アイテム'+st.par+'こ以内（つかった数 '+placed.length+'）';
+ $('rst').innerHTML='★'+(got?'★':'<i>★</i>')+(fast?'★':'<i>★</i>');
+ $('rl2').innerHTML='✔ キャッチ<br>'+(got?'✔':'✕')+' ほねっこ<br>'+(fast?'✔':'✕')+' はっしゃ2回以内（'+tries+'回め）';
  $('nx').style.display=cur<STAGES.length-1?'':'none';$('res').style.display='flex'}
 $('nx').onclick=()=>{$('res').style.display='none';start(cur+1)};
 $('ag').onclick=()=>{$('res').style.display='none';state='edit';world=null;ui();msg('置きかたを かえてみよう')};
