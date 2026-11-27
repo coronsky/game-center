@@ -6,7 +6,7 @@
 .tray button b{font-size:15px;margin-left:3px}.tray button:disabled,.tool button:disabled{opacity:.35}
 .tool{display:flex;gap:6px;justify-content:center;margin:4px 0}
 .skr{display:flex;gap:4px;justify-content:flex-end;align-items:center;font-size:10px;font-weight:900;margin:-2px 0 4px}.skb{border:2px solid #e2cfb2;background:#fffaf1;border-radius:10px;padding:2px 7px;font:inherit;font-size:10px;font-weight:900;color:#5a3d2b;cursor:pointer}.skb.on{background:#56705a;color:#fff;border-color:#56705a}
-.bar{font-size:11px;text-align:center;margin:0 0 4px;font-weight:700}.bar b{font-size:14px}#play .msg{min-height:0;font-size:12px;padding:4px 6px;margin-bottom:6px}#play .row{margin:4px 0}#play .row .btn{padding:8px 14px;font-size:14px}
+.bar{font-size:11px;text-align:center;margin:0 0 4px;font-weight:700}.bar b{font-size:14px}#play .msg{min-height:0;font-size:12px;padding:4px 6px;margin-bottom:6px}#play .row{margin:4px 0}#play .row .btn{padding:8px 14px;font-size:14px}#go.stop{background:#8a8a8a;border-color:#6f6f6f}
 .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .grid button{aspect-ratio:1;border:2px solid #e2cfb2;background:#fffaf1;border-radius:14px;font:inherit;font-weight:900;font-size:18px;color:#5a3d2b;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .grid button small{font-size:10px;color:#e0a100;letter-spacing:-1px}.grid button.done{background:#eef5e6;border-color:#9cc08e}
@@ -103,7 +103,7 @@ function left(k){return(st.items[k]||0)-placed.filter(p=>p.k===k).length}
 function ui(){const t=$('tray');t.innerHTML='';const ed=state==='edit';
  for(const k in st.items){const b=document.createElement('button');b.innerHTML=ITEMS[k].e+' '+ITEMS[k].n+'<b>×'+left(k)+'</b>';
   b.disabled=!ed||left(k)<=0;b.onclick=()=>add(k);t.appendChild(b)}
- $('rl').disabled=$('rr').disabled=!ed||sel<0||placed[sel].k==='ball';$('del').disabled=!ed||sel<0;$('go').disabled=!ed;$('clr').disabled=!ed||!placed.length;
+ $('rl').disabled=$('rr').disabled=!ed||sel<0||placed[sel].k==='ball';$('del').disabled=!ed||sel<0;$('go').disabled=!(ed||state==='fly');$('go').textContent=state==='fly'?'■ やめる':'はっしゃ！';$('go').classList.toggle('stop',state==='fly');$('clr').disabled=!ed||!placed.length;
  $('tr').textContent=tries}
 
 /* ---------- 置く・動かす ---------- */
@@ -125,13 +125,13 @@ $('del').onclick=()=>{if(sel>=0){placed.splice(sel,1);sel=-1;ui()}};
 $('clr').onclick=()=>{placed=[];sel=-1;ui()};$('back').onclick=menu;
 
 /* ---------- はっしゃ ---------- */
-$('go').onclick=()=>{if(placed.some(bad)){msg('赤いアイテムは ワンコや発射機に近すぎるよ');return}
+$('go').onclick=()=>{if(state==='fly'){world.stopped=true;world.end('fail','とめたよ。置きかたを かえてみよう');return}if(state!=='edit')return;if(placed.some(bad)){msg('赤いアイテムは ワンコや発射機に近すぎるよ');return}
  tries++;sel=-1;state='fly';mood='';world=new World(st,placed.map(p=>({...p})));pops=[];ui();msg('いけ〜！')};
 function popAdd(px,py,t){pops.push({x:px,y:py,t,life:1})}
 function tick(){if(state==='fly'&&world){for(let i=0;i<4&&!world.res;i++){world.step();
    if(world.msg){const p=world.p;if(world.msg==='bone')popAdd(p.x,p.y-14,'ほねっこゲット！');if(world.msg==='fast'){popAdd(p.x,p.y-14,'はやすぎ〜！');fastT=performance.now()}world.msg=''}}
   if(world.res==='catch'){state='caught';caughtT=performance.now();setTimeout(result,900)}
-  else if(world.res){lastPath=world.path.slice();mood='sad';const d=target();msg(world.why+'　'+DOG[d.k].n+'「'+pick(SAY[d.k].fail)+'」');state='edit';ui()}}
+  else if(world.res){lastPath=world.path.slice();const d=target();if(world.stopped){mood='';msg(world.why)}else{mood='sad';msg(world.why+'　'+DOG[d.k].n+'「'+pick(SAY[d.k].fail)+'」')}state='edit';ui()}}
  draw();requestAnimationFrame(tick)}
 function result(){const got=world.bones.every(b=>b.got),d=target(),n=1+(got?1:0)+(placed.length<=st.par?1:0);
  stars[cur]=Math.max(stars[cur]||0,n);SS('stars30',stars);
