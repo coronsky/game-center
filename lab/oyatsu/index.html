@@ -62,15 +62,18 @@ const HEADE={moon:[128,100,110,92],coron:[125,110,110,95]};
 const WPAD=50,WOUT=400,SRC={};const wcv=document.createElement('canvas');wcv.width=wcv.height=WOUT;const wgx=wcv.getContext('2d'),wimg=wgx.createImageData(WOUT,WOUT),wout=new Uint32Array(wimg.data.buffer);
 function srcPix(key,im){if(SRC[key])return SRC[key];const c=document.createElement('canvas');c.width=c.height=300;const g=c.getContext('2d');g.drawImage(im,0,0,300,300);return SRC[key]=new Uint32Array(g.getImageData(0,0,300,300).data.buffer)}
 // 動かす重み（絵300pxの各点）：頭のだ円の中は1、外へ離れるほどなめらかに0へ。体の前側は少しだけ頭についていく
+// よこ用：頭から離れるほどなめらかに0（体は少しかたむくだけで、たての長さは変わらない）
+// たて用：頭のすぐ下のせまい首だけが伸び縮み（体・背中の形はそのまま）
 const WGT={};
-function weightMap(k){if(WGT[k])return WGT[k];const P=HEADE[k],NK=NECK[k],HB=HEADX[k],YF=285,BS=.3,F=75,w=new Float32Array(90000);
- for(let y=0;y<300;y++)for(let x0=0;x0<300;x0++){const q=Math.hypot((x0-P[0])/P[2],(y-P[1])/P[3]);let h=q<=1?1:Math.max(0,1-(q-1)*Math.min(P[2],P[3])/F);h=h*h*(3-2*h);
+function weightMap(k){if(WGT[k])return WGT[k];const P=HEADE[k],NK=NECK[k],HB=HEADX[k],YF=285,BS=.3,wx=new Float32Array(90000),wy=new Float32Array(90000);
+ for(let y=0;y<300;y++)for(let x0=0;x0<300;x0++){const q=Math.hypot((x0-P[0])/P[2],(y-P[1])/P[3]),dd=(q-1)*Math.min(P[2],P[3]);
+  let h=q<=1?1:Math.max(0,1-dd/75);h=h*h*(3-2*h);let v=q<=1?1:Math.max(0,1-dd/42);v=v*v*(3-2*v);
   const t=x0<=HB[0]?0:x0>=HB[1]?1:(x0-HB[0])/(HB[1]-HB[0]),fr=1-t*t*(3-2*t),b=y<NK[1]?BS:BS*Math.max(0,(YF-y)/(YF-NK[1]));
-  w[y*300+x0]=h+(1-h)*b*fr}
- return WGT[k]=w}
+  wx[y*300+x0]=h+(1-h)*b*fr;wy[y*300+x0]=v}
+ return WGT[k]={wx,wy}}
 function warpSprite(src,W,hx,hy,tl,wag){
- const o=[0,0],off=(sx,sy)=>{const ix=sx<0?0:sx>299?299:sx|0,iy=sy<0?0:sy>299?299:sy|0,w=W[iy*300+ix];
-  o[0]=hx*w;o[1]=hy*w;if(tl&&sy>tl.y0&&sy<tl.y1&&sx>tl.x0)o[0]+=wag*((tl.y1-sy)/(tl.y1-tl.y0))*Math.min(1,(sx-tl.x0)/(tl.x1-tl.x0))};
+ const WX=W.wx,WY=W.wy,o=[0,0],off=(sx,sy)=>{const ix=sx<0?0:sx>299?299:sx|0,iy=sy<0?0:sy>299?299:sy|0,n=iy*300+ix;
+  o[0]=hx*WX[n];o[1]=hy*WY[n];if(tl&&sy>tl.y0&&sy<tl.y1&&sx>tl.x0)o[0]+=wag*((tl.y1-sy)/(tl.y1-tl.y0))*Math.min(1,(sx-tl.x0)/(tl.x1-tl.x0))};
  for(let Y=0;Y<WOUT;Y++){const dy=Y-WPAD,row=Y*WOUT;for(let X=0;X<WOUT;X++){const dx=X-WPAD;
    off(dx,dy);let sx=dx-o[0],sy=dy-o[1];off(sx,sy);sx=Math.round(dx-o[0]);sy=Math.round(dy-o[1]);
    wout[row+X]=(sx>=0&&sx<300&&sy>=0&&sy<300)?src[sy*300+sx]:0}}
@@ -241,7 +244,7 @@ function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';l
     mx0=d.x-d.f*lmx,my0=base-S+mo[1]*S/300;
    if(caught&&catchP){const e=now-caughtT;tg=catchP;wt=e<70?1:Math.max(0,1-(e-70)/220)}
    else if(near){const ds=Math.hypot(near.x-mx0,near.y-my0);tg=near;wt=Math.max(0,Math.min(1,(62-ds)/34))}
-   if(tg&&wt>0){hx+=Math.max(-12,Math.min(12,-d.f*(tg.x-mx0)))*wt;hy+=Math.max(-12,Math.min(8,tg.y-my0))*wt}}
+   if(tg&&wt>0){hx+=Math.max(-12,Math.min(12,-d.f*(tg.x-mx0)))*wt;hy+=Math.max(-8,Math.min(8,tg.y-my0))*wt}}
   // 動かす量＝頭の移動量 ×（たて方向の重み）×（よこ方向の重み）。頭からはなれた背中・しっぽ側は動かさない
   const NK=NECK[d.k],HB=HEADX[d.k],YF=285,BS=.3,
    Vw=sy=>sy<=NK[0]?1:sy<NK[1]?1+(BS-1)*(sy-NK[0])/(NK[1]-NK[0]):BS*Math.max(0,(YF-sy)/(YF-NK[1])),
@@ -251,7 +254,7 @@ function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';l
   // 1ピクセルずつずらして描く（つなぎ目が出ない）
   const WM=weightMap(d.k),wc=warpSprite(srcPix(d.k+'_'+fr+(mtail?'b':''),im),WM,hx*K,hy*K,tl,wag);
   x.drawImage(wc,-S/2-WPAD/K,-S-WPAD/K,WOUT/K,WOUT/K);
-  if(mtail){const [px,py]=MT.PIV,v=WM[py*300+px];x.save();x.translate(-S/2+px*S/300+hx*v,-S+py*S/300+hy*v);x.rotate(.09*Math.sin(T*9));x.drawImage(MT.tail,-px*S/300,-py*S/300,S,S);x.restore()}
+  if(mtail){const [px,py]=MT.PIV,n=py*300+px;x.save();x.translate(-S/2+px*S/300+hx*WM.wx[n],-S+py*S/300+hy*WM.wy[n]);x.rotate(.09*Math.sin(T*9));x.drawImage(MT.tail,-px*S/300,-py*S/300,S,S);x.restore()}
   x.restore();return}
  const col=moon?'#fbfbf8':'#e0a66b',dark=moon?'#e3ded3':'#b8763d';
  // からだ
