@@ -55,6 +55,26 @@ const MOUTH={moon:[100,130],coron:[112,122]};
 const NECK={moon:[182,216],coron:[192,222]};
 // 頭のよこのはし（ここから右＝背中・しっぽ側へ、なめらかに動きを0にする）
 const HEADX={moon:[175,225],coron:[195,240]};
+// 頭のだ円（中心x,中心y,よこ半径,たて半径：絵300pxの中）。あご・コロンの耳まで入れる
+const HEADE={moon:[128,100,110,92],coron:[125,110,110,95]};
+
+// ===== ワンコの絵を1ピクセルずつずらす（頭は形そのまま・首だけのびる・背中側は動かない） =====
+const WPAD=50,WOUT=400,SRC={};const wcv=document.createElement('canvas');wcv.width=wcv.height=WOUT;const wgx=wcv.getContext('2d'),wimg=wgx.createImageData(WOUT,WOUT),wout=new Uint32Array(wimg.data.buffer);
+function srcPix(key,im){if(SRC[key])return SRC[key];const c=document.createElement('canvas');c.width=c.height=300;const g=c.getContext('2d');g.drawImage(im,0,0,300,300);return SRC[key]=new Uint32Array(g.getImageData(0,0,300,300).data.buffer)}
+// 動かす重み（絵300pxの各点）：頭のだ円の中は1、外へ離れるほどなめらかに0へ。体の前側は少しだけ頭についていく
+const WGT={};
+function weightMap(k){if(WGT[k])return WGT[k];const P=HEADE[k],NK=NECK[k],HB=HEADX[k],YF=285,BS=.3,F=75,w=new Float32Array(90000);
+ for(let y=0;y<300;y++)for(let x0=0;x0<300;x0++){const q=Math.hypot((x0-P[0])/P[2],(y-P[1])/P[3]);let h=q<=1?1:Math.max(0,1-(q-1)*Math.min(P[2],P[3])/F);h=h*h*(3-2*h);
+  const t=x0<=HB[0]?0:x0>=HB[1]?1:(x0-HB[0])/(HB[1]-HB[0]),fr=1-t*t*(3-2*t),b=y<NK[1]?BS:BS*Math.max(0,(YF-y)/(YF-NK[1]));
+  w[y*300+x0]=h+(1-h)*b*fr}
+ return WGT[k]=w}
+function warpSprite(src,W,hx,hy,tl,wag){
+ const o=[0,0],off=(sx,sy)=>{const ix=sx<0?0:sx>299?299:sx|0,iy=sy<0?0:sy>299?299:sy|0,w=W[iy*300+ix];
+  o[0]=hx*w;o[1]=hy*w;if(tl&&sy>tl.y0&&sy<tl.y1&&sx>tl.x0)o[0]+=wag*((tl.y1-sy)/(tl.y1-tl.y0))*Math.min(1,(sx-tl.x0)/(tl.x1-tl.x0))};
+ for(let Y=0;Y<WOUT;Y++){const dy=Y-WPAD,row=Y*WOUT;for(let X=0;X<WOUT;X++){const dx=X-WPAD;
+   off(dx,dy);let sx=dx-o[0],sy=dy-o[1];off(sx,sy);sx=Math.round(dx-o[0]);sy=Math.round(dy-o[1]);
+   wout[row+X]=(sx>=0&&sx<300&&sy>=0&&sy<300)?src[sy*300+sx]:0}}
+ wgx.putImageData(wimg,0,0);return wcv}
 const sprOK=k=>SPR[k]&&SPR[k].every(im=>im.complete&&im.naturalWidth);let mood='',fastT=-1e9,catchP=null;
 // スキン（ゲームセンター共通の mc_vt）
 const SKINS=[['natural','ナチュラル'],['retro','レトロ'],['neon','ネオン']];
@@ -221,24 +241,17 @@ function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';l
     mx0=d.x-d.f*lmx,my0=base-S+mo[1]*S/300;
    if(caught&&catchP){const e=now-caughtT;tg=catchP;wt=e<70?1:Math.max(0,1-(e-70)/220)}
    else if(near){const ds=Math.hypot(near.x-mx0,near.y-my0);tg=near;wt=Math.max(0,Math.min(1,(62-ds)/34))}
-   if(tg&&wt>0){hx+=Math.max(-14,Math.min(14,-d.f*(tg.x-mx0)))*wt;hy+=Math.max(-12,Math.min(8,tg.y-my0))*wt}}
+   if(tg&&wt>0){hx+=Math.max(-12,Math.min(12,-d.f*(tg.x-mx0)))*wt;hy+=Math.max(-12,Math.min(8,tg.y-my0))*wt}}
   // 動かす量＝頭の移動量 ×（たて方向の重み）×（よこ方向の重み）。頭からはなれた背中・しっぽ側は動かさない
   const NK=NECK[d.k],HB=HEADX[d.k],YF=285,BS=.3,
    Vw=sy=>sy<=NK[0]?1:sy<NK[1]?1+(BS-1)*(sy-NK[0])/(NK[1]-NK[0]):BS*Math.max(0,(YF-sy)/(YF-NK[1])),
    Hw=sx=>{if(sx<=HB[0])return 1;if(sx>=HB[1])return 0;const t=(sx-HB[0])/(HB[1]-HB[0]);return 1-t*t*(3-2*t)};
   x.save();x.translate(d.x,d.y-jy+S*20/760);if(d.f>0)x.scale(-1,1);
-  const mtail=d.k==='moon'&&fr===0&&mtOK(),im=mtail?MT.body:SPR[d.k][fr],N=50,iw=im.naturalWidth,ih=im.naturalHeight,sc=iw/300,tl=fr===0?TAIL[d.k]:null,wag=tl?tl.A*Math.sin(T*9):0;
-  // よこの区切り：頭のはしの移りかわり部分と、しっぽ部分だけ細かく
-  const cutsBase=[0,HB[0]];for(let c=1;c<6;c++)cutsBase.push(HB[0]+(HB[1]-HB[0])*c/6);cutsBase.push(HB[1]);
-  const tailCuts=tl?Array.from({length:9},(_,c)=>tl.x0+(tl.x1-tl.x0)*c/8):[];
-  const cellOff=(sx,sy)=>{const h=Hw(sx),t=Math.max(0,Math.min(1,(sy-NK[0])/(NK[1]-NK[0]))),v=sy<=NK[0]?1:h*Vw(sy)+(1-h)*(1-t);let ox=hx*v,oy=hy*v;if(tl&&sy>tl.y0&&sy<tl.y1&&sx>tl.x0)ox+=wag*((tl.y1-sy)/(tl.y1-tl.y0))*Math.min(1,(sx-tl.x0)/(tl.x1-tl.x0));return[ox,oy]};
-  // 下の段から描いて、頭（あごの毛）が体の上に重なるようにする
-  for(let i=N-1;i>=0;i--){const s0=i*300/N,s1=(i+1)*300/N,sm=(s0+s1)/2,isT=tl&&sm>tl.y0&&sm<tl.y1;
-   const cuts=[...new Set([...cutsBase,...(isT?tailCuts:[]),300])].filter(v=>v>=0&&v<=300).sort((a,b)=>a-b);
-   for(let c=0;c<cuts.length-1;c++){const x0=cuts[c],x1=cuts[c+1];if(x1-x0<.5)continue;const xm=(x0+x1)/2,a=cellOff(xm,s0),b=cellOff(xm,s1),m=cellOff(xm,sm);
-    const dy=-S+s0*S/300+a[1],dh=(-S+s1*S/300+b[1])-dy+.6,dx=-S/2+x0*S/300+m[0];
-    x.drawImage(im,x0*sc,s0*sc,(x1-x0)*sc+.5,(s1-s0)*sc,dx,dy,(x1-x0)*S/300+.5,dh)}}
-  if(mtail){const [px,py]=MT.PIV,o=cellOff(px,py);x.save();x.translate(-S/2+px*S/300+o[0],-S+py*S/300+o[1]);x.rotate(.09*Math.sin(T*9));x.drawImage(MT.tail,-px*S/300,-py*S/300,S,S);x.restore()}
+  const mtail=d.k==='moon'&&fr===0&&mtOK(),im=mtail?MT.body:SPR[d.k][fr],tl=fr===0?TAIL[d.k]:null,K=300/S,wag=tl?tl.A*Math.sin(T*9):0;
+  // 1ピクセルずつずらして描く（つなぎ目が出ない）
+  const WM=weightMap(d.k),wc=warpSprite(srcPix(d.k+'_'+fr+(mtail?'b':''),im),WM,hx*K,hy*K,tl,wag);
+  x.drawImage(wc,-S/2-WPAD/K,-S-WPAD/K,WOUT/K,WOUT/K);
+  if(mtail){const [px,py]=MT.PIV,v=WM[py*300+px];x.save();x.translate(-S/2+px*S/300+hx*v,-S+py*S/300+hy*v);x.rotate(.09*Math.sin(T*9));x.drawImage(MT.tail,-px*S/300,-py*S/300,S,S);x.restore()}
   x.restore();return}
  const col=moon?'#fbfbf8':'#e0a66b',dark=moon?'#e3ded3':'#b8763d';
  // からだ
