@@ -83,7 +83,7 @@ function warpSprite(src,W,hx,hy,tl,wag){
 const LAY={},ZW={wx:new Float32Array(90000),wy:new Float32Array(90000)};
 for(const k of ['moon','coron'])for(let i=0;i<5;i++){const h=new Image(),b=new Image();h.src='img/'+k+'_'+i+'_head.webp';b.src='img/'+k+'_'+i+'_body.webp';LAY[k+'_'+i]={head:h,body:b}}
 {const h=new Image(),b=new Image();h.src='img/moon_0b_head.webp';b.src='img/moon_0b_body.webp';LAY['moon_0b']={head:h,body:b}}
-const sprOK=k=>SPR[k]&&SPR[k].every(im=>im.complete&&im.naturalWidth);let mood='',fastT=-1e9,catchP=null;
+const imOK=im=>im.complete&&im.naturalWidth;const sprOK=k=>SPR[k]&&SPR[k].every(imOK)&&[0,1,2,3,4].every(i=>imOK(LAY[k+'_'+i].head)&&imOK(LAY[k+'_'+i].body))&&(k!=='moon'||(mtOK()&&imOK(LAY.moon_0b.head)&&imOK(LAY.moon_0b.body)));let mood='',fastT=-1e9,catchP=null;
 // スキン（ゲームセンター共通の mc_vt）
 const SKINS=[['natural','ナチュラル'],['retro','レトロ'],['neon','ネオン']];
 let skin=(()=>{const ok=v=>SKINS.some(s=>s[0]===v);const h=location.hash.slice(1);if(ok(h))return h;try{const v=localStorage.getItem('mc_vt');if(ok(v))return v;const p=JSON.parse(localStorage.getItem('mcgc_p')||'{}');if(ok(p.theme))return p.theme}catch(e){}return'natural'})();
