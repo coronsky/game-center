@@ -157,7 +157,7 @@ cv.addEventListener('pointermove',e=>{if(!mode||sel<0)return;const p=pos(e),it=p
 cv.addEventListener('pointerup',()=>{mode=null});cv.addEventListener('pointercancel',()=>{mode=null});
 $('rl').onclick=()=>{if(sel>=0)placed[sel].a+=15};$('rr').onclick=()=>{if(sel>=0)placed[sel].a-=15};
 $('del').onclick=()=>{if(sel>=0){placed.splice(sel,1);sel=-1;ui()}};
-$('hint').onclick=()=>{if(state!=='edit'||hintN>=st.sol.length)return;hintN++;ui();msg('ヒント：うすい絵のところにおいてみて！（ヒントをつかうと★は1つまで）')};$('clr').onclick=()=>{placed=[];sel=-1;ui()};$('back').onclick=menu;
+$('hint').onclick=()=>{if(state!=='edit')return;if(hintN===0){placed=[]}if(hintN>=st.sol.length)return;placed.push({...st.sol[hintN]});hintN++;sel=-1;ui();msg('ヒント：正しい位置にアイテムをおいたよ！（ヒントをつかうと★は1つまで）')};$('clr').onclick=()=>{placed=[];sel=-1;ui()};$('back').onclick=menu;
 
 /* ---------- はっしゃ ---------- */
 $('go').onclick=()=>{if(state==='fly'){world.stopped=true;world.end('fail','とめたよ。置きかたを かえてみよう');return}if(state!=='edit')return;if(placed.some(bad)){msg('赤いアイテムは ワンコ・発射機・ワープに近すぎるよ');return}
@@ -297,7 +297,7 @@ function draw(){x.setTransform(DPR,0,0,DPR,0,0);bg();if(!st)return;const w=world
  const bs=w?w.bones:(st.bones||[]).map(b=>({x:b[0],y:b[1],got:false}));const pulse=1+Math.sin(performance.now()/250)*.08;
  for(const b of bs)if(!b.got){if(drawCore('bone',b.x,b.y,30*pulse,30*pulse*coreAsp('bone')))continue;x.fillStyle='rgba(255,214,90,.35)';x.beginPath();x.arc(b.x,b.y,15*pulse,0,7);x.fill();bone(b.x,b.y,1.05,'#fffdf5','#d9b45a')}
  if(lastPath&&state==='edit'){x.fillStyle='rgba(160,97,45,.35)';for(let i=0;i<lastPath.length;i+=4){x.beginPath();x.arc(lastPath[i],lastPath[i+1],1.8,0,7);x.fill()}}
- if(state==='edit'&&hintN){x.save();x.globalAlpha=.42;st.sol.slice(0,hintN).forEach(it=>drawItem(it,-1));x.restore();x.save();x.strokeStyle='rgba(255,170,0,.9)';x.lineWidth=2;x.setLineDash([5,4]);st.sol.slice(0,hintN).forEach(it=>{if(it.k==='ball'){x.beginPath();x.arc(it.x,it.y,ITEMS.ball.r+4,0,7);x.stroke()}else{const s=itemSeg(it);x.beginPath();x.moveTo(s.x1,s.y1);x.lineTo(s.x2,s.y2);x.stroke()}});x.restore()}
+ if(false){x.save();x.globalAlpha=.42;st.sol.slice(0,hintN).forEach(it=>drawItem(it,-1));x.restore();x.save();x.strokeStyle='rgba(255,170,0,.9)';x.lineWidth=2;x.setLineDash([5,4]);st.sol.slice(0,hintN).forEach(it=>{if(it.k==='ball'){x.beginPath();x.arc(it.x,it.y,ITEMS.ball.r+4,0,7);x.stroke()}else{const s=itemSeg(it);x.beginPath();x.moveTo(s.x1,s.y1);x.lineTo(s.x2,s.y2);x.stroke()}});x.restore()}
  placed.forEach(drawItem);
  const dogs=w?w.dogs:st.dogs;const caught=state==='caught';
  for(const d of dogs)drawDog(d,w?d.near:null,caught&&d.target);
