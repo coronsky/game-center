@@ -1,0 +1,21 @@
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;overscroll-behavior:none}
+body{font-family:"Zen Maru Gothic",system-ui,sans-serif;color:#5a3d2b;background:linear-gradient(#f9efdc,#ecd8b5);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.wrap{max-width:480px;margin:0 auto;padding:10px 10px 30px}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.top a{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#56705a;color:#fff;text-decoration:none;font-size:11px;font-weight:900;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.top h1{flex:1;font-size:18px;margin:0}
+.top .tag{font-size:10px;background:#c0392b;color:#fff;border-radius:8px;padding:2px 6px}
+.card2{background:#fffaf1;border:2px solid #e2cfb2;border-radius:16px;padding:10px;margin-bottom:10px}
+.info{display:flex;gap:6px;margin-bottom:8px}.info div{flex:1;background:#fffaf1;border:2px solid #e2cfb2;border-radius:12px;text-align:center;padding:4px;font-size:11px;font-weight:700}.info b{display:block;font-size:17px}
+.btn{border:0;border-radius:14px;padding:10px 16px;font:inherit;font-weight:900;font-size:15px;color:#fff;background:linear-gradient(#6c8a60,#4a6342);box-shadow:0 3px 0 #38502f;cursor:pointer}
+.btn.sub{background:linear-gradient(#f0b429,#d9961a);box-shadow:0 3px 0 #a8730f}.btn:disabled{opacity:.4}
+.msg{min-height:44px;text-align:center;font-weight:900;font-size:14px;padding:6px;margin-bottom:8px;background:#fff6d6;border-radius:12px;border:2px solid #f0d58a}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+canvas{display:block;width:100%;touch-action:none;border-radius:14px}
+/* playing cards */
+.pcard{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:46px;height:66px;border-radius:7px;background:#fff;border:1.5px solid #888;font-weight:900;font-size:17px;line-height:1.05;box-shadow:0 2px 4px rgba(0,0,0,.2);cursor:pointer;flex:none}
+.pcard.red{color:#c0392b}.pcard.back{background:repeating-linear-gradient(45deg,#3b6aa8,#3b6aa8 4px,#5b8ac8 4px,#5b8ac8 8px);color:transparent;border-color:#fff}
+.pcard.sel{transform:translateY(-10px);box-shadow:0 0 0 3px #f0b429}.pcard.dim{opacity:.35}.pcard.ok{box-shadow:0 0 0 3px #6cc36c}
+.hand{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.hand.ov .pcard{margin-left:-20px}.hand.ov .pcard:first-child{margin-left:0}
