@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="robots" content="noindex"><title>【叩き台】パクッとおやつキャッチ</title><link rel="stylesheet" href="../lab.css">
 <style>
-#cv{width:min(100%,calc((100dvh - 285px)*.6667));margin:0 auto;border:2px solid #e2cfb2;background:#fff}
+#cv{width:min(100%,calc((100dvh - 345px)*.6667));margin:0 auto;border:2px solid #e2cfb2;background:#fff}
 .tray{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px 0}
 .tray button,.tool button{border:2px solid #e2cfb2;background:#fffaf1;border-radius:12px;padding:5px 9px;font:inherit;font-weight:900;font-size:12px;color:#5a3d2b;cursor:pointer}
 .tray button b{font-size:15px;margin-left:3px}.tray button:disabled,.tool button:disabled{opacity:.35}
@@ -22,13 +22,31 @@
 .proto .grid button{background:var(--i-card) center/100% 100% no-repeat;border:0;border-radius:0}
 .proto .grid button.done{background-image:var(--i-cardc)}
 [data-skin=retro].proto .grid button,[data-skin=neon].proto .grid button,body.proto[data-skin=retro] .grid button,body.proto[data-skin=neon] .grid button{color:#fff4d6;text-shadow:0 1px 3px #000}
-.proto #play .row{display:flex;gap:2px;justify-content:center;align-items:flex-start;flex-wrap:nowrap}
-.proto #play .row .btn{flex:0 0 auto;width:70px;height:86px;padding:0 0 0;border:0;border-radius:0;background:var(--ic) top center/64px auto no-repeat;box-shadow:none;color:#5a3d2b;font-size:11px;font-weight:900;display:flex;align-items:flex-end;justify-content:center;text-shadow:0 1px 0 #fff8}
-.proto #play .row .btn:disabled{filter:grayscale(.7) opacity(.5)}
-.proto #go{--ic:var(--i-go)}.proto #go.stop{--ic:var(--i-reset);background-color:transparent}.proto #hint{--ic:var(--i-hint)}.proto #retry{--ic:var(--i-new)}.proto #clr{--ic:var(--i-undo)}.proto #back{--ic:var(--i-back)}
 .proto #res .st{display:flex;justify-content:center;gap:6px;font-size:0;margin:6px 0}.proto #res .st .sx,.proto #res img.sx{width:54px;height:54px;border:0;border-radius:0;box-shadow:none;object-fit:contain;background:none}
-.proto #res .row .btn#nx,.proto #res .row .btn#ag,.proto #res .row .btn#rs{width:64px;height:78px;padding:0;border:0;border-radius:0;box-shadow:none;background:var(--ic) top center/58px auto no-repeat;color:#5a3d2b;font-size:11px;font-weight:900;display:inline-flex;align-items:flex-end;justify-content:center}
-.proto #res #nx{--ic:var(--i-next)}.proto #res #ag{--ic:var(--i-again)}.proto #res #rs{--ic:var(--i-back)}
+/* 枠画像UI */
+[data-skin=natural]{--gow:151px;--wiw:108px;--wih:40px;--sqw:52px;--sqh:51px;--paw:87px;--tx:#5a3d2b;--gt:#fff;--ht:#fff;--msc:#5a3d2b;--sh:0 1px 0 #0003;--msl:40;}
+[data-skin=retro]{--gow:129px;--wiw:100px;--wih:40px;--sqw:45px;--sqh:46px;--paw:102px;--tx:#4a2a10;--gt:#fff4d6;--ht:#fff4d6;--msc:#fff4d6;--sh:0 1px 2px #0008;--msl:34;}
+[data-skin=neon]{--gow:157px;--wiw:100px;--wih:38px;--sqw:47px;--sqh:48px;--paw:115px;--tx:#bff4ff;--gt:#ffe0f6;--ht:#8ff;--msc:#bff4ff;--sh:0 0 6px #0cf;--msl:34;}
+[data-skin=retro]{--hdc:#fff4d6}[data-skin=neon]{--hdc:#8ff}[data-skin=natural]{--hdc:#fff}
+body[data-skin] .btn,body[data-skin] .tray button,body[data-skin] #del{border:0;border-radius:0;box-shadow:none;background-color:transparent;background-repeat:no-repeat;background-size:100% 100%;background-position:center;color:var(--tx);text-shadow:none}
+body[data-skin] #play .row .btn.sub,body[data-skin] #res .row .btn.sub{background-image:var(--u-wide);width:var(--wiw);height:var(--wih);padding:0;font-size:12px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;color:var(--tx)}
+body[data-skin] #play .row .btn#go{background-image:var(--u-go);width:var(--gow);height:52px;padding:0 0 3px;font-size:17px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;color:var(--gt);text-shadow:var(--sh)}
+body[data-skin] #go.stop{background-image:var(--u-wide);color:var(--tx);text-shadow:none;background-color:transparent}
+body[data-skin] #res .row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;margin-top:6px}
+body[data-skin] #res .row .btn:not(.sub){background-image:var(--u-go);height:48px;padding:0 22px 3px;min-width:var(--gow);font-size:15px;font-weight:900;color:var(--gt);text-shadow:var(--sh);display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+body[data-skin] #res .row .btn.sub{width:auto;min-width:var(--wiw);padding:0 16px}
+body[data-skin] #play .row{display:flex;gap:6px;justify-content:center;align-items:center;margin:4px 0}
+body[data-skin] #del{background-image:var(--u-sq);width:var(--sqw);height:var(--sqh);padding:0 0 2px;font-size:17px}
+body[data-skin] .tray button{background-image:var(--u-wide);padding:0 14px;height:var(--wih);min-width:var(--wiw);display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+body[data-skin] .tray button b{font-size:14px}
+body[data-skin] .bar{display:flex;gap:10px;justify-content:center;margin:0 0 4px}
+body[data-skin] .pn{width:var(--paw);height:56px;background:var(--u-pa) center/100% 100% no-repeat;display:flex;flex-direction:column;align-items:center;color:var(--tx)}
+body[data-skin] .pn small{font-size:9px;font-weight:900;color:var(--hdc);height:19px;line-height:19px;margin-top:1px;letter-spacing:0}
+body[data-skin] .pn b{font-size:15px;line-height:30px;font-weight:900}
+.goalt{font-size:10px;font-weight:700;text-align:center;margin:0 0 4px;opacity:.85}
+body[data-skin] .msg{background:none;border:0;border-style:solid;border-width:12px;border-image:var(--u-msg) var(--msl) fill/12px stretch;padding:0 4px;color:var(--msc);text-shadow:none;font-weight:900;text-align:center;min-height:0}
+body[data-skin] #play .msg{font-size:12px;padding:0 4px;margin-bottom:6px}
+body[data-skin] #res .st{display:flex;justify-content:center;gap:6px;font-size:0;margin:6px 0}body[data-skin] #res .st .sx{width:54px;height:54px;border:0;border-radius:0;box-shadow:none;object-fit:contain;background:none}
 </style></head><body><div class="wrap">
 <div class="top" style="margin-bottom:4px"><a href="../">ラボ</a><h1>パクッとおやつキャッチ <span class="tag">叩き台</span></h1></div>
 
@@ -37,11 +55,11 @@
 <p style="font-size:11px;opacity:.75;margin-top:12px">アイテムを置いてから「はっしゃ！」。おやつをはねかえして、ワンコのお口へとどけよう。<br>★1 キャッチ ／ ★2 ほねっこをとる ／ ★3 はっしゃ3回以内</p></div>
 
 <div id="play" style="display:none">
-<div class="bar">ステージ <b id="sn">1</b>　ちょうせん <b id="tr">0</b>　<span id="goal"></span></div>
+<div class="bar"><div class="pn"><small>ステージ</small><b id="sn">1</b></div><div class="pn"><small>ちょうせん</small><b id="tr">0</b></div></div><div class="goalt" id="goal"></div>
 <div class="msg" id="m"></div>
 <canvas id="cv"></canvas>
 <div class="tray"><span id="tray" style="display:contents"></span><button id="del">🗑</button></div>
-<div class="row"><button class="btn" id="go">はっしゃ！</button><button class="btn sub" id="retry">🔁 やりなおす</button><button class="btn sub" id="clr">ぜんぶもどす</button><button class="btn sub" id="back">ステージ</button></div>
+<div class="row"><button class="btn" id="go">はっしゃ！</button></div><div class="row"><button class="btn sub" id="retry">🔁 やりなおす</button><button class="btn sub" id="clr">ぜんぶもどす</button><button class="btn sub" id="back">ステージ</button></div>
 </div></div>
 
 <div id="res"><div class="box"><div id="rt" style="font-weight:900;font-size:18px">パクッ！</div>
@@ -99,7 +117,8 @@ const MISS={natural:{sg_bt_new:'rv_bt_new'},neon:{sg_bt_flag:'sg_bt_set'}};
 const IMG=f=>'../../img/'+skin+'/'+((MISS[skin]||{})[f]||f)+'.webp';
 if(PROTO)$('retry').textContent='やりなおす';
 const sxs=(n)=>[0,1,2].map(i=>'<img class="sx" src="../../img/ui/star_'+({natural:'n',retro:'r',neon:'x'}[skin])+(i<n?'':'0')+'.webp?v=3">').join('');
-function protoVars(){if(!PROTO)return;const r=document.documentElement.style,m={go:'btn_play',reset:'bt_cont',hint:'sg_bt_hint',new:'sg_bt_new',undo:'sg_bt_undo',back:'sg_bt_flag',next:'btn_play',again:'bt_cont',card:'stg_frame',cardc:'stg_frame_clear'};for(const k in m)r.setProperty('--i-'+k,'url('+IMG(m[k])+')')}
+function uiVars(){const r=document.documentElement.style;for(const k of ['go','wide','sq','pa','msg'])r.setProperty('--u-'+k,'url(../../img/'+skin+'/ui_'+k+'.webp?v=1)')}
+function protoVars(){uiVars();if(!PROTO)return;const r=document.documentElement.style,m={go:'btn_play',reset:'bt_cont',hint:'sg_bt_hint',new:'sg_bt_new',undo:'sg_bt_undo',back:'sg_bt_flag',next:'btn_play',again:'bt_cont',card:'stg_frame',cardc:'stg_frame_clear'};for(const k in m)r.setProperty('--i-'+k,'url('+IMG(m[k])+')')}
 function setSkin(v){skin=v;try{localStorage.setItem('mc_vt',v)}catch(e){}document.body.dataset.skin=v;protoVars();skinUI();if(typeof menu==='function'&&state==='menu')menu()}
 function skinUI(){document.querySelectorAll('.skb').forEach(b=>b.classList.toggle('on',b.dataset.s===skin))}
 // 道具の絵：META=絵の中の「本体」の範囲（左,上,右,下の割合）
