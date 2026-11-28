@@ -47,6 +47,7 @@ body[data-skin] .pn b{font-size:15px;line-height:30px;font-weight:900}
 body[data-skin] .msg{background:none;border:0;border-style:solid;border-width:12px;border-image:var(--u-msg) var(--msl) fill/12px stretch;padding:0 4px;color:var(--msc);text-shadow:none;font-weight:900;text-align:center;min-height:0}
 body[data-skin] #play .msg{font-size:12px;padding:0 4px;margin-bottom:6px}
 body[data-skin] #res .st{display:flex;justify-content:center;gap:6px;font-size:0;margin:6px 0}body[data-skin] #res .st .sx{width:54px;height:54px;border:0;border-radius:0;box-shadow:none;object-fit:contain;background:none}
+body[data-skin] #play .row .btn.sub#del,body[data-skin] #play .row .btn.sub#clr{width:auto;min-width:var(--wiw);padding:0 18px}
 </style></head><body><div class="wrap">
 <div class="top" style="margin-bottom:4px"><a href="../">ラボ</a><h1>パクッとおやつキャッチ <span class="tag">叩き台</span></h1></div>
 
@@ -58,8 +59,8 @@ body[data-skin] #res .st{display:flex;justify-content:center;gap:6px;font-size:0
 <div class="bar"><div class="pn"><small>ステージ</small><b id="sn">1</b></div><div class="pn"><small>ちょうせん</small><b id="tr">0</b></div></div><div class="goalt" id="goal"></div>
 <div class="msg" id="m"></div>
 <canvas id="cv"></canvas>
-<div class="tray"><span id="tray" style="display:contents"></span><button id="del">えらんだ アイテムを はずす</button></div>
-<div class="row"><button class="btn" id="go">はっしゃ！</button></div><div class="row"><button class="btn sub" id="retry">🔁 やりなおす</button><button class="btn sub" id="clr">ぜんぶもどす</button><button class="btn sub" id="back">ステージ</button></div>
+<div class="tray"><span id="tray" style="display:contents"></span></div><div class="row"><button class="btn sub" id="del">えらんだ アイテムを はずす</button><button class="btn sub" id="clr">ぜんぶ はずす</button></div>
+<div class="row"><button class="btn" id="go">はっしゃ！</button></div><div class="row"><button class="btn sub" id="retry">🔁 やりなおす</button><button class="btn sub" id="back">ステージ</button></div>
 </div></div>
 
 <div id="res"><div class="box"><div id="rt" style="font-weight:900;font-size:18px">パクッ！</div>
