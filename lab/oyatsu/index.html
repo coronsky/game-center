@@ -73,7 +73,7 @@ const {W,H,FLOOR,R,ITEMS,DOG,STAGES,World,itemSeg,dogGeo,REACH}=ENG,$=id=>docume
 const cv=$('cv'),x=cv.getContext('2d'),DPR=Math.min(3,window.devicePixelRatio||1);cv.width=W*DPR;cv.height=H*DPR;
 const LS=k=>{try{return JSON.parse(localStorage.getItem('lab_oy_'+k))}catch(e){return null}},SS=(k,v)=>{try{localStorage.setItem('lab_oy_'+k,JSON.stringify(v))}catch(e){}};
 // ワンコの絵（左向き・全スキン共通）：0まち 1あーん 2パクッ 3しょんぼり 4びっくり
-const SPR={};for(const k of ['moon','coron']){SPR[k]=[0,1,2,3,4].map(i=>{const im=new Image();im.src='img/'+k+'_'+i+'.webp';return im})}
+const SPR={};for(const k of ['moon','coron']){SPR[k]=[0,1,2,3,4,5].map(i=>{const im=new Image();im.src='img/'+k+'_'+i+'.webp';return im})}
 // しっぽの範囲（絵300pxの中の座標）：x0より右・y0〜y1の段がしっぽ
 const TAIL={coron:{x0:228,x1:265,y0:200,y1:272,A:4}};
 // ムーンのしっぽは丸い毛玉なので、切り抜いた絵を根もと(PIV)中心に回す
@@ -269,7 +269,7 @@ function drawTreat(p,t,sz){sz=sz||1;if(special){const k='rare'+SPECIAL.indexOf(s
  x.fillStyle='#d9a066';for(const [a,b] of [[-2,-2],[3,1],[-1,3]]){x.beginPath();x.arc(a,b,1.3,0,7);x.fill()}x.restore()}
 function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';let ox=0,oy=0;
  if(near&&d.target){const dx=near.x-g.mx,dy=near.y-g.my,l=Math.hypot(dx,dy)||1,m=Math.min(REACH,l);ox=dx/l*m;oy=dy/l*m}
- if(sprOK(d.k)){let S=82,fr=caught&&d.target?(performance.now()-caughtT<70?1:2):performance.now()-fastT<700&&d.target?4:near&&d.target?1:mood==='sad'&&d.target&&state==='edit'?3:0,hurt=performance.now()-(d.hitT||-9e3)<700;if(hurt&&!caught)fr=3;
+ if(sprOK(d.k)){let S=82,fr=caught&&d.target?(performance.now()-caughtT<70?1:2):performance.now()-fastT<700&&d.target?4:near&&d.target?1:mood==='sad'&&d.target&&state==='edit'?3:0,hurt=performance.now()-(d.hitT||-9e3)<700;if(hurt&&!caught)fr=5;
   const jy=d.jy||0,T=performance.now()/1000;
   // 頭は形を変えずに動かす（hx,hy＝頭の移動量px）。首の段だけ伸び縮みし、体は少しだけ、足もとは固定
   const now=performance.now();let hx=0,hy=0;
