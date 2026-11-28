@@ -31,7 +31,7 @@
 body[data-skin] .btn,body[data-skin] .tray button,body[data-skin] #del{border:0;border-radius:0;box-shadow:none;background-color:transparent;background-repeat:no-repeat;background-size:100% 100%;background-position:center;color:var(--tx);text-shadow:none}
 body[data-skin] #play .row .btn.sub,body[data-skin] #res .row .btn.sub{background-image:var(--u-wide);width:var(--wiw);height:var(--wih);padding:0;font-size:12px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;color:var(--tx)}
 body[data-skin] #play .row .btn#go{background-image:var(--u-go);width:var(--gow);height:52px;padding:0 0 3px;font-size:17px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;color:var(--gt);text-shadow:var(--sh)}
-body[data-skin] #go.stop{background-image:var(--u-wide);color:var(--tx);text-shadow:none;background-color:transparent}
+body[data-skin] #play .row .btn#go.stop{width:var(--wiw);height:var(--wih);padding:0;font-size:12px;background-image:var(--u-wide);color:var(--tx);text-shadow:none;background-color:transparent}
 body[data-skin] #res .row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;margin-top:6px}
 body[data-skin] #res .row .btn:not(.sub){background-image:var(--u-go);height:48px;padding:0 22px 3px;min-width:var(--gow);font-size:15px;font-weight:900;color:var(--gt);text-shadow:var(--sh);display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
 body[data-skin] #res .row .btn.sub{width:auto;min-width:var(--wiw);padding:0 16px}
@@ -203,7 +203,7 @@ $('go').onclick=()=>{if(state==='fly'){world.stopped=true;world.end('fail','と�
 const SPECIAL=[{e:'🧀',n:'チーズ'},{e:'🍓',n:'いちご'},{e:'🍠',n:'おいも'},{e:'🥕',n:'にんじん'},{e:'🍎',n:'りんご'},{e:'🦴',n:'ほねガム'}];let special=null;
 const rpick=a=>a[Math.floor(Math.random()*a.length)];function popAdd(px,py,t){pops.push({x:px,y:py,t,life:1})}
 function tick(){if(state==='fly'&&world){for(let i=0;i<4&&!world.res;i++){world.step();
-   if(world.msg){const p=world.p;if(world.msg==='bone')popAdd(p.x,p.y-14,world.bones.length>1?'ちゅうけい '+world.bones.filter(b=>b.got).length+'/'+world.bones.length+'！':'ほねっこゲット！');if(world.msg==='door')popAdd(p.x,p.y-20,'ワープ！');if(world.msg==='head')popAdd(p.x,p.y-16,rpick(['いてっ！','あたっ！','ぽこっ！','わふっ！？','ひゃんっ！','おでこに ごっつん！']));if(world.msg==='body')popAdd(p.x,p.y-16,rpick(['くすぐったい！','わふ〜','おっとっと','ぽふっ！','もふっ！']));if(world.msg==='fast'){popAdd(p.x,p.y-14,'はやすぎ〜！');fastT=performance.now()}world.msg=''}}
+   if(world.msg){const p=world.p;if(world.msg==='bone')popAdd(p.x,p.y-14,world.bones.length>1?'ちゅうけい '+world.bones.filter(b=>b.got).length+'/'+world.bones.length+'！':'ほねっこゲット！');if(world.msg==='door')popAdd(p.x,p.y-20,'ワープ！');if(world.msg==='head'&&world.hitDog)world.hitDog.hitT=performance.now();if(world.msg==='head')popAdd(p.x,p.y-16,rpick(['いてっ！','いたたっ…','あいたっ！','きゃんっ！','うぅ…いたい','ごっつん！ いてて…']));if(world.msg==='body')popAdd(p.x,p.y-16,rpick(['くすぐったい！','わふ〜','おっとっと','ぽふっ！','もふっ！']));if(world.msg==='fast'){popAdd(p.x,p.y-14,'はやすぎ〜！');fastT=performance.now()}world.msg=''}}
   if(world.res==='catch'){state='caught';caughtT=performance.now();catchP={x:world.p.x,y:world.p.y};if(special)popAdd(world.p.x,world.p.y-30,'レア！'+special.n);setTimeout(result,1000)}
   else if(world.res){lastPath=world.path.slice();const d=target();if(world.stopped){mood='';msg(world.why)}else{mood='sad';msg(world.why+'　'+DOG[d.k].n+'「'+pick(SAY[d.k].fail)+'」')}state='edit';ui()}}
  draw();requestAnimationFrame(tick)}
@@ -269,7 +269,7 @@ function drawTreat(p,t,sz){sz=sz||1;if(special){const k='rare'+SPECIAL.indexOf(s
  x.fillStyle='#d9a066';for(const [a,b] of [[-2,-2],[3,1],[-1,3]]){x.beginPath();x.arc(a,b,1.3,0,7);x.fill()}x.restore()}
 function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';let ox=0,oy=0;
  if(near&&d.target){const dx=near.x-g.mx,dy=near.y-g.my,l=Math.hypot(dx,dy)||1,m=Math.min(REACH,l);ox=dx/l*m;oy=dy/l*m}
- if(sprOK(d.k)){const S=82,fr=caught&&d.target?(performance.now()-caughtT<70?1:2):performance.now()-fastT<700&&d.target?4:near&&d.target?1:mood==='sad'&&d.target&&state==='edit'?3:0;
+ if(sprOK(d.k)){let S=82,fr=caught&&d.target?(performance.now()-caughtT<70?1:2):performance.now()-fastT<700&&d.target?4:near&&d.target?1:mood==='sad'&&d.target&&state==='edit'?3:0,hurt=performance.now()-(d.hitT||-9e3)<700;if(hurt&&!caught)fr=3;
   const jy=d.jy||0,T=performance.now()/1000;
   // 頭は形を変えずに動かす（hx,hy＝頭の移動量px）。首の段だけ伸び縮みし、体は少しだけ、足もとは固定
   const now=performance.now();let hx=0,hy=0;
@@ -288,7 +288,7 @@ function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';l
   const NK=NECK[d.k],HB=HEADX[d.k],YF=285,BS=.3,
    Vw=sy=>sy<=NK[0]?1:sy<NK[1]?1+(BS-1)*(sy-NK[0])/(NK[1]-NK[0]):BS*Math.max(0,(YF-sy)/(YF-NK[1])),
    Hw=sx=>{if(sx<=HB[0])return 1;if(sx>=HB[1])return 0;const t=(sx-HB[0])/(HB[1]-HB[0]);return 1-t*t*(3-2*t)};
-  x.save();x.translate(d.x,d.y-jy+S*20/760);if(d.f>0)x.scale(-1,1);
+  x.save();x.translate(d.x+(hurt&&!caught?Math.sin(performance.now()/22)*2.5:0),d.y-jy+S*20/760);if(d.f>0)x.scale(-1,1);
   const mtail=d.k==='moon'&&fr===0&&mtOK(),im=mtail?MT.body:SPR[d.k][fr],tl=fr===0?TAIL[d.k]:null,K=300/S,wag=tl?tl.A*Math.sin(T*9):0;
   // 1ピクセルずつずらして描く（つなぎ目が出ない）
   const WM=weightMap(d.k),wc=warpSprite(srcPix(d.k+'_'+fr+(mtail?'b':''),im),WM,hx*K,hy*K,tl,wag);

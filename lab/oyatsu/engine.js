@@ -66,7 +66,7 @@ World.prototype.step=function(){
       if(inBite(d,p.x,p.y)&&p.y<d.y-30-d.jy){/* 床をころがるおやつは食べない */const sp=Math.hypot(p.vx,p.vy);
         if(sp<CATCH_V){d.near={x:p.x,y:p.y};return this.end('catch',d.k)}if(!this.fastOnce){this.fastOnce=1;this.msg='fast'}}}
     const hx=p.x-g.hx,hy=p.y-g.hy,hd=Math.hypot(hx,hy);
-    if(hd<g.hr+R&&hd>1e-6&&!(d.target&&inBite(d,p.x,p.y,6))){this.bounce(hx/hd,hy/hd,g.hr+R-hd,'head');if(this.t-(this.rt||-9)>.6){this.msg='head';this.rt=this.t}}
+    if(hd<g.hr+R&&hd>1e-6&&!(d.target&&inBite(d,p.x,p.y,6))){this.bounce(hx/hd,hy/hd,g.hr+R-hd,'head');if(this.t-(this.rt||-9)>.6){this.msg='head';this.hitDog=d;this.rt=this.t}}
     else if(Math.abs(p.x-d.x)<16&&p.y>g.hy+g.hr&&p.y<d.y-2&&this.t-(this.rt||-9)>.6){this.msg='body';this.rt=this.t}}
   if(p.x<-30||p.x>W+30||p.y>H+30)return this.end('fail','おやつがとんでいっちゃった');
   if(this.t>TMAX)return this.end('fail','時間切れ');
