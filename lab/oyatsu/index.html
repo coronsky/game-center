@@ -288,7 +288,7 @@ function drawDog(d,near,caught){const k=DOG[d.k],g=dogGeo(d),moon=d.k==='moon';l
   const NK=NECK[d.k],HB=HEADX[d.k],YF=285,BS=.3,
    Vw=sy=>sy<=NK[0]?1:sy<NK[1]?1+(BS-1)*(sy-NK[0])/(NK[1]-NK[0]):BS*Math.max(0,(YF-sy)/(YF-NK[1])),
    Hw=sx=>{if(sx<=HB[0])return 1;if(sx>=HB[1])return 0;const t=(sx-HB[0])/(HB[1]-HB[0]);return 1-t*t*(3-2*t)};
-  x.save();x.translate(d.x+(hurt&&!caught?Math.sin(performance.now()/22)*2.5:0),d.y-jy+S*20/760);if(d.f>0)x.scale(-1,1);
+  x.save();x.translate(d.x,d.y-jy+S*20/760);if(d.f>0)x.scale(-1,1);
   const mtail=d.k==='moon'&&fr===0&&mtOK(),im=mtail?MT.body:SPR[d.k][fr],tl=fr===0?TAIL[d.k]:null,K=300/S,wag=tl?tl.A*Math.sin(T*9):0;
   // 1ピクセルずつずらして描く（つなぎ目が出ない）
   const WM=weightMap(d.k),wc=warpSprite(srcPix(d.k+'_'+fr+(mtail?'b':''),im),WM,hx*K,hy*K,tl,wag);
@@ -339,7 +339,7 @@ function draw(){x.setTransform(DPR,0,0,DPR,0,0);bg();if(!st)return;const w=world
  if(false){x.save();x.globalAlpha=.42;st.sol.slice(0,hintN).forEach(it=>drawItem(it,-1));x.restore();x.save();x.strokeStyle='rgba(255,170,0,.9)';x.lineWidth=2;x.setLineDash([5,4]);st.sol.slice(0,hintN).forEach(it=>{if(it.k==='ball'){x.beginPath();x.arc(it.x,it.y,ITEMS.ball.r+4,0,7);x.stroke()}else{const s=itemSeg(it);x.beginPath();x.moveTo(s.x1,s.y1);x.lineTo(s.x2,s.y2);x.stroke()}});x.restore()}
  placed.forEach(drawItem);
  const dogs=w?w.dogs:st.dogs;const caught=state==='caught';
- for(const d of dogs)drawDog(d,w?d.near:null,caught&&d.target);
+ for(const d of dogs)drawDog(d,w?d.near:null,caught&&d.target);for(const d of dogs){const e=performance.now()-(d.hitT||-9e3);if(e<900&&!caught){const g=ENG.dogGeo(d);x.save();x.font='20px sans-serif';x.textAlign='center';x.textBaseline='middle';x.globalAlpha=e<700?1:(900-e)/200;x.fillText('💫',g.hx,g.hy-g.hr-4);x.font='14px sans-serif';x.fillText('💧',g.hx+g.hr*.8*(d.f>0?-1:1),g.hy-g.hr*.5);x.restore()}}
  drawLauncher();
  if(w&&!caught)drawTreat(w.p,t);
  // キャッチ：お口に吸いこまれてから消える
