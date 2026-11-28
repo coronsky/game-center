@@ -201,9 +201,9 @@ $('go').onclick=()=>{if(state==='fly'){world.stopped=true;world.end('fail','と�
  tries++;sel=-1;state='fly';mood='';special=Math.random()<.2?pick(SPECIAL):null;world=new World(st,placed.map(p=>({...p})));pops=[];ui();msg(special?'あっ、'+special.n+'だ！いけ〜！':'いけ〜！')};
 // ときどき出るレアおやつ（見た目だけ。飛び方は同じ）
 const SPECIAL=[{e:'🧀',n:'チーズ'},{e:'🍓',n:'いちご'},{e:'🍠',n:'おいも'},{e:'🥕',n:'にんじん'},{e:'🍎',n:'りんご'},{e:'🦴',n:'ほねガム'}];let special=null;
-function popAdd(px,py,t){pops.push({x:px,y:py,t,life:1})}
+const rpick=a=>a[Math.floor(Math.random()*a.length)];function popAdd(px,py,t){pops.push({x:px,y:py,t,life:1})}
 function tick(){if(state==='fly'&&world){for(let i=0;i<4&&!world.res;i++){world.step();
-   if(world.msg){const p=world.p;if(world.msg==='bone')popAdd(p.x,p.y-14,world.bones.length>1?'ちゅうけい '+world.bones.filter(b=>b.got).length+'/'+world.bones.length+'！':'ほねっこゲット！');if(world.msg==='door')popAdd(p.x,p.y-20,'ワープ！');if(world.msg==='fast'){popAdd(p.x,p.y-14,'はやすぎ〜！');fastT=performance.now()}world.msg=''}}
+   if(world.msg){const p=world.p;if(world.msg==='bone')popAdd(p.x,p.y-14,world.bones.length>1?'ちゅうけい '+world.bones.filter(b=>b.got).length+'/'+world.bones.length+'！':'ほねっこゲット！');if(world.msg==='door')popAdd(p.x,p.y-20,'ワープ！');if(world.msg==='head')popAdd(p.x,p.y-16,rpick(['いてっ！','あたっ！','ぽこっ！','わふっ！？','ひゃんっ！','おでこに ごっつん！']));if(world.msg==='body')popAdd(p.x,p.y-16,rpick(['くすぐったい！','わふ〜','おっとっと','ぽふっ！','もふっ！']));if(world.msg==='fast'){popAdd(p.x,p.y-14,'はやすぎ〜！');fastT=performance.now()}world.msg=''}}
   if(world.res==='catch'){state='caught';caughtT=performance.now();catchP={x:world.p.x,y:world.p.y};if(special)popAdd(world.p.x,world.p.y-30,'レア！'+special.n);setTimeout(result,1000)}
   else if(world.res){lastPath=world.path.slice();const d=target();if(world.stopped){mood='';msg(world.why)}else{mood='sad';msg(world.why+'　'+DOG[d.k].n+'「'+pick(SAY[d.k].fail)+'」')}state='edit';ui()}}
  draw();requestAnimationFrame(tick)}
